@@ -48,7 +48,7 @@ public class SingleAlignerMap extends
 		String refString = null;
 
 		CacheStore cache = new CacheStore(context.getConfiguration());
-		String jbwaLibLocation = cache.getArchive("jbwaLib075a");
+		String jbwaLibLocation = cache.getArchive("jbwaLib");
 		String jbwaLib = FileUtil.path(jbwaLibLocation, "native",
 				"libbwajni.so");
 		String referencePath = cache.getArchive("reference");

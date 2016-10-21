@@ -47,9 +47,9 @@ public class PairedAlignerJob extends HadoopJob {
 	protected void setupDistributedCache(CacheStore cache) {
 
 		// distribute jbwa libraries
-		String hdfsPath = HdfsUtil.path("jbwa-data", "jbwa075a.tar.gz");
+		String hdfsPath = HdfsUtil.path("jbwa-data", "jbwa.tar.gz");
 		if (!HdfsUtil.exists(hdfsPath)) {
-			String jbwa = FileUtil.path(folder,"jbwa075a.tar.gz");
+			String jbwa = FileUtil.path(folder,"jbwa.tar.gz");
 			HdfsUtil.put(jbwa, hdfsPath);
 		}
 		
@@ -63,7 +63,7 @@ public class PairedAlignerJob extends HadoopJob {
 		log.info("Archive path is: "+hdfsPath);
 		log.info("Reference path is: "+hdfsPathRef);
 		
-		cache.addArchive("jbwaLib075a", hdfsPath);
+		cache.addArchive("jbwaLib", hdfsPath);
 		cache.addArchive("reference", hdfsPathRef);
 
 	}
