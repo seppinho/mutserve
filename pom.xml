@@ -1,0 +1,148 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>genepi-pileup</groupId>
+	<artifactId>genepi-pileup</artifactId>
+	<version>1.0</version>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<repositories>
+
+		<repository>
+			<id>hadoop-bam-sourceforge</id>
+			<url>http://hadoop-bam.sourceforge.net/maven/</url>
+		</repository>
+
+		<repository>
+			<id>genepi-hadoop</id>
+			<url>https://raw.github.com/genepi/maven-repository/mvn-repo/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+
+		<repository>
+			<id>in-project</id>
+			<name>In Project Repo</name>
+			<url>file://${basedir}/libs</url>
+		</repository>
+
+	</repositories>
+
+	<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+
+
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>genepi.vcbox.VcBox</mainClass>
+								</transformer>
+							</transformers>
+
+							<artifactSet>
+								<includes>
+									<include>genepi:genepi-io:*:*</include>
+									<include>genepi:genepi-hadoop:*:*</include>
+									<include>seqdoop:hadoop-bam:*:*</include>
+									<include>gatk:gatk-jar:*:*</include>
+									<include>net.sf.opencsv:opencsv:*:*</include>
+								</includes>
+							</artifactSet>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>create-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>assembly/assembly.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<dependencies>
+
+				<dependency>
+			<groupId>genepi</groupId>
+			<artifactId>genepi-io</artifactId>
+			<version>1.0.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>genepi</groupId>
+			<artifactId>genepi-hadoop</artifactId>
+			<version>mr1-1.1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>seqdoop</groupId>
+			<artifactId>hadoop-bam</artifactId>
+			<version>7.7.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>gatk</groupId>
+			<artifactId>gatk-jar</artifactId>
+			<version>3.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>2.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math3</artifactId>
+			<version>3.2</version>
+		</dependency>
+	</dependencies>
+
+</project>
