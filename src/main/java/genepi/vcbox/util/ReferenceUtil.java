@@ -13,8 +13,6 @@ public class ReferenceUtil {
 
 	public static String findFileinReferenceArchive(File reference, String suffix) {
 		String refPath = null;
-		System.out.println(reference);
-		System.out.println(suffix);
 		if (reference.isDirectory()) {
 			File[] files = reference.listFiles();
 			for (File i : files) {
