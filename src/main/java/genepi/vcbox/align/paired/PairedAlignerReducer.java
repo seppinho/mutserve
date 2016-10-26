@@ -8,7 +8,7 @@ import java.util.List;
 import genepi.hadoop.CacheStore;
 import genepi.io.FileUtil;
 import genepi.vcbox.objects.SingleRead;
-import genepi.vcbox.util.Helper;
+import genepi.vcbox.util.ReferenceUtil;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -59,7 +59,7 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 
 		File reference = new File(referencePath);
 
-		refString = Helper.findFileinReferenceArchive(reference, ".fasta");
+		refString = ReferenceUtil.findFileinReferenceArchive(reference, ".fasta");
 
 		/** load index, aligner */
 		index = new BwaIndex(new File(refString));

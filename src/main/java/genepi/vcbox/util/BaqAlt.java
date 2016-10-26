@@ -661,7 +661,7 @@ public class BaqAlt {
 		
 		// Done by Seb to check	for valid ref name
 		int refLength= read.getHeader().getSequenceDictionary().getSequence(read.getReferenceName()).getSequenceLength();
-		String validName = Helper.getValidReferenceNameForBaq(refLength);
+		String validName = ReferenceUtil.getValidReferenceNameForBaq(refLength);
 		
 		// add bases to the start
 		if (start < 0) {
