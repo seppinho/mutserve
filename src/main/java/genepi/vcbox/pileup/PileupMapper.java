@@ -4,7 +4,7 @@ import genepi.hadoop.CacheStore;
 import genepi.hadoop.PreferenceStore;
 import genepi.vcbox.objects.BasePosition;
 import genepi.vcbox.util.BaqAlt;
-import genepi.vcbox.util.Helper;
+import genepi.vcbox.util.ReferenceUtil;
 import htsjdk.samtools.CigarElement;
 import htsjdk.samtools.CigarOperator;
 import htsjdk.samtools.SAMRecord;
@@ -62,8 +62,8 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 
 		File referencePath = new File(cache.getArchive("reference"));
 
-		String fastaPath = Helper.findFileinReferenceArchive(referencePath, ".fasta");
-		String faiPath = Helper.findFileinReferenceArchive(referencePath, ".fasta.fai");
+		String fastaPath = ReferenceUtil.findFileinReferenceArchive(referencePath, ".fasta");
+		String faiPath = ReferenceUtil.findFileinReferenceArchive(referencePath, ".fasta.fai");
 
 		PreferenceStore store = new PreferenceStore(context.getConfiguration());
 		baqVersion = store.getString("pileup.baq.version");
@@ -144,7 +144,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 							// TAG
 							// is
 							// included
-							if (Helper.getTagFromSamRecord(samRecord.getAttributes(), "AS") >= alignQual) {
+							if (ReferenceUtil.getTagFromSamRecord(samRecord.getAttributes(), "AS") >= alignQual) {
 
 								/**
 								 * execute BAQ only if read maps correctly. BAQ

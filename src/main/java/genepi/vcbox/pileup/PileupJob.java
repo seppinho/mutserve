@@ -15,7 +15,7 @@ import genepi.hadoop.HadoopJob;
 import genepi.hadoop.HdfsUtil;
 import genepi.io.FileUtil;
 import genepi.vcbox.objects.BasePosition;
-import genepi.vcbox.util.Helper;
+import genepi.vcbox.util.ReferenceUtil;
 
 public class PileupJob extends HadoopJob {
 
@@ -66,7 +66,7 @@ public class PileupJob extends HadoopJob {
 	@Override
 	protected void setupDistributedCache(CacheStore cache) {
 
-		String archive = Helper.getSelectedReferenceArchive(reference);
+		String archive = ReferenceUtil.getSelectedReferenceArchive(reference);
 
 		// get path by class
 		String folder = getFolder(PileupJob.class);

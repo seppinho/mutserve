@@ -9,7 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
-public class Helper {
+public class ReferenceUtil {
 
 	public static String findFileinReferenceArchive(File reference, String suffix) {
 		String refPath = null;

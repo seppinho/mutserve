@@ -5,7 +5,7 @@ import genepi.hadoop.HadoopJob;
 import genepi.hadoop.HdfsUtil;
 import genepi.io.FileUtil;
 import genepi.vcbox.objects.SingleRead;
-import genepi.vcbox.util.Helper;
+import genepi.vcbox.util.ReferenceUtil;
 
 import java.io.File;
 
@@ -53,7 +53,7 @@ public class PairedAlignerJob extends HadoopJob {
 			HdfsUtil.put(jbwa, hdfsPath);
 		}
 		
-		String archive = FileUtil.path(folder,Helper.getSelectedReferenceArchive(reference));
+		String archive = FileUtil.path(folder,ReferenceUtil.getSelectedReferenceArchive(reference));
 		String hdfsPathRef = HdfsUtil.path("jbwa-data", archive);
 		
 		if (!HdfsUtil.exists(hdfsPathRef)) {

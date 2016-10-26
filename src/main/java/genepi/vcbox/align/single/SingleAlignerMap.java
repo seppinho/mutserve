@@ -15,7 +15,7 @@ import com.github.lindenb.jbwa.jni.ShortRead;
 
 import genepi.hadoop.CacheStore;
 import genepi.io.FileUtil;
-import genepi.vcbox.util.Helper;
+import genepi.vcbox.util.ReferenceUtil;
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMLineParser;
 import htsjdk.samtools.SAMRecord;
@@ -64,7 +64,7 @@ public class SingleAlignerMap extends
 
 		File reference = new File(referencePath);
 
-		refString = Helper.findFileinReferenceArchive(reference, ".fasta");
+		refString = ReferenceUtil.findFileinReferenceArchive(reference, ".fasta");
 
 		/** load index, aligner */
 		if (refString != null) {

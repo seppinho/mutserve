@@ -3,7 +3,7 @@ package genepi.vcbox.lowlevelDetector;
 import genepi.io.table.writer.CsvTableWriter;
 import genepi.io.text.LineWriter;
 import genepi.vcbox.objects.PositionObject;
-import genepi.vcbox.util.Helper;
+import genepi.vcbox.util.ReferenceUtil;
 import genepi.vcbox.util.StatUtil;
 
 import java.io.BufferedReader;
@@ -44,7 +44,7 @@ public class DetectVariants {
 
 	public DetectVariants(String fasta) {
 
-		DetectVariants.refAsString = Helper.readInReference(fasta);
+		DetectVariants.refAsString = ReferenceUtil.readInReference(fasta);
 		df = DecimalFormat.getInstance();
 		df.setMinimumFractionDigits(2);
 		df.setMaximumFractionDigits(4);
