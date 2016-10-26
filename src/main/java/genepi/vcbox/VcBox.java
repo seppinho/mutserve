@@ -2,6 +2,8 @@ package genepi.vcbox;
 
 import genepi.base.Toolbox;
 import genepi.vcbox.align.AlignTool;
+import genepi.vcbox.lowlevelDetector.DetectTool;
+import genepi.vcbox.lowlevelDetector.DetectVariants;
 import genepi.vcbox.pileup.PileupTool;
 import genepi.vcbox.sort.SortTool;
 
@@ -23,6 +25,9 @@ public class VcBox {
 		// read in BAM file and count per POS with MapReduce
 		toolbox.addTool("analyse", PileupTool.class);
 
+		// detect low level variants
+		toolbox.addTool("detect", DetectTool.class);
+		
 		toolbox.start();
 
 	}
