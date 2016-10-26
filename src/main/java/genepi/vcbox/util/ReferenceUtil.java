@@ -28,7 +28,7 @@ public class ReferenceUtil {
 		return refPath;
 	}
 	
-	// for BAQ calculation to get a correct reference
+	// for BAQ calculation only needed for mtDNA!
 	public static String getValidReferenceNameForBaq (int length){
 		String alteredRef = null;
 		
@@ -82,24 +82,8 @@ public class ReferenceUtil {
 	}
 	
 	public static String getSelectedReferenceArchive(String reference) {
-		String archive;
-		switch(reference)
-		{
-			case "rcrs": 
-				archive = "rcrs.tar.gz";
-			   break; 
-			case "rsrs": 
-				archive = "rsrs.tar.gz";
-			   break; 
-			case "hg19": 
-				archive = "hg19.tar.gz";
-			   break; 
-			case "kiv2_6": 
-				archive = "kiv2_6.tar.gz";
-			   break; 
-			default:
-				archive = "notfound.tar.gz";
-		}
-		return archive;
+		
+		return reference+".tar.gz";
+		
 	}
 }
