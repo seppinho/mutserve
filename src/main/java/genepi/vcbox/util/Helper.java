@@ -2,7 +2,11 @@ package genepi.vcbox.util;
 
 import htsjdk.samtools.SAMRecord.SAMTagAndValue;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 
 public class Helper {
@@ -47,6 +51,34 @@ public class Helper {
 				value = (int) member.value;
 		}
 		return value;
+	}
+	
+	public static String readInReference(String file)  {
+		StringBuilder stringBuilder = null;
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			String line = null;
+			stringBuilder = new StringBuilder();
+			
+			while ((line = reader.readLine()) != null) {
+
+				if (!line.startsWith(">"))
+					stringBuilder.append(line);
+
+			}
+			
+			reader.close();
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+
+		return stringBuilder.toString();
 	}
 	
 	public static String getSelectedReferenceArchive(String reference) {
