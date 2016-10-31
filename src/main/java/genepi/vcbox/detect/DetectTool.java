@@ -16,7 +16,6 @@ public class DetectTool extends Tool {
 		addParameter("outputFiltered", "output path filtered");
 		addParameter("detectionLevel", "detection level in %");
 		addParameter("reference", "reference");
-		addParameter("variants", "variants");
 		
 	}
 
