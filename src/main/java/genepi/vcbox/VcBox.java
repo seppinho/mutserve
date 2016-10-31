@@ -6,6 +6,8 @@ import genepi.vcbox.detect.DetectTool;
 import genepi.vcbox.detect.DetectVariants;
 import genepi.vcbox.pileup.PileupTool;
 import genepi.vcbox.sort.SortTool;
+import genepi.vcbox.stats.CreateStatistics;
+import genepi.vcbox.stats.StatisticsTool;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -27,6 +29,9 @@ public class VcBox {
 
 		// detect low level variants
 		toolbox.addTool("detect", DetectTool.class);
+		
+		// generate statistics
+		toolbox.addTool("stats", StatisticsTool.class);
 		
 		toolbox.start();
 

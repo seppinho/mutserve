@@ -8,4 +8,4 @@ A parallelized approach to detect low level variants, also called heteroplasmies
 * Sort: Sorting aligned reads and creating a BAM file. It uses the secondary sort mechanism of Hadoop. 
 * Pileup: Calculating base-pair information at each chromosomal position. It also applies several models, which are included in the pileup file.
 * Variant detection: Detect variants and low-level variants (also called heteroplasmy in context of mtDNA).
-
+* Statistics: Generate sample statistics.
