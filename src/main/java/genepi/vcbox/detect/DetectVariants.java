@@ -1,17 +1,16 @@
-package genepi.vcbox.lowlevelDetector;
+package genepi.vcbox.detect;
 
 import genepi.io.table.writer.CsvTableWriter;
-import genepi.io.text.LineWriter;
 import genepi.vcbox.objects.PositionObject;
 import genepi.vcbox.util.ReferenceUtil;
 import genepi.vcbox.util.StatUtil;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -24,13 +23,12 @@ import org.apache.hadoop.util.LineReader;
 public class DetectVariants {
 
 	private String hdfsFolder = "";
-	private double heteroplasmy;
+	private double detectionLevel = 0.01;
 	private String outputRaw;
 	private String outputFiltered;
 	private String outputHSD;
 	private String outputHSDCheck;
 	private String outSummary;
-	private String variants;
 
 	NumberFormat df;
 
@@ -38,9 +36,16 @@ public class DetectVariants {
 
 	public static String refAsString;
 
-	public static int HETEROPLASMY = 1; // reliable heteroplasmy
+	public static int VARIANT = 1; // variant
 
-	public static int DOUBT_HETEROPLASMY = 2; // doubt heteroplasmy
+	public static int LOW_LEVEL_VARIANT = 2; // low level variant
+
+	public static int SUSPICOUS_LOW_LEVEL_VARIANT = 3; // double check low level
+														// variant
+
+	public static int DELETION = 4; // deletion
+
+	public static int INSERTION = 5; // deletion
 
 	public DetectVariants(String fasta) {
 
@@ -59,18 +64,13 @@ public class DetectVariants {
 			FileStatus[] files = fileSystem.listStatus(new Path(hdfsFolder));
 
 			Text line = new Text();
-			TreeSet<PositionObject> lowlevelPos = new TreeSet<PositionObject>();
+			List<PositionObject> variantPos = new ArrayList<PositionObject>();
 			CsvTableWriter rawWriter = new CsvTableWriter(outputRaw, '\t', false);
 			// TODO CHANGE LLR BACK TO D
-			rawWriter.setColumns(new String[] { "SampleID", "POS", "REF", "TOP-BASE-FWD", "MINOR-BASE-FWD", "TOP-BASE-REV",
-					"MINOR-BASE-REV", "COV-FWD", "COV-REV", "TYPE", "HET-LEVEL", "%A", "%C", "%G", "%T", "%d", "%a", "%c",
-					"%g", "%t", "%d", "LLRFWD", "LLRREV" });
-			
-			CsvTableWriter variantsWriter = new CsvTableWriter(outputFiltered, '\t', false);
-			variantsWriter.setColumns(
-					new String[] { "SampleID", "POS", "REF", "VARIANT", "COV-FWD", "COV-REV", "TYPE", "HET-LEVEL" });
-
-			HashMap<String, TreeSet<String>> variantMap = new HashMap<String, TreeSet<String>>();
+			rawWriter.setColumns(new String[] { "SampleID", "Pos", "Ref", "Top-Base-FWD", "Minor-Base-FWD",
+					"Top-Base-REV", "Minor-Base-REV", "Coverage-FWD", "Coverage-REV", "Variant-Type", "Variant-Level",
+					"%A", "%C", "%G", "%T", "%d", "%a", "%c", "%g", "%t", "%d", "LLR-FWD", "LLR-REV", "Boundary-FWD",
+					"Boundary-Rev" });
 
 			for (FileStatus file : files) {
 
@@ -86,16 +86,22 @@ public class DetectVariants {
 
 						if (pos.getPosition() > 0 && pos.getPosition() <= refAsString.length()) {
 
-							determineLowLevelVariant(pos);
-
-							if (pos.isHeteroplasmy() == 0) {
-								determineVariant(variantMap, pos);
-							} else {
-								lowlevelPos.add(pos);
-							}
-
+							// write each pos
 							if (!pos.isInsertion()) {
 								writeRaw(rawWriter, pos);
+							}
+
+							//detect low-level variants
+							determineLowLevelVariants(pos);
+
+							// no low-level variant detected
+							if (pos.getVariantType() == 0) {
+								determineVariants(pos);
+							}
+
+							if (pos.getVariantType() == VARIANT || pos.getVariantType() == LOW_LEVEL_VARIANT
+									|| pos.getVariantType() == SUSPICOUS_LOW_LEVEL_VARIANT) {
+								variantPos.add(pos);
 							}
 
 						}
@@ -108,17 +114,10 @@ public class DetectVariants {
 
 			rawWriter.close();
 
-			/** write heteroplasmy file */
-			for (PositionObject obj : lowlevelPos) {
-				writeVariants(variantsWriter, obj);
-			}
-
-			variantsWriter.close();
-
-			/** write variants */
-			writeVariantsOld(variantMap);
+			writeVariants(variantPos);
 
 			return true;
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -126,7 +125,7 @@ public class DetectVariants {
 
 	}
 
-	public void determineLowLevelVariant(PositionObject posObj) {
+	public void determineLowLevelVariants(PositionObject posObj) {
 
 		double minorBasePercentsFWD = posObj.getMinorPercentsFWD();
 		double minorBasePercentsREV = posObj.getMinorBasePercentsREV();
@@ -152,7 +151,7 @@ public class DetectVariants {
 							 * the raw frequency for the minor allele is no less
 							 * than 1% on both strands
 							 **/
-							if (minorBasePercentsFWD >= heteroplasmy || minorBasePercentsREV >= heteroplasmy) {
+							if (minorBasePercentsFWD >= detectionLevel || minorBasePercentsREV >= detectionLevel) {
 
 								/**
 								 * high-confidence heteroplasmy was defined as
@@ -166,14 +165,14 @@ public class DetectVariants {
 										double fwd = minorBasePercentsFWD * posObj.getCovFWD();
 										double rev = minorBasePercentsREV * posObj.getCovREV();
 
-										posObj.setHeteroplasmy(HETEROPLASMY);
+										posObj.setVariantType(LOW_LEVEL_VARIANT);
 
-										posObj.setHetLevel((fwd + rev) / (posObj.getCovFWD() + posObj.getCovREV()));
+										posObj.setVariantLevel((fwd + rev) / (posObj.getCovFWD() + posObj.getCovREV()));
 
 										calcConfidence(posObj);
 
 										if (!equalBase(posObj)) {
-											posObj.setHeteroplasmy(DOUBT_HETEROPLASMY);
+											posObj.setVariantType(SUSPICOUS_LOW_LEVEL_VARIANT);
 										}
 
 									}
@@ -191,34 +190,138 @@ public class DetectVariants {
 
 	}
 
-	public void determineVariant(HashMap<String, TreeSet<String>> map, PositionObject posObj) {
+	private void writeRaw(CsvTableWriter writer, PositionObject posObj) {
+
+		char ref = refAsString.charAt(posObj.getPosition() - 1);
+
+		try {
+
+			writer.setString(0, posObj.getId());
+
+			writer.setInteger(1, posObj.getPosition());
+
+			writer.setString(2, ref + "");
+
+			writer.setString(3, posObj.getTopBaseFWD() + "");
+
+			writer.setString(4, posObj.getMinorBaseFWD() + "");
+
+			writer.setString(5, posObj.getTopBaseREV() + "");
+
+			writer.setString(6, posObj.getMinorBaseREV() + "");
+
+			writer.setInteger(7, posObj.getCovFWD());
+
+			writer.setInteger(8, posObj.getCovREV());
+
+			writer.setString(9, posObj.getVariantType() + "");
+
+			writer.setString(10, df.format(posObj.getVariantLevel()) + "");
+
+			writer.setString(11, df.format(posObj.getaPercentageFWD()) + "");
+
+			writer.setString(12, df.format(posObj.getcPercentageFWD()) + "");
+
+			writer.setString(13, df.format(posObj.getgPercentageFWD()) + "");
+
+			writer.setString(14, df.format(posObj.gettPercentageFWD()) + "");
+
+			writer.setString(15, df.format(posObj.getdPercentageFWD()) + "");
+
+			writer.setString(16, df.format(posObj.getaPercentageREV()) + "");
+
+			writer.setString(17, df.format(posObj.getcPercentageREV()) + "");
+
+			writer.setString(18, df.format(posObj.getgPercentageREV()) + "");
+
+			writer.setString(19, df.format(posObj.gettPercentageREV()) + "");
+
+			writer.setString(20, df.format(posObj.getdPercentageFWD()) + "");
+
+			writer.setDouble(21, posObj.getLlrFWD());
+
+			writer.setDouble(22, posObj.getLlrREV());
+
+			writer.setString(23, getBoundaryFWD(posObj));
+
+			writer.setString(24, getBoundaryREV(posObj));
+
+			writer.next();
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		} catch (Error e) {
+
+			e.printStackTrace();
+		}
+
+	}
+
+	private void writeVariants(List<PositionObject> list) {
+
+		CsvTableWriter writer = new CsvTableWriter(outputFiltered, '\t', false);
+		writer.setColumns(new String[] { "SampleID", "Pos", "Ref", "Variant", "Coverage-FWD", "Coverage-REV",
+				"Coverage-Total", "Variant-Type", "Variant-Level" });
+
+		Collections.sort(list);
+
+		for (PositionObject posObj : list) {
+
+			char ref = refAsString.charAt(posObj.getPosition() - 1);
+
+			writer.setString(0, posObj.getId());
+
+			writer.setInteger(1, posObj.getPosition());
+
+			writer.setString(2, ref + "");
+
+			// double check for low_level variants to write the non-reference
+			// base
+			writer.setString(3, getVariantBase(posObj) + "");
+
+			writer.setInteger(4, posObj.getCovFWD());
+
+			writer.setInteger(5, posObj.getCovREV());
+
+			writer.setInteger(6, posObj.getCovFWD() + posObj.getCovREV());
+
+			writer.setString(7, posObj.getVariantType() + "");
+
+			if (posObj.getVariantType() == 1) {
+
+				writer.setString(8, "1.0");
+
+			} else {
+
+				writer.setString(8, df.format(posObj.getVariantLevel()) + "");
+
+			}
+
+			writer.next();
+
+		}
+
+		writer.close();
+
+	}
+
+	public void determineVariants(PositionObject posObj) {
 
 		char ref = refAsString.charAt(posObj.getPosition() - 1);
 
 		if (posObj.getTopBaseFWD() == posObj.getTopBaseREV()) {
+
 			if (posObj.getTopBaseFWD() != ref && (posObj.getCovFWD() * posObj.getCovREV() / 2) > 10 * 2) {
 
 				if (posObj.getTopBaseFWD() == 'd') {
 					posObj.setDeletion(true);
+					posObj.setVariantType(DELETION);
 				} else {
 					posObj.setVariant(true);
+					posObj.setVariantType(VARIANT);
 				}
 			}
-		}
-
-		TreeSet<String> set;
-		if (posObj.isVariant()) {
-			if (!map.containsKey(posObj.getId())) {
-				set = new TreeSet<String>();
-			} else {
-				set = map.get(posObj.getId());
-			}
-			set.add(posObj.getPosition() + "\t" + ref + "\t" + posObj.getTopBaseFWD() + "\t"
-					+ Integer.valueOf((int) (posObj.getTopBasePercentsFWD() * posObj.getCovFWD())) + " / "
-					+ posObj.getCovFWD() + "\t"
-					+ Integer.valueOf((int) (posObj.getTopBasePercentsREV() * posObj.getCovREV())) + " / "
-					+ posObj.getCovREV());
-			map.put(posObj.getId(), set);
 		}
 	}
 
@@ -281,131 +384,26 @@ public class DetectVariants {
 		return true;
 	}
 
-	private void writeRaw(CsvTableWriter writer, PositionObject posObj) {
-
-		char ref = refAsString.charAt(posObj.getPosition() - 1);
-
-		try {
-
-			writer.setString(0, posObj.getId());
-
-			writer.setInteger(1, posObj.getPosition());
-
-			writer.setString(2, ref + "");
-
-			writer.setString(3, posObj.getTopBaseFWD() + "");
-
-			writer.setString(4, posObj.getMinorBaseFWD() + "");
-
-			writer.setString(5, posObj.getTopBaseREV() + "");
-
-			writer.setString(6, posObj.getMinorBaseREV() + "");
-
-			writer.setInteger(7, posObj.getCovFWD());
-
-			writer.setInteger(8, posObj.getCovREV());
-
-			writer.setString(9, posObj.isHeteroplasmy() + "");
-
-			writer.setString(10, df.format(posObj.getHetLevel()) + "");
-
-			writer.setString(11, df.format(posObj.getaPercentageFWD()) + "");
-
-			writer.setString(12, df.format(posObj.getcPercentageFWD()) + "");
-
-			writer.setString(13, df.format(posObj.getgPercentageFWD()) + "");
-
-			writer.setString(14, df.format(posObj.gettPercentageFWD()) + "");
-
-			writer.setString(15, df.format(posObj.getdPercentageFWD()) + "");
-
-			writer.setString(16, df.format(posObj.getaPercentageREV()) + "");
-
-			writer.setString(17, df.format(posObj.getcPercentageREV()) + "");
-
-			writer.setString(18, df.format(posObj.getgPercentageREV()) + "");
-
-			writer.setString(19, df.format(posObj.gettPercentageREV()) + "");
-
-			writer.setString(20, df.format(posObj.getdPercentageFWD()) + "");
-
-			writer.setDouble(21, posObj.getLlrFWD());
-
-			writer.setDouble(22, posObj.getLlrREV());
-
-			// writer.setString(23, getBoundaryFWD(posObj));
-
-			// writer.setString(24, getBoundaryREV(posObj));
-
-			writer.next();
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		} catch (Error e) {
-
-			e.printStackTrace();
-		}
-
-	}
-
-	private void writeVariants(CsvTableWriter writer, PositionObject posObj) {
-
-		char ref = refAsString.charAt(posObj.getPosition() - 1);
-
-		try {
-
-			writer.setString(0, posObj.getId());
-
-			writer.setInteger(1, posObj.getPosition());
-
-			writer.setString(2, ref + "");
-
-			if (posObj.getTopBaseFWD() == ref) {
-				writer.setString(3, posObj.getMinorBaseFWD() + "");
-			} else {
-				writer.setString(3, posObj.getTopBaseFWD() + "");
-			}
-			writer.setInteger(4, posObj.getCovFWD());
-
-			writer.setInteger(5, posObj.getCovREV());
-
-			writer.setString(6, posObj.isHeteroplasmy() + "");
-
-			writer.setString(7, df.format(posObj.getHetLevel()) + "");
-
-			writer.next();
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		} catch (Error e) {
-
-			e.printStackTrace();
-		}
-
-	}
-	
-	private void writeVariantsOld(HashMap<String, TreeSet<String>> map) throws IOException {
-		LineWriter varWriter = new LineWriter(variants);
-		varWriter.write("SampleID\tPOS\tREF\tVARIANT\tCOV-FWD\tCOV-REV");
-
-		for (String sampleId : map.keySet()) {
-			TreeSet<String> set = map.get(sampleId);
-			StringBuilder c = new StringBuilder();
-			for (String poly : set) {
-				c.append(sampleId + "\t" + poly + "\n");
-			}
-			varWriter.write(c.toString());
-		}
-		varWriter.close();
-	}
-
 	private void calcConfidence(PositionObject posObj) {
 		if ((posObj.getCovFWD() * posObj.getCovREV() / 2) < 40) {
 			generateWilsonInterval(posObj);
 		} else {
 			generateAgrestiInterval(posObj);
+		}
+	}
+
+	private char getVariantBase(PositionObject posObj) {
+
+		char ref = refAsString.charAt(posObj.getPosition() - 1);
+
+		if (posObj.getTopBaseFWD() == ref) {
+
+			return posObj.getMinorBaseFWD();
+
+		} else {
+
+			return posObj.getTopBaseFWD();
+
 		}
 	}
 
@@ -468,12 +466,12 @@ public class DetectVariants {
 		}
 	}
 
-	public double getHeteroplasmy() {
-		return heteroplasmy;
+	public double getDetectionLevel() {
+		return detectionLevel;
 	}
 
-	public void setHeteroplasmy(double heteroplasmy) {
-		this.heteroplasmy = heteroplasmy;
+	public void setDetectionLevel(double detectionLevel) {
+		this.detectionLevel = detectionLevel;
 	}
 
 	public String getOutputRaw() {
@@ -522,14 +520,6 @@ public class DetectVariants {
 
 	public void setOutSummary(String outSummary) {
 		this.outSummary = outSummary;
-	}
-
-	public String getVariants() {
-		return variants;
-	}
-
-	public void setVariants(String variants) {
-		this.variants = variants;
 	}
 
 }
