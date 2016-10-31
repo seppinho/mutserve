@@ -31,7 +31,7 @@ public class DetectTool extends Tool {
 		String input = (String) getValue("input");
 		String outputRaw = (String) getValue("outputRaw");
 		String outputFiltered = (String) getValue("outputFiltered");
-		String level = (String) getValue("level");
+		String level = (String) getValue("detectionLevel");
 		
 		DetectVariants detecter = new DetectVariants(reference+".fasta");
 		
