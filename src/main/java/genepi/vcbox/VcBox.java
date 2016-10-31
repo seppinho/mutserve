@@ -2,8 +2,8 @@ package genepi.vcbox;
 
 import genepi.base.Toolbox;
 import genepi.vcbox.align.AlignTool;
-import genepi.vcbox.lowlevelDetector.DetectTool;
-import genepi.vcbox.lowlevelDetector.DetectVariants;
+import genepi.vcbox.detect.DetectTool;
+import genepi.vcbox.detect.DetectVariants;
 import genepi.vcbox.pileup.PileupTool;
 import genepi.vcbox.sort.SortTool;
 

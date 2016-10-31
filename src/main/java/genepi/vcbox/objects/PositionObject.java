@@ -38,8 +38,8 @@ public class PositionObject implements Comparable<PositionObject> {
 	private double topBasePercentsREV;
 	private double minorBasePercentsREV;
 
-	private int isHeteroplasmy = 0;
-	private double hetLevel = 0.0;
+	private int type = 0;
+	private double varLevel = 0.0;
 	private boolean fwdOK = false;
 	private boolean revOK = false;
 	private boolean isInsertion = false;
@@ -734,8 +734,8 @@ public class PositionObject implements Comparable<PositionObject> {
 				+ ", minorBasePercentsFWD=" + minorBasePercentsFWD
 				+ ", topBasePercentsREV=" + topBasePercentsREV
 				+ ", minorBasePercentsREV=" + minorBasePercentsREV
-				+ ", isHeteroplasmy=" + isHeteroplasmy + ", hetLevel="
-				+ hetLevel + ", fwdOK=" + fwdOK + ", revOK=" + revOK
+				+ ", type=" + type + ", hetLevel="
+				+ varLevel + ", fwdOK=" + fwdOK + ", revOK=" + revOK
 				+ ", isInsertion=" + isInsertion + ", isVariant=" + isVariant
 				+ ", isDeletion=" + isDeletion + ", insertionIndex="
 				+ insertionIndex + ", isRevVariant=" + isRevVariant
@@ -917,12 +917,12 @@ public class PositionObject implements Comparable<PositionObject> {
 		this.topBaseREV = posREV;
 	}
 
-	public int isHeteroplasmy() {
-		return isHeteroplasmy;
+	public int getVariantType() {
+		return type;
 	}
 
-	public void setHeteroplasmy(int isHeteroplasmy) {
-		this.isHeteroplasmy = isHeteroplasmy;
+	public void setVariantType(int isHeteroplasmy) {
+		this.type = isHeteroplasmy;
 	}
 
 	public char getMinorBaseFWD() {
@@ -941,12 +941,12 @@ public class PositionObject implements Comparable<PositionObject> {
 		this.minorBaseREV = minorBaseREV;
 	}
 
-	public double getHetLevel() {
-		return hetLevel;
+	public double getVariantLevel() {
+		return varLevel;
 	}
 
-	public void setHetLevel(double hetLevelFWD) {
-		this.hetLevel = hetLevelFWD;
+	public void setVariantLevel(double hetLevelFWD) {
+		this.varLevel = hetLevelFWD;
 	}
 
 	public double getMinorBasePercentsREV() {

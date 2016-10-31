@@ -1,4 +1,4 @@
-package genepi.vcbox.lowlevelDetector;
+package genepi.vcbox.detect;
 
 import genepi.base.Tool;
 
@@ -14,7 +14,7 @@ public class DetectTool extends Tool {
 		addParameter("input", "input path");
 		addParameter("outputRaw", "output path raw");
 		addParameter("outputFiltered", "output path filtered");
-		addParameter("heteroLevel", "heteroplasmy");
+		addParameter("detectionLevel", "detection level in %");
 		addParameter("reference", "reference");
 		addParameter("variants", "variants");
 		
@@ -32,16 +32,14 @@ public class DetectTool extends Tool {
 		String input = (String) getValue("input");
 		String outputRaw = (String) getValue("outputRaw");
 		String outputFiltered = (String) getValue("outputFiltered");
-		String heteroplasmy = (String) getValue("heteroLevel");
-		String variants = (String) getValue("variants");
+		String level = (String) getValue("level");
 		
 		DetectVariants detecter = new DetectVariants(reference+".fasta");
 		
 		detecter.setHdfsFolder(input);
-		detecter.setHeteroplasmy(Double.valueOf(heteroplasmy)/100.0);
+		detecter.setDetectionLevel(Double.valueOf(level)/100.0);
 		detecter.setOutputFiltered(outputFiltered);
 		detecter.setOutputRaw(outputRaw);
-		detecter.setVariants(variants);
 		detecter.analyzeReads();
 		
 		return 0;
