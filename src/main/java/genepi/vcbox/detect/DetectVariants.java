@@ -42,7 +42,6 @@ public class DetectVariants {
 
 	public static int SUSPICOUS_LOW_LEVEL_VARIANT = 3; // double check low level
 														// variant
-
 	public static int DELETION = 4; // deletion
 
 	public static int INSERTION = 5; // deletion
