@@ -1,7 +1,5 @@
 package genepi.vcbox.stats;
 
-import java.io.IOException;
-
 import genepi.base.Tool;
 
 public class StatisticsTool extends Tool {

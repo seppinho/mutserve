@@ -1,12 +1,10 @@
 package genepi.vcbox.pileup;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.CounterGroup;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.JobStatus;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.seqdoop.hadoop_bam.AnySAMInputFormat;
 

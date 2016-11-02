@@ -336,29 +336,6 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 		}
 	}
 
-	private boolean checkValidRead(SAMRecord read) {
-
-		int amountN = 0;
-		for (int i = 0; i < read.getReadLength(); i++) {
-
-			if (read.getBaseQualities()[i] < 5) {
-				return false;
-			}
-
-			if (read.getReadBases()[i] == 'N') {
-				amountN++;
-			}
-
-			if (amountN > 5) {
-				return false;
-			}
-
-		}
-
-		return true;
-
-	}
-
 	private int hg19Mapper(int pos) {
 
 		int updatedPos = 0;
