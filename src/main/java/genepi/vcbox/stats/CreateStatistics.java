@@ -8,6 +8,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import genepi.io.table.reader.CsvTableReader;
+import genepi.io.table.writer.CsvTableWriter;
 import genepi.io.text.LineWriter;
 
 public class CreateStatistics {
@@ -28,39 +29,48 @@ public class CreateStatistics {
 		File file = new File(input);
 
 		CsvTableReader reader = new CsvTableReader(file.getAbsolutePath(), '\t');
-		LineWriter writer;
-		try {
-			writer = new LineWriter(output);
-			String sample = null;
-			ArrayList<Double> positions = new ArrayList<Double>();
-			
-			while (reader.next()) {
+		CsvTableWriter writer = new CsvTableWriter(output, ',', true);
+		writer.setColumns(new String[] { "SampleID", "Mean", "SD", "Min-Coverage", "Max-Coverage" });
 
-				if (!reader.getString(0).equals(sample) && sample != null) {
-					DescriptiveStatistics statistics = calcStats(positions);
-					writer.write(sample + "\t" + statistics.getMean() + "\t" + statistics.getStandardDeviation() + "\t"
-							+ statistics.getMin() + "\t" + statistics.getMax() + "\n");
-					positions = new ArrayList<Double>();
-				}
+		String sample = null;
+		ArrayList<Double> positions = new ArrayList<Double>();
 
-				double coverage = Double.valueOf(reader.getRow()[reader.getColumnIndex("Coverage-FWD")])
-						+ Double.valueOf(reader.getRow()[reader.getColumnIndex("Coverage-REV")]);
-				positions.add(coverage);
-				sample = reader.getString(0);
+		while (reader.next()) {
 
+			if (!reader.getString(0).equals(sample) && sample != null) {
+
+				DescriptiveStatistics statistics = calcStats(positions);
+				writer.setString(0, "");
+				writer.setDouble(1, statistics.getMean());
+				writer.setDouble(2, statistics.getStandardDeviation());
+				writer.setDouble(3, statistics.getMin());
+				writer.setDouble(4, statistics.getMax());
+				writer.next();
+
+				positions = new ArrayList<Double>();
 			}
-			//last sample
-			DescriptiveStatistics statistics = calcStats(positions);
-			writer.write(sample + "\t" + statistics.getMean() + "\t" + statistics.getStandardDeviation() + "\t"
-					+ statistics.getMin() + "\t" + statistics.getMax() + "\n");
+			
 
-			reader.close();
-			writer.close();
+			double posCov = Double.valueOf(reader.getRow()[reader.getColumnIndex("Coverage-FWD")])
+					+ Double.valueOf(reader.getRow()[reader.getColumnIndex("Coverage-REV")]);
+			
+			positions.add(posCov);
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			sample = reader.getString(0);
+
 		}
+		
+		// last sample
+		DescriptiveStatistics statistics = calcStats(positions);
+		writer.setString(0, sample);
+		writer.setDouble(1, statistics.getMean());
+		writer.setDouble(2, statistics.getStandardDeviation());
+		writer.setDouble(3, statistics.getMin());
+		writer.setDouble(4, statistics.getMax());
+		writer.next();
+
+		reader.close();
+		writer.close();
 
 		return true;
 
