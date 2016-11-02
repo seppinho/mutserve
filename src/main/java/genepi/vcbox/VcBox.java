@@ -14,7 +14,7 @@ public class VcBox {
 
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, SecurityException,
 			NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
-		Toolbox toolbox = new Toolbox("genepi-pileup.jar", args);
+		Toolbox toolbox = new Toolbox("vc-toolbox-1.0.jar", args);
 
 		// align SE and PE with jbwa and MapReduce
 		toolbox.addTool("align", AlignTool.class);

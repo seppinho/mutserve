@@ -14,6 +14,7 @@ public class DetectTool extends Tool {
 		addParameter("input", "input path");
 		addParameter("outputRaw", "output path raw");
 		addParameter("outputFiltered", "output path filtered");
+		addParameter("uncoveredPos", "output pos not covered by model");
 		addParameter("detectionLevel", "detection level in %");
 		addParameter("reference", "reference");
 		
@@ -31,6 +32,7 @@ public class DetectTool extends Tool {
 		String input = (String) getValue("input");
 		String outputRaw = (String) getValue("outputRaw");
 		String outputFiltered = (String) getValue("outputFiltered");
+		String uncoveredPos = (String) getValue("uncoveredPos");
 		String level = (String) getValue("detectionLevel");
 		
 		DetectVariants detecter = new DetectVariants(reference+".fasta");
@@ -38,6 +40,7 @@ public class DetectTool extends Tool {
 		detecter.setHdfsFolder(input);
 		detecter.setDetectionLevel(Double.valueOf(level)/100.0);
 		detecter.setOutputFiltered(outputFiltered);
+		detecter.setUncoveredPos(uncoveredPos);
 		detecter.setOutputRaw(outputRaw);
 		detecter.analyzeReads();
 		
