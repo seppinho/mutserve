@@ -37,6 +37,8 @@ public class PositionObject implements Comparable<PositionObject> {
 	private double minorBasePercentsFWD;
 	private double topBasePercentsREV;
 	private double minorBasePercentsREV;
+	
+	private String message;
 
 	private int type = 0;
 	private double varLevel = 0.0;
@@ -1279,4 +1281,12 @@ public class PositionObject implements Comparable<PositionObject> {
 		this.llrREV = llrREV;
 	}
 
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	
 }
