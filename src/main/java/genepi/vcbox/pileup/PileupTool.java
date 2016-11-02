@@ -7,7 +7,6 @@ import genepi.vcbox.util.HadoopJobStep;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -49,7 +48,6 @@ public class PileupTool extends HadoopJobStep {
 
 			// print qc statistics
 			DecimalFormat df = (DecimalFormat) NumberFormat.getInstance(Locale.US);
-			DecimalFormatSymbols symbols = df.getDecimalFormatSymbols();
 
 			StringBuffer text = new StringBuffer();
 

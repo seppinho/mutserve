@@ -1,15 +1,12 @@
 package genepi.vcbox.stats;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.table.writer.CsvTableWriter;
-import genepi.io.text.LineWriter;
 
 public class CreateStatistics {
 
@@ -49,17 +46,16 @@ public class CreateStatistics {
 
 				positions = new ArrayList<Double>();
 			}
-			
 
 			double posCov = Double.valueOf(reader.getRow()[reader.getColumnIndex("Coverage-FWD")])
 					+ Double.valueOf(reader.getRow()[reader.getColumnIndex("Coverage-REV")]);
-			
+
 			positions.add(posCov);
 
 			sample = reader.getString(0);
 
 		}
-		
+
 		// last sample
 		DescriptiveStatistics statistics = calcStats(positions);
 		writer.setString(0, sample);
