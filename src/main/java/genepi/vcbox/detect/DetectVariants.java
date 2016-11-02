@@ -183,7 +183,7 @@ public class DetectVariants {
 					}
 				}
 			} else {
-				posObj.setMessage("Position coverage not sufficient");
+				posObj.setMessage("Position coverage not sufficient. No model can be applied");
 				uncoveredPos.add(posObj);
 			}
 
