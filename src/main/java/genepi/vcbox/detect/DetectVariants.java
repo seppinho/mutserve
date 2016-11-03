@@ -4,8 +4,6 @@ import genepi.io.table.writer.CsvTableWriter;
 import genepi.vcbox.objects.PositionObject;
 import genepi.vcbox.util.ReferenceUtil;
 import genepi.vcbox.util.StatUtil;
-
-import java.io.BufferedReader;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -31,23 +29,22 @@ public class DetectVariants {
 
 	NumberFormat df;
 
-	BufferedReader bufferedReaderNumts;
+	private String refAsString;
 
-	public static String refAsString;
+	private String version;
 
-	public static int VARIANT = 1; // variant
+	private static int VARIANT = 1; // variant
 
-	public static int LOW_LEVEL_VARIANT = 2; // low level variant
+	private static int LOW_LEVEL_VARIANT = 2; // low level variant
 
-	public static int SUSPICOUS_LOW_LEVEL_VARIANT = 3; // double check low level
-														// variant
-	public static int DELETION = 4; // deletion
+	private static int SUSPICOUS_LOW_LEVEL_VARIANT = 3; // double check low
+														// level
+	private static int DELETION = 4; // deletion
 
-	public static int INSERTION = 5; // deletion
+	private static int INSERTION = 5; // deletion
 
-	public DetectVariants(String fasta) {
+	public DetectVariants() {
 
-		DetectVariants.refAsString = ReferenceUtil.readInReference(fasta);
 		df = DecimalFormat.getInstance();
 		df.setMinimumFractionDigits(2);
 		df.setMaximumFractionDigits(4);
@@ -85,13 +82,18 @@ public class DetectVariants {
 
 						if (pos.getPosition() > 0 && pos.getPosition() <= refAsString.length()) {
 
-							// write each pos
+							// write each pos; ignore insertions
 							if (!pos.isInsertion()) {
 								writePositionsFile(rawWriter, pos);
 							}
 
 							// detect low-level variants
-							determineLowLevelVariants(pos, uncoveredPosList);
+							if (version.equals("mtdna")) {
+								if (!ReferenceUtil.ismtDNAHotSpot(pos.getPosition()))
+									determineLowLevelVariants(pos, uncoveredPosList);
+							} else {
+								determineLowLevelVariants(pos, uncoveredPosList);
+							}
 
 							// no low-level variant detected
 							if (pos.getVariantType() == 0) {
@@ -534,6 +536,22 @@ public class DetectVariants {
 
 	public void setUncoveredPos(String uncoveredPos) {
 		this.uncoveredPos = uncoveredPos;
+	}
+
+	public String getRefAsString() {
+		return refAsString;
+	}
+
+	public void setRefAsString(String refAsString) {
+		this.refAsString = refAsString;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
 	}
 
 }
