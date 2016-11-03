@@ -16,6 +16,7 @@ public class SortReducer extends Reducer<ReadKey, Text, Text, Text> {
 
 	private String output;
 	SAMFileHeader header;
+	String reflength;
 
 	@Override
 	protected void setup(Context context) throws IOException,
@@ -33,7 +34,8 @@ public class SortReducer extends Reducer<ReadKey, Text, Text, Text> {
 		String name = key.getSample() + "_" + key.getSequence() + ".bam";
 
 		if (header.getSequence(key.getSequence()) == null) {
-			header.addSequence(new SAMSequenceRecord(key.getSequence(), 16569));
+			String length = context.getConfiguration().get("LN");
+			header.addSequence(new SAMSequenceRecord(key.getSequence(), Integer.valueOf(length)));
 		}
 
 		SAMLineParser parser = new SAMLineParser(header);
