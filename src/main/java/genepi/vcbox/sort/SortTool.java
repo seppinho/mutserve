@@ -5,6 +5,7 @@ import java.util.List;
 
 import genepi.base.Tool;
 import genepi.hadoop.HdfsUtil;
+import genepi.vcbox.util.ReferenceUtil;
 
 public class SortTool extends Tool {
 
@@ -15,6 +16,7 @@ public class SortTool extends Tool {
 	@Override
 	public void createParameters() {
 		addParameter("input", "input path");
+		addParameter("reference", "reference file");
 		addParameter("statistics", "output filename statistics");
 		addParameter("output", "output path");
 		addParameter("inType", "input file format");
@@ -35,6 +37,7 @@ public class SortTool extends Tool {
 			String statistics = (String) getValue("statistics");
 			String localOutput = (String) getValue("local-output");
 			String inType = (String) getValue("inType");
+			String reference = (String) getValue("reference");
 
 			if (inType.equals("se") || inType.equals("pe")) {
 
@@ -48,6 +51,8 @@ public class SortTool extends Tool {
 
 				SortJob sort = new SortJob("sort-bam");
 				sort.setInput(inputs);
+				String ref = ReferenceUtil.readInReference(reference + ".fasta");
+				sort.setRefLength(ref.length() + "");
 				sort.setOutput(output);
 				sort.setStatistics(statistics);
 				sort.setLocalOutput(localOutput);

@@ -36,7 +36,6 @@ public class SortJob extends HadoopJob {
 
 		job.setMapOutputKeyClass(ReadKey.class);
 		job.setMapOutputValueClass(Text.class);
-		// job.setMapOutputValueClass(SAMRecordWritable.class);
 
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
@@ -52,6 +51,10 @@ public class SortJob extends HadoopJob {
 		getConfiguration().set("OUTPUT", output);
 		super.setOutput(output + "-temp");
 		this.outputSplits = output;
+	}
+	
+	public void setRefLength(String length) {
+		getConfiguration().set("LN", length);
 	}
 
 	public void setLocalOutput(String localOutput) {

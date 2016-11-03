@@ -121,14 +121,13 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 				for (htsjdk.samtools.SAMSequenceRecord record : value.get().getHeader().getSequenceDictionary()
 						.getSequences()) {
 
-					if (version.equalsIgnoreCase(versionEnum.MTDNA.name())) {
-						if (record.getSequenceLength() == 16569 || record.getSequenceLength() == 16571) {
-							referenceName = record.getSequenceName();
-						}
-					} else {
-						if (record.getSequenceLength() == 5104) {
-							referenceName = record.getSequenceName();
-						}
+					//mtdna
+					if (record.getSequenceLength() == 16569 || record.getSequenceLength() == 16571) {
+						referenceName = record.getSequenceName();
+					}
+					// stefan
+					if (record.getSequenceLength() == 5104) {
+						referenceName = record.getSequenceName();
 					}
 				}
 			}
