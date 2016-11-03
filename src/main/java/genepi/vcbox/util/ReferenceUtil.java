@@ -7,9 +7,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ReferenceUtil {
+	
+	private static Set<Integer> hotSpots = new HashSet<Integer>(Arrays.asList(302, 303,
+			304, 305, 306, 307, 308, 309, 310, 311, 315, 316, 3105, 3106,
+			3107));
 
 	public static String findFileinReferenceArchive(File reference, String suffix) {
 		String refPath = null;
@@ -84,4 +91,9 @@ public class ReferenceUtil {
 		return reference+".tar.gz";
 		
 	}
+	
+	public static boolean ismtDNAHotSpot(int pos) {
+		return hotSpots.contains(pos);
+	}
+	
 }

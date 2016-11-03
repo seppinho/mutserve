@@ -1,6 +1,10 @@
 package genepi.vcbox.detect;
 
+import java.io.File;
+
 import genepi.base.Tool;
+import genepi.hadoop.PreferenceStore;
+import genepi.vcbox.util.ReferenceUtil;
 
 public class DetectTool extends Tool {
 
@@ -35,8 +39,14 @@ public class DetectTool extends Tool {
 		String uncoveredPos = (String) getValue("uncoveredPos");
 		String level = (String) getValue("detectionLevel");
 		
-		DetectVariants detecter = new DetectVariants(reference+".fasta");
+		DetectVariants detecter = new DetectVariants();
 		
+		PreferenceStore store = new PreferenceStore(new File("job.config"));
+		String version = store.getString("server.version");
+		String ref =  ReferenceUtil.readInReference(reference+".fasta");
+		
+		detecter.setVersion(version);
+		detecter.setRefAsString(ref);
 		detecter.setHdfsFolder(input);
 		detecter.setDetectionLevel(Double.valueOf(level)/100.0);
 		detecter.setOutputFiltered(outputFiltered);

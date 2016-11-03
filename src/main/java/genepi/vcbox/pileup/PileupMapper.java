@@ -36,13 +36,19 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 
 	BaqAlt baqHMMAltered;
 	BAQ baqHMM;
-	String baqVersion;
+	String version;
 
 	HashMap<String, BasePosition> counts = new HashMap<String, BasePosition>(16569);
 
 	enum Counters {
 
 		GOOD_MAPPING, BAD_MAPPING, BAD_QUALITY, GOOD_QUALITY, BAD_ALIGNMENT_SCORE, WRONG_REF, INVALID_READ, INVALID_FLAGS
+
+	}
+
+	enum versionEnum {
+
+		MTDNA, GENOME
 
 	}
 
@@ -66,21 +72,21 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 		String faiPath = ReferenceUtil.findFileinReferenceArchive(referencePath, ".fasta.fai");
 
 		PreferenceStore store = new PreferenceStore(context.getConfiguration());
-		baqVersion = store.getString("pileup.baq.version");
+		version = store.getString("server.version");
 
 		refReader = new IndexedFastaSequenceFile(new File(fastaPath), new FastaSequenceIndex(new File(faiPath)));
 
 		// defined by samtools mpileup: gap open prob (phred scale 40), gap
 		// extension prob (phred scale 20)
 
-		if (baqVersion.equals("mtGenome")) {
+		if (version.equalsIgnoreCase(versionEnum.MTDNA.name())) {
 			baqHMMAltered = new BaqAlt(1e-4, 1e-2, 7, (byte) 0, true);
 		} else {
 			baqHMM = new BAQ(1e-4, 1e-2, 7, (byte) 0, true);
 		}
 
 		System.out.println("BAQ " + baq);
-		System.out.println("BAQ version " + baqVersion);
+		System.out.println("Server-Version " + version);
 		System.out.println("baseQual " + baseQual);
 		System.out.println("mapQual " + mapQual);
 		System.out.println("alignQual " + alignQual);
@@ -115,7 +121,15 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 				for (htsjdk.samtools.SAMSequenceRecord record : value.get().getHeader().getSequenceDictionary()
 						.getSequences()) {
 
-					referenceName = record.getSequenceName();
+					if (version.equalsIgnoreCase(versionEnum.MTDNA.name())) {
+						if (record.getSequenceLength() == 16569 || record.getSequenceLength() == 16571) {
+							referenceName = record.getSequenceName();
+						}
+					} else {
+						if (record.getSequenceLength() == 5104) {
+							referenceName = record.getSequenceName();
+						}
+					}
 				}
 			}
 
@@ -152,7 +166,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 								 * checked
 								 */
 								if (baq) {
-									if (baqVersion.equals("mtGenome")) {
+									if (version.equalsIgnoreCase(versionEnum.MTDNA.name())) {
 										baqHMMAltered.baqRead(samRecord, refReader,
 												genepi.vcbox.util.BaqAlt.CalculationMode.CALCULATE_AS_NECESSARY,
 												genepi.vcbox.util.BaqAlt.QualityMode.OVERWRITE_QUALS);
