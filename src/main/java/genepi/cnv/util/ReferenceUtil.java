@@ -13,10 +13,9 @@ import java.util.List;
 import java.util.Set;
 
 public class ReferenceUtil {
-	
-	private static Set<Integer> hotSpots = new HashSet<Integer>(Arrays.asList(302, 303,
-			304, 305, 306, 307, 308, 309, 310, 311, 315, 316, 3105, 3106,
-			3107));
+
+	private static Set<Integer> hotSpots = new HashSet<Integer>(
+			Arrays.asList(302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 315, 316, 3105, 3106, 3107));
 
 	public static String findFileinReferenceArchive(File reference, String suffix) {
 		String refPath = null;
@@ -32,20 +31,19 @@ public class ReferenceUtil {
 		System.out.println("path " + refPath);
 		return refPath;
 	}
-	
+
 	// for BAQ calculation only needed for mtDNA!
-	public static String getValidReferenceNameForBaq (int length){
+	public static String getValidReferenceNameForBaq(int length) {
 		String alteredRef = null;
-		
-		switch(length)
-		{
-			case 16569:
-				alteredRef = "rCRS";
-			   break; 
-			case 16571:
-				alteredRef = "gi|17981852|ref|NC_001807.4|";
+
+		switch (length) {
+		case 16569:
+			alteredRef = "rCRS";
+			break;
+		case 16571:
+			alteredRef = "gi|17981852|ref|NC_001807.4|";
 		}
-		
+
 		return alteredRef;
 	}
 
@@ -57,23 +55,23 @@ public class ReferenceUtil {
 		}
 		return value;
 	}
-	
-	public static String readInReference(String file)  {
+
+	public static String readInReference(String file) {
 		StringBuilder stringBuilder = null;
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			String line = null;
 			stringBuilder = new StringBuilder();
-			
+
 			while ((line = reader.readLine()) != null) {
 
 				if (!line.startsWith(">"))
 					stringBuilder.append(line);
 
 			}
-			
+
 			reader.close();
-			
+
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -81,19 +79,24 @@ public class ReferenceUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
 
 		return stringBuilder.toString();
 	}
-	
+
 	public static String getSelectedReferenceArchive(String reference) {
-		
-		return reference+".tar.gz";
-		
+
+		return reference + ".tar.gz";
+
 	}
-	
+
+	public static String getSelectedReferenceFasta(String reference) {
+
+		return reference + ".fasta";
+
+	}
+
 	public static boolean ismtDNAHotSpot(int pos) {
 		return hotSpots.contains(pos);
 	}
-	
+
 }

@@ -60,7 +60,7 @@ mapred:
       values:
         se: Fastq Single-End
         pe: Fastq Paired-End
-        bam: SAM/BAM
+        bam: SAM/BAM/CRAM
       
     
     - id: reference
@@ -192,4 +192,3 @@ mapred:
       removeHeader: false
       download: false
       temp: true
-

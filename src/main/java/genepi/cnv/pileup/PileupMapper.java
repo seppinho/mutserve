@@ -59,12 +59,10 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 		alignQual = context.getConfiguration().getInt("alignQual", 30);
 		baseQual = context.getConfiguration().getInt("baseQual", 20);
 		baq = context.getConfiguration().getBoolean("baq", true);
-
-
-		// at the moment BAM only
+		
+		// required for BAM splits
 		if (context.getInputSplit().getClass().equals(FileVirtualSplit.class)) {
-			filename = ((FileVirtualSplit) context.getInputSplit()).getPath().getName().replace(".bam", "")
-					.replace(".sam", "").replace(".cram", "");
+			filename = ((FileVirtualSplit) context.getInputSplit()).getPath().getName().replace(".bam", "");
 		} else {
 			filename = ((FileSplit) context.getInputSplit()).getPath().getName().replace(".bam", "").replace(".sam", "")
 					.replace(".cram", "");
