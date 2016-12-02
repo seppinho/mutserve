@@ -1,5 +1,5 @@
 name: CNV Mutation Server
-description: a server to detect variants in CNV regions
+description: CNV Mutation Server is able to detect both variants in genomic CNV regions and heteroplasmies in mitochondrial DNA. Users can specify fastq (SE or PE), BAM and CRAM files as an input and receive annotated variant files in return.
 version: 1.0
 website: https://lpa-server.i-med.ac.at/
 
@@ -60,8 +60,8 @@ mapred:
       values:
         se: Fastq Single-End
         pe: Fastq Paired-End
-        bam: SAM/BAM/CRAM
-      
+        bam: SAM | BAM | CRAM
+      value: bam
     
     - id: reference
       description: Reference
