@@ -18,6 +18,7 @@ import java.util.HashMap;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.broadinstitute.gatk.utils.baq.BAQ;
 import org.seqdoop.hadoop_bam.FileVirtualSplit;
 import org.seqdoop.hadoop_bam.SAMRecordWritable;
@@ -58,8 +59,17 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 		alignQual = context.getConfiguration().getInt("alignQual", 30);
 		baseQual = context.getConfiguration().getInt("baseQual", 20);
 		baq = context.getConfiguration().getBoolean("baq", true);
-		filename = ((FileVirtualSplit) context.getInputSplit()).getPath().getName().replace(".bam", "")
-				.replace(".fq", "").replace(".fastq", "");
+
+
+		// at the moment BAM only
+		if (context.getInputSplit().getClass().equals(FileVirtualSplit.class)) {
+			filename = ((FileVirtualSplit) context.getInputSplit()).getPath().getName().replace(".bam", "")
+					.replace(".sam", "").replace(".cram", "");
+		} else {
+			filename = ((FileSplit) context.getInputSplit()).getPath().getName().replace(".bam", "").replace(".sam", "")
+					.replace(".cram", "");
+		}
+
 		mapQual = context.getConfiguration().getInt("mapQual", 20);
 
 		ref = context.getConfiguration().get("reference");
@@ -121,7 +131,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 				for (htsjdk.samtools.SAMSequenceRecord record : value.get().getHeader().getSequenceDictionary()
 						.getSequences()) {
 
-					//mtdna
+					// mtdna
 					if (record.getSequenceLength() == 16569 || record.getSequenceLength() == 16571) {
 						referenceName = record.getSequenceName();
 					}
