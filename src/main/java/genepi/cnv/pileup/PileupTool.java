@@ -18,7 +18,6 @@ public class PileupTool extends HadoopJobStep {
 		String type = context.get("inType");
 
 		String input;
-		System.out.println("type is " + type);
 		if (type.equals("se") || type.equals("pe")) {
 			input = context.get("outputBam");
 		} else {

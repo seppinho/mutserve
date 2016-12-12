@@ -165,13 +165,10 @@ public class DetectVariants {
 								if (posObj.getLlrFWD() >= 5 || posObj.getLlrREV() >= 5) {
 
 									if (calcStrandBias(posObj) <= 1) {
-										//
-										double fwd = minorBasePercentsFWD * posObj.getCovFWD();
-										double rev = minorBasePercentsREV * posObj.getCovREV();
 
 										posObj.setVariantType(LOW_LEVEL_VARIANT);
 
-										posObj.setVariantLevel((fwd + rev) / (posObj.getCovFWD() + posObj.getCovREV()));
+										posObj.setVariantLevel(calcHetLevel(posObj));
 
 										calcConfidence(posObj);
 
@@ -265,8 +262,8 @@ public class DetectVariants {
 	private void writeVariantsFile(List<PositionObject> list) {
 
 		CsvTableWriter writer = new CsvTableWriter(outputFiltered, '\t', false);
-		writer.setColumns(new String[] { "SampleID", "Pos", "Ref", "Variant", "Coverage-FWD", "Coverage-REV",
-				"Coverage-Total", "Variant-Type", "Variant-Level" });
+		writer.setColumns(new String[] { "SampleID", "Pos", "Ref", "Variant", "Major/Minor", "Variant-Level", "Coverage-FWD", "Coverage-REV",
+				"Coverage-Total"});
 
 		Collections.sort(list);
 
@@ -282,23 +279,25 @@ public class DetectVariants {
 
 			writer.setString(3, getVariantBase(posObj) + "");
 
-			writer.setInteger(4, posObj.getCovFWD());
-
-			writer.setInteger(5, posObj.getCovREV());
-
-			writer.setInteger(6, posObj.getCovFWD() + posObj.getCovREV());
-
-			writer.setString(7, posObj.getVariantType() + "");
-
 			if (posObj.getVariantType() == 1) {
+				
+				writer.setString(4, posObj.getVariantType() + "-");
 
-				writer.setString(8, "1.0");
+				writer.setString(5, "1.0");
 
 			} else {
+				
+				writer.setString(4, posObj.getTopBaseFWD() + "/" + posObj.getMinorBaseFWD());
 
-				writer.setString(8, df.format(posObj.getVariantLevel()) + "");
+				writer.setString(5, df.format(posObj.getVariantLevel()) + "");
 
 			}
+			
+			writer.setInteger(6, posObj.getCovFWD());
+
+			writer.setInteger(7, posObj.getCovREV());
+
+			writer.setInteger(8, posObj.getCovFWD() + posObj.getCovREV());
 
 			writer.next();
 
@@ -363,6 +362,23 @@ public class DetectVariants {
 		double bias = Math.abs((b / (a + b)) - (d / (c + d))) / ((b + d) / (a + b + c + d));
 
 		return bias;
+	}
+
+	private double calcHetLevel(PositionObject posObj) {
+
+		char ref = refAsString.charAt(posObj.getPosition() - 1);
+		double fwd;
+		double rev;
+
+		if (posObj.getTopBaseFWD() == ref) {
+			fwd = posObj.getMinorPercentsFWD() * posObj.getCovFWD();
+			rev = posObj.getMinorBasePercentsREV() * posObj.getCovREV();
+		} else {
+			fwd = posObj.getTopBasePercentsFWD() * posObj.getCovFWD();
+			rev = posObj.getTopBasePercentsREV() * posObj.getCovREV();
+		}
+
+		return (fwd + rev) / (posObj.getCovFWD() + posObj.getCovREV());
 	}
 
 	private boolean equalBase(PositionObject posObj) {

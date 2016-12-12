@@ -48,10 +48,6 @@ public class SingleAlignerMap extends Mapper<Object, SequencedFragment, Text, Te
 		String jbwaLib = FileUtil.path(jbwaLibLocation, "native", "libbwajni.so");
 		String referencePath = cache.getArchive("reference");
 
-		// trimBasesStart = context.getConfiguration().getInt("trimReadsStart",
-		// 0);
-		// trimBasesEnd = context.getConfiguration().getInt("trimReadsEnd", 0);
-
 		FileSplit fileSplit = (FileSplit) context.getInputSplit();
 		filename = fileSplit.getPath().getName();
 
@@ -83,14 +79,10 @@ public class SingleAlignerMap extends Mapper<Object, SequencedFragment, Text, Te
 
 		ShortRead read = new ShortRead(key.toString(), seq.getBytes(), qual.getBytes());
 
-		System.out.println(value.getSequence().toString());
-
 		// equivalent to setting bwa mem -x flag set to "intractg"
 		// mem.updateScoringParameters(9, 16, 16, 1, 1, 5, 5);
 
 		for (AlnRgn alignedRead : mem.align(read)) {
-
-			System.out.println("O " + alignedRead.toString());
 
 			// edit header
 			if (header.getSequence(alignedRead.getChrom()) == null) {
