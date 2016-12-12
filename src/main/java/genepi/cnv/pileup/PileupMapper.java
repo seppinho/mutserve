@@ -38,8 +38,9 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 	BaqAlt baqHMMAltered;
 	BAQ baqHMM;
 	String version;
+	int length;
 
-	HashMap<String, BasePosition> counts = new HashMap<String, BasePosition>(16569);
+	HashMap<String, BasePosition> counts;
 
 	enum Counters {
 
@@ -78,6 +79,9 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 
 		String fastaPath = ReferenceUtil.findFileinReferenceArchive(referencePath, ".fasta");
 		String faiPath = ReferenceUtil.findFileinReferenceArchive(referencePath, ".fasta.fai");
+		
+		length = (ReferenceUtil.readInReference(fastaPath)).length();
+		counts = new HashMap<String, BasePosition>(length);
 
 		PreferenceStore store = new PreferenceStore(context.getConfiguration());
 		version = store.getString("server.version");
@@ -98,8 +102,6 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 		System.out.println("baseQual " + baseQual);
 		System.out.println("mapQual " + mapQual);
 		System.out.println("alignQual " + alignQual);
-
-		counts.clear();
 
 	}
 
@@ -167,11 +169,6 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 							// included
 							if (ReferenceUtil.getTagFromSamRecord(samRecord.getAttributes(), "AS") >= alignQual) {
 
-								/**
-								 * execute BAQ only if read maps correctly. BAQ
-								 * has problems with circular DNA AND BAQ is
-								 * checked
-								 */
 								if (baq) {
 									if (version.equalsIgnoreCase(versionEnum.MTDNA.name())) {
 										baqHMMAltered.baqRead(samRecord, refReader,

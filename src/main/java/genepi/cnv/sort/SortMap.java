@@ -22,33 +22,33 @@ public class SortMap extends Mapper<Object, Text, ReadKey, Text> {
 
 	private Text text;
 
+	private String length;
+
 	// SAMRecordWritable sam = new SAMRecordWritable();
 
 	// private SAMRecordWritable out = new SAMRecordWritable();
 
 	@Override
-	protected void setup(Context context) throws IOException,
-			InterruptedException {
+	protected void setup(Context context) throws IOException, InterruptedException {
 		header = new SAMFileHeader();
 		parser = new SAMLineParser(header);
 		text = new Text();
+		length = context.getConfiguration().get("LN");
 		// sam = new SAMRecordWritable();
 
 	}
 
-	public void map(Object key, Text value, Context context)
-			throws IOException, InterruptedException {
+	public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 
 		if (!value.toString().trim().equals("")) {
 			String tilesValue[] = value.toString().split("\t", 2);
-			String sample = tilesValue[0].replaceAll(".fastq", "").replaceAll(
-					".fq", "");
+			String sample = tilesValue[0].replaceAll(".fastq", "").replaceAll(".fq", "");
 
 			String[] tiles = tilesValue[1].split("\t");
 			String contig = tiles[2].trim();
 
 			if (header.getSequence(contig) == null) {
-				header.addSequence(new SAMSequenceRecord(contig, 16569));
+				header.addSequence(new SAMSequenceRecord(contig, Integer.valueOf(length)));
 			}
 
 			SAMRecord samRecord = parser.parseLine(tilesValue[1]);
@@ -77,40 +77,32 @@ public class SortMap extends Mapper<Object, Text, ReadKey, Text> {
 	}
 
 	private void generateCounters(Context context, SAMRecord recFromText) {
-		context.getCounter("BAM_STATS", outKey.getSample() + "\tREADS")
-				.increment(1);
+		context.getCounter("BAM_STATS", outKey.getSample() + "\tREADS").increment(1);
 
 		if (recFromText.isValid() == null) {
-			context.getCounter("BAM_STATS", outKey.getSample() + "\tVALID")
-					.increment(1);
+			context.getCounter("BAM_STATS", outKey.getSample() + "\tVALID").increment(1);
 		}
 
 		if (recFromText.getReadUnmappedFlag()) {
-			context.getCounter("BAM_STATS", outKey.getSample() + "\tUNMAPPED")
-					.increment(1);
+			context.getCounter("BAM_STATS", outKey.getSample() + "\tUNMAPPED").increment(1);
 		} else {
-			context.getCounter("BAM_STATS", outKey.getSample() + "\tMAPPED")
-					.increment(1);
+			context.getCounter("BAM_STATS", outKey.getSample() + "\tMAPPED").increment(1);
 		}
 
 		if (recFromText.getReadPairedFlag()) {
 			if (recFromText.getProperPairFlag()) {
-				context.getCounter("BAM_STATS",
-						outKey.getSample() + "\tPROPER_PAIR").increment(1);
+				context.getCounter("BAM_STATS", outKey.getSample() + "\tPROPER_PAIR").increment(1);
 			}
 		}
 
 		if (recFromText.getReadFailsVendorQualityCheckFlag()) {
-			context.getCounter("BAM_STATS",
-					outKey.getSample() + "\tQC_FAILURE_READS").increment(1);
+			context.getCounter("BAM_STATS", outKey.getSample() + "\tQC_FAILURE_READS").increment(1);
 		}
 
 		if (recFromText.getMappingQuality() < 30) {
-			context.getCounter("BAM_STATS", outKey.getSample() + "\tLQ30")
-					.increment(1);
+			context.getCounter("BAM_STATS", outKey.getSample() + "\tLQ30").increment(1);
 		} else {
-			context.getCounter("BAM_STATS", outKey.getSample() + "\tHQ30")
-					.increment(1);
+			context.getCounter("BAM_STATS", outKey.getSample() + "\tHQ30").increment(1);
 		}
 	}
 
