@@ -208,28 +208,44 @@ package com.github.lindenb.jbwa.jni;
 import java.io.File;
 import java.io.IOException;
 
-public class KSeq	
+public class ExampleSEChangeMemOpt	
+{
+	public static void main(String args[]) throws IOException
 	{
-	protected long ref=0L;
-	public KSeq(File f) throws IOException
+		System.loadLibrary("bwajni");
+		if(args.length==0)
 		{
-		this.ref=KSeq.init(f==null?"-":f.toString());
+			System.out.println("Usage [ref.fa] (stdin|fastq)\n");
+			return;
 		}
-	
-	public KSeq() throws IOException
+
+		BwaIndex index=new BwaIndex(new File(args[0]));
+		BwaMem mem=new BwaMem(index);
+		KSeq kseq=new KSeq(args.length<2 || args[1].equals("-")?null:new File(args[1]));
+
+		ShortRead read=null;
+    // equivalent to setting bwa mem -x flag set to "intractg"
+		mem.updateScoringParameters(9, 16, 16, 1, 1, 5, 5);
+		while((read=kseq.next())!=null)
 		{
-		this(null);
+			for(AlnRgn a: mem.align(read))
+			{
+				if(a.getSecondary()>=0) continue;
+				System.out.println(
+					read.getName()+"\t"+
+					a.getStrand()+"\t"+
+					a.getChrom()+"\t"+
+					a.getPos()+"\t"+
+					a.getMQual()+"\t"+
+					a.getCigar()+"\t"+
+					a.getNm()
+					);
+			}
 		}
-	
-	public native ShortRead next() throws IOException;
-	
-	@Override
-	protected void finalize()
-		{
-		dispose();
-		}
-	
-	public native void dispose();
-	
-	private static native long init(String file);
+
+		kseq.dispose();
+		index.close();
+		mem.dispose();
 	}
+}
+

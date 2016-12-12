@@ -1,8 +1,6 @@
 package genepi.cnv.pileup;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.CounterGroup;
@@ -88,9 +86,8 @@ public class PileupJob extends HadoopJob {
 		cache.addArchive("reference", hdfsArchivePath);
 
 		
-		set(CRAMInputFormat.REFERENCE_SOURCE_PATH_PROPERTY,
-				getFileSystem().getHomeDirectory() + "/" + REF_DIRECTORY + "/" + fasta);
-
+		//set(CRAMInputFormat.REFERENCE_SOURCE_PATH_PROPERTY,
+		//		getFileSystem().getHomeDirectory() + "/" + REF_DIRECTORY + "/" + fasta);
 	}
 
 	@Override
@@ -265,15 +262,6 @@ public class PileupJob extends HadoopJob {
 
 	public void setRevRead(long revRead) {
 		this.revRead = revRead;
-	}
-
-	protected static URI formalizeClusterURI(URI clusterUri) throws URISyntaxException {
-		if (clusterUri.getPath() == null) {
-			return new URI(clusterUri.getScheme(), null, clusterUri.getHost(), clusterUri.getPort(), "/", null, null);
-		} else if (clusterUri.getPath().trim() == "") {
-			return new URI(clusterUri.getScheme(), null, clusterUri.getHost(), clusterUri.getPort(), "/", null, null);
-		}
-		return clusterUri;
 	}
 
 }

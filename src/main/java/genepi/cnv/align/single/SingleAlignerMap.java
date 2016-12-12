@@ -22,14 +22,12 @@ import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMSequenceRecord;
 import htsjdk.samtools.util.SequenceUtil;
 
-public class SingleAlignerMap extends
-		Mapper<Object, SequencedFragment, Text, Text> {
+public class SingleAlignerMap extends Mapper<Object, SequencedFragment, Text, Text> {
 
 	BwaIndex index;
 	BwaMem mem;
+	int length;
 	String filename;
-	//int trimBasesStart;
-	//int trimBasesEnd;
 	private Text outValue = new Text();
 	private SAMFileHeader header = new SAMFileHeader();
 	private SAMLineParser parser = null;
@@ -41,20 +39,18 @@ public class SingleAlignerMap extends
 
 	}
 
-	protected void setup(Context context) throws IOException,
-			InterruptedException {
+	protected void setup(Context context) throws IOException, InterruptedException {
 
 		/** load jbwa lib and reference */
-		String refString = null;
 
 		CacheStore cache = new CacheStore(context.getConfiguration());
 		String jbwaLibLocation = cache.getArchive("jbwaLib");
-		String jbwaLib = FileUtil.path(jbwaLibLocation, "native",
-				"libbwajni.so");
+		String jbwaLib = FileUtil.path(jbwaLibLocation, "native", "libbwajni.so");
 		String referencePath = cache.getArchive("reference");
 
-		//trimBasesStart = context.getConfiguration().getInt("trimReadsStart", 0);
-		//trimBasesEnd = context.getConfiguration().getInt("trimReadsEnd", 0);
+		// trimBasesStart = context.getConfiguration().getInt("trimReadsStart",
+		// 0);
+		// trimBasesEnd = context.getConfiguration().getInt("trimReadsEnd", 0);
 
 		FileSplit fileSplit = (FileSplit) context.getInputSplit();
 		filename = fileSplit.getPath().getName();
@@ -64,7 +60,8 @@ public class SingleAlignerMap extends
 
 		File reference = new File(referencePath);
 
-		refString = ReferenceUtil.findFileinReferenceArchive(reference, ".fasta");
+		String refString = ReferenceUtil.findFileinReferenceArchive(reference, ".fasta");
+		length = (ReferenceUtil.readInReference(refString)).length();
 
 		/** load index, aligner */
 		if (refString != null) {
@@ -79,98 +76,120 @@ public class SingleAlignerMap extends
 
 	}
 
-	public void map(Object key, SequencedFragment value, Context context)
-			throws IOException, InterruptedException {
+	public void map(Object key, SequencedFragment value, Context context) throws IOException, InterruptedException {
 
 		String seq = value.getSequence().toString();
 		String qual = value.getQuality().toString();
 
-		ShortRead read = new ShortRead(key.toString(), seq.getBytes(),
-				qual.getBytes());
+		ShortRead read = new ShortRead(key.toString(), seq.getBytes(), qual.getBytes());
+
+		System.out.println(value.getSequence().toString());
+
+		// equivalent to setting bwa mem -x flag set to "intractg"
+		// mem.updateScoringParameters(9, 16, 16, 1, 1, 5, 5);
 
 		for (AlnRgn alignedRead : mem.align(read)) {
 
+			System.out.println("O " + alignedRead.toString());
+
 			// edit header
 			if (header.getSequence(alignedRead.getChrom()) == null) {
-				// add contig with mtSequence length
-				header.addSequence(new SAMSequenceRecord(
-						alignedRead.getChrom(), 16569));
+				header.addSequence(new SAMSequenceRecord(alignedRead.getChrom(), length));
 			}
 
 			// reset builder
 			samRecordBulder.setLength(0);
 
-			samRecordBulder.append(key.toString()); // READNAME
+			// READNAME
+			samRecordBulder.append(key.toString());
 			samRecordBulder.append("\t");
 
-			if (alignedRead.getStrand() == '-') { //Flag is 16
+			// see for secondary:
+			// https://github.com/lh3/bwa/blob/master/bwamem.h
+			// see for flags: http://picard.sourceforge.net/explain-flags.html
 
-				// see for secondary: https://github.com/lh3/bwa/blob/master/bwamem.h
-				// see for flags: http://picard.sourceforge.net/explain-flags.html
-				if (alignedRead.getSecondary() < 0)
-					samRecordBulder.append(16); // FLAGS REVERSE, PRIMARY ALIGNMENT
-				else
+			if (alignedRead.getStrand() == '-') {
+
+				if (alignedRead.getSecondary() < 0) {
+					// FLAGS REVERSE, PRIMARY ALIGNMENT
+					samRecordBulder.append(16);
+				} else {
+					// FLAGS REVERSE
 					samRecordBulder.append((16 | 256));
+				}
 
-			} else { //flag 0 for "+"-Strand
+			} else {
 
-				if (alignedRead.getSecondary() < 0)
-					samRecordBulder.append(0); // FLAGS FORWARD, PRIMARY ALIGNMENT
-				else
-					samRecordBulder.append((0 | 256)); // FLAGS FORWARD
+				if (alignedRead.getSecondary() < 0) {
+					// FLAGS FORWARD, PRIMARY ALIGNMENT
+					samRecordBulder.append(0);
+				} else {
+					// FLAGS FORWARD
+					samRecordBulder.append((0 | 256));
+				}
 			}
 
 			samRecordBulder.append("\t");
 
-			samRecordBulder.append(alignedRead.getChrom()); // REFERENCE
+			// REFERENCE
+			samRecordBulder.append(alignedRead.getChrom());
 
 			samRecordBulder.append("\t");
 
-			samRecordBulder.append(alignedRead.getPos() + 1); // LEFT MOST POS
+			// LEFT MOST POS
+			samRecordBulder.append(alignedRead.getPos());
 
 			samRecordBulder.append("\t");
 
-			samRecordBulder.append(alignedRead.getMQual()); // QUAL
+			// QUAL
+			samRecordBulder.append(alignedRead.getMQual());
 
 			samRecordBulder.append("\t");
 
-			samRecordBulder.append(alignedRead.getCigar()); // CIGAR
+			// CIGAR
+			samRecordBulder.append(alignedRead.getCigar());
 
 			samRecordBulder.append("\t");
 
-			samRecordBulder.append("*\t0\t0\t"); // RNEXT (REF NAME OF THE MATE)
-													// PNEXT
-			// (POS OF THE MATE) LENGTH OF TEMPLATE
+			// RNEXT (REF NAME OF THE MATE)
+			// PNEXT (POS OF THE MATE) LENGTH OF TEMPLATE
+			samRecordBulder.append("*\t0\t0\t");
 
-			if (alignedRead.getStrand() == '-') { // SEQ REVERSE
+			// SEQ REVERSE
+			if (alignedRead.getStrand() == '-') {
 				byte[] temp = value.getSequence().toString().getBytes();
 				SequenceUtil.reverseComplement(temp);
 				samRecordBulder.append(new String(temp));
 			}
 
 			else {
-				samRecordBulder.append(value.getSequence()); // SEQ FORWARD
+				// SEQ FORWARD
+				samRecordBulder.append(value.getSequence());
 			}
 
 			samRecordBulder.append("\t");
 
-			if (alignedRead.getStrand() == '-') { // QUAL REVERSE
+			// QUAL REVERSE
+			if (alignedRead.getStrand() == '-') {
 				byte[] temp = value.getQuality().toString().getBytes();
 				SequenceUtil.reverseQualities(temp);
 				samRecordBulder.append(new String(temp));
 			} else {
-				samRecordBulder.append(value.getQuality()); // QUAL FORWARD
+				// QUAL FORWARD
+				samRecordBulder.append(value.getQuality());
 			}
 
 			samRecordBulder.append("\t");
 
-			// jbwa hack. changing NM flag to AS FLAG
-			samRecordBulder.append("AS:i:" + alignedRead.getNm());
+			// jbwa fork
+			samRecordBulder.append("NM:i:" + alignedRead.getNm());
+			samRecordBulder.append("\t");
+			samRecordBulder.append("AS:i:" + alignedRead.getAs());
 
 			SAMRecord samRecord = parser.parseLine(samRecordBulder.toString());
 
 			outValue.set(filename + "\t" + samRecord.getSAMString());
-			
+
 			context.write(null, outValue);
 
 		}
