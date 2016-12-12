@@ -37,7 +37,7 @@ public class PositionObject implements Comparable<PositionObject> {
 	private double minorBasePercentsFWD;
 	private double topBasePercentsREV;
 	private double minorBasePercentsREV;
-	
+
 	private String message;
 
 	private int type = 0;
@@ -174,58 +174,54 @@ public class PositionObject implements Comparable<PositionObject> {
 			}
 		}
 
-		if (topBasePercentsFWD == minorBasePercentsFWD
-				&& topBasePercentsFWD > 0) { // prefer lexicographic order
-												// in case of 50/50: A / C
-			if (aFWDPercents == gFWDPercents
-					&& gFWDPercents == topBasePercentsFWD) {
+		if (topBasePercentsFWD == minorBasePercentsFWD && topBasePercentsFWD > 0) { // prefer
+																					// lexicographic
+																					// order
+																					// in
+																					// case
+																					// of
+																					// 50/50:
+																					// A
+																					// /
+																					// C
+			if (aFWDPercents == gFWDPercents && gFWDPercents == topBasePercentsFWD) {
 				topBaseFWD = 'A';
 				minorBaseFWD = 'G';
-			} else if (aFWDPercents == cFWDPercents
-					&& cFWDPercents == topBasePercentsFWD) {
+			} else if (aFWDPercents == cFWDPercents && cFWDPercents == topBasePercentsFWD) {
 				topBaseFWD = 'A';
 				minorBaseFWD = 'C';
-			} else if (aFWDPercents == tFWDPercents
-					&& tFWDPercents == topBasePercentsFWD) {
+			} else if (aFWDPercents == tFWDPercents && tFWDPercents == topBasePercentsFWD) {
 				topBaseFWD = 'A';
 				minorBaseFWD = 'T';
-			} else if (cFWDPercents == tFWDPercents
-					&& tFWDPercents == topBasePercentsFWD) {
+			} else if (cFWDPercents == tFWDPercents && tFWDPercents == topBasePercentsFWD) {
 				topBaseFWD = 'C';
 				minorBaseFWD = 'T';
-			} else if (cFWDPercents == gFWDPercents
-					&& gFWDPercents == topBasePercentsFWD) {
+			} else if (cFWDPercents == gFWDPercents && gFWDPercents == topBasePercentsFWD) {
 				topBaseFWD = 'C';
 				minorBaseFWD = 'G';
-			} else if (gFWDPercents == tFWDPercents
-					&& tFWDPercents == topBasePercentsFWD) {
+			} else if (gFWDPercents == tFWDPercents && tFWDPercents == topBasePercentsFWD) {
 				topBaseFWD = 'G';
 				minorBaseFWD = 'T';
 			}
 		}
 
-		else if (aFWD >= cFWD && aFWD >= gFWD && aFWD >= tFWD && aFWD >= dFWD
-				&& aFWD > 0) {
+		else if (aFWD >= cFWD && aFWD >= gFWD && aFWD >= tFWD && aFWD >= dFWD && aFWD > 0) {
 			topBaseFWD = 'A';
 		}
 
-		else if (cFWD >= aFWD && cFWD >= gFWD && cFWD >= tFWD && cFWD >= dFWD
-				&& cFWD > 0) {
+		else if (cFWD >= aFWD && cFWD >= gFWD && cFWD >= tFWD && cFWD >= dFWD && cFWD > 0) {
 			topBaseFWD = 'C';
 		}
 
-		else if (gFWD >= cFWD && gFWD >= aFWD && gFWD >= tFWD && gFWD >= dFWD
-				&& gFWD > 0) {
+		else if (gFWD >= cFWD && gFWD >= aFWD && gFWD >= tFWD && gFWD >= dFWD && gFWD > 0) {
 			topBaseFWD = 'G';
 		}
 
-		else if (tFWD >= cFWD && tFWD >= gFWD && tFWD >= aFWD && tFWD >= dFWD
-				&& tFWD > 0) {
+		else if (tFWD >= cFWD && tFWD >= gFWD && tFWD >= aFWD && tFWD >= dFWD && tFWD > 0) {
 			topBaseFWD = 'T';
 		}
 
-		else if (dFWD >= cFWD && dFWD >= gFWD && dFWD >= aFWD && dFWD >= tFWD
-				&& dFWD > 0) {
+		else if (dFWD >= cFWD && dFWD >= gFWD && dFWD >= aFWD && dFWD >= tFWD && dFWD > 0) {
 			topBaseFWD = 'd';
 		}
 
@@ -234,60 +230,49 @@ public class PositionObject implements Comparable<PositionObject> {
 															// order in case
 															// of 50/50: A /
 															// C
-			if (aREVPercents == gREVPercents
-					&& gREVPercents == topBasePercentsREV) {
+			if (aREVPercents == gREVPercents && gREVPercents == topBasePercentsREV) {
 				topBaseREV = 'A';
 				minorBaseREV = 'G';
 			}
-			if (aREVPercents == cREVPercents
-					&& cREVPercents == topBasePercentsREV) {
+			if (aREVPercents == cREVPercents && cREVPercents == topBasePercentsREV) {
 				topBaseREV = 'A';
 				minorBaseREV = 'C';
 			}
-			if (aREVPercents == tREVPercents
-					&& tREVPercents == topBasePercentsREV) {
+			if (aREVPercents == tREVPercents && tREVPercents == topBasePercentsREV) {
 				topBaseREV = 'A';
 				minorBaseREV = 'T';
 			}
-			if (cREVPercents == tREVPercents
-					&& tREVPercents == topBasePercentsREV) {
+			if (cREVPercents == tREVPercents && tREVPercents == topBasePercentsREV) {
 				topBaseREV = 'C';
 				minorBaseREV = 'T';
 			}
-			if (cREVPercents == gREVPercents
-					&& gREVPercents == topBasePercentsREV) {
+			if (cREVPercents == gREVPercents && gREVPercents == topBasePercentsREV) {
 				topBaseREV = 'C';
 				minorBaseREV = 'G';
 			}
-			if (gREVPercents == tREVPercents
-					&& tREVPercents == topBasePercentsREV) {
+			if (gREVPercents == tREVPercents && tREVPercents == topBasePercentsREV) {
 				topBaseREV = 'G';
 				minorBaseREV = 'T';
 			}
 		}
 
-		else if (aREV >= cREV && aREV >= gREV && aREV >= tREV && aREV >= dREV
-				&& aREV > 0) {
+		else if (aREV >= cREV && aREV >= gREV && aREV >= tREV && aREV >= dREV && aREV > 0) {
 			topBaseREV = 'A';
 		}
 
-		else if (cREV >= aREV && cREV >= gREV && cREV >= tREV && cREV >= dREV
-				&& cREV > 0) {
+		else if (cREV >= aREV && cREV >= gREV && cREV >= tREV && cREV >= dREV && cREV > 0) {
 			topBaseREV = 'C';
 		}
 
-		else if (gREV >= cREV && gREV >= aREV && gREV >= tREV && gREV >= dREV
-				&& gREV > 0) {
+		else if (gREV >= cREV && gREV >= aREV && gREV >= tREV && gREV >= dREV && gREV > 0) {
 			topBaseREV = 'G';
 		}
 
-		else if (tREV >= cREV && tREV >= gREV && tREV >= aREV && tREV >= dREV
-				&& tREV > 0) {
+		else if (tREV >= cREV && tREV >= gREV && tREV >= aREV && tREV >= dREV && tREV > 0) {
 			topBaseREV = 'T';
 		}
 
-		else if (dREV >= cREV && dREV >= gREV && dREV >= aREV && dREV >= tREV
-				&& dREV > 0) {
+		else if (dREV >= cREV && dREV >= gREV && dREV >= aREV && dREV >= tREV && dREV > 0) {
 			topBaseREV = 'd';
 		}
 
@@ -331,7 +316,7 @@ public class PositionObject implements Comparable<PositionObject> {
 
 		}
 
-		//TODO combine detect detect heteroplasmy with this!
+		// TODO combine detect detect heteroplasmy with this!
 		if (minorBasePercentsFWD >= 0.01 || minorBasePercentsREV >= 0.01) {
 			double fm0FWD = calcFirst(base);
 			double fm1FWD = calcFirst(base) + calcSecond(base);
@@ -410,8 +395,7 @@ public class PositionObject implements Comparable<PositionObject> {
 				String[] insertion = tiles2[1].split("\\.");
 				isInsertion = true;
 				pos = Integer.parseInt(insertion[0]);
-				insertionIndex = Short.parseShort(insertion[1].substring(0,
-						insertion[1].length() - 1));
+				insertionIndex = Short.parseShort(insertion[1].substring(0, insertion[1].length() - 1));
 			} else {
 				pos = Integer.parseInt(tiles2[1]);
 			}
@@ -471,11 +455,9 @@ public class PositionObject implements Comparable<PositionObject> {
 
 				// ignore deletions on minor base
 				if (allelesFWD.get(1).equals(dFWD)) {
-					minorBasePercentsFWD = allelesFWD.get(2)
-							/ (double) totalFWD;
+					minorBasePercentsFWD = allelesFWD.get(2) / (double) totalFWD;
 				} else {
-					minorBasePercentsFWD = allelesFWD.get(1)
-							/ (double) totalFWD;
+					minorBasePercentsFWD = allelesFWD.get(1) / (double) totalFWD;
 				}
 			}
 
@@ -493,66 +475,60 @@ public class PositionObject implements Comparable<PositionObject> {
 			if (totalREV > 0) {
 				topBasePercentsREV = allelesREV.get(0) / (double) totalREV;
 				if (allelesREV.get(1).equals(dREV)) {
-					minorBasePercentsREV = allelesREV.get(2)
-							/ (double) totalREV;
+					minorBasePercentsREV = allelesREV.get(2) / (double) totalREV;
 				} else {
-					minorBasePercentsREV = allelesREV.get(1)
-							/ (double) totalREV;
+					minorBasePercentsREV = allelesREV.get(1) / (double) totalREV;
 				}
 			}
 
-			if (topBasePercentsFWD == minorBasePercentsFWD
-					&& topBasePercentsFWD > 0) { // prefer lexicographic order
-													// in case of 50/50: A / C
-				if (aFWDPercents == gFWDPercents
-						&& gFWDPercents == topBasePercentsFWD) {
+			if (topBasePercentsFWD == minorBasePercentsFWD && topBasePercentsFWD > 0) { // prefer
+																						// lexicographic
+																						// order
+																						// in
+																						// case
+																						// of
+																						// 50/50:
+																						// A
+																						// /
+																						// C
+				if (aFWDPercents == gFWDPercents && gFWDPercents == topBasePercentsFWD) {
 					topBaseFWD = 'A';
 					minorBaseFWD = 'G';
-				} else if (aFWDPercents == cFWDPercents
-						&& cFWDPercents == topBasePercentsFWD) {
+				} else if (aFWDPercents == cFWDPercents && cFWDPercents == topBasePercentsFWD) {
 					topBaseFWD = 'A';
 					minorBaseFWD = 'C';
-				} else if (aFWDPercents == tFWDPercents
-						&& tFWDPercents == topBasePercentsFWD) {
+				} else if (aFWDPercents == tFWDPercents && tFWDPercents == topBasePercentsFWD) {
 					topBaseFWD = 'A';
 					minorBaseFWD = 'T';
-				} else if (cFWDPercents == tFWDPercents
-						&& tFWDPercents == topBasePercentsFWD) {
+				} else if (cFWDPercents == tFWDPercents && tFWDPercents == topBasePercentsFWD) {
 					topBaseFWD = 'C';
 					minorBaseFWD = 'T';
-				} else if (cFWDPercents == gFWDPercents
-						&& gFWDPercents == topBasePercentsFWD) {
+				} else if (cFWDPercents == gFWDPercents && gFWDPercents == topBasePercentsFWD) {
 					topBaseFWD = 'C';
 					minorBaseFWD = 'G';
-				} else if (gFWDPercents == tFWDPercents
-						&& tFWDPercents == topBasePercentsFWD) {
+				} else if (gFWDPercents == tFWDPercents && tFWDPercents == topBasePercentsFWD) {
 					topBaseFWD = 'G';
 					minorBaseFWD = 'T';
 				}
 			}
 
-			else if (aFWD >= cFWD && aFWD >= gFWD && aFWD >= tFWD
-					&& aFWD >= dFWD && aFWD > 0) {
+			else if (aFWD >= cFWD && aFWD >= gFWD && aFWD >= tFWD && aFWD >= dFWD && aFWD > 0) {
 				topBaseFWD = 'A';
 			}
 
-			else if (cFWD >= aFWD && cFWD >= gFWD && cFWD >= tFWD
-					&& cFWD >= dFWD && cFWD > 0) {
+			else if (cFWD >= aFWD && cFWD >= gFWD && cFWD >= tFWD && cFWD >= dFWD && cFWD > 0) {
 				topBaseFWD = 'C';
 			}
 
-			else if (gFWD >= cFWD && gFWD >= aFWD && gFWD >= tFWD
-					&& gFWD >= dFWD && gFWD > 0) {
+			else if (gFWD >= cFWD && gFWD >= aFWD && gFWD >= tFWD && gFWD >= dFWD && gFWD > 0) {
 				topBaseFWD = 'G';
 			}
 
-			else if (tFWD >= cFWD && tFWD >= gFWD && tFWD >= aFWD
-					&& tFWD >= dFWD && tFWD > 0) {
+			else if (tFWD >= cFWD && tFWD >= gFWD && tFWD >= aFWD && tFWD >= dFWD && tFWD > 0) {
 				topBaseFWD = 'T';
 			}
 
-			else if (dFWD >= cFWD && dFWD >= gFWD && dFWD >= aFWD
-					&& dFWD >= tFWD && dFWD > 0) {
+			else if (dFWD >= cFWD && dFWD >= gFWD && dFWD >= aFWD && dFWD >= tFWD && dFWD > 0) {
 				topBaseFWD = 'd';
 			}
 
@@ -561,60 +537,49 @@ public class PositionObject implements Comparable<PositionObject> {
 																// order in case
 																// of 50/50: A /
 																// C
-				if (aREVPercents == gREVPercents
-						&& gREVPercents == topBasePercentsREV) {
+				if (aREVPercents == gREVPercents && gREVPercents == topBasePercentsREV) {
 					topBaseREV = 'A';
 					minorBaseREV = 'G';
 				}
-				if (aREVPercents == cREVPercents
-						&& cREVPercents == topBasePercentsREV) {
+				if (aREVPercents == cREVPercents && cREVPercents == topBasePercentsREV) {
 					topBaseREV = 'A';
 					minorBaseREV = 'C';
 				}
-				if (aREVPercents == tREVPercents
-						&& tREVPercents == topBasePercentsREV) {
+				if (aREVPercents == tREVPercents && tREVPercents == topBasePercentsREV) {
 					topBaseREV = 'A';
 					minorBaseREV = 'T';
 				}
-				if (cREVPercents == tREVPercents
-						&& tREVPercents == topBasePercentsREV) {
+				if (cREVPercents == tREVPercents && tREVPercents == topBasePercentsREV) {
 					topBaseREV = 'C';
 					minorBaseREV = 'T';
 				}
-				if (cREVPercents == gREVPercents
-						&& gREVPercents == topBasePercentsREV) {
+				if (cREVPercents == gREVPercents && gREVPercents == topBasePercentsREV) {
 					topBaseREV = 'C';
 					minorBaseREV = 'G';
 				}
-				if (gREVPercents == tREVPercents
-						&& tREVPercents == topBasePercentsREV) {
+				if (gREVPercents == tREVPercents && tREVPercents == topBasePercentsREV) {
 					topBaseREV = 'G';
 					minorBaseREV = 'T';
 				}
 			}
 
-			else if (aREV >= cREV && aREV >= gREV && aREV >= tREV
-					&& aREV >= dREV && aREV > 0) {
+			else if (aREV >= cREV && aREV >= gREV && aREV >= tREV && aREV >= dREV && aREV > 0) {
 				topBaseREV = 'A';
 			}
 
-			else if (cREV >= aREV && cREV >= gREV && cREV >= tREV
-					&& cREV >= dREV && cREV > 0) {
+			else if (cREV >= aREV && cREV >= gREV && cREV >= tREV && cREV >= dREV && cREV > 0) {
 				topBaseREV = 'C';
 			}
 
-			else if (gREV >= cREV && gREV >= aREV && gREV >= tREV
-					&& gREV >= dREV && gREV > 0) {
+			else if (gREV >= cREV && gREV >= aREV && gREV >= tREV && gREV >= dREV && gREV > 0) {
 				topBaseREV = 'G';
 			}
 
-			else if (tREV >= cREV && tREV >= gREV && tREV >= aREV
-					&& tREV >= dREV && tREV > 0) {
+			else if (tREV >= cREV && tREV >= gREV && tREV >= aREV && tREV >= dREV && tREV > 0) {
 				topBaseREV = 'T';
 			}
 
-			else if (dREV >= cREV && dREV >= gREV && dREV >= aREV
-					&& dREV >= tREV && dREV > 0) {
+			else if (dREV >= cREV && dREV >= gREV && dREV >= aREV && dREV >= tREV && dREV > 0) {
 				topBaseREV = 'd';
 			}
 
@@ -720,32 +685,21 @@ public class PositionObject implements Comparable<PositionObject> {
 
 	@Override
 	public String toString() {
-		return "PositionObject [id=" + id + ", position=" + position
-				+ ", covFWD=" + covFWD + ", covREV=" + covREV + ", topBaseFWD="
-				+ topBaseFWD + ", topBaseREV=" + topBaseREV + ", minorBaseFWD="
-				+ minorBaseFWD + ", minorBaseREV=" + minorBaseREV
-				+ ", aPercentageFWD=" + aPercentageFWD + ", cPercentageFWD="
-				+ cPercentageFWD + ", gPercentageFWD=" + gPercentageFWD
-				+ ", tPercentageFWD=" + tPercentageFWD + ", nPercentageFWD="
-				+ nPercentageFWD + ", dPercentageFWD=" + dPercentageFWD
-				+ ", aPercentageREV=" + aPercentageREV + ", cPercentageREV="
-				+ cPercentageREV + ", gPercentageREV=" + gPercentageREV
-				+ ", tPercentageREV=" + tPercentageREV + ", nPercentageREV="
-				+ nPercentageREV + ", dPercentageREV=" + dPercentageREV
-				+ ", topBasePercentsFWD=" + topBasePercentsFWD
-				+ ", minorBasePercentsFWD=" + minorBasePercentsFWD
-				+ ", topBasePercentsREV=" + topBasePercentsREV
-				+ ", minorBasePercentsREV=" + minorBasePercentsREV
-				+ ", type=" + type + ", hetLevel="
-				+ varLevel + ", fwdOK=" + fwdOK + ", revOK=" + revOK
-				+ ", isInsertion=" + isInsertion + ", isVariant=" + isVariant
-				+ ", isDeletion=" + isDeletion + ", insertionIndex="
-				+ insertionIndex + ", isRevVariant=" + isRevVariant
-				+ ", CIW_LOW_FWD=" + CIW_LOW_FWD + ", CIW_UP_FWD=" + CIW_UP_FWD
-				+ ", CIW_LOW_REV=" + CIW_LOW_REV + ", CIW_UP_REV=" + CIW_UP_REV
-				+ ", CIAC_LOW_FWD=" + CIAC_LOW_FWD + ", CIAC_UP_FWD="
-				+ CIAC_UP_FWD + ", CIAC_LOW_REV=" + CIAC_LOW_REV
-				+ ", CIAC_UP_REV=" + CIAC_UP_REV + "]";
+		return "PositionObject [id=" + id + ", position=" + position + ", covFWD=" + covFWD + ", covREV=" + covREV
+				+ ", topBaseFWD=" + topBaseFWD + ", topBaseREV=" + topBaseREV + ", minorBaseFWD=" + minorBaseFWD
+				+ ", minorBaseREV=" + minorBaseREV + ", aPercentageFWD=" + aPercentageFWD + ", cPercentageFWD="
+				+ cPercentageFWD + ", gPercentageFWD=" + gPercentageFWD + ", tPercentageFWD=" + tPercentageFWD
+				+ ", nPercentageFWD=" + nPercentageFWD + ", dPercentageFWD=" + dPercentageFWD + ", aPercentageREV="
+				+ aPercentageREV + ", cPercentageREV=" + cPercentageREV + ", gPercentageREV=" + gPercentageREV
+				+ ", tPercentageREV=" + tPercentageREV + ", nPercentageREV=" + nPercentageREV + ", dPercentageREV="
+				+ dPercentageREV + ", topBasePercentsFWD=" + topBasePercentsFWD + ", minorBasePercentsFWD="
+				+ minorBasePercentsFWD + ", topBasePercentsREV=" + topBasePercentsREV + ", minorBasePercentsREV="
+				+ minorBasePercentsREV + ", type=" + type + ", hetLevel=" + varLevel + ", fwdOK=" + fwdOK + ", revOK="
+				+ revOK + ", isInsertion=" + isInsertion + ", isVariant=" + isVariant + ", isDeletion=" + isDeletion
+				+ ", insertionIndex=" + insertionIndex + ", isRevVariant=" + isRevVariant + ", CIW_LOW_FWD="
+				+ CIW_LOW_FWD + ", CIW_UP_FWD=" + CIW_UP_FWD + ", CIW_LOW_REV=" + CIW_LOW_REV + ", CIW_UP_REV="
+				+ CIW_UP_REV + ", CIAC_LOW_FWD=" + CIAC_LOW_FWD + ", CIAC_UP_FWD=" + CIAC_UP_FWD + ", CIAC_LOW_REV="
+				+ CIAC_LOW_REV + ", CIAC_UP_REV=" + CIAC_UP_REV + "]";
 	}
 
 	public PositionObject() {
@@ -1288,5 +1242,5 @@ public class PositionObject implements Comparable<PositionObject> {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
+
 }

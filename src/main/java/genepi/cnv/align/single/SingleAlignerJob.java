@@ -7,6 +7,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.seqdoop.hadoop_bam.FastqInputFormat;
 
+import genepi.cnv.Server;
 import genepi.cnv.objects.BasePosition;
 import genepi.cnv.util.ReferenceUtil;
 import genepi.hadoop.CacheStore;
@@ -48,14 +49,14 @@ public class SingleAlignerJob extends HadoopJob {
 	protected void setupDistributedCache(CacheStore cache) {
 
 		// distribute jbwa libraries
-		String hdfsPath = HdfsUtil.path("jbwa-data", "jbwa.tar.gz");
+		String hdfsPath = HdfsUtil.path(Server.REF_DIRECTORY, "jbwa.tar.gz");
 		if (!HdfsUtil.exists(hdfsPath)) {
 			String jbwa = FileUtil.path(folder,"jbwa.tar.gz");
 			HdfsUtil.put(jbwa, hdfsPath);
 		}
 		
 		String archive = FileUtil.path(folder,ReferenceUtil.getSelectedReferenceArchive(reference));
-		String hdfsPathRef = HdfsUtil.path("jbwa-data", archive);
+		String hdfsPathRef = HdfsUtil.path(Server.REF_DIRECTORY, archive);
 		
 		if (!HdfsUtil.exists(hdfsPathRef)) {
 			HdfsUtil.put(archive, hdfsPathRef);

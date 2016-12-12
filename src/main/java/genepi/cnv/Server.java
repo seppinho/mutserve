@@ -11,6 +11,8 @@ import java.lang.reflect.InvocationTargetException;
 
 public class Server {
 
+	public static final String REF_DIRECTORY = "/tmp/mutation-server-data";
+	
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, SecurityException,
 			NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
 		

@@ -7,8 +7,8 @@ import org.apache.hadoop.mapreduce.CounterGroup;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.seqdoop.hadoop_bam.AnySAMInputFormat;
-import org.seqdoop.hadoop_bam.CRAMInputFormat;
 
+import genepi.cnv.Server;
 import genepi.cnv.objects.BasePosition;
 import genepi.cnv.util.ReferenceUtil;
 import genepi.hadoop.CacheStore;
@@ -18,7 +18,6 @@ import genepi.io.FileUtil;
 
 public class PileupJob extends HadoopJob {
 
-	public static final String REF_DIRECTORY = "jbwa-data";
 	private String reference;
 
 	private long overall;
@@ -71,8 +70,8 @@ public class PileupJob extends HadoopJob {
 		String localArchivePath = FileUtil.path(folder, archive);
 		String localFastaPath = FileUtil.path(folder, fasta);
 		
-		String hdfsArchivePath = HdfsUtil.path(REF_DIRECTORY, archive);
-		String hdfsFastaPath = HdfsUtil.path(REF_DIRECTORY, fasta);
+		String hdfsArchivePath = HdfsUtil.path(Server.REF_DIRECTORY, archive);
+		String hdfsFastaPath = HdfsUtil.path(Server.REF_DIRECTORY, fasta);
 		
 		if (!HdfsUtil.exists(hdfsArchivePath)) {
 			HdfsUtil.put(localArchivePath, hdfsArchivePath);

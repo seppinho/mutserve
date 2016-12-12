@@ -1,6 +1,8 @@
 package genepi.cnv.align.paired;
 
+import genepi.cnv.Server;
 import genepi.cnv.objects.SingleRead;
+import genepi.cnv.pileup.PileupJob;
 import genepi.cnv.util.ReferenceUtil;
 import genepi.hadoop.CacheStore;
 import genepi.hadoop.HadoopJob;
@@ -45,14 +47,14 @@ public class PairedAlignerJob extends HadoopJob {
 	protected void setupDistributedCache(CacheStore cache) {
 
 		// distribute jbwa libraries
-		String hdfsPath = HdfsUtil.path("jbwa-data", "jbwa.tar.gz");
+		String hdfsPath = HdfsUtil.path(Server.REF_DIRECTORY, "jbwa.tar.gz");
 		if (!HdfsUtil.exists(hdfsPath)) {
 			String jbwa = FileUtil.path(folder,"jbwa.tar.gz");
 			HdfsUtil.put(jbwa, hdfsPath);
 		}
 		
 		String archive = FileUtil.path(folder,ReferenceUtil.getSelectedReferenceArchive(reference));
-		String hdfsPathRef = HdfsUtil.path("jbwa-data", archive);
+		String hdfsPathRef = HdfsUtil.path(Server.REF_DIRECTORY, archive);
 		
 		if (!HdfsUtil.exists(hdfsPathRef)) {
 			HdfsUtil.put(archive, hdfsPathRef);
