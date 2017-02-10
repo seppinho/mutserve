@@ -35,7 +35,9 @@ public class SortReducer extends Reducer<ReadKey, Text, Text, Text> {
 			Context context) {
 
 		String name = key.getSample() + "_" + key.getSequence() + ".bam";
-
+		
+		name = name.replaceAll(":", "_");
+		
 		if (header.getSequence(key.getSequence()) == null) {
 			header.addSequence(new SAMSequenceRecord(key.getSequence(), Integer.valueOf(length)));
 		}
