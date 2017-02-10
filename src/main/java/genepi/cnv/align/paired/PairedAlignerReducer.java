@@ -16,6 +16,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 import com.github.lindenb.jbwa.jni.BwaIndex;
 import com.github.lindenb.jbwa.jni.BwaMem;
 import com.github.lindenb.jbwa.jni.ShortRead;
+import com.google.common.collect.Iterators;
 
 public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> {
 
@@ -37,8 +38,7 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 
 	}
 
-	protected void setup(Context context) throws IOException,
-			InterruptedException {
+	protected void setup(Context context) throws IOException, InterruptedException {
 		String refString = null;
 		L1 = new ArrayList<ShortRead>();
 		L2 = new ArrayList<ShortRead>();
@@ -48,8 +48,7 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 		/** load jbwa lib and reference */
 		CacheStore cache = new CacheStore(context.getConfiguration());
 		String jbwaLibLocation = cache.getArchive("jbwaLib");
-		String jbwaLib = FileUtil.path(jbwaLibLocation, "native",
-				"libbwajni.so");
+		String jbwaLib = FileUtil.path(jbwaLibLocation, "native", "libbwajni.so");
 		String referencePath = cache.getArchive("reference");
 		trimBasesStart = context.getConfiguration().getInt("trimReadsStart", 0);
 		trimBasesEnd = context.getConfiguration().getInt("trimReadsEnd", 0);
@@ -67,23 +66,13 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 
 	}
 
-	protected void reduce(Text key, java.lang.Iterable<SingleRead> values,
-			Context context) throws java.io.IOException, InterruptedException {
+	protected void reduce(Text key, java.lang.Iterable<SingleRead> values, Context context)
+			throws java.io.IOException, InterruptedException {
 
-		/** preprocessing reads, trim *//*
-		String seq = new String(value.getBases());
-		String qual= new String(value.getQualities());
-		seq = seq.substring(trimBasesStart, seq.length());
-		qual = qual.substring(trimBasesStart, qual.length());
-		
-		if(trimBasesEnd!=0 && seq.length() >= trimBasesEnd){
-			seq = seq.substring(0, trimBasesEnd);
-			qual = qual.substring(0, trimBasesEnd);
-		}*/
-		
+		int i = 0;
 		for (SingleRead value : values) {
 
-			countReads++;
+			i++;
 
 			if (value.getReadNumber() == 1) {
 
@@ -94,7 +83,7 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 				first.setBases(value.getBases());
 				first.setQual(value.getQualities());
 				first.setFilename(value.getFilename());
-				L1.add(first);
+				// L1.add(first);
 
 			} else {
 
@@ -104,23 +93,31 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 				second.setBases(value.getBases());
 				second.setQual(value.getQualities());
 				second.setFilename(value.getFilename());
-				L2.add(second);
+				// L2.add(second);
 
 			}
 
 		}
 
-		if (countReads % 99010 == 0) {
+		//when chunking only chunks are used which are available from both sides (often: length read1 != length read2)
+		if (i == 2) {
+			countReads += 2;
+			L1.add(first);
+			L2.add(second);
 
-			System.out.println("count is " + countReads);
-			/** main JBWA JNI */
-			align(context);
+			if (countReads % 99010 == 0) {
+
+				System.out.println(L1.size());
+				System.out.println(L2.size());
+				System.out.println("count is " + countReads);
+				/** main JBWA JNI */
+				align(context);
+			}
+
 		}
-
 	}
 
-	protected void cleanup(Context context) throws IOException,
-			InterruptedException {
+	protected void cleanup(Context context) throws IOException, InterruptedException {
 
 		if (L1.size() > 0) {
 
@@ -140,8 +137,7 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 
 	}
 
-	private void align(Context context) throws IOException,
-			InterruptedException {
+	private void align(Context context) throws IOException, InterruptedException {
 
 		result = mem.align(L1, L2);
 
@@ -157,14 +153,13 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 			read = read.replaceAll("\\t+$", "");
 			read = read.replaceAll("\\s+$", "");
 			String tiles[] = read.split("\t+\n");
-			
+
 			for (String tile : tiles) {
 				out.clear();
 				out.set(tile);
 				context.write(new Text(sample), out);
 
 			}
-			
 
 		}
 

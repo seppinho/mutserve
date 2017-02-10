@@ -1,0 +1,203 @@
+name: CNV Mutation Server
+description: CNV Mutation Server is able to detect both variants in genomic CNV regions and heteroplasmies in mitochondrial DNA. Users can specify fastq (SE or PE), BAM and CRAM files as an input and receive annotated variant files in return.
+version: 1.0
+website: https://lpa-server.i-med.ac.at/
+
+cluster:
+
+  image: us-east-1/ami-da0cf8b3
+  type: m1.large,m1.xlarge
+  ports: 80,50030,50070
+  creationOnly: false
+  installMapred: true
+  initScript: install.sh
+  service: hadoop
+ 
+mapred:
+
+  steps:
+ 
+#if( $inType == "se" || $inType == "pe")
+    - name: Align Reads
+      classname: genepi.cnv.align.AlignTool
+      jar: cnv-mutation-server-1.0.jar
+      generates: $bwaOut
+
+    - name: Sort Aligned Reads
+      jar: cnv-mutation-server-1.0.jar
+      params: sort --input $bwaOut --reference $reference --output $outputBam --inType $inType --statistics $stat.txt --local-output $localOutput
+#set( $input = $outputBam )
+#end
+
+    - name: Generate Pileup File
+      classname: genepi.cnv.pileup.PileupTool
+      jar: cnv-mutation-server-1.0.jar
+      generates: $analyseOut $statistics
+
+    - name: Detect Variants
+      jar: cnv-mutation-server-1.0.jar
+      params: detect --input $analyseOut --detectionLevel $level --reference $reference --outputRaw ${raw}.txt --outputFiltered ${variants}.txt  --uncoveredPos ${uncovered_pos}.txt 
+
+    - name: Annotate Variants
+      exec: /usr/bin/java -jar genepi-annotate-0.1.0.jar annotate --input ${variants}.txt --reference kiv2_6.fasta --position Pos --mutation Variant --maplocus maplocus_v3.txt --output ${annotate_out}.txt --columnwt wt_aas --columnmut mut_aas
+
+    - name: Create Statistics
+      jar: cnv-mutation-server-1.0.jar
+      params: stats --input ${raw}.txt --output ${stats}.txt
+
+  inputs:
+
+    - id: input
+      description: Input Files (FASTQ SE/PE, SAM/BAM) <br><br>or use the <a href="/index.html#!pages/upload-tool">Upload-Tool</a>
+      type: text
+      value: stefan-lpa
+
+
+    - id: inType
+      description: Input Format
+      type: list
+      required: true
+      values:
+        se: Fastq Single-End
+        pe: Fastq Paired-End
+        bam: SAM | BAM | CRAM
+      value: bam
+    
+    - id: reference
+      description: Reference
+      type: list
+      visible: true
+      values:
+        kiv2_6: Kiv2_6
+        rcrs: rCRS
+        muc1-one: muc1-one
+        muc1-two: muc1-two
+        muc1-90: muc1-90
+        KIV2_cDNA: KIV2_cDNA
+        KIV2_cDNAinsert: KIV2_cDNAinsert
+        KIV2_cDNAretained: KIV2_cDNAretained
+      value: kiv2_6
+     
+
+    - id: level
+      description: Detection Level in %
+      type: number
+      value: 1
+      visible: false
+      
+    - id: mapQuality
+      description: Min. Mapping quality
+      type: number
+      value: 20
+      visible: false
+
+    - id: alignQuality
+      description: Min Alignment quality
+      visible: true
+      type: number
+      value: 30     
+      
+    - id: baseQuality
+      description: Min. Base quality
+      type: number
+      value: 20
+      visible: false
+
+    - id: chunkLength
+      description: Split after x bases; 0 no split
+      type: number
+      value: 0
+      visible: true
+
+    - id: baq
+      description: BAQ?
+      type: checkbox
+      visible: true
+      values:
+        true: true
+        false: false
+      value: true
+      
+    - id: fileSize
+      description: Filesize to upload
+      type: number
+      value: 10000
+      visible: false
+              
+    - id: submissionSource
+      description: submission source
+      type: text
+      value: web
+      visible: false
+
+  outputs:
+
+    - id: report
+      description: Interactive Report
+      type: local-file
+      download: true 
+   
+    - id: variants
+      description: Variants
+      type: local-file
+      download: true 
+
+    - id: uncovered_pos
+      description: Uncovered Positions
+      type: local-file
+      download: true 
+
+    - id: raw
+      description: Raw Pileup File
+      type: local-file
+      download: true  
+      zip: true
+
+    - id: stats
+      description: Statistics
+      type: local-file
+      download: true  
+      zip: false
+
+    - id: statistics
+      description: BAM Statistics
+      type: hdfs-folder
+      download: false
+      temp: true
+      mergeOutput: true
+      removeHeader: false
+      zip: false
+      autoExport: true
+
+    - id: annotate_out
+      description: Annotated Variants
+      type: local-file
+      download: true
+ 
+    - id: outputBam
+      description: BAM files
+      type: hdfs-folder
+      download: true
+      temp: false
+      zip: false
+      mergeOutput: false
+
+    - id: bwaOut
+      description: BWA-MEM out
+      type: hdfs-folder
+      removeHeader: false
+      download: false
+      temp: true
+
+    - id: localOutput
+      description: BAM Files
+      type: local-folder
+      download: false
+      temp: true
+
+    - id: analyseOut
+      description: Heteroplasmy
+      type: hdfs-folder
+      removeHeader: false
+      download: false
+      temp: true

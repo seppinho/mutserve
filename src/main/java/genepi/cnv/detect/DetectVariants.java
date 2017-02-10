@@ -281,7 +281,7 @@ public class DetectVariants {
 
 			if (posObj.getVariantType() == 1) {
 				
-				writer.setString(4, posObj.getVariantType() + "-");
+				writer.setString(4, "-");
 
 				writer.setString(5, "1.0");
 

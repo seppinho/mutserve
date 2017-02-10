@@ -2,7 +2,6 @@ package genepi.cnv.align.paired;
 
 import genepi.cnv.Server;
 import genepi.cnv.objects.SingleRead;
-import genepi.cnv.pileup.PileupJob;
 import genepi.cnv.util.ReferenceUtil;
 import genepi.hadoop.CacheStore;
 import genepi.hadoop.HadoopJob;
@@ -81,6 +80,11 @@ public class PairedAlignerJob extends HadoopJob {
 
 	public void setFolder(String folder) {
 		this.folder = folder;
+	}
+
+	public void setChunkLength(String chunkLength) {
+		set("chunkLength", chunkLength);
+		
 	}
 
 }
