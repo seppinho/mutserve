@@ -37,7 +37,7 @@ public class CreateStatistics {
 			if (!reader.getString(0).equals(sample) && sample != null) {
 
 				DescriptiveStatistics statistics = calcStats(positions);
-				writer.setString(0, "");
+				writer.setString(0, sample);
 				writer.setDouble(1, statistics.getMean());
 				writer.setDouble(2, statistics.getStandardDeviation());
 				writer.setDouble(3, statistics.getMin());

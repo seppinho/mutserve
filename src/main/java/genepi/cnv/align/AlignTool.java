@@ -41,6 +41,7 @@ public class AlignTool extends HadoopJobStep {
 		String inType = context.get("inType");
 		String output = context.get("bwaOut");
 		String reference = context.get("reference");
+		String chunkLength = context.get("chunkLength");
 
 		if (inType.equals("se")) {
 
@@ -81,6 +82,7 @@ public class AlignTool extends HadoopJobStep {
 					job.setInput(values.get(0), values.get(1));
 					job.setOutput(roundOutput);
 					job.setReference(reference);
+					job.setChunkLength(chunkLength);
 					job.setFolder(getFolder(AlignTool.class));
 					job.setJarByClass(AlignTool.class);
 					successful = executeHadoopJob(job, context);
