@@ -15,6 +15,16 @@ cluster:
  
 mapred:
 
+  setup:
+    name: Input Validator
+    jar: cnv-mutation-server-1.0.jar
+    classname: genepi.cnv.validate.InputValidation
+
+  onFailure:
+    name: Send Notification on Failure
+    jar: mtdna-heteroplasmy.jar
+    classname: heteroplasmy.validator.FailureNotification
+
   steps:
  
 #if( $inType == "se" || $inType == "pe")
@@ -49,7 +59,7 @@ mapred:
 
     - id: input
       description: Input Files (FASTQ SE/PE, SAM/BAM) <br><br>or use the <a href="/index.html#!pages/upload-tool">Upload-Tool</a>
-      type: text
+      type: hdfs-folder
       value: stefan-lpa
 
 
