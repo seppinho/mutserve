@@ -27,7 +27,7 @@ public class CreateStatistics {
 
 		CsvTableReader reader = new CsvTableReader(file.getAbsolutePath(), '\t');
 		CsvTableWriter writer = new CsvTableWriter(output, ',', true);
-		writer.setColumns(new String[] { "SampleID", "Mean", "SD", "Min-Coverage", "Max-Coverage" });
+		writer.setColumns(new String[] { "SampleID", "Mean-Coverage", "SD-Coverage", "Min-Coverage", "Max-Coverage" });
 
 		String sample = null;
 		ArrayList<Double> positions = new ArrayList<Double>();
