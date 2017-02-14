@@ -24,6 +24,11 @@
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
+		
+				<repository>
+			<id>cloudera</id>
+			<url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+		</repository>
 
 		<repository>
 			<id>in-project</id>
@@ -138,6 +143,13 @@
 			<version>2.3</version>
 		</dependency>
 
+	<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
@@ -149,7 +161,29 @@
 			<artifactId>guava</artifactId>
 			<version>21.0</version>
 		</dependency>
+		
+				<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-hdfs</artifactId>
+			<version>2.5.0-cdh5.3.8</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
 
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-common</artifactId>
+			<version>2.5.0-cdh5.3.8</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-test</artifactId>
+			<version>2.5.0-mr1-cdh5.3.8</version>
+			<scope>test</scope>
+</dependency>
 
 	</dependencies>
 
