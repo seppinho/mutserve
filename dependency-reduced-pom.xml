@@ -76,12 +76,28 @@
       <url>https://raw.github.com/genepi/maven-repository/mvn-repo/</url>
     </repository>
     <repository>
+      <id>cloudera</id>
+      <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+    </repository>
+    <repository>
       <id>in-project</id>
       <name>In Project Repo</name>
       <url>file://${basedir}/libs</url>
     </repository>
   </repositories>
   <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>hamcrest-core</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-math3</artifactId>
@@ -93,6 +109,56 @@
       <artifactId>guava</artifactId>
       <version>21.0</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-hdfs</artifactId>
+      <version>2.5.0-cdh5.3.8</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>commons-daemon</artifactId>
+          <groupId>commons-daemon</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-common</artifactId>
+      <version>2.5.0-cdh5.3.8</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>jersey-json</artifactId>
+          <groupId>com.sun.jersey</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-test</artifactId>
+      <version>2.5.0-mr1-cdh5.3.8</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>ftplet-api</artifactId>
+          <groupId>org.apache.ftpserver</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>mina-core</artifactId>
+          <groupId>org.apache.mina</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>ftpserver-core</artifactId>
+          <groupId>org.apache.ftpserver</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>ftpserver-deprecated</artifactId>
+          <groupId>org.apache.ftpserver</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <properties>
