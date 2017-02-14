@@ -22,8 +22,8 @@ mapred:
 
   onFailure:
     name: Send Notification on Failure
-    jar: mtdna-heteroplasmy.jar
-    classname: heteroplasmy.validator.FailureNotification
+    jar: cnv-mutation-server-1.0.jar
+    classname: genepi.cnv.validate.FailureNotification
 
   steps:
  
@@ -42,19 +42,21 @@ mapred:
     - name: Generate Pileup File
       classname: genepi.cnv.pileup.PileupTool
       jar: cnv-mutation-server-1.0.jar
-      generates: $analyseOut $statistics
+      generates: $analyseOut $statisticsBam
 
     - name: Detect Variants
+      classname: genepi.cnv.detect.DetectTool
       jar: cnv-mutation-server-1.0.jar
-      params: detect --input $analyseOut --detectionLevel $level --reference $reference --outputRaw ${raw}.txt --outputFiltered ${variants}.txt  --uncoveredPos ${uncovered_pos}.txt 
-
+      
     - name: Annotate Variants
-      exec: /usr/bin/java -jar genepi-annotate-0.1.0.jar annotate --input ${variants}.txt --reference kiv2_6.fasta --position Pos --mutation Variant --maplocus maplocus_v3.txt --output ${annotate_out}.txt --columnwt wt_aas --columnmut mut_aas
+      exec: /usr/bin/java -jar genepi-annotate-0.1.0.jar annotate --input ${variants}.txt --reference {$reference}.fasta --position Pos --mutation Variant --maplocus maplocus_v3.txt --output ${variants_annotated}.txt --columnwt wt_aas --columnmut mut_aas
 
     - name: Create Statistics
       jar: cnv-mutation-server-1.0.jar
-      params: stats --input ${raw}.txt --output ${stats}.txt
+      params: stats --input ${raw}.txt --output ${statistics}.txt
 
+
+     
   inputs:
 
     - id: input
@@ -146,11 +148,16 @@ mapred:
       description: Interactive Report
       type: local-file
       download: true 
-   
+
+    - id: variants_annotated
+      description: Annotated Variants
+      type: local-file
+      download: true
+      
     - id: variants
       description: Variants
       type: local-file
-      download: true 
+      download: false 
 
     - id: uncovered_pos
       description: Uncovered Positions
@@ -163,13 +170,13 @@ mapred:
       download: true  
       zip: true
 
-    - id: stats
+    - id: statistics
       description: Statistics
       type: local-file
       download: true  
       zip: false
 
-    - id: statistics
+    - id: statisticsBam
       description: BAM Statistics
       type: hdfs-folder
       download: false
@@ -179,11 +186,6 @@ mapred:
       zip: false
       autoExport: true
 
-    - id: annotate_out
-      description: Annotated Variants
-      type: local-file
-      download: true
- 
     - id: outputBam
       description: BAM files
       type: hdfs-folder
