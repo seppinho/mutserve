@@ -36,13 +36,13 @@ public class DetectVariants {
 
 	private static int VARIANT = 1; // variant
 
-	private static int LOW_LEVEL_VARIANT = 2; // low level variant
+	public static int LOW_LEVEL_VARIANT = 2; // low level variant
 
-	private static int SUSPICOUS_LOW_LEVEL_VARIANT = 3; // double check low
+	public static int SUSPICOUS_LOW_LEVEL_VARIANT = 3; // double check low
 														// level
-	private static int DELETION = 4; // deletion
+	public static int DELETION = 4; // deletion
 
-	private static int INSERTION = 5; // deletion
+	public static int INSERTION = 5; // deletion
 
 	public DetectVariants() {
 

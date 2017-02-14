@@ -2,59 +2,42 @@ package genepi.cnv.detect;
 
 import java.io.File;
 
-import genepi.base.Tool;
 import genepi.cnv.util.ReferenceUtil;
 import genepi.hadoop.PreferenceStore;
+import genepi.hadoop.common.WorkflowContext;
+import genepi.hadoop.common.WorkflowStep;
+import genepi.io.FileUtil;
 
-public class DetectTool extends Tool {
+public class DetectTool extends WorkflowStep {
 
-	public DetectTool(String[] args) {
-		super(args);
-		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public void createParameters() {
-		addParameter("input", "input path");
-		addParameter("outputRaw", "output path raw");
-		addParameter("outputFiltered", "output path filtered");
-		addParameter("uncoveredPos", "output pos not covered by model");
-		addParameter("detectionLevel", "detection level in %");
-		addParameter("reference", "reference");
-		
-	}
 
 	@Override
-	public void init() {
-		// TODO Auto-generated method stub
-	}
+	public boolean run(WorkflowContext context) {
 
-	@Override
-	public int run() {
-
-		String reference = (String) getValue("reference");
-		String input = (String) getValue("input");
-		String outputRaw = (String) getValue("outputRaw");
-		String outputFiltered = (String) getValue("outputFiltered");
-		String uncoveredPos = (String) getValue("uncoveredPos");
-		String level = (String) getValue("detectionLevel");
+		String reference = context.get("reference");
+		String input = context.get("analyseOut");
+		String outputRaw = context.get("raw");
+		String outputFiltered = context.get("variants");
+		String uncoveredPos = context.get("uncovered_pos");
+		String level = context.get("level");
 		
 		DetectVariants detecter = new DetectVariants();
 		
-		PreferenceStore store = new PreferenceStore(new File("job.config"));
+		String folder = getFolder(DetectTool.class);
+		PreferenceStore store = new PreferenceStore(new File(FileUtil.path(folder, "job.config")));
 		String version = store.getString("server.version");
-		String ref =  ReferenceUtil.readInReference(reference+".fasta");
+		String ref =  ReferenceUtil.readInReference(FileUtil.path(folder,reference+".fasta"));
 		
 		detecter.setVersion(version);
 		detecter.setRefAsString(ref);
 		detecter.setHdfsFolder(input);
 		detecter.setDetectionLevel(Double.valueOf(level)/100.0);
-		detecter.setOutputFiltered(outputFiltered);
-		detecter.setUncoveredPos(uncoveredPos);
-		detecter.setOutputRaw(outputRaw);
+		detecter.setOutputFiltered(outputFiltered+".txt");
+		detecter.setUncoveredPos(uncoveredPos+".txt");
+		detecter.setOutputRaw(outputRaw+".txt");
 		detecter.analyzeReads();
 		
-		return 0;
+		return true;
 	}
 
 }
