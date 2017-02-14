@@ -49,7 +49,7 @@ mapred:
       jar: cnv-mutation-server-1.0.jar
       
     - name: Annotate Variants
-      exec: /usr/bin/java -jar genepi-annotate-0.1.0.jar annotate --input ${variants}.txt --reference {$reference}.fasta --position Pos --mutation Variant --maplocus maplocus_v3.txt --output ${variants_annotated}.txt --columnwt wt_aas --columnmut mut_aas
+      exec: /usr/bin/java -jar genepi-annotate-0.1.0.jar annotate --input ${variants}.txt --reference ${reference}.fasta --position Pos --mutation Variant --maplocus maplocus_v3.txt --output ${variants_annotated}.txt --columnwt wt_aas --columnmut mut_aas
 
     - name: Create Statistics
       jar: cnv-mutation-server-1.0.jar
