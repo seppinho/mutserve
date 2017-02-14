@@ -35,7 +35,12 @@ public class DetectTool extends WorkflowStep {
 		detecter.setOutputFiltered(outputFiltered+".txt");
 		detecter.setUncoveredPos(uncoveredPos+".txt");
 		detecter.setOutputRaw(outputRaw+".txt");
+		
+		context.beginTask("Detect variants...");
+		
 		detecter.analyzeReads();
+		
+		context.endTask("Variants detection finished", WorkflowContext.OK);
 		
 		return true;
 	}
