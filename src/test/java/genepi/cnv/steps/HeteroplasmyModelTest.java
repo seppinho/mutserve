@@ -15,7 +15,7 @@ public class HeteroplasmyModelTest {
 	public void HetModelTest() {
 
 		double hetLevel = 1;
-		String refPath = "test-data/mtdna/rcrs.fasta";
+		String refPath = "files/rcrs.fasta";
 		String sanger = "test-data/mtdna/sanger.txt";
 
 		RawFileAnalyser model = new RawFileAnalyser();
