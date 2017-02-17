@@ -54,7 +54,7 @@ public class AlignmentStepTest {
 		WorkflowTestContext context = buildContext(inputFolder, reference);
 
 		// create step instance
-		AlignTool align = new AlignnMock("test-data/mtdna");
+		AlignTool align = new AlignnMock("files");
 
 		boolean result = align.run(context);
 		
@@ -79,6 +79,7 @@ public class AlignmentStepTest {
 		    }
 		    br.close();
 		    assertEquals(317,i);
+		    
 		}
 	}
 
