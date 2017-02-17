@@ -45,7 +45,7 @@ public class SingleAlignerMap extends Mapper<Object, SequencedFragment, Text, Te
 
 		CacheStore cache = new CacheStore(context.getConfiguration());
 		String jbwaLibLocation = cache.getArchive("jbwaLib");
-		String jbwaLib = FileUtil.path(jbwaLibLocation, "native", "libbwajni.so");
+		String jbwaLib = FileUtil.path(jbwaLibLocation, "libbwajni.so");
 		String referencePath = cache.getArchive("reference");
 
 		FileSplit fileSplit = (FileSplit) context.getInputSplit();
@@ -91,6 +91,11 @@ public class SingleAlignerMap extends Mapper<Object, SequencedFragment, Text, Te
 
 			// reset builder
 			samRecordBulder.setLength(0);
+			
+			//as defined by BWA
+			if(alignedRead.getAs()<30) {
+				continue;
+			}
 
 			// READNAME
 			samRecordBulder.append(key.toString());
@@ -106,8 +111,8 @@ public class SingleAlignerMap extends Mapper<Object, SequencedFragment, Text, Te
 					// FLAGS REVERSE, PRIMARY ALIGNMENT
 					samRecordBulder.append(16);
 				} else {
-					// FLAGS REVERSE
-					samRecordBulder.append((16 | 256));
+					// dont output secondary alignments!!
+					continue;
 				}
 
 			} else {
@@ -116,8 +121,8 @@ public class SingleAlignerMap extends Mapper<Object, SequencedFragment, Text, Te
 					// FLAGS FORWARD, PRIMARY ALIGNMENT
 					samRecordBulder.append(0);
 				} else {
-					// FLAGS FORWARD
-					samRecordBulder.append((0 | 256));
+					// dont output secondary alignments!!
+					continue;
 				}
 			}
 
