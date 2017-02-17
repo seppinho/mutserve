@@ -13,7 +13,7 @@ public abstract class HadoopJobStep extends WorkflowStep {
 	public boolean executeHadoopJob(HadoopJob job, WorkflowContext context) {
 
 		this.job = job;
-		context.beginTask("Running Pileup Job...");
+		context.beginTask("Running Job...");
 		boolean successful = job.execute();
 		if (successful) {
 			context.endTask("Execution successful.", WorkflowContext.OK);

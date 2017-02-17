@@ -20,6 +20,7 @@ import org.apache.hadoop.fs.Path;
 import genepi.cnv.align.paired.PairedAlignerJob;
 import genepi.cnv.align.single.SingleAlignerJob;
 import genepi.cnv.util.HadoopJobStep;
+import genepi.hadoop.HdfsUtil;
 import genepi.hadoop.common.WorkflowContext;
 
 public class AlignTool extends HadoopJobStep {
@@ -41,10 +42,8 @@ public class AlignTool extends HadoopJobStep {
 		String inType = context.get("inType");
 		String output = context.get("bwaOut");
 		String reference = context.get("reference");
-		String chunkLength = context.get("chunkLength");
 
 		if (inType.equals("se")) {
-
 			SingleAlignerJob job = new SingleAlignerJob(
 					"Align SingleEnd");
 			job.setReference(reference);
@@ -59,6 +58,8 @@ public class AlignTool extends HadoopJobStep {
 		}
 
 		else if (inType.equals("pe")) {
+			
+			String chunkLength = context.get("chunkLength");
 
 			generatePEPairs(input);
 
@@ -105,7 +106,7 @@ public class AlignTool extends HadoopJobStep {
 	private void generatePEPairs(String input) {
 		try {
 			FileSystem fileSystem;
-			fileSystem = FileSystem.get(new Configuration());
+			fileSystem = FileSystem.get(HdfsUtil.getConfiguration());
 			FileStatus[] fileList = fileSystem.listStatus(new Path(input));
 
 			for (FileStatus file : fileList) {

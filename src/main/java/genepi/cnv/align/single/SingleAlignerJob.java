@@ -49,9 +49,9 @@ public class SingleAlignerJob extends HadoopJob {
 	protected void setupDistributedCache(CacheStore cache) {
 
 		// distribute jbwa libraries
-		String hdfsPath = HdfsUtil.path(Server.REF_DIRECTORY, "jbwa.tar.gz");
+		String hdfsPath = HdfsUtil.path(Server.REF_DIRECTORY, "jbwa-native.tar");
 		if (!HdfsUtil.exists(hdfsPath)) {
-			String jbwa = FileUtil.path(folder,"jbwa.tar.gz");
+			String jbwa = FileUtil.path(folder,"jbwa-native.tar");
 			HdfsUtil.put(jbwa, hdfsPath);
 		}
 		
