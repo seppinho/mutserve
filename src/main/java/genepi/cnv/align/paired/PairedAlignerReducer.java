@@ -48,7 +48,7 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 		/** load jbwa lib and reference */
 		CacheStore cache = new CacheStore(context.getConfiguration());
 		String jbwaLibLocation = cache.getArchive("jbwaLib");
-		String jbwaLib = FileUtil.path(jbwaLibLocation, "native", "libbwajni.so");
+		String jbwaLib = FileUtil.path(jbwaLibLocation, "libbwajni.so");
 		String referencePath = cache.getArchive("reference");
 		trimBasesStart = context.getConfiguration().getInt("trimReadsStart", 0);
 		trimBasesEnd = context.getConfiguration().getInt("trimReadsEnd", 0);
@@ -83,7 +83,6 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 				first.setBases(value.getBases());
 				first.setQual(value.getQualities());
 				first.setFilename(value.getFilename());
-				// L1.add(first);
 
 			} else {
 
@@ -93,7 +92,6 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 				second.setBases(value.getBases());
 				second.setQual(value.getQualities());
 				second.setFilename(value.getFilename());
-				// L2.add(second);
 
 			}
 
@@ -140,6 +138,7 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 	private void align(Context context) throws IOException, InterruptedException {
 
 		result = mem.align(L1, L2);
+		
 
 		for (int i = 0; i < result.length; i++) {
 
