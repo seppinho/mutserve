@@ -9,6 +9,15 @@ import genepi.cnv.objects.SingleRead;
 import genepi.cnv.util.ReferenceUtil;
 import genepi.hadoop.CacheStore;
 import genepi.io.FileUtil;
+import htsjdk.samtools.DefaultSAMRecordFactory;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMLineParser;
+import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord.SAMTagAndValue;
+import htsjdk.samtools.SAMSequenceRecord;
+import htsjdk.samtools.SamReader;
+import htsjdk.samtools.SamReaderFactory;
+import htsjdk.samtools.ValidationStringency;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -28,6 +37,7 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 	List<ShortRead> L2;
 	Text out;
 	String[] result;
+	String ref;
 	int countReads;
 	int trimBasesStart;
 	int trimBasesEnd;
@@ -52,6 +62,8 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 		String referencePath = cache.getArchive("reference");
 		trimBasesStart = context.getConfiguration().getInt("trimReadsStart", 0);
 		trimBasesEnd = context.getConfiguration().getInt("trimReadsEnd", 0);
+		ref = context.getConfiguration().get("reference");
+
 
 		/** load JNI */
 		System.load(jbwaLib);
@@ -154,6 +166,17 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 			String tiles[] = read.split("\t+\n");
 
 			for (String tile : tiles) {
+				
+				SAMLineParser parser = new SAMLineParser(new DefaultSAMRecordFactory(), 
+		                ValidationStringency.SILENT, new SAMFileHeader(), 
+		                null, null); 
+				
+				SAMRecord samRecord = parser.parseLine(tile);
+				
+				if(samRecord.getIntegerAttribute("AS")<30){
+					continue;
+				}
+				
 				out.clear();
 				out.set(tile);
 				context.write(new Text(sample), out);

@@ -111,7 +111,7 @@ public class SingleAlignerMap extends Mapper<Object, SequencedFragment, Text, Te
 					// FLAGS REVERSE, PRIMARY ALIGNMENT
 					samRecordBulder.append(16);
 				} else {
-					// dont output secondary alignments!!
+					// don't output secondary alignments!!
 					continue;
 				}
 
@@ -121,7 +121,7 @@ public class SingleAlignerMap extends Mapper<Object, SequencedFragment, Text, Te
 					// FLAGS FORWARD, PRIMARY ALIGNMENT
 					samRecordBulder.append(0);
 				} else {
-					// dont output secondary alignments!!
+					// don't output secondary alignments!!
 					continue;
 				}
 			}

@@ -30,8 +30,6 @@ public class AlignmentStepTest {
 
 	public static final boolean VERBOSE = true;
 
-	public static final String INPUT = "input";
-
 	@BeforeClass
 	public static void setUp() throws Exception {
 		TestCluster.getInstance().start();
@@ -47,11 +45,16 @@ public class AlignmentStepTest {
 
 		String inputFolder = "test-data/mtdna/fastqse/";
 		String reference = "rcrs";
-
-		importInputdata(inputFolder);
+		String hdfsFolder = "inputSE";
+		
+		importInputdata(inputFolder,hdfsFolder);
 
 		// create workflow context
 		WorkflowTestContext context = buildContext(inputFolder, reference);
+		
+		context.setInput("input", hdfsFolder);
+		context.setInput("inType", "se");
+		context.setOutput("bwaOut", "cloudgene-bwaOutSe");
 
 		// create step instance
 		AlignTool align = new AlignnMock("files");
@@ -60,7 +63,7 @@ public class AlignmentStepTest {
 
 		assertTrue(result);
 
-		HdfsUtil.merge(new File("test-data/tmp/bwaOut/result.txt").getPath(), "cloudgene-bwaOut/0", false);
+		HdfsUtil.merge(new File("test-data/tmp/bwaOut/result.txt").getPath(), "cloudgene-bwaOutSe/0", false);
 
 		try (BufferedReader br = new BufferedReader(new FileReader(new File("test-data/tmp/bwaOut/result.txt")))) {
 			String line;
@@ -78,6 +81,7 @@ public class AlignmentStepTest {
 			br.close();
 			///bwa mem rcrs.fasta small_small.fastq_| wc -l
 			assertEquals(317, i);
+			FileUtil.deleteDirectory("test/tmp");
 
 		}
 	}
@@ -87,14 +91,17 @@ public class AlignmentStepTest {
 
 		String inputFolder = "test-data/mtdna/fastqpe/";
 		String reference = "rcrs";
-
-		importInputdata(inputFolder);
+		String hdfsFolder ="inputPE";
+		
+		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
 		WorkflowTestContext context = buildContext(inputFolder, reference);
 
+		context.setInput("input", hdfsFolder);
 		context.setInput("inType", "pe");
 		context.setInput("chunkLength", "0");
+		context.setOutput("bwaOut", "cloudgene-bwaOutPe");
 
 		// create step instance
 		AlignTool align = new AlignnMock("files");
@@ -103,7 +110,7 @@ public class AlignmentStepTest {
 
 		assertTrue(result);
 
-		HdfsUtil.merge(new File("test-data/tmp/bwaOut/result.txt").getPath(), "cloudgene-bwaOut/0", false);
+		HdfsUtil.merge(new File("test-data/tmp/bwaOut/result.txt").getPath(), "cloudgene-bwaOutPe/0", false);
 
 		try (BufferedReader br = new BufferedReader(new FileReader(new File("test-data/tmp/bwaOut/result.txt")))) {
 			String line;
@@ -117,9 +124,11 @@ public class AlignmentStepTest {
 
 			}
 			///bwa mem rcrs.fasta small_r1.fastq small_r2.fastq_small | wc -l
-			assertEquals(201, i);
+			// there is one additional line which is ignore
+			assertEquals(200, i);
 			System.out.println(i);
 			br.close();
+			FileUtil.deleteDirectory("test/tmp");
 
 		}
 	}
@@ -157,11 +166,7 @@ public class AlignmentStepTest {
 		WorkflowTestContext context = new WorkflowTestContext();
 
 		context.setVerbose(VERBOSE);
-		context.setInput("input", INPUT);
 		context.setInput("reference", ref);
-		context.setInput("inType", "se");
-
-		context.setOutput("bwaOut", "cloudgene-bwaOut");
 
 		FileUtil.createDirectory(file.getAbsolutePath() + "/bwaOut");
 
@@ -169,11 +174,11 @@ public class AlignmentStepTest {
 
 	}
 
-	private void importInputdata(String folder) {
+	private void importInputdata(String folder, String input) {
 		System.out.println("Import Data:");
 		String[] files = FileUtil.getFiles(folder, "*.*");
 		for (String file : files) {
-			String target = HdfsUtil.path(INPUT, FileUtil.getFilename(file));
+			String target = HdfsUtil.path(input, FileUtil.getFilename(file));
 			System.out.println("  Import " + file + " to " + target);
 			HdfsUtil.put(file, target);
 		}
