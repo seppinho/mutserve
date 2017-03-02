@@ -11,8 +11,9 @@ import htsjdk.samtools.*;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.seqdoop.hadoop_bam.SAMRecordWritable;
 
-public class SortReducer extends Reducer<ReadKey, Text, Text, Text> {
+public class SortReducer extends Reducer<ReadKey, SAMRecordWritable, Text, Text> {
 
 	private String output;
 	SAMFileHeader header;
@@ -33,7 +34,7 @@ public class SortReducer extends Reducer<ReadKey, Text, Text, Text> {
 
 	}
 
-	protected void reduce(ReadKey key, java.lang.Iterable<Text> values,
+	protected void reduce(ReadKey key, java.lang.Iterable<SAMRecordWritable> values,
 			Context context) {
 
 		String name = key.getSample() + "_" + key.getSequence() + ".bam";
@@ -44,13 +45,12 @@ public class SortReducer extends Reducer<ReadKey, Text, Text, Text> {
 			header.addSequence(new SAMSequenceRecord(key.getSequence(), Integer.valueOf(length)));
 		}
 
-		SAMLineParser parser = new SAMLineParser(header);
+		//S//AMLineParser parser = new SAMLineParser(header);
 		SAMFileWriter bamWriter = new SAMFileWriterFactory().makeBAMWriter(
 				header, true, new File(name));
 
-		for (Text value : values) {
-			SAMRecord recFromText = parser.parseLine(value.toString());
-			bamWriter.addAlignment(recFromText);
+		for (SAMRecordWritable value : values) {
+			bamWriter.addAlignment(value.get());
 		}
 
 		bamWriter.close();

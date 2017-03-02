@@ -70,14 +70,14 @@ public class SortStepTest {
 			HdfsUtil.get(file, out);
 		}
 
-		final SamReader reader = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX)
-				.validationStringency(ValidationStringency.SILENT)
+		final SamReader reader = SamReaderFactory.make().validationStringency(ValidationStringency.SILENT)
 				.samRecordFactory(DefaultSAMRecordFactory.getInstance()).open(new File(out));
 
 		SAMRecordIterator s = reader.iterator();
 		int i = 0;
 		while (s.hasNext()) {
-			s.next();
+			SAMRecord rec = s.next();
+			System.out.println(rec.getSAMString());
 			i++;
 		}
 

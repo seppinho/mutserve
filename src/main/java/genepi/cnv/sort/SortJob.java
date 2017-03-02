@@ -9,6 +9,7 @@ import genepi.hadoop.HadoopJob;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.seqdoop.hadoop_bam.SAMRecordWritable;
 
 public class SortJob extends HadoopJob {
 
@@ -29,7 +30,7 @@ public class SortJob extends HadoopJob {
 		job.setReducerClass(SortReducer.class);
 
 		job.setMapOutputKeyClass(ReadKey.class);
-		job.setMapOutputValueClass(Text.class);
+		job.setMapOutputValueClass(SAMRecordWritable.class);
 
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
