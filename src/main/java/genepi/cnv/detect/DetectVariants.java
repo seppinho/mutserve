@@ -3,6 +3,7 @@ package genepi.cnv.detect;
 import genepi.cnv.objects.PositionObject;
 import genepi.cnv.util.ReferenceUtil;
 import genepi.cnv.util.StatUtil;
+import genepi.hadoop.HdfsUtil;
 import genepi.io.table.writer.CsvTableWriter;
 
 import java.text.DecimalFormat;
@@ -56,7 +57,7 @@ public class DetectVariants {
 
 		try {
 
-			FileSystem fileSystem = FileSystem.get(new Configuration());
+			FileSystem fileSystem = FileSystem.get(HdfsUtil.getConfiguration());
 			FileStatus[] files = fileSystem.listStatus(new Path(hdfsFolder));
 
 			Text line = new Text();

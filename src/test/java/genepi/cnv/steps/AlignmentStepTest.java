@@ -85,6 +85,53 @@ public class AlignmentStepTest {
 
 		}
 	}
+	
+	
+	@Test
+	public void Alignment2SETest() throws IOException {
+
+		String inputFolder = "test-data/mtdna/fastqse/";
+		String reference = "rcrs";
+		String hdfsFolder = "inputSE";
+		
+		importInputdata(inputFolder,hdfsFolder);
+
+		// create workflow context
+		WorkflowTestContext context = buildContext(inputFolder, reference);
+		
+		context.setInput("input", hdfsFolder);
+		context.setInput("inType", "se");
+		context.setOutput("bwaOut", "cloudgene-bwaOutSe");
+
+		// create step instance
+		AlignTool align = new AlignnMock("files");
+
+		boolean result = align.run(context);
+
+		assertTrue(result);
+
+		HdfsUtil.merge(new File("test-data/tmp/bwaOut/result.txt").getPath(), "cloudgene-bwaOutSe/0", false);
+
+		try (BufferedReader br = new BufferedReader(new FileReader(new File("test-data/tmp/bwaOut/result.txt")))) {
+			String line;
+			int i = 0;
+			while ((line = br.readLine()) != null) {
+
+				if (line.length() > 0) {
+
+					if (line.contains("QS6LK:01441:00464")) {
+						assertEquals("23S25M1D48M1I93M", line.split("\t")[6]);
+					}
+					i++;
+				}
+			}
+			br.close();
+			///bwa mem rcrs.fasta small_small.fastq_| wc -l
+			assertEquals(317, i);
+			FileUtil.deleteDirectory("test/tmp");
+
+		}
+	}
 
 	@Test
 	public void AlignmentPETest() throws IOException {
