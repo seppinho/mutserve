@@ -72,7 +72,7 @@ public class ImporterBamHttp implements IImporter {
 	@Override
 	public boolean importFiles(String extension) {
 
-		Configuration conf = new Configuration();
+		Configuration conf = HdfsUtil.getConfiguration();
 		FileSystem fileSystem;
 		try {
 			fileSystem = FileSystem.get(conf);

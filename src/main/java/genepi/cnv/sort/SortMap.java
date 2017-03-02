@@ -11,6 +11,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 import genepi.cnv.objects.ReadKey;
+import genepi.hadoop.HdfsUtil;
 
 public class SortMap extends Mapper<Object, Text, ReadKey, Text> {
 
@@ -35,6 +36,9 @@ public class SortMap extends Mapper<Object, Text, ReadKey, Text> {
 		text = new Text();
 		length = context.getConfiguration().get("LN");
 		// sam = new SAMRecordWritable();
+		
+
+		HdfsUtil.setDefaultConfiguration(context.getConfiguration());
 
 	}
 

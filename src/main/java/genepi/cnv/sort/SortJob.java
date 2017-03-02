@@ -12,12 +12,6 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 
 public class SortJob extends HadoopJob {
 
-	private String statistics;
-
-	private String outputSplits;
-
-	private String localOutput;
-
 	public SortJob(String name) {
 
 		super(name);
@@ -50,23 +44,9 @@ public class SortJob extends HadoopJob {
 	public void setOutput(String output) {
 		getConfiguration().set("OUTPUT", output);
 		super.setOutput(output + "-temp");
-		this.outputSplits = output;
 	}
 	
 	public void setRefLength(String length) {
 		getConfiguration().set("LN", length);
 	}
-
-	public void setLocalOutput(String localOutput) {
-		this.localOutput = localOutput;
-	}
-
-	public void setStatistics(String statistics) {
-		this.statistics = statistics;
-	}
-
-	public String getStatistics() {
-		return statistics;
-	}
-
 }

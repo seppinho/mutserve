@@ -23,6 +23,8 @@ public class SortReducer extends Reducer<ReadKey, Text, Text, Text> {
 	protected void setup(Context context) throws IOException,
 			InterruptedException {
 
+		HdfsUtil.setDefaultConfiguration(context.getConfiguration());
+		
 		output = context.getConfiguration().get("OUTPUT");
 
 		header = new SAMFileHeader();
