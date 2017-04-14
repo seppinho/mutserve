@@ -1,10 +1,14 @@
 package genepi.cnv.pileup;
 
+import genepi.cnv.sort.SortTool;
 import genepi.cnv.util.HadoopJobStep;
 import genepi.hadoop.HdfsUtil;
+import genepi.hadoop.PreferenceStore;
 import genepi.hadoop.common.WorkflowContext;
 import genepi.hadoop.io.HdfsLineWriter;
+import genepi.io.FileUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -16,6 +20,8 @@ public class PileupTool extends HadoopJobStep {
 	public boolean run(WorkflowContext context) {
 
 		String type = context.get("inType");
+		
+		String folder = getFolder(PileupTool.class);
 
 		String input;
 		if (type.equals("se") || type.equals("pe")) {
@@ -31,14 +37,32 @@ public class PileupTool extends HadoopJobStep {
 		String reference = context.get("reference");
 		Boolean baq = Boolean.valueOf(context.get("baq"));
 		
-		PileupJob bamJob = new PileupJob("Analyse BAM");
+		PileupJob bamJob = new PileupJob("Analyse BAM"){
+			@Override
+			protected void readConfigFile() {
+				File file = new File(folder + "/" + CONFIG_FILE);
+				if (file.exists()) {
+					log.info("Loading distributed configuration file " + folder + "/" + CONFIG_FILE + "...");
+					PreferenceStore preferenceStore = new PreferenceStore(file);
+					preferenceStore.write(getConfiguration());
+					for (Object key : preferenceStore.getKeys()) {
+						log.info("  " + key + ": " + preferenceStore.getString(key.toString()));
+					}
+
+				} else {
+
+					log.info("No distributed configuration file (" + CONFIG_FILE + ") available.");
+
+				}
+			}
+		};
 		bamJob.setInput(input);
 		bamJob.setOutput(output);
 		bamJob.setMappingQuality(mappingQual);
 		bamJob.setBaseQuality(baseQual);
 		bamJob.setAlignmentQuality(alignQual);
 		bamJob.setBAQ(baq);
-		bamJob.setReference(reference);
+		bamJob.setReference(FileUtil.path(folder,reference));
 		bamJob.setJarByClass(PileupTool.class);
 
 		boolean successful = executeHadoopJob(bamJob, context);

@@ -35,20 +35,21 @@ public class SortStepTest {
 
 	@AfterClass
 	public static void tearDown() throws Exception {
-		//TestCluster.getInstance().stop();
+		TestCluster.getInstance().stop();
 	}
 
 	@Test
-	public void SortTest() throws IOException {
+	public void SortTestSE() throws IOException {
 
 		String inputFolder = "test-data/mtdna/fastqse/";
 		String reference = "rcrs";
 		String hdfsFolder = "input";
+		String type = "se";
 
 		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
-		WorkflowTestContext context = buildContext(inputFolder, reference);
+		WorkflowTestContext context = buildContext(inputFolder, reference,type);
 
 		// create step instance
 		AlignTool align = new AlignnMock("files");
@@ -85,6 +86,56 @@ public class SortStepTest {
 
 		assertEquals(317, i);
 		;
+
+	}
+	
+	@Test
+	public void SortTestPE() throws IOException {
+
+		String inputFolder = "test-data/mtdna/fastqpe/";
+		String reference = "rcrs";
+		String hdfsFolder = "input";
+		String type = "pe";
+
+		importInputdata(inputFolder, hdfsFolder);
+
+		// create workflow context
+		WorkflowTestContext context = buildContext(inputFolder, reference, type);
+
+		// create step instance
+		AlignTool align = new AlignnMock("files");
+		context.setInput("chunkLength", "0");
+
+		boolean result = align.run(context);
+
+		assertTrue(result);
+
+		SortTool sort = new SortMock("files");
+		result = sort.run(context);
+		assertTrue(result);
+
+		assertTrue(HdfsUtil.exists("outputBam"));
+
+		List<String> files = HdfsUtil.getFiles("outputBam");
+		String out = "test-data/tmp/out.bam";
+
+		for (String file : files) {
+			HdfsUtil.get(file, out);
+		}
+
+		final SamReader reader = SamReaderFactory.make().validationStringency(ValidationStringency.SILENT)
+				.samRecordFactory(DefaultSAMRecordFactory.getInstance()).open(new File(out));
+
+		SAMRecordIterator s = reader.iterator();
+
+		int i = 0;
+		while (s.hasNext()) {
+			SAMRecord rec = s.next();
+			i++;
+			System.out.println("sorted " + rec.getSAMString());
+		}
+		System.out.println("AMOUNT " + i);
+		
 
 	}
 
@@ -127,7 +178,7 @@ public class SortStepTest {
 		return step.run(context);
 	}
 
-	protected WorkflowTestContext buildContext(String input, String ref) {
+	protected WorkflowTestContext buildContext(String input, String ref, String type) {
 
 		File file = new File("test-data/tmp");
 		if (file.exists()) {
@@ -138,7 +189,7 @@ public class SortStepTest {
 		WorkflowTestContext context = new WorkflowTestContext();
 
 		context.setInput("input", "input");
-		context.setInput("inType", "se");
+		context.setInput("inType", type);
 		context.setVerbose(VERBOSE);
 		context.setInput("reference", ref);
 		context.setOutput("bwaOut", "cloudgene-bwaOutSe");

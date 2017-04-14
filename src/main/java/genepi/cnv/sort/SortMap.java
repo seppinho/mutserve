@@ -24,7 +24,7 @@ public class SortMap extends Mapper<Object, Text, ReadKey, Text> {
 		if (!value.toString().trim().equals("")) {
 			String tilesValue[] = value.toString().split("\t", 2);
 			String sample = tilesValue[0].replaceAll(".fastq", "").replaceAll(".fq", "");
-
+			
 			String[] tiles = tilesValue[1].split("\t");
 			String readName = tiles[0].trim();
 			String contig = tiles[2].trim();

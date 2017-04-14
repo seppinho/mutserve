@@ -42,12 +42,13 @@ public class SortReducer extends Reducer<ReadKey, Text, Text, Text> {
 		
 		name = name.replaceAll(":", "_");
 		
-		
 		SAMFileWriter bamWriter = new SAMFileWriterFactory().makeBAMWriter(header, true, new File(name));
 		
 		SAMLineParser parser = new SAMLineParser(header);
 
+		int i = 0;
 		for (Text value : values) {
+			i++;
 			bamWriter.addAlignment(parser.parseLine(value.toString()));
 		}
 
