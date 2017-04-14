@@ -151,12 +151,11 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 
 		result = mem.align(L1, L2);
 		
-
 		for (int i = 0; i < result.length; i++) {
 
 			String read = result[i];
 			String sample = ((SingleRead) L1.get(i / 2)).getFilename();
-
+			
 			/**
 			 * hack to write a valid SAM since BWA MEM outputs tabs at the end,
 			 * samtools can not handle this

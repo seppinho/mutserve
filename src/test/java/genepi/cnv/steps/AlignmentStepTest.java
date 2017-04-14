@@ -32,7 +32,7 @@ public class AlignmentStepTest {
 
 	@AfterClass
 	public static void tearDown() throws Exception {
-		TestCluster.getInstance().stop();
+		//TestCluster.getInstance().stop();
 	}
 
 	@Test
@@ -109,9 +109,11 @@ public class AlignmentStepTest {
 
 		assertTrue(result);
 
-		HdfsUtil.merge(new File("test-data/tmp/bwaOut/result.txt").getPath(), "cloudgene-bwaOutPe/0", false);
+		String tmpFile = "test-data/tmp/bwaOut/result.txt";
+		HdfsUtil.merge(new File(tmpFile).getPath(), "cloudgene-bwaOutPe/0", false);
 
-		try (BufferedReader br = new BufferedReader(new FileReader(new File("test-data/tmp/bwaOut/result.txt")))) {
+		try (BufferedReader br = new BufferedReader(new FileReader(new File(tmpFile)))) {
+			
 			String line;
 			int i = 0;
 			while ((line = br.readLine()) != null) {
@@ -121,6 +123,10 @@ public class AlignmentStepTest {
 						assertEquals("rCRS", splits[3]);
 						assertEquals("101M", splits[6]);
 					}
+					//if(line.contains("HWI-ST301L:236:C0EJ5ACXX:3:1101:15916:2104")){
+						System.out.println("aligned \t " + line);
+					
+					//}
 					i++;
 				}
 

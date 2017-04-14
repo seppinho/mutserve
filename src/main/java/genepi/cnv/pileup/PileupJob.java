@@ -84,9 +84,6 @@ public class PileupJob extends HadoopJob {
 
 		cache.addArchive("reference", hdfsArchivePath);
 
-		
-		//set(CRAMInputFormat.REFERENCE_SOURCE_PATH_PROPERTY,
-		//		getFileSystem().getHomeDirectory() + "/" + REF_DIRECTORY + "/" + fasta);
 	}
 
 	@Override

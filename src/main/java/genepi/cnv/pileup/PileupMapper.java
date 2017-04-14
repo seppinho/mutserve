@@ -69,8 +69,6 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 					.replace(".cram", "");
 		}
 
-		mapQual = context.getConfiguration().getInt("mapQual", 20);
-
 		ref = context.getConfiguration().get("reference");
 
 		CacheStore cache = new CacheStore(context.getConfiguration());
@@ -149,6 +147,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 					}
 				}
 			}
+			
 
 			analyseBam(context, value.get());
 
@@ -159,8 +158,13 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 
 	private void analyseBam(Context context, SAMRecord samRecord) throws Exception {
 
+		
+		if(samRecord.getReadName().contains("HWI-ST301L:236:C0EJ5ACXX:3:1101:15916:2104")){
+			System.out.println(samRecord.getSAMString());
+			System.out.println("UIU");
+		}
 		context.getCounter("mtdna", "OVERALL-READS").increment(1);
-
+		
 		if (samRecord.getReferenceName().equals(referenceName)) {
 
 			if (samRecord.getMappingQuality() >= mapQual) {
@@ -171,10 +175,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 					if (!samRecord.getDuplicateReadFlag()) {
 
 						if (samRecord.getReadLength() > 25) {
-							// Attention: We changed the jbwa version, that a AS
-							// TAG
-							// is
-							// included
+							
 							if (ReferenceUtil.getTagFromSamRecord(samRecord.getAttributes(), "AS") >= alignQual) {
 
 								if (baq) {
