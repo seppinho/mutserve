@@ -31,7 +31,7 @@ public class SingleAlignerMap extends Mapper<Object, SequencedFragment, Text, Te
 	private Text outValue = new Text();
 	private SAMFileHeader header = new SAMFileHeader();
 	private SAMLineParser parser = null;
-	StringBuilder samRecordBulder = new StringBuilder();
+	StringBuilder samRecordBuilder = new StringBuilder();
 
 	enum Counters {
 
@@ -90,7 +90,7 @@ public class SingleAlignerMap extends Mapper<Object, SequencedFragment, Text, Te
 			}
 
 			// reset builder
-			samRecordBulder.setLength(0);
+			samRecordBuilder.setLength(0);
 			
 			//as defined by BWA
 			if(alignedRead.getAs()<30) {
@@ -98,8 +98,8 @@ public class SingleAlignerMap extends Mapper<Object, SequencedFragment, Text, Te
 			}
 
 			// READNAME
-			samRecordBulder.append(key.toString());
-			samRecordBulder.append("\t");
+			samRecordBuilder.append(key.toString());
+			samRecordBuilder.append("\t");
 
 			// see for secondary:
 			// https://github.com/lh3/bwa/blob/master/bwamem.h
@@ -109,7 +109,7 @@ public class SingleAlignerMap extends Mapper<Object, SequencedFragment, Text, Te
 
 				if (alignedRead.getSecondary() < 0) {
 					// FLAGS REVERSE, PRIMARY ALIGNMENT
-					samRecordBulder.append(16);
+					samRecordBuilder.append(16);
 				} else {
 					// don't output secondary alignments!!
 					continue;
@@ -119,74 +119,74 @@ public class SingleAlignerMap extends Mapper<Object, SequencedFragment, Text, Te
 
 				if (alignedRead.getSecondary() < 0) {
 					// FLAGS FORWARD, PRIMARY ALIGNMENT
-					samRecordBulder.append(0);
+					samRecordBuilder.append(0);
 				} else {
 					// don't output secondary alignments!!
 					continue;
 				}
 			}
 
-			samRecordBulder.append("\t");
+			samRecordBuilder.append("\t");
 
 			// REFERENCE
-			samRecordBulder.append(alignedRead.getChrom());
+			samRecordBuilder.append(alignedRead.getChrom());
 
-			samRecordBulder.append("\t");
+			samRecordBuilder.append("\t");
 
 			// LEFT MOST POS
-			samRecordBulder.append(alignedRead.getPos());
+			samRecordBuilder.append(alignedRead.getPos());
 
-			samRecordBulder.append("\t");
+			samRecordBuilder.append("\t");
 
 			// QUAL
-			samRecordBulder.append(alignedRead.getMQual());
+			samRecordBuilder.append(alignedRead.getMQual());
 
-			samRecordBulder.append("\t");
+			samRecordBuilder.append("\t");
 
 			// CIGAR
-			samRecordBulder.append(alignedRead.getCigar());
+			samRecordBuilder.append(alignedRead.getCigar());
 
-			samRecordBulder.append("\t");
+			samRecordBuilder.append("\t");
 
 			// RNEXT (REF NAME OF THE MATE)
 			// PNEXT (POS OF THE MATE) LENGTH OF TEMPLATE
-			samRecordBulder.append("*\t0\t0\t");
+			samRecordBuilder.append("*\t0\t0\t");
 
 			// SEQ REVERSE
 			if (alignedRead.getStrand() == '-') {
 				byte[] temp = value.getSequence().toString().getBytes();
 				SequenceUtil.reverseComplement(temp);
-				samRecordBulder.append(new String(temp));
+				samRecordBuilder.append(new String(temp));
 			}
 
 			else {
 				// SEQ FORWARD
-				samRecordBulder.append(value.getSequence());
+				samRecordBuilder.append(value.getSequence());
 			}
 
-			samRecordBulder.append("\t");
+			samRecordBuilder.append("\t");
 
 			// QUAL REVERSE
 			if (alignedRead.getStrand() == '-') {
 				byte[] temp = value.getQuality().toString().getBytes();
 				SequenceUtil.reverseQualities(temp);
-				samRecordBulder.append(new String(temp));
+				samRecordBuilder.append(new String(temp));
 			} else {
 				// QUAL FORWARD
-				samRecordBulder.append(value.getQuality());
+				samRecordBuilder.append(value.getQuality());
 			}
 
-			samRecordBulder.append("\t");
+			samRecordBuilder.append("\t");
 
 			// jbwa fork
-			samRecordBulder.append("NM:i:" + alignedRead.getNm());
-			samRecordBulder.append("\t");
-			samRecordBulder.append("AS:i:" + alignedRead.getAs());
+			samRecordBuilder.append("NM:i:" + alignedRead.getNm());
+			samRecordBuilder.append("\t");
+			samRecordBuilder.append("AS:i:" + alignedRead.getAs());
 
-			SAMRecord samRecord = parser.parseLine(samRecordBulder.toString());
+			SAMRecord samRecord = parser.parseLine(samRecordBuilder.toString());
 
 			outValue.set(filename + "\t" + samRecord.getSAMString());
-
+			
 			context.write(null, outValue);
 
 		}
