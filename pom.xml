@@ -78,7 +78,7 @@
 								<includes>
 									<include>genepi:genepi-io:*:*</include>
 									<include>genepi:genepi-hadoop:*:*</include>
-									<include>seqdoop:hadoop-bam:*:*</include>
+									<include>org.seqdoop:hadoop-bam:*:*</include>
 									<include>gatk:gatk-jar:*:*</include>
 									<include>net.sf.opencsv:opencsv:*:*</include>
 								</includes>
@@ -116,19 +116,19 @@
 		<dependency>
 			<groupId>genepi</groupId>
 			<artifactId>genepi-io</artifactId>
-			<version>1.0.3</version>
+			<version>1.0.4</version>
 		</dependency>
 
 		<dependency>
 			<groupId>genepi</groupId>
 			<artifactId>genepi-hadoop</artifactId>
-			<version>mr1-1.1.3</version>
+			<version>mr1-1.1.5</version>
 		</dependency>
 
 		<dependency>
-			<groupId>seqdoop</groupId>
+			<groupId>org.seqdoop</groupId>
 			<artifactId>hadoop-bam</artifactId>
-			<version>7.7.1</version>
+			<version>7.8.0</version>
 		</dependency>
 
 		<dependency>
@@ -155,33 +155,19 @@
 			<artifactId>commons-math3</artifactId>
 			<version>3.2</version>
 		</dependency>
-
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>21.0</version>
-		</dependency>
 		
 				<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-hdfs</artifactId>
-			<version>2.5.0-cdh5.3.8</version>
+			<version>2.6.0-cdh5.10.0</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-<dependency>
-    <groupId>com.google.guava</groupId>
-    <artifactId>guava</artifactId>
-    <version>21.0</version>
-</dependency>
-		
 
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-common</artifactId>
-			<version>2.5.0-cdh5.3.8</version>
+			<version>2.6.0-cdh5.10.0</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
@@ -189,7 +175,7 @@
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-test</artifactId>
-			<version>2.5.0-mr1-cdh5.3.8</version>
+			<version>2.6.0-mr1-cdh5.10.0</version>
 			<scope>test</scope>
 </dependency>
 

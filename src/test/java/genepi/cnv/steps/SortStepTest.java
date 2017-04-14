@@ -35,7 +35,7 @@ public class SortStepTest {
 
 	@AfterClass
 	public static void tearDown() throws Exception {
-		TestCluster.getInstance().stop();
+		//TestCluster.getInstance().stop();
 	}
 
 	@Test
@@ -77,7 +77,9 @@ public class SortStepTest {
 		int i = 0;
 		while (s.hasNext()) {
 			SAMRecord rec = s.next();
-			System.out.println(rec.getSAMString());
+			if(rec.getReadName().equals("QS6LK:01421:01280")){
+				assertEquals("rCRS",rec.getContig());
+			}
 			i++;
 		}
 
