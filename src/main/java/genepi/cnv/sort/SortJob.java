@@ -30,7 +30,7 @@ public class SortJob extends HadoopJob {
 		job.setReducerClass(SortReducer.class);
 
 		job.setMapOutputKeyClass(ReadKey.class);
-		job.setMapOutputValueClass(SAMRecordWritable.class);
+		job.setMapOutputValueClass(Text.class);
 
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);

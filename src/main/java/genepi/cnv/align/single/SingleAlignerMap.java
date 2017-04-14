@@ -178,7 +178,6 @@ public class SingleAlignerMap extends Mapper<Object, SequencedFragment, Text, Te
 
 			samRecordBuilder.append("\t");
 
-			// jbwa fork
 			samRecordBuilder.append("NM:i:" + alignedRead.getNm());
 			samRecordBuilder.append("\t");
 			samRecordBuilder.append("AS:i:" + alignedRead.getAs());

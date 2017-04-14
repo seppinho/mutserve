@@ -5,8 +5,6 @@ import genepi.hadoop.common.WorkflowContext;
 import genepi.hadoop.common.WorkflowStep;
 import genepi.hadoop.importer.IImporter;
 import genepi.hadoop.importer.ImporterFactory;
-import genepi.hadoop.importer.ImporterFtp;
-import genepi.hadoop.importer.ImporterHttp;
 import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.fastq.FastqReader;
 
@@ -362,13 +360,13 @@ public class InputValidation extends WorkflowStep {
 
 						if (importer != null) {
 
-							// if http url and bam file, use our own importer!
+						/*	// if http url and bam file, use our own importer!
 							if ((importer instanceof ImporterHttp || importer instanceof ImporterFtp)
 									&& context.get("inType").equals("bam")) {
 								importer = new ImporterBamHttp(url, target);
 								context.updateTask("Import only mitochondrial part from " + url2 + "...",
 										WorkflowContext.RUNNING);
-							}
+							}*/
 
 							boolean successful = importer.importFiles(".bam|.fq|.fastq|.gz");
 
