@@ -19,6 +19,7 @@ import genepi.io.FileUtil;
 public class PileupJob extends HadoopJob {
 
 	private String reference;
+	private String folder;
 
 	private long overall;
 	private long goodQual;
@@ -61,28 +62,15 @@ public class PileupJob extends HadoopJob {
 	@Override
 	protected void setupDistributedCache(CacheStore cache) {
 
-		String archive = ReferenceUtil.getSelectedReferenceArchive(reference);
-		String fasta = ReferenceUtil.getSelectedReferenceFasta(reference);
+		String archive = FileUtil.path(folder, ReferenceUtil.getSelectedReferenceArchive(reference));
 
-		// get path by class
-		String folder = getFolder(PileupJob.class);
-		
-		String localArchivePath = FileUtil.path(folder, archive);
-		String localFastaPath = FileUtil.path(folder, fasta);
-		
-		String hdfsArchivePath = HdfsUtil.path(Server.REF_DIRECTORY, archive);
-		String hdfsFastaPath = HdfsUtil.path(Server.REF_DIRECTORY, fasta);
-		
-		if (!HdfsUtil.exists(hdfsArchivePath)) {
-			HdfsUtil.put(localArchivePath, hdfsArchivePath);
-		}
-		
-		if (!HdfsUtil.exists(hdfsFastaPath)) {
-			HdfsUtil.put(localFastaPath, hdfsFastaPath);
-			HdfsUtil.put(localFastaPath+".fai", hdfsFastaPath+".fai");
+		String hdfsPathRef = HdfsUtil.path(Server.REF_DIRECTORY, archive);
+
+		if (!HdfsUtil.exists(hdfsPathRef)) {
+			HdfsUtil.put(archive, hdfsPathRef);
 		}
 
-		cache.addArchive("reference", hdfsArchivePath);
+		cache.addArchive("reference", hdfsPathRef);
 
 	}
 
@@ -258,6 +246,10 @@ public class PileupJob extends HadoopJob {
 
 	public void setRevRead(long revRead) {
 		this.revRead = revRead;
+	}
+
+	public void setFolder(String folder) {
+		this.folder = folder;
 	}
 
 }

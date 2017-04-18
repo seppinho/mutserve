@@ -1,5 +1,6 @@
 package genepi.cnv.pileup;
 
+import genepi.cnv.align.AlignTool;
 import genepi.cnv.sort.SortTool;
 import genepi.cnv.util.HadoopJobStep;
 import genepi.hadoop.HdfsUtil;
@@ -62,8 +63,9 @@ public class PileupTool extends HadoopJobStep {
 		bamJob.setBaseQuality(baseQual);
 		bamJob.setAlignmentQuality(alignQual);
 		bamJob.setBAQ(baq);
-		bamJob.setReference(FileUtil.path(folder,reference));
+		bamJob.setReference(reference);
 		bamJob.setJarByClass(PileupTool.class);
+		bamJob.setFolder(folder);
 
 		boolean successful = executeHadoopJob(bamJob, context);
 

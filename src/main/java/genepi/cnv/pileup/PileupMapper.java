@@ -158,11 +158,6 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 
 	private void analyseBam(Context context, SAMRecord samRecord) throws Exception {
 
-		
-		if(samRecord.getReadName().contains("HWI-ST301L:236:C0EJ5ACXX:3:1101:15916:2104")){
-			System.out.println(samRecord.getSAMString());
-			System.out.println("UIU");
-		}
 		context.getCounter("mtdna", "OVERALL-READS").increment(1);
 		
 		if (samRecord.getReferenceName().equals(referenceName)) {
