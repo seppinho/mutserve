@@ -13,10 +13,6 @@ import htsjdk.samtools.DefaultSAMRecordFactory;
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMLineParser;
 import htsjdk.samtools.SAMRecord;
-import htsjdk.samtools.SAMRecord.SAMTagAndValue;
-import htsjdk.samtools.SAMSequenceRecord;
-import htsjdk.samtools.SamReader;
-import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.ValidationStringency;
 
 import org.apache.hadoop.io.Text;
@@ -25,7 +21,6 @@ import org.apache.hadoop.mapreduce.Reducer;
 import com.github.lindenb.jbwa.jni.BwaIndex;
 import com.github.lindenb.jbwa.jni.BwaMem;
 import com.github.lindenb.jbwa.jni.ShortRead;
-import com.google.common.collect.Iterators;
 
 public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> {
 

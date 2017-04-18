@@ -1,13 +1,10 @@
 package genepi.cnv.pileup;
 
-import genepi.cnv.align.AlignTool;
-import genepi.cnv.sort.SortTool;
 import genepi.cnv.util.HadoopJobStep;
 import genepi.hadoop.HdfsUtil;
 import genepi.hadoop.PreferenceStore;
 import genepi.hadoop.common.WorkflowContext;
 import genepi.hadoop.io.HdfsLineWriter;
-import genepi.io.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -114,7 +111,6 @@ public class PileupTool extends HadoopJobStep {
 				
 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
