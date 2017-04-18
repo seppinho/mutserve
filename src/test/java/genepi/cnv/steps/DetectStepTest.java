@@ -6,13 +6,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.math.MathException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import genepi.cnv.align.AlignTool;
+import genepi.cnv.detect.DetectTool;
 import genepi.cnv.pileup.PileupTool;
 import genepi.cnv.sort.SortTool;
+import genepi.cnv.util.RawFileAnalyser;
 import genepi.cnv.util.TestCluster;
 import genepi.cnv.util.WorkflowTestContext;
 import genepi.hadoop.HdfsUtil;
@@ -26,7 +29,7 @@ import htsjdk.samtools.SamReader;
 import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.ValidationStringency;
 
-public class PileupStepTest {
+public class DetectStepTest {
 
 	public static final boolean VERBOSE = true;
 
@@ -41,7 +44,7 @@ public class PileupStepTest {
 	}
 
 	@Test
-	public void PileupTestPE() throws IOException {
+	public void DetectPipelinePETest() throws IOException {
 
 		String inputFolder = "test-data/mtdna/fastqpe/";
 		String reference = "rcrs";
@@ -71,19 +74,16 @@ public class PileupStepTest {
 		PileupTool pileUp = new PileupMock("files");
 		result = pileUp.run(context);
 		assertTrue(result);
-
-		List<String> files = HdfsUtil.getFiles("analyseOut");
-
-		for (String file : files) {
-			System.out.println(file);
-		}
-
+		
+		DetectMock detect = new DetectMock("files");
+		result = detect.run(context);
+		assertTrue(result);
 	}
 	
 	@Test
-	public void PileupTestBAM() throws IOException {
+	public void DetectPipelineBAM() throws IOException {
 
-		String inputFolder = "test-data/mtdna/bam/";
+		String inputFolder = "test-data/mtdna/mixtures/";
 		String reference = "rcrs";
 		String hdfsFolder = "input";
 		String type = "bam";
@@ -96,22 +96,28 @@ public class PileupStepTest {
 		PileupTool pileUp = new PileupMock("files");
 		boolean result = pileUp.run(context);
 		assertTrue(result);
-
-		List<String> files = HdfsUtil.getFiles("analyseOut");
-
-		String out = "test-data/tmp/out.txt";
-
-		for (String file : files) {
-			HdfsUtil.get(file, out);
-		}
 		
-		LineReader reader = new LineReader(out);
-		while(reader.next()){
-			System.out.println(reader.get());
-		}
+		DetectMock detect = new DetectMock("files");
+		result = detect.run(context);
+		assertTrue(result);
+		
+		double hetLevel = Double.valueOf(context.get("level"));
+		String refPath = "files/rcrs.fasta";
+		String sanger = "test-data/mtdna/sanger.txt";
 
+		RawFileAnalyser model = new RawFileAnalyser();
+		File file = new File("test-data/tmp");
+
+			try {
+				result = model.analyseFile(file.getPath() +"/raw.txt", refPath, sanger, hetLevel / 100);
+				assertEquals(true, result);
+			} catch (MathException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 	}
-
+	
 	class AlignnMock extends AlignTool {
 
 		private String folder;
@@ -162,6 +168,23 @@ public class PileupStepTest {
 		}
 
 	}
+	
+	class DetectMock extends DetectTool {
+
+		private String folder;
+
+		public DetectMock(String folder) {
+			super();
+			this.folder = folder;
+		}
+
+		@Override
+		public String getFolder(Class clazz) {
+			// override folder with static folder instead of jar location
+			return folder;
+		}
+
+	}
 
 	protected boolean run(WorkflowTestContext context, WorkflowStep step) {
 		step.setup(context);
@@ -190,6 +213,11 @@ public class PileupStepTest {
 		context.setOutput("alignQuality", "30");
 		context.setOutput("statistics", "statistics");
 		context.setOutput("baq", "true");
+		
+		context.setOutput("raw", file.getAbsolutePath()+"/raw");
+		context.setOutput("variants", file.getAbsolutePath()+"/variants");
+		context.setOutput("uncovered_pos", file.getAbsolutePath()+"/uncovered");
+		context.setOutput("level", "1");
 
 		return context;
 
