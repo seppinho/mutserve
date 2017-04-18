@@ -46,7 +46,7 @@ public class RawFileAnalyser {
 
 		Set<String> ids = new TreeSet<String>();
 		while (idReader.next()) {
-			ids.add(idReader.getString("ID"));
+			ids.add(idReader.getString("SAMPLE"));
 		}
 		idReader.close();
 
@@ -161,11 +161,10 @@ public class RawFileAnalyser {
 	private static PositionObject parseObject(CsvTableReader cloudgeneReader) {
 		PositionObject obj = new PositionObject();
 
-		obj.setId(cloudgeneReader.getString("ID"));
+		obj.setId(cloudgeneReader.getString("SAMPLE"));
 		obj.setPosition(cloudgeneReader.getInteger("POS"));
 
 		// TODO
-		cloudgeneReader.getDouble("LLRFWD");
 		obj.setLlrFWD(cloudgeneReader.getDouble("LLRFWD"));
 
 		obj.setLlrREV(cloudgeneReader.getDouble("LLRREV"));
@@ -210,10 +209,10 @@ public class RawFileAnalyser {
 		obj.setTopBasePercentsREV(topBasePercentsREV);
 		obj.setMinorBasePercentsREV(minorBasePercentsREV);
 
-		obj.setTopBaseFWD(cloudgeneReader.getString("TOP-BASE-FWD").charAt(0));
-		obj.setTopBaseREV(cloudgeneReader.getString("TOP-BASE-REV").charAt(0));
-		obj.setMinorBaseFWD(cloudgeneReader.getString("MINOR-BASE-FWD").charAt(0));
-		obj.setMinorBaseREV(cloudgeneReader.getString("MINOR-BASE-REV").charAt(0));
+		obj.setTopBaseFWD(cloudgeneReader.getString("TOP-FWD").charAt(0));
+		obj.setTopBaseREV(cloudgeneReader.getString("TOP-REV").charAt(0));
+		obj.setMinorBaseFWD(cloudgeneReader.getString("MINOR-FWD").charAt(0));
+		obj.setMinorBaseREV(cloudgeneReader.getString("MINOR-REV").charAt(0));
 
 		return obj;
 	}

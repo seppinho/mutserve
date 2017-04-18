@@ -64,9 +64,9 @@ public class DetectVariants {
 			List<PositionObject> variantPos = new ArrayList<PositionObject>();
 			CsvTableWriter rawWriter = new CsvTableWriter(outputRaw, '\t', false);
 			// TODO CHANGE LLR BACK TO D
-			rawWriter.setColumns(new String[] { "SampleID", "Pos", "Ref", "Top-Base-FWD", "Minor-Base-FWD",
-					"Top-Base-REV", "Minor-Base-REV", "Coverage-FWD", "Coverage-REV", "Coverage-Total", "Variant-Type",
-					"Variant-Level", "%A", "%C", "%G", "%T", "%D", "%N", "%a", "%c", "%g", "%t", "%d", "%n" });
+			rawWriter.setColumns(new String[] { "SAMPLE", "POS", "REF", "TOP-FWD", "MINOR-FWD",
+					"TOP-REV", "MINOR-REV", "COV-FWD", "COV-REV", "COV-TOTAL", "TYPE",
+					"LEVEL", "%A", "%C", "%G", "%T", "%D", "%N", "%a", "%c", "%g", "%t", "%d", "%n", "LLRFWD", "LLRREV" });
 
 			List<PositionObject> uncoveredPosList = new ArrayList<PositionObject>();
 
@@ -247,7 +247,11 @@ public class DetectVariants {
 			writer.setString(22, df.format(posObj.getdPercentageREV()) + "");
 
 			writer.setString(23, df.format(posObj.getnPercentageREV()) + "");
-
+			
+			writer.setString(24, df.format(posObj.getLlrFWD()) + "");
+		
+			writer.setString(25, df.format(posObj.getLlrREV()) + "");
+			
 			writer.next();
 
 		} catch (Exception e) {

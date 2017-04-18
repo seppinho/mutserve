@@ -19,19 +19,16 @@ public class HeteroplasmyModelTest {
 		String sanger = "test-data/mtdna/sanger.txt";
 
 		RawFileAnalyser model = new RawFileAnalyser();
-		File input = new File("test-data/mtdna/raw-results/");
+		File input = new File("/home/seb/git/cnv-mutation-server/test-data/tmp/raw.txt");
 
-		for (File file : input.listFiles()) {
-			System.out.println("input file is " + file.getName());
+			System.out.println("input file is " + input.getName());
 			try {
-				boolean result = model.analyseFile(file.getPath(), refPath, sanger, hetLevel / 100);
+				boolean result = model.analyseFile(input.getPath(), refPath, sanger, hetLevel / 100);
 				assertEquals(true, result);
 			} catch (MathException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-		}
 
 	}
 }
