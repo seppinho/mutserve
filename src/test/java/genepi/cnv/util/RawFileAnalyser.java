@@ -27,7 +27,9 @@ public class RawFileAnalyser {
 	private static Set<Integer> hotspots = new HashSet<Integer>(
 			Arrays.asList(302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 315, 316, 3105, 3106, 3107));
 
-	public boolean analyseFile(String in, String refpath, String sangerpos, double hetLevel) throws MathException {
+	ArrayList<QCMetric> metrics = new ArrayList<QCMetric>();
+	
+	public ArrayList<QCMetric> analyseFile(String in, String refpath, String sangerpos, double hetLevel) throws MathException {
 
 		NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
 		DecimalFormat df = (DecimalFormat) nf;
@@ -88,7 +90,7 @@ public class RawFileAnalyser {
 							if (obj.getVariantType() == DetectVariants.LOW_LEVEL_VARIANT
 									|| obj.getVariantType() == DetectVariants.SUSPICOUS_LOW_LEVEL_VARIANT) {
 
-								hetero.add(cloudgeneReader.getDouble("HET-LEVEL"));
+								hetero.add(cloudgeneReader.getDouble("LEVEL"));
 
 								if (sangerPos.contains(position)) {
 
@@ -127,7 +129,7 @@ public class RawFileAnalyser {
 
 			foundBySanger = sangerPos.size();
 
-			System.out.println("  ID: " + id);
+			/*System.out.println("  ID: " + id);
 
 			System.out.println("  Correct hits : " + truePositiveCount + "/" + gold);
 
@@ -139,23 +141,35 @@ public class RawFileAnalyser {
 
 			System.out.println("  Found additionally with Cloudgene: " + falsePositiveCount);
 
-			System.out.println("    " + falsePositives);
+			System.out.println("    " + falsePositives);*/
 
-			String sens = (df.format(((truePositiveCount) / (float) (truePositiveCount + falseNegativeCount) * 100)));
-			String spec = (df.format((trueNegativeCount / (float) (falsePositiveCount + trueNegativeCount)) * 100));
-			String prec = (df.format((truePositiveCount / (float) (truePositiveCount + falsePositiveCount) * 100)));
+			double sens2 = truePositiveCount / (double) (truePositiveCount + falseNegativeCount) * 100;
+			double spec2 = trueNegativeCount / (double) (falsePositiveCount + trueNegativeCount) * 100;
+			double prec2 = truePositiveCount / (double) (truePositiveCount + falsePositiveCount) * 100;
+			
+			
+			String sens = df.format(sens2);
+			String spec = df.format(spec2);
+			String prec = df.format(prec2);
 
-			System.out.println("  Sensitivity (Recall) -> " + sens + " values " + truePositiveCount + "/"
+			/*System.out.println("  Sensitivity (Recall) -> " + sens + " values " + truePositiveCount + "/"
 					+ (truePositiveCount + falseNegativeCount));
 			System.out.println("  Specificity -> " + " values " + trueNegativeCount + "/"
 					+ (falsePositiveCount + trueNegativeCount));
 			System.out.println("  Precision -> " + " values " + truePositiveCount + "/"
-					+ (truePositiveCount + falsePositiveCount));
+					+ (truePositiveCount + falsePositiveCount));*/
 
 			System.out.println(prec + " / " + sens + " / " + spec);
-
+			
+			QCMetric metric = new QCMetric();
+			metric.setId(id);
+			metric.setSensitivity(sens2);
+			metric.setSpecificity(spec2);
+			metric.setPrecision(prec2);
+			
+			metrics.add(metric);
 		}
-		return true;
+		return metrics;
 	}
 
 	private static PositionObject parseObject(CsvTableReader cloudgeneReader) {

@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math.MathException;
@@ -15,6 +16,7 @@ import genepi.cnv.align.AlignTool;
 import genepi.cnv.detect.DetectTool;
 import genepi.cnv.pileup.PileupTool;
 import genepi.cnv.sort.SortTool;
+import genepi.cnv.util.QCMetric;
 import genepi.cnv.util.RawFileAnalyser;
 import genepi.cnv.util.TestCluster;
 import genepi.cnv.util.WorkflowTestContext;
@@ -105,11 +107,24 @@ public class DetectStepTest {
 		String refPath = "files/rcrs.fasta";
 		String sanger = "test-data/mtdna/sanger.txt";
 
-		RawFileAnalyser model = new RawFileAnalyser();
+		RawFileAnalyser analyser = new RawFileAnalyser();
 		File file = new File("test-data/tmp");
 
 			try {
-				result = model.analyseFile(file.getPath() +"/raw.txt", refPath, sanger, hetLevel / 100);
+				ArrayList<QCMetric> list = analyser.analyseFile(file.getPath() +"/raw.txt", refPath, sanger, hetLevel / 100);
+				
+				assertTrue(list.size()==1);
+				
+				for(QCMetric metric: list){
+					
+					System.out.println(metric.getPrecision());
+					System.out.println(metric.getSensitivity());
+					System.out.println(metric.getSpecificity());
+					
+					assertEquals(100, metric.getPrecision(),0);
+					assertEquals(59.259, metric.getSensitivity(),0.1);
+					assertEquals(100, metric.getSpecificity(),0);
+				}
 				assertEquals(true, result);
 			} catch (MathException e) {
 				// TODO Auto-generated catch block
