@@ -50,6 +50,7 @@ public class DetectVariants {
 		df = DecimalFormat.getInstance();
 		df.setMinimumFractionDigits(2);
 		df.setMaximumFractionDigits(4);
+		df.setGroupingUsed(false);
 
 	}
 

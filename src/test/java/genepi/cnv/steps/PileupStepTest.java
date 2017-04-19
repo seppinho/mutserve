@@ -107,7 +107,10 @@ public class PileupStepTest {
 		
 		LineReader reader = new LineReader(out);
 		while(reader.next()){
-			System.out.println(reader.get());
+			String line = reader.get();
+			if(line.contains("15289")){
+			System.out.println(line);
+			}
 		}
 
 	}
