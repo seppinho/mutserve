@@ -37,7 +37,7 @@ public class PileupStepTest {
 
 	@AfterClass
 	public static void tearDown() throws Exception {
-		// TestCluster.getInstance().stop();
+		TestCluster.getInstance().stop();
 	}
 
 	@Test
@@ -52,7 +52,7 @@ public class PileupStepTest {
 
 		// create workflow context
 		WorkflowTestContext context = buildContext(hdfsFolder, reference, type);
-		
+
 		context.setInput("chunkLength", "0");
 
 		// create step instance
@@ -79,7 +79,7 @@ public class PileupStepTest {
 		}
 
 	}
-	
+
 	@Test
 	public void PileupTestBAM() throws IOException {
 
@@ -92,7 +92,7 @@ public class PileupStepTest {
 
 		// create workflow context
 		WorkflowTestContext context = buildContext(hdfsFolder, reference, type);
-		
+
 		PileupTool pileUp = new PileupMock("files");
 		boolean result = pileUp.run(context);
 		assertTrue(result);
@@ -104,12 +104,12 @@ public class PileupStepTest {
 		for (String file : files) {
 			HdfsUtil.get(file, out);
 		}
-		
+
 		LineReader reader = new LineReader(out);
-		while(reader.next()){
+		while (reader.next()) {
 			String line = reader.get();
-			if(line.contains("15289")){
-			System.out.println(line);
+			if (line.contains("15289")) {
+				System.out.println(line);
 			}
 		}
 

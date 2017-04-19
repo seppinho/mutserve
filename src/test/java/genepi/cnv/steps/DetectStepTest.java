@@ -42,7 +42,7 @@ public class DetectStepTest {
 
 	@AfterClass
 	public static void tearDown() throws Exception {
-		// TestCluster.getInstance().stop();
+		TestCluster.getInstance().stop();
 	}
 
 	@Test
@@ -57,7 +57,7 @@ public class DetectStepTest {
 
 		// create workflow context
 		WorkflowTestContext context = buildContext(hdfsFolder, reference, type);
-		
+
 		context.setInput("chunkLength", "0");
 
 		// create step instance
@@ -76,12 +76,12 @@ public class DetectStepTest {
 		PileupTool pileUp = new PileupMock("files");
 		result = pileUp.run(context);
 		assertTrue(result);
-		
+
 		DetectMock detect = new DetectMock("files");
 		result = detect.run(context);
 		assertTrue(result);
 	}
-	
+
 	@Test
 	public void DetectPipelineBAM() throws IOException {
 
@@ -94,15 +94,15 @@ public class DetectStepTest {
 
 		// create workflow context
 		WorkflowTestContext context = buildContext(hdfsFolder, reference, type);
-		
+
 		PileupTool pileUp = new PileupMock("files");
 		boolean result = pileUp.run(context);
 		assertTrue(result);
-		
+
 		DetectMock detect = new DetectMock("files");
 		result = detect.run(context);
 		assertTrue(result);
-		
+
 		double hetLevel = Double.valueOf(context.get("level"));
 		String refPath = "files/rcrs.fasta";
 		String sanger = "test-data/mtdna/sanger.txt";
@@ -110,29 +110,30 @@ public class DetectStepTest {
 		RawFileAnalyser analyser = new RawFileAnalyser();
 		File file = new File("test-data/tmp");
 
-			try {
-				ArrayList<QCMetric> list = analyser.analyseFile(file.getPath() +"/raw.txt", refPath, sanger, hetLevel / 100);
-				
-				assertTrue(list.size()==1);
-				
-				for(QCMetric metric: list){
-					
-					System.out.println(metric.getPrecision());
-					System.out.println(metric.getSensitivity());
-					System.out.println(metric.getSpecificity());
-					
-					assertEquals(100, metric.getPrecision(),0);
-					assertEquals(59.259, metric.getSensitivity(),0.1);
-					assertEquals(100, metric.getSpecificity(),0);
-				}
-				assertEquals(true, result);
-			} catch (MathException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		try {
+			ArrayList<QCMetric> list = analyser.analyseFile(file.getPath() + "/raw.txt", refPath, sanger,
+					hetLevel / 100);
+
+			assertTrue(list.size() == 1);
+
+			for (QCMetric metric : list) {
+
+				System.out.println(metric.getPrecision());
+				System.out.println(metric.getSensitivity());
+				System.out.println(metric.getSpecificity());
+
+				assertEquals(100, metric.getPrecision(), 0);
+				assertEquals(59.259, metric.getSensitivity(), 0.1);
+				assertEquals(100, metric.getSpecificity(), 0);
 			}
-		
+			assertEquals(true, result);
+		} catch (MathException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
-	
+
 	class AlignnMock extends AlignTool {
 
 		private String folder;
@@ -183,7 +184,7 @@ public class DetectStepTest {
 		}
 
 	}
-	
+
 	class DetectMock extends DetectTool {
 
 		private String folder;
@@ -228,10 +229,10 @@ public class DetectStepTest {
 		context.setOutput("alignQuality", "30");
 		context.setOutput("statistics", "statistics");
 		context.setOutput("baq", "true");
-		
-		context.setOutput("raw", file.getAbsolutePath()+"/raw");
-		context.setOutput("variants", file.getAbsolutePath()+"/variants");
-		context.setOutput("uncovered_pos", file.getAbsolutePath()+"/uncovered");
+
+		context.setOutput("raw", file.getAbsolutePath() + "/raw");
+		context.setOutput("variants", file.getAbsolutePath() + "/variants");
+		context.setOutput("uncovered_pos", file.getAbsolutePath() + "/uncovered");
 		context.setOutput("level", "1");
 
 		return context;

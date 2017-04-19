@@ -21,15 +21,23 @@ public class AnalyseRawTest {
 		String sanger = "test-data/mtdna/sanger.txt";
 
 		RawFileAnalyser model = new RawFileAnalyser();
-		File input = new File("test-data/tmp/raw.txt");
+		File input = new File("test-data/mtdna/raw-results/raw-s4.txt");
 
 			System.out.println("input file is " + input.getName());
-			try {
-				ArrayList<QCMetric> metrics = model.analyseFile(input.getPath(), refPath, sanger, hetLevel / 100);
-			} catch (MathException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				try {
+					ArrayList<QCMetric> metrics = model.analyseFile(input.getPath(), refPath, sanger, hetLevel / 100);
+					for(QCMetric  metric : metrics){
+						assertEquals(100, metric.getPrecision(), 0);
+						assertEquals(59.259, metric.getSensitivity(), 0.1);
+						assertEquals(100, metric.getSpecificity(), 0);
+					}
+					
+					
+				} catch (MathException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		
 
 	}
 }
