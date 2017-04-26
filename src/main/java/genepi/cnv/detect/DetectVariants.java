@@ -65,9 +65,9 @@ public class DetectVariants {
 			List<PositionObject> variantPos = new ArrayList<PositionObject>();
 			CsvTableWriter rawWriter = new CsvTableWriter(outputRaw, '\t', false);
 			// TODO CHANGE LLR BACK TO D
-			rawWriter.setColumns(new String[] { "SAMPLE", "POS", "REF", "TOP-FWD", "MINOR-FWD",
-					"TOP-REV", "MINOR-REV", "COV-FWD", "COV-REV", "COV-TOTAL", "TYPE",
-					"LEVEL", "%A", "%C", "%G", "%T", "%D", "%N", "%a", "%c", "%g", "%t", "%d", "%n", "LLRFWD", "LLRREV" });
+			rawWriter.setColumns(new String[] { "SAMPLE", "POS", "REF", "TOP-FWD", "MINOR-FWD", "TOP-REV", "MINOR-REV",
+					"COV-FWD", "COV-REV", "COV-TOTAL", "TYPE", "LEVEL", "%A", "%C", "%G", "%T", "%D", "%N", "%a", "%c",
+					"%g", "%t", "%d", "%n", "LLRFWD", "LLRREV" });
 
 			List<PositionObject> uncoveredPosList = new ArrayList<PositionObject>();
 
@@ -128,6 +128,24 @@ public class DetectVariants {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
+		}
+
+	}
+
+	public void multiallelicSites(double posPercentFWD, double posPercentREV) {
+
+		try {
+
+			/**
+			 * 10× coverage of qualified bases on both positive and negative
+			 * strands;
+			 */
+			if (posPercentFWD >= detectionLevel || posPercentREV >= detectionLevel) {
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}
@@ -249,11 +267,11 @@ public class DetectVariants {
 			writer.setString(22, df.format(posObj.getdPercentageREV()) + "");
 
 			writer.setString(23, df.format(posObj.getnPercentageREV()) + "");
-			
+
 			writer.setString(24, df.format(posObj.getLlrFWD()) + "");
-		
+
 			writer.setString(25, df.format(posObj.getLlrREV()) + "");
-			
+
 			writer.next();
 
 		} catch (Exception e) {
@@ -269,8 +287,8 @@ public class DetectVariants {
 	private void writeVariantsFile(List<PositionObject> list) {
 
 		CsvTableWriter writer = new CsvTableWriter(outputFiltered, '\t', false);
-		writer.setColumns(new String[] { "SampleID", "Pos", "Ref", "Variant", "Major/Minor", "Variant-Level", "Coverage-FWD", "Coverage-REV",
-				"Coverage-Total"});
+		writer.setColumns(new String[] { "SampleID", "Pos", "Ref", "Variant", "Major/Minor", "Variant-Level",
+				"Coverage-FWD", "Coverage-REV", "Coverage-Total" });
 
 		Collections.sort(list);
 
@@ -287,19 +305,19 @@ public class DetectVariants {
 			writer.setString(3, getVariantBase(posObj) + "");
 
 			if (posObj.getVariantType() == 1) {
-				
+
 				writer.setString(4, "-");
 
 				writer.setString(5, "1.0");
 
 			} else {
-				
+
 				writer.setString(4, posObj.getTopBaseFWD() + "/" + posObj.getMinorBaseFWD());
 
 				writer.setString(5, df.format(posObj.getVariantLevel()) + "");
 
 			}
-			
+
 			writer.setInteger(6, posObj.getCovFWD());
 
 			writer.setInteger(7, posObj.getCovREV());
