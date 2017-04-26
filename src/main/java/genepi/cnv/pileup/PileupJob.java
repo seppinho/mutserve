@@ -10,6 +10,7 @@ import org.seqdoop.hadoop_bam.AnySAMInputFormat;
 
 import genepi.cnv.Server;
 import genepi.cnv.objects.BasePosition;
+import genepi.cnv.objects.PositionObject;
 import genepi.cnv.util.ReferenceUtil;
 import genepi.hadoop.CacheStore;
 import genepi.hadoop.HadoopJob;
@@ -54,7 +55,7 @@ public class PileupJob extends HadoopJob {
 		job.setMapOutputValueClass(BasePosition.class);
 
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(BasePosition.class);
+		job.setOutputValueClass(PositionObject.class);
 
 		job.setOutputFormatClass(TextOutputFormat.class);
 	}

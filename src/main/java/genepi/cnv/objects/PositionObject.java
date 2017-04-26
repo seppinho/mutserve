@@ -3,6 +3,7 @@ package genepi.cnv.objects;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class PositionObject implements Comparable<PositionObject> {
 
@@ -59,23 +60,72 @@ public class PositionObject implements Comparable<PositionObject> {
 	private double CIAC_LOW_REV;
 	private double CIAC_UP_REV;
 
-	public PositionObject(String line) {
-		try {
-			parseLine(line);
-		} catch (IOException e) {
-			e.printStackTrace();
+	public void parseLine(String line) {
+
+		String[] splits = line.split("\t");
+		for (String a : splits) {
+			System.out.println(a);
 		}
+
+		System.out.println("done");
+
+		this.setId(splits[0]);
+		this.setPosition(Integer.valueOf(splits[1]));
+		this.setCovFWD(Integer.valueOf(splits[2]));
+		this.setCovREV(Integer.valueOf(splits[3]));
+		this.setTopBaseFWD(splits[4].charAt(0));
+		this.setTopBaseREV(splits[5].charAt(0));
+
+		this.setMinorBaseFWD(splits[6].charAt(0));
+		this.setMinorBaseREV(splits[7].charAt(0));
+
+		this.setaPercentageFWD(Double.valueOf(splits[8]));
+		this.setcPercentageFWD(Double.valueOf(splits[9]));
+		this.setgPercentageFWD(Double.valueOf(splits[10]));
+		this.settPercentageFWD(Double.valueOf(splits[11]));
+		this.setnPercentageFWD(Double.valueOf(splits[12]));
+		this.setdPercentageFWD(Double.valueOf(splits[13]));
+
+		this.setaPercentageREV(Double.valueOf(splits[14]));
+		this.setcPercentageREV(Double.valueOf(splits[15]));
+		this.setgPercentageREV(Double.valueOf(splits[16]));
+		this.settPercentageREV(Double.valueOf(splits[17]));
+		this.setnPercentageREV(Double.valueOf(splits[18]));
+		this.setdPercentageREV(Double.valueOf(splits[19]));
+
+		this.setTopBasePercentsFWD(Double.valueOf(splits[20]));
+		this.setMinorBasePercentsFWD(Double.valueOf(splits[21]));
+
+		this.setTopBasePercentsREV(Double.valueOf(splits[22]));
+		this.setMinorBasePercentsREV(Double.valueOf(splits[23]));
+
+		this.setVariantType(Integer.valueOf(splits[24]));
+		this.setVariantLevel(Double.valueOf(splits[25]));
+
+		this.setFwdOK(Boolean.valueOf(splits[26]));
+		this.setRevOK(Boolean.valueOf(splits[27]));
+
+		this.setInsertion(Boolean.valueOf(splits[28]));
+		this.setVariant(Boolean.valueOf(splits[29]));
+		this.setDeletion(Boolean.valueOf(splits[30]));
+		this.setRevVariant(Boolean.valueOf(splits[31]));
+
+		this.setLlrFWD(Double.valueOf(splits[32]));
+		this.setLlrREV(Double.valueOf(splits[33]));
+		
+		this.setCIW_LOW_FWD(Double.valueOf(splits[34]));
+		this.setCIW_UP_FWD(Double.valueOf(splits[35]));
+		this.setCIW_LOW_REV(Double.valueOf(splits[36]));
+		this.setCIW_UP_REV(Double.valueOf(splits[37]));
+		
+		this.setCIAC_LOW_FWD(Double.valueOf(splits[38]));
+		this.setCIAC_UP_FWD(Double.valueOf(splits[39]));
+		this.setCIAC_LOW_REV(Double.valueOf(splits[40]));
+		this.setCIAC_UP_REV(Double.valueOf(splits[41]));
+
 	}
 
-	public PositionObject(BasePosition line) {
-		try {
-			parseLine2(line);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void parseLine2(BasePosition base) throws IOException {
+	public void analysePosition(BasePosition base) throws IOException {
 
 		double aFWDPercents = 0;
 		double cFWDPercents = 0;
@@ -90,9 +140,11 @@ public class PositionObject implements Comparable<PositionObject> {
 		double nREVPercents = 0;
 		double dREVPercents = 0;
 		int pos;
+		String id;
 		short insertionIndex = 0;
 		isInsertion = false;
 
+		id = base.getId();
 		pos = base.getPos();
 
 		int aFWD = base.getaFor();
@@ -365,306 +417,6 @@ public class PositionObject implements Comparable<PositionObject> {
 
 	}
 
-	private void parseLine(String line) throws IOException {
-
-		double aFWDPercents = 0;
-		double cFWDPercents = 0;
-		double gFWDPercents = 0;
-		double tFWDPercents = 0;
-		double nFWDPercents = 0;
-		double dFWDPercents = 0;
-		double aREVPercents = 0;
-		double cREVPercents = 0;
-		double gREVPercents = 0;
-		double tREVPercents = 0;
-		double nREVPercents = 0;
-		double dREVPercents = 0;
-		int pos;
-		short insertionIndex = 0;
-		isInsertion = false;
-
-		String[] tiles = line.split("\t");
-		// TODO
-		if (tiles.length == 15) {
-
-			String[] tiles2 = tiles[0].split(":");
-			String id = tiles2[0];
-
-			/** insertions **/
-			if (tiles2[1].contains(".")) {
-				String[] insertion = tiles2[1].split("\\.");
-				isInsertion = true;
-				pos = Integer.parseInt(insertion[0]);
-				insertionIndex = Short.parseShort(insertion[1].substring(0, insertion[1].length() - 1));
-			} else {
-				pos = Integer.parseInt(tiles2[1]);
-			}
-
-			int aFWD = Integer.parseInt(tiles[1]);
-			int cFWD = Integer.parseInt(tiles[2]);
-			int gFWD = Integer.parseInt(tiles[3]);
-			int tFWD = Integer.parseInt(tiles[4]);
-			int nFWD = Integer.parseInt(tiles[5]);
-			int aREV = Integer.parseInt(tiles[6]);
-			int cREV = Integer.parseInt(tiles[7]);
-			int gREV = Integer.parseInt(tiles[8]);
-			int tREV = Integer.parseInt(tiles[9]);
-			int nREV = Integer.parseInt(tiles[10]);
-
-			int dFWD = Integer.parseInt(tiles[11]);
-			int dREV = Integer.parseInt(tiles[12]);
-
-			double llrFWD = Double.parseDouble(tiles[13]);
-
-			double llrREV = Double.parseDouble(tiles[14]);
-
-			int totalFWD = aFWD + cFWD + gFWD + tFWD + dFWD;
-			int totalREV = aREV + cREV + gREV + tREV + dREV;
-
-			if (totalFWD > 0) {
-				aFWDPercents = aFWD / (double) totalFWD;
-				cFWDPercents = cFWD / (double) totalFWD;
-				gFWDPercents = gFWD / (double) totalFWD;
-				tFWDPercents = tFWD / (double) totalFWD;
-				dFWDPercents = dFWD / (double) totalFWD;
-				nFWDPercents = nFWD / (double) (totalFWD + nFWD);
-			}
-
-			if (totalREV > 0) {
-				aREVPercents = aREV / (double) totalREV;
-				cREVPercents = cREV / (double) totalREV;
-				gREVPercents = gREV / (double) totalREV;
-				tREVPercents = tREV / (double) totalREV;
-				dREVPercents = dREV / (double) totalREV;
-				nREVPercents = nREV / (double) (totalREV + nREV);
-			}
-
-			ArrayList<Integer> allelesFWD = new ArrayList<Integer>();
-			allelesFWD.add(aFWD);
-			allelesFWD.add(cFWD);
-			allelesFWD.add(gFWD);
-			allelesFWD.add(tFWD);
-			allelesFWD.add(dFWD);
-
-			Collections.sort(allelesFWD, Collections.reverseOrder());
-			topBasePercentsFWD = 0.0;
-			minorBasePercentsFWD = 0.0;
-
-			if (totalFWD > 0) {
-				topBasePercentsFWD = allelesFWD.get(0) / (double) totalFWD;
-
-				// ignore deletions on minor base
-				if (allelesFWD.get(1).equals(dFWD)) {
-					minorBasePercentsFWD = allelesFWD.get(2) / (double) totalFWD;
-				} else {
-					minorBasePercentsFWD = allelesFWD.get(1) / (double) totalFWD;
-				}
-			}
-
-			ArrayList<Integer> allelesREV = new ArrayList<Integer>();
-			allelesREV.add(aREV);
-			allelesREV.add(cREV);
-			allelesREV.add(gREV);
-			allelesREV.add(tREV);
-			allelesREV.add(dREV);
-
-			Collections.sort(allelesREV, Collections.reverseOrder());
-			topBasePercentsREV = 0.0;
-			minorBasePercentsREV = 0.0;
-
-			if (totalREV > 0) {
-				topBasePercentsREV = allelesREV.get(0) / (double) totalREV;
-				if (allelesREV.get(1).equals(dREV)) {
-					minorBasePercentsREV = allelesREV.get(2) / (double) totalREV;
-				} else {
-					minorBasePercentsREV = allelesREV.get(1) / (double) totalREV;
-				}
-			}
-
-			if (topBasePercentsFWD == minorBasePercentsFWD && topBasePercentsFWD > 0) { // prefer
-																						// lexicographic
-																						// order
-																						// in
-																						// case
-																						// of
-																						// 50/50:
-																						// A
-																						// /
-																						// C
-				if (aFWDPercents == gFWDPercents && gFWDPercents == topBasePercentsFWD) {
-					topBaseFWD = 'A';
-					minorBaseFWD = 'G';
-				} else if (aFWDPercents == cFWDPercents && cFWDPercents == topBasePercentsFWD) {
-					topBaseFWD = 'A';
-					minorBaseFWD = 'C';
-				} else if (aFWDPercents == tFWDPercents && tFWDPercents == topBasePercentsFWD) {
-					topBaseFWD = 'A';
-					minorBaseFWD = 'T';
-				} else if (cFWDPercents == tFWDPercents && tFWDPercents == topBasePercentsFWD) {
-					topBaseFWD = 'C';
-					minorBaseFWD = 'T';
-				} else if (cFWDPercents == gFWDPercents && gFWDPercents == topBasePercentsFWD) {
-					topBaseFWD = 'C';
-					minorBaseFWD = 'G';
-				} else if (gFWDPercents == tFWDPercents && tFWDPercents == topBasePercentsFWD) {
-					topBaseFWD = 'G';
-					minorBaseFWD = 'T';
-				}
-			}
-
-			else if (aFWD >= cFWD && aFWD >= gFWD && aFWD >= tFWD && aFWD >= dFWD && aFWD > 0) {
-				topBaseFWD = 'A';
-			}
-
-			else if (cFWD >= aFWD && cFWD >= gFWD && cFWD >= tFWD && cFWD >= dFWD && cFWD > 0) {
-				topBaseFWD = 'C';
-			}
-
-			else if (gFWD >= cFWD && gFWD >= aFWD && gFWD >= tFWD && gFWD >= dFWD && gFWD > 0) {
-				topBaseFWD = 'G';
-			}
-
-			else if (tFWD >= cFWD && tFWD >= gFWD && tFWD >= aFWD && tFWD >= dFWD && tFWD > 0) {
-				topBaseFWD = 'T';
-			}
-
-			else if (dFWD >= cFWD && dFWD >= gFWD && dFWD >= aFWD && dFWD >= tFWD && dFWD > 0) {
-				topBaseFWD = 'd';
-			}
-
-			if (topBasePercentsREV == minorBasePercentsREV) { // prefer
-																// lexicographic
-																// order in case
-																// of 50/50: A /
-																// C
-				if (aREVPercents == gREVPercents && gREVPercents == topBasePercentsREV) {
-					topBaseREV = 'A';
-					minorBaseREV = 'G';
-				}
-				if (aREVPercents == cREVPercents && cREVPercents == topBasePercentsREV) {
-					topBaseREV = 'A';
-					minorBaseREV = 'C';
-				}
-				if (aREVPercents == tREVPercents && tREVPercents == topBasePercentsREV) {
-					topBaseREV = 'A';
-					minorBaseREV = 'T';
-				}
-				if (cREVPercents == tREVPercents && tREVPercents == topBasePercentsREV) {
-					topBaseREV = 'C';
-					minorBaseREV = 'T';
-				}
-				if (cREVPercents == gREVPercents && gREVPercents == topBasePercentsREV) {
-					topBaseREV = 'C';
-					minorBaseREV = 'G';
-				}
-				if (gREVPercents == tREVPercents && tREVPercents == topBasePercentsREV) {
-					topBaseREV = 'G';
-					minorBaseREV = 'T';
-				}
-			}
-
-			else if (aREV >= cREV && aREV >= gREV && aREV >= tREV && aREV >= dREV && aREV > 0) {
-				topBaseREV = 'A';
-			}
-
-			else if (cREV >= aREV && cREV >= gREV && cREV >= tREV && cREV >= dREV && cREV > 0) {
-				topBaseREV = 'C';
-			}
-
-			else if (gREV >= cREV && gREV >= aREV && gREV >= tREV && gREV >= dREV && gREV > 0) {
-				topBaseREV = 'G';
-			}
-
-			else if (tREV >= cREV && tREV >= gREV && tREV >= aREV && tREV >= dREV && tREV > 0) {
-				topBaseREV = 'T';
-			}
-
-			else if (dREV >= cREV && dREV >= gREV && dREV >= aREV && dREV >= tREV && dREV > 0) {
-				topBaseREV = 'd';
-			}
-
-			if (minorBasePercentsFWD > 0 && minorBasePercentsFWD < 0.5) {
-
-				if (minorBasePercentsFWD == aFWDPercents) {
-					minorBaseFWD = 'A';
-				}
-
-				else if (minorBasePercentsFWD == cFWDPercents) {
-					minorBaseFWD = 'C';
-				}
-
-				else if (minorBasePercentsFWD == gFWDPercents) {
-					minorBaseFWD = 'G';
-				}
-
-				else if (minorBasePercentsFWD == tFWDPercents) {
-					minorBaseFWD = 'T';
-				}
-
-			}
-
-			if (minorBasePercentsREV > 0 && minorBasePercentsREV < 0.5) {
-
-				if (minorBasePercentsREV == aREVPercents) {
-					minorBaseREV = 'A';
-				}
-
-				else if (minorBasePercentsREV == cREVPercents) {
-					minorBaseREV = 'C';
-				}
-
-				else if (minorBasePercentsREV == gREVPercents) {
-					minorBaseREV = 'G';
-				}
-
-				else if (minorBasePercentsREV == tREVPercents) {
-					minorBaseREV = 'T';
-				}
-
-			}
-
-			// set attributes
-			this.setId(id);
-			this.setPosition(pos);
-
-			this.setCovFWD(totalFWD);
-			this.setCovREV(totalREV);
-
-			this.setTopBaseFWD(topBaseFWD);
-			this.setTopBaseREV(topBaseREV);
-			this.setMinorBaseFWD(minorBaseFWD);
-			this.setMinorBaseREV(minorBaseREV);
-
-			this.setaPercentageFWD(aFWDPercents);
-			this.setcPercentageFWD(cFWDPercents);
-			this.setgPercentageFWD(gFWDPercents);
-			this.settPercentageFWD(tFWDPercents);
-			this.setnPercentageFWD(nFWDPercents);
-			this.setdPercentageFWD(dFWDPercents);
-
-			this.setaPercentageREV(aREVPercents);
-			this.setcPercentageREV(cREVPercents);
-			this.setgPercentageREV(gREVPercents);
-			this.settPercentageREV(tREVPercents);
-			this.setnPercentageREV(nREVPercents);
-			this.setdPercentageREV(dREVPercents);
-
-			this.setInsertion(isInsertion);
-			this.setInsertionIndex(insertionIndex);
-
-			this.setTopBasePercentsFWD(topBasePercentsFWD);
-			this.setMinorBasePercentsFWD(minorBasePercentsFWD);
-			this.setTopBasePercentsREV(topBasePercentsREV);
-			this.setMinorBasePercentsREV(minorBasePercentsREV);
-			this.setMinorBasePercentsREV(minorBasePercentsREV);
-
-			this.setLlrFWD(llrFWD);
-			this.setLlrREV(llrREV);
-
-		}
-
-	}
-
 	@Override
 	public int compareTo(PositionObject o) {
 
@@ -685,21 +437,15 @@ public class PositionObject implements Comparable<PositionObject> {
 
 	@Override
 	public String toString() {
-		return "PositionObject [id=" + id + ", position=" + position + ", covFWD=" + covFWD + ", covREV=" + covREV
-				+ ", topBaseFWD=" + topBaseFWD + ", topBaseREV=" + topBaseREV + ", minorBaseFWD=" + minorBaseFWD
-				+ ", minorBaseREV=" + minorBaseREV + ", aPercentageFWD=" + aPercentageFWD + ", cPercentageFWD="
-				+ cPercentageFWD + ", gPercentageFWD=" + gPercentageFWD + ", tPercentageFWD=" + tPercentageFWD
-				+ ", nPercentageFWD=" + nPercentageFWD + ", dPercentageFWD=" + dPercentageFWD + ", aPercentageREV="
-				+ aPercentageREV + ", cPercentageREV=" + cPercentageREV + ", gPercentageREV=" + gPercentageREV
-				+ ", tPercentageREV=" + tPercentageREV + ", nPercentageREV=" + nPercentageREV + ", dPercentageREV="
-				+ dPercentageREV + ", topBasePercentsFWD=" + topBasePercentsFWD + ", minorBasePercentsFWD="
-				+ minorBasePercentsFWD + ", topBasePercentsREV=" + topBasePercentsREV + ", minorBasePercentsREV="
-				+ minorBasePercentsREV + ", type=" + type + ", hetLevel=" + varLevel + ", fwdOK=" + fwdOK + ", revOK="
-				+ revOK + ", isInsertion=" + isInsertion + ", isVariant=" + isVariant + ", isDeletion=" + isDeletion
-				+ ", insertionIndex=" + insertionIndex + ", isRevVariant=" + isRevVariant + ", CIW_LOW_FWD="
-				+ CIW_LOW_FWD + ", CIW_UP_FWD=" + CIW_UP_FWD + ", CIW_LOW_REV=" + CIW_LOW_REV + ", CIW_UP_REV="
-				+ CIW_UP_REV + ", CIAC_LOW_FWD=" + CIAC_LOW_FWD + ", CIAC_UP_FWD=" + CIAC_UP_FWD + ", CIAC_LOW_REV="
-				+ CIAC_LOW_REV + ", CIAC_UP_REV=" + CIAC_UP_REV + "]";
+		return id + "\t" + position + "\t" + covFWD + "\t" + covREV + "\t" + topBaseFWD + "\t" + topBaseREV + "\t"
+				+ minorBaseFWD + "\t" + minorBaseREV + "\t" + aPercentageFWD + "\t" + cPercentageFWD + "\t"
+				+ gPercentageFWD + "\t" + tPercentageFWD + "\t" + nPercentageFWD + "\t" + dPercentageFWD + "\t"
+				+ aPercentageREV + "\t" + cPercentageREV + "\t" + gPercentageREV + "\t" + tPercentageREV + "\t"
+				+ nPercentageREV + "\t" + dPercentageREV + "\t" + topBasePercentsFWD + "\t" + minorBasePercentsFWD
+				+ "\t" + topBasePercentsREV + "\t" + minorBasePercentsREV + "\t" + type + "\t" + varLevel + "\t" + fwdOK
+				+ "\t" + revOK + "\t" + isInsertion + "\t" + isVariant + "\t" + isDeletion + "\t" + isRevVariant + "\t"
+				+ llrFWD + "\t" + llrREV + "\t" + CIW_LOW_FWD + "\t" + CIW_UP_FWD + "\t" + CIW_LOW_REV + "\t" + CIW_UP_REV + "\t" + CIAC_LOW_FWD + "\t"
+				+ CIAC_UP_FWD + "\t" + CIAC_LOW_REV + "\t" + CIAC_UP_REV;
 	}
 
 	public PositionObject() {
