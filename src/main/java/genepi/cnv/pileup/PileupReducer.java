@@ -11,14 +11,14 @@ import genepi.cnv.objects.BasePosition;
 import genepi.cnv.objects.PositionObject;
 
 public class PileupReducer extends
-		Reducer<Text, BasePosition, Text, BasePosition> {
+		Reducer<Text, BasePosition, Text, PositionObject> {
 
-	private BasePosition valueOut = new BasePosition();
+	private BasePosition valueIn = new BasePosition();
 
 	protected void reduce(Text key, java.lang.Iterable<BasePosition> values,
 			Context context) throws java.io.IOException, InterruptedException {
 
-		valueOut.clear();
+		valueIn.clear();
 		List<Byte> combinedAFor = new ArrayList<Byte>();
 		List<Byte> combinedCFor = new ArrayList<Byte>();
 		List<Byte> combinedGFor = new ArrayList<Byte>();
@@ -29,7 +29,7 @@ public class PileupReducer extends
 		List<Byte> combinedTRev = new ArrayList<Byte>();
 		
 		for (BasePosition value : values) {
-			valueOut.add(value);
+			valueIn.add(value);
 			combinedAFor.addAll(value.getaForQ());
 			combinedCFor.addAll(value.getcForQ());
 			combinedGFor.addAll(value.getgForQ());
@@ -40,21 +40,24 @@ public class PileupReducer extends
 			combinedTRev.addAll(value.gettRevQ());
 		}
 		
-		valueOut.setaForQ(combinedAFor);
-		valueOut.setcForQ(combinedCFor);
-		valueOut.setgForQ(combinedGFor);
-		valueOut.settForQ(combinedTFor);
+		valueIn.setaForQ(combinedAFor);
+		valueIn.setcForQ(combinedCFor);
+		valueIn.setgForQ(combinedGFor);
+		valueIn.settForQ(combinedTFor);
 		
-		valueOut.setaRevQ(combinedARev);
-		valueOut.setcRevQ(combinedCRev);
-		valueOut.setgRevQ(combinedGRev);
-		valueOut.settRevQ(combinedTRev);
+		valueIn.setaRevQ(combinedARev);
+		valueIn.setcRevQ(combinedCRev);
+		valueIn.setgRevQ(combinedGRev);
+		valueIn.settRevQ(combinedTRev);
 		
-		valueOut.setPos(Integer.valueOf(key.toString().split(":")[1]));
-		PositionObject currentPos = new PositionObject(valueOut);
-		valueOut.setLlrFWD(currentPos.getLlrFWD());
-		valueOut.setLlrREV(currentPos.getLlrREV());
-		context.write(key, valueOut);
+		valueIn.setId(key.toString().split(":")[0]);
+		
+		valueIn.setPos(Integer.valueOf(key.toString().split(":")[1]));
+		
+		PositionObject posOut = new PositionObject();
+		posOut.analysePosition(valueIn);
+		
+		context.write(null, posOut);
 	};
 
 }

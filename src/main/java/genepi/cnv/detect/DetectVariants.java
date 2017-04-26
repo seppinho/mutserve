@@ -81,7 +81,8 @@ public class DetectVariants {
 					while (hdfsReader.readLine(line, 500) > 0) {
 
 						/** parse each line */
-						PositionObject pos = new PositionObject(line.toString());
+						PositionObject pos = new PositionObject();
+						pos.parseLine(line.toString());
 
 						if (pos.getPosition() > 0 && pos.getPosition() <= refAsString.length()) {
 

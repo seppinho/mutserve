@@ -14,6 +14,8 @@ public class BasePosition implements Writable {
 
 	private double llrREV;
 	
+	private String id;
+	
 	private int pos = 0;
 	
 	private int aFor = 0;
@@ -472,6 +474,14 @@ public class BasePosition implements Writable {
 
 	public void setLlrREV(double llrREV) {
 		this.llrREV = llrREV;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }
