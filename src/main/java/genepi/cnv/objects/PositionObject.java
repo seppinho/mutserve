@@ -3,7 +3,6 @@ package genepi.cnv.objects;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
 public class PositionObject implements Comparable<PositionObject> {
 
@@ -16,11 +15,10 @@ public class PositionObject implements Comparable<PositionObject> {
 	private double llrFWD;
 	private double llrREV;
 
-	private char topBaseFWD = '-';
-	private char topBaseREV = '-';
-	private char minorBaseFWD = '-';
-	private char minorBaseREV = '-';
-
+	private char topBaseFWD;
+	private char topBaseREV;
+	private char minorBaseFWD;
+	private char minorBaseREV;
 	private double aPercentageFWD;
 	private double cPercentageFWD;
 	private double gPercentageFWD;
@@ -49,7 +47,6 @@ public class PositionObject implements Comparable<PositionObject> {
 	private boolean isVariant = false;
 	private boolean oneSideVariant = false;
 	private boolean isDeletion = false;
-	private short insertionIndex = 0;
 	private boolean isRevVariant = false;
 	private double CIW_LOW_FWD;
 	private double CIW_UP_FWD;
@@ -63,19 +60,16 @@ public class PositionObject implements Comparable<PositionObject> {
 	public void parseLine(String line) {
 
 		String[] splits = line.split("\t");
-		for (String a : splits) {
-			System.out.println(a);
-		}
-
-		System.out.println("done");
 
 		this.setId(splits[0]);
 		this.setPosition(Integer.valueOf(splits[1]));
+		
 		this.setCovFWD(Integer.valueOf(splits[2]));
 		this.setCovREV(Integer.valueOf(splits[3]));
+		
 		this.setTopBaseFWD(splits[4].charAt(0));
 		this.setTopBaseREV(splits[5].charAt(0));
-
+		
 		this.setMinorBaseFWD(splits[6].charAt(0));
 		this.setMinorBaseREV(splits[7].charAt(0));
 
@@ -95,33 +89,12 @@ public class PositionObject implements Comparable<PositionObject> {
 
 		this.setTopBasePercentsFWD(Double.valueOf(splits[20]));
 		this.setMinorBasePercentsFWD(Double.valueOf(splits[21]));
-
+		
 		this.setTopBasePercentsREV(Double.valueOf(splits[22]));
 		this.setMinorBasePercentsREV(Double.valueOf(splits[23]));
 
-		this.setVariantType(Integer.valueOf(splits[24]));
-		this.setVariantLevel(Double.valueOf(splits[25]));
-
-		this.setFwdOK(Boolean.valueOf(splits[26]));
-		this.setRevOK(Boolean.valueOf(splits[27]));
-
-		this.setInsertion(Boolean.valueOf(splits[28]));
-		this.setVariant(Boolean.valueOf(splits[29]));
-		this.setDeletion(Boolean.valueOf(splits[30]));
-		this.setRevVariant(Boolean.valueOf(splits[31]));
-
-		this.setLlrFWD(Double.valueOf(splits[32]));
-		this.setLlrREV(Double.valueOf(splits[33]));
-		
-		this.setCIW_LOW_FWD(Double.valueOf(splits[34]));
-		this.setCIW_UP_FWD(Double.valueOf(splits[35]));
-		this.setCIW_LOW_REV(Double.valueOf(splits[36]));
-		this.setCIW_UP_REV(Double.valueOf(splits[37]));
-		
-		this.setCIAC_LOW_FWD(Double.valueOf(splits[38]));
-		this.setCIAC_UP_FWD(Double.valueOf(splits[39]));
-		this.setCIAC_LOW_REV(Double.valueOf(splits[40]));
-		this.setCIAC_UP_REV(Double.valueOf(splits[41]));
+		this.setLlrFWD(Double.valueOf(splits[24]));
+		this.setLlrREV(Double.valueOf(splits[25]));
 
 	}
 
@@ -141,8 +114,6 @@ public class PositionObject implements Comparable<PositionObject> {
 		double dREVPercents = 0;
 		int pos;
 		String id;
-		short insertionIndex = 0;
-		isInsertion = false;
 
 		id = base.getId();
 		pos = base.getPos();
@@ -192,8 +163,8 @@ public class PositionObject implements Comparable<PositionObject> {
 		allelesFWD.add(dFWD);
 
 		Collections.sort(allelesFWD, Collections.reverseOrder());
-		topBasePercentsFWD = 0.0;
-		minorBasePercentsFWD = 0.0;
+		double topBasePercentsFWD = 0.0;
+		double minorBasePercentsFWD = 0.0;
 
 		if (totalFWD > 0) {
 			topBasePercentsFWD = allelesFWD.get(0) / (double) totalFWD;
@@ -214,8 +185,8 @@ public class PositionObject implements Comparable<PositionObject> {
 		allelesREV.add(dREV);
 
 		Collections.sort(allelesREV, Collections.reverseOrder());
-		topBasePercentsREV = 0.0;
-		minorBasePercentsREV = 0.0;
+		double topBasePercentsREV = 0.0;
+		double minorBasePercentsREV = 0.0;
 
 		if (totalREV > 0) {
 			topBasePercentsREV = allelesREV.get(0) / (double) totalREV;
@@ -226,16 +197,10 @@ public class PositionObject implements Comparable<PositionObject> {
 			}
 		}
 
-		if (topBasePercentsFWD == minorBasePercentsFWD && topBasePercentsFWD > 0) { // prefer
-																					// lexicographic
-																					// order
-																					// in
-																					// case
-																					// of
-																					// 50/50:
-																					// A
-																					// /
-																					// C
+		char topBaseFWD = '-';
+		char minorBaseFWD = '-';
+		// prefer lexicographic order in case of 50/50
+		if (topBasePercentsFWD == minorBasePercentsFWD && topBasePercentsFWD > 0) {
 			if (aFWDPercents == gFWDPercents && gFWDPercents == topBasePercentsFWD) {
 				topBaseFWD = 'A';
 				minorBaseFWD = 'G';
@@ -277,11 +242,10 @@ public class PositionObject implements Comparable<PositionObject> {
 			topBaseFWD = 'd';
 		}
 
-		if (topBasePercentsREV == minorBasePercentsREV) { // prefer
-															// lexicographic
-															// order in case
-															// of 50/50: A /
-															// C
+		char topBaseREV = '-';
+		char minorBaseREV = '-';
+
+		if (topBasePercentsREV == minorBasePercentsREV) {
 			if (aREVPercents == gREVPercents && gREVPercents == topBasePercentsREV) {
 				topBaseREV = 'A';
 				minorBaseREV = 'G';
@@ -368,18 +332,6 @@ public class PositionObject implements Comparable<PositionObject> {
 
 		}
 
-		// TODO combine detect detect heteroplasmy with this!
-		if (minorBasePercentsFWD >= 0.01 || minorBasePercentsREV >= 0.01) {
-			double fm0FWD = calcFirst(base);
-			double fm1FWD = calcFirst(base) + calcSecond(base);
-
-			double fm0REV = calcFirstRev(base);
-			double fm1REV = calcFirstRev(base) + calcSecondR(base);
-
-			this.setLlrFWD(Math.abs(fm1FWD - fm0FWD));
-			this.setLlrREV(Math.abs(fm1REV - fm0REV));
-		}
-
 		// set attributes
 		this.setId(id);
 		this.setPosition(pos);
@@ -406,14 +358,22 @@ public class PositionObject implements Comparable<PositionObject> {
 		this.setnPercentageREV(nREVPercents);
 		this.setdPercentageREV(dREVPercents);
 
-		this.setInsertion(isInsertion);
-		this.setInsertionIndex(insertionIndex);
-
 		this.setTopBasePercentsFWD(topBasePercentsFWD);
 		this.setMinorBasePercentsFWD(minorBasePercentsFWD);
+
 		this.setTopBasePercentsREV(topBasePercentsREV);
 		this.setMinorBasePercentsREV(minorBasePercentsREV);
-		this.setMinorBasePercentsREV(minorBasePercentsREV);
+		
+		if (minorBasePercentsFWD >= 0.01 || minorBasePercentsREV >= 0.01) {
+			double fm0FWD = calcFirst(base);
+			double fm1FWD = calcFirst(base) + calcSecond(base);
+
+			double fm0REV = calcFirstRev(base);
+			double fm1REV = calcFirstRev(base) + calcSecondR(base);
+
+			this.setLlrFWD(Math.abs(fm1FWD - fm0FWD));
+			this.setLlrREV(Math.abs(fm1REV - fm0REV));
+		}
 
 	}
 
@@ -427,14 +387,6 @@ public class PositionObject implements Comparable<PositionObject> {
 		}
 	}
 
-	public boolean isVariant() {
-		return isVariant;
-	}
-
-	public void setVariant(boolean isVariant) {
-		this.isVariant = isVariant;
-	}
-
 	@Override
 	public String toString() {
 		return id + "\t" + position + "\t" + covFWD + "\t" + covREV + "\t" + topBaseFWD + "\t" + topBaseREV + "\t"
@@ -442,15 +394,191 @@ public class PositionObject implements Comparable<PositionObject> {
 				+ gPercentageFWD + "\t" + tPercentageFWD + "\t" + nPercentageFWD + "\t" + dPercentageFWD + "\t"
 				+ aPercentageREV + "\t" + cPercentageREV + "\t" + gPercentageREV + "\t" + tPercentageREV + "\t"
 				+ nPercentageREV + "\t" + dPercentageREV + "\t" + topBasePercentsFWD + "\t" + minorBasePercentsFWD
-				+ "\t" + topBasePercentsREV + "\t" + minorBasePercentsREV + "\t" + type + "\t" + varLevel + "\t" + fwdOK
-				+ "\t" + revOK + "\t" + isInsertion + "\t" + isVariant + "\t" + isDeletion + "\t" + isRevVariant + "\t"
-				+ llrFWD + "\t" + llrREV + "\t" + CIW_LOW_FWD + "\t" + CIW_UP_FWD + "\t" + CIW_LOW_REV + "\t" + CIW_UP_REV + "\t" + CIAC_LOW_FWD + "\t"
-				+ CIAC_UP_FWD + "\t" + CIAC_LOW_REV + "\t" + CIAC_UP_REV;
+				+ "\t" + topBasePercentsREV + "\t" + minorBasePercentsREV + "\t" + llrFWD + "\t" + llrREV;
 	}
 
-	public PositionObject() {
+	public double calcFirst(BasePosition base) {
+		char major = getTopBaseFWD();
+		double tmp = 0;
+		double f = getTopBasePercentsFWD();
+		switch (major) {
+		case 'A':
+			int aFWD = base.getaFor();
+			for (int i = 0; i < aFWD; i++) {
+				byte err = 20;
+				err = base.getaForQ().get(i);
+				double p = Math.pow(10, (-err / 10));
+				tmp = majorCalc(tmp, f, p);
+			}
+
+			break;
+		case 'C':
+			int cFWD = base.getcFor();
+			for (int i = 0; i < cFWD; i++) {
+				Byte err = base.getcForQ().get(i);
+				double p = Math.pow(10, (-err / 10));
+				tmp = majorCalc(tmp, f, p);
+			}
+			break;
+		case 'G':
+			int gFWD = base.getgFor();
+			for (int i = 0; i < gFWD; i++) {
+				Byte err = base.getgForQ().get(i);
+				double p = Math.pow(10, (-err / 10));
+				tmp = majorCalc(tmp, f, p);
+			}
+			break;
+		case 'T':
+			int tFWD = base.gettFor();
+			for (int i = 0; i < tFWD; i++) {
+				Byte err = base.gettForQ().get(i);
+				double p = Math.pow(10, (-err / 10));
+				tmp = majorCalc(tmp, f, p);
+			}
+			break;
+		default:
+			break;
+		}
+		return tmp;
 	}
 
+	public double calcSecond(BasePosition base) {
+		char minor = getMinorBaseFWD();
+		double tmp = 0;
+		double f = getTopBasePercentsFWD();
+		switch (minor) {
+		case 'A':
+			int aFWD = base.getaFor();
+			for (int i = 0; i < aFWD; i++) {
+				Byte err = base.getaForQ().get(i);
+				double p = Math.pow(10, (-err / 10));
+				tmp = minorCalc(tmp, f, p);
+			}
+			break;
+		case 'C':
+			int cFWD = base.getcFor();
+			for (int i = 0; i < cFWD; i++) {
+				Byte err = base.getcForQ().get(i);
+				double p = Math.pow(10, (-err / 10));
+				tmp = minorCalc(tmp, f, p);
+			}
+			break;
+		case 'G':
+			int gFWD = base.getgFor();
+			for (int i = 0; i < gFWD; i++) {
+				Byte err = base.getgForQ().get(i);
+				double p = Math.pow(10, (-err / 10));
+				tmp = minorCalc(tmp, f, p);
+			}
+			break;
+		case 'T':
+			int tFWD = base.gettFor();
+			for (int i = 0; i < tFWD; i++) {
+				Byte err = base.gettForQ().get(i);
+				double p = Math.pow(10, (-err / 10));
+				tmp = minorCalc(tmp, f, p);
+			}
+			break;
+		default:
+			break;
+		}
+		return tmp;
+	}
+
+	private double majorCalc(double tmp, double f, double p) {
+		return tmp + Math.log(((1 - f) * p + f * (1 - p)));
+	}
+
+	private double minorCalc(double tmp, double f, double p) {
+		return tmp + Math.log(((1 - f) * (1 - p) + (f * p)));
+	}
+
+	public double calcFirstRev(BasePosition base) {
+		char major = getTopBaseREV();
+		double tmp = 0;
+		double f = getTopBasePercentsREV();
+		switch (major) {
+		case 'A':
+			int aREV = base.getaRev();
+			for (int i = 0; i < aREV; i++) {
+				Byte quality = base.getaRevQ().get(i);
+				double p = Math.pow(10, (-quality / 10));
+				tmp = majorCalc(tmp, f, p);
+			}
+			break;
+		case 'C':
+			int cREV = base.getcRev();
+			for (int i = 0; i < cREV; i++) {
+				Byte quality = base.getcRevQ().get(i);
+				double p = Math.pow(10, (-quality / 10));
+				tmp = majorCalc(tmp, f, p);
+			}
+			break;
+		case 'G':
+			int gREV = base.getgRev();
+			for (int i = 0; i < gREV; i++) {
+				Byte quality = base.getgRevQ().get(i);
+				double p = Math.pow(10, (-quality / 10));
+				tmp = majorCalc(tmp, f, p);
+			}
+			break;
+		case 'T':
+			int tREV = base.gettRev();
+			for (int i = 0; i < tREV; i++) {
+				Byte quality = base.gettRevQ().get(i);
+				double p = Math.pow(10, (-quality / 10));
+				tmp = majorCalc(tmp, f, p);
+			}
+			break;
+		default:
+			break;
+		}
+		return tmp;
+	}
+
+	public double calcSecondR(BasePosition base) {
+		char minor = getMinorBaseREV();
+		double tmp = 0;
+		double f = getTopBasePercentsREV();
+		switch (minor) {
+		case 'A':
+			int aREV = base.getaRev();
+			for (int i = 0; i < aREV; i++) {
+				Byte quality = base.getaRevQ().get(i);
+				double p = Math.pow(10, (-quality / 10));
+				tmp = minorCalc(tmp, f, p);
+			}
+			break;
+		case 'C':
+			int cREV = base.getcRev();
+			for (int i = 0; i < cREV; i++) {
+				Byte quality = base.getcRevQ().get(i);
+				double p = Math.pow(10, (-quality / 10));
+				tmp = minorCalc(tmp, f, p);
+			}
+			break;
+		case 'G':
+			int gREV = base.getgRev();
+			for (int i = 0; i < gREV; i++) {
+				Byte quality = base.getgRevQ().get(i);
+				double p = Math.pow(10, (-quality / 10));
+				tmp = minorCalc(tmp, f, p);
+			}
+			break;
+		case 'T':
+			int tREV = base.gettRev();
+			for (int i = 0; i < tREV; i++) {
+				Byte quality = base.gettRevQ().get(i);
+				double p = Math.pow(10, (-quality / 10));
+				tmp = minorCalc(tmp, f, p);
+			}
+			break;
+		default:
+			break;
+		}
+		return tmp;
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -618,6 +746,14 @@ public class PositionObject implements Comparable<PositionObject> {
 	public void setTopBaseREV(char posREV) {
 		this.topBaseREV = posREV;
 	}
+	
+	public boolean isVariant() {
+		return isVariant;
+	}
+
+	public void setVariant(boolean isVariant) {
+		this.isVariant = isVariant;
+	}
 
 	public int getVariantType() {
 		return type;
@@ -751,14 +887,6 @@ public class PositionObject implements Comparable<PositionObject> {
 		this.isInsertion = isInsertion;
 	}
 
-	public short getInsertionIndex() {
-		return insertionIndex;
-	}
-
-	public void setInsertionIndex(short insertionIndex) {
-		this.insertionIndex = insertionIndex;
-	}
-
 	public boolean isRevVariant() {
 		return isRevVariant;
 	}
@@ -781,188 +909,6 @@ public class PositionObject implements Comparable<PositionObject> {
 
 	public void setDeletion(boolean isDeletion) {
 		this.isDeletion = isDeletion;
-	}
-
-	public double calcFirst(BasePosition base) {
-		char major = getTopBaseFWD();
-		double tmp = 0;
-		double f = this.getTopBasePercentsFWD();
-		switch (major) {
-		case 'A':
-			int aFWD = base.getaFor();
-			for (int i = 0; i < aFWD; i++) {
-				byte err = 20;
-				err = base.getaForQ().get(i);
-				double p = Math.pow(10, (-err / 10));
-				tmp = majorCalc(tmp, f, p);
-			}
-
-			break;
-		case 'C':
-			int cFWD = base.getcFor();
-			for (int i = 0; i < cFWD; i++) {
-				Byte err = base.getcForQ().get(i);
-				double p = Math.pow(10, (-err / 10));
-				tmp = majorCalc(tmp, f, p);
-			}
-			break;
-		case 'G':
-			int gFWD = base.getgFor();
-			for (int i = 0; i < gFWD; i++) {
-				Byte err = base.getgForQ().get(i);
-				double p = Math.pow(10, (-err / 10));
-				tmp = majorCalc(tmp, f, p);
-			}
-			break;
-		case 'T':
-			int tFWD = base.gettFor();
-			for (int i = 0; i < tFWD; i++) {
-				Byte err = base.gettForQ().get(i);
-				double p = Math.pow(10, (-err / 10));
-				tmp = majorCalc(tmp, f, p);
-			}
-			break;
-		default:
-			break;
-		}
-		return tmp;
-	}
-
-	public double calcSecond(BasePosition base) {
-		char minor = getMinorBaseFWD();
-		double tmp = 0;
-		double f = this.getTopBasePercentsFWD();
-		switch (minor) {
-		case 'A':
-			int aFWD = base.getaFor();
-			for (int i = 0; i < aFWD; i++) {
-				Byte err = base.getaForQ().get(i);
-				double p = Math.pow(10, (-err / 10));
-				tmp = minorCalc(tmp, f, p);
-			}
-			break;
-		case 'C':
-			int cFWD = base.getcFor();
-			for (int i = 0; i < cFWD; i++) {
-				Byte err = base.getcForQ().get(i);
-				double p = Math.pow(10, (-err / 10));
-				tmp = minorCalc(tmp, f, p);
-			}
-			break;
-		case 'G':
-			int gFWD = base.getgFor();
-			for (int i = 0; i < gFWD; i++) {
-				Byte err = base.getgForQ().get(i);
-				double p = Math.pow(10, (-err / 10));
-				tmp = minorCalc(tmp, f, p);
-			}
-			break;
-		case 'T':
-			int tFWD = base.gettFor();
-			for (int i = 0; i < tFWD; i++) {
-				Byte err = base.gettForQ().get(i);
-				double p = Math.pow(10, (-err / 10));
-				tmp = minorCalc(tmp, f, p);
-			}
-			break;
-		default:
-			break;
-		}
-		return tmp;
-	}
-
-	private double majorCalc(double tmp, double f, double p) {
-		return tmp + Math.log(((1 - f) * p + f * (1 - p)));
-	}
-
-	private double minorCalc(double tmp, double f, double p) {
-		return tmp + Math.log(((1 - f) * (1 - p) + (f * p)));
-	}
-
-	public double calcFirstRev(BasePosition base) {
-		char major = getTopBaseREV();
-		double tmp = 0;
-		double f = this.getTopBasePercentsREV();
-		switch (major) {
-		case 'A':
-			int aREV = base.getaRev();
-			for (int i = 0; i < aREV; i++) {
-				Byte quality = base.getaRevQ().get(i);
-				double p = Math.pow(10, (-quality / 10));
-				tmp = majorCalc(tmp, f, p);
-			}
-			break;
-		case 'C':
-			int cREV = base.getcRev();
-			for (int i = 0; i < cREV; i++) {
-				Byte quality = base.getcRevQ().get(i);
-				double p = Math.pow(10, (-quality / 10));
-				tmp = majorCalc(tmp, f, p);
-			}
-			break;
-		case 'G':
-			int gREV = base.getgRev();
-			for (int i = 0; i < gREV; i++) {
-				Byte quality = base.getgRevQ().get(i);
-				double p = Math.pow(10, (-quality / 10));
-				tmp = majorCalc(tmp, f, p);
-			}
-			break;
-		case 'T':
-			int tREV = base.gettRev();
-			for (int i = 0; i < tREV; i++) {
-				Byte quality = base.gettRevQ().get(i);
-				double p = Math.pow(10, (-quality / 10));
-				tmp = majorCalc(tmp, f, p);
-			}
-			break;
-		default:
-			break;
-		}
-		return tmp;
-	}
-
-	public double calcSecondR(BasePosition base) {
-		char minor = getMinorBaseREV();
-		double tmp = 0;
-		double f = this.getTopBasePercentsREV();
-		switch (minor) {
-		case 'A':
-			int aREV = base.getaRev();
-			for (int i = 0; i < aREV; i++) {
-				Byte quality = base.getaRevQ().get(i);
-				double p = Math.pow(10, (-quality / 10));
-				tmp = minorCalc(tmp, f, p);
-			}
-			break;
-		case 'C':
-			int cREV = base.getcRev();
-			for (int i = 0; i < cREV; i++) {
-				Byte quality = base.getcRevQ().get(i);
-				double p = Math.pow(10, (-quality / 10));
-				tmp = minorCalc(tmp, f, p);
-			}
-			break;
-		case 'G':
-			int gREV = base.getgRev();
-			for (int i = 0; i < gREV; i++) {
-				Byte quality = base.getgRevQ().get(i);
-				double p = Math.pow(10, (-quality / 10));
-				tmp = minorCalc(tmp, f, p);
-			}
-			break;
-		case 'T':
-			int tREV = base.gettRev();
-			for (int i = 0; i < tREV; i++) {
-				Byte quality = base.gettRevQ().get(i);
-				double p = Math.pow(10, (-quality / 10));
-				tmp = minorCalc(tmp, f, p);
-			}
-			break;
-		default:
-			break;
-		}
-		return tmp;
 	}
 
 	public double getLlrFWD() {
