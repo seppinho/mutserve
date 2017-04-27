@@ -31,6 +31,7 @@ public class PositionObject implements Comparable<PositionObject> {
 	private double tPercentageREV;
 	private double nPercentageREV;
 	private double dPercentageREV;
+	private char[] pos;
 
 	private double topBasePercentsFWD;
 	private double minorBasePercentsFWD;
@@ -176,7 +177,7 @@ public class PositionObject implements Comparable<PositionObject> {
 				minorBasePercentsFWD = allelesFWD.get(1) / (double) totalFWD;
 			}
 		}
-
+		
 		ArrayList<Integer> allelesREV = new ArrayList<Integer>();
 		allelesREV.add(aREV);
 		allelesREV.add(cREV);
@@ -366,10 +367,10 @@ public class PositionObject implements Comparable<PositionObject> {
 		
 		if (minorBasePercentsFWD >= 0.01 || minorBasePercentsREV >= 0.01) {
 			double fm0FWD = calcFirst(base);
-			double fm1FWD = calcFirst(base) + calcSecond(base);
+			double fm1FWD = calcFirst(base) + calcSecond(base, getMinorBaseFWD());
 
 			double fm0REV = calcFirstRev(base);
-			double fm1REV = calcFirstRev(base) + calcSecondR(base);
+			double fm1REV = calcFirstRev(base) + calcSecondR(base,getMinorBaseREV());
 
 			this.setLlrFWD(Math.abs(fm1FWD - fm0FWD));
 			this.setLlrREV(Math.abs(fm1REV - fm0REV));
@@ -442,8 +443,8 @@ public class PositionObject implements Comparable<PositionObject> {
 		return tmp;
 	}
 
-	public double calcSecond(BasePosition base) {
-		char minor = getMinorBaseFWD();
+	public double calcSecond(BasePosition base, char baseChar) {
+		char minor = baseChar;
 		double tmp = 0;
 		double f = getTopBasePercentsFWD();
 		switch (minor) {
@@ -536,8 +537,8 @@ public class PositionObject implements Comparable<PositionObject> {
 		return tmp;
 	}
 
-	public double calcSecondR(BasePosition base) {
-		char minor = getMinorBaseREV();
+	public double calcSecondR(BasePosition base, char baseChar) {
+		char minor = baseChar;
 		double tmp = 0;
 		double f = getTopBasePercentsREV();
 		switch (minor) {
