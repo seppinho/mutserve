@@ -74,7 +74,7 @@ public class RawFileAnalyser {
 
 			while (cloudgeneReader.next()) {
 
-				PositionObject obj = parseObject(cloudgeneReader);
+				PositionObject obj = parseRaw(cloudgeneReader);
 
 				if (id.equals(obj.getId())) {
 
@@ -172,7 +172,7 @@ public class RawFileAnalyser {
 		return metrics;
 	}
 
-	private static PositionObject parseObject(CsvTableReader cloudgeneReader) {
+	private static PositionObject parseRaw(CsvTableReader cloudgeneReader) {
 		PositionObject obj = new PositionObject();
 
 		obj.setId(cloudgeneReader.getString("SAMPLE"));
