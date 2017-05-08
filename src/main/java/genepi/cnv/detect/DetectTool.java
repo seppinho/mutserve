@@ -18,6 +18,7 @@ public class DetectTool extends WorkflowStep {
 		String input = context.get("analyseOut");
 		String outputRaw = context.get("raw");
 		String outputFiltered = context.get("variants");
+		String outputMultiallelic = context.get("multiallelic");
 		String uncoveredPos = context.get("uncovered_pos");
 		String level = context.get("level");
 		
@@ -33,6 +34,7 @@ public class DetectTool extends WorkflowStep {
 		detecter.setHdfsFolder(input);
 		detecter.setDetectionLevel(Double.valueOf(level)/100.0);
 		detecter.setOutputFiltered(outputFiltered+".txt");
+		detecter.setOutputMultiallelic(outputMultiallelic+".txt");
 		detecter.setUncoveredPos(uncoveredPos+".txt");
 		detecter.setOutputRaw(outputRaw+".txt");
 		
