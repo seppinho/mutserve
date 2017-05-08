@@ -135,8 +135,21 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 					}
 					// stefan
 					if (record.getSequenceLength() == 5104) {
+						
+						
 						referenceName = record.getSequenceName();
 					}
+					
+					//kiv 7
+					if (record.getSequenceLength() == 1142) {
+						referenceName = record.getSequenceName();
+					}
+					
+					//lpa full
+					if (record.getSequenceLength() == 138893) {
+						referenceName = record.getSequenceName();
+					}
+					
 					// muc1-one
 					if (record.getSequenceLength() == 90) {
 						referenceName = record.getSequenceName();
