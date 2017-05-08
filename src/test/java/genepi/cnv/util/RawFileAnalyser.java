@@ -90,6 +90,8 @@ public class RawFileAnalyser {
 							if (obj.getVariantType() == DetectVariants.LOW_LEVEL_VARIANT
 									|| obj.getVariantType() == DetectVariants.SUSPICOUS_LOW_LEVEL_VARIANT) {
 
+								System.out.println("----" + obj.getPosition());
+								
 								hetero.add(cloudgeneReader.getDouble("LEVEL"));
 
 								if (sangerPos.contains(position)) {
@@ -172,20 +174,29 @@ public class RawFileAnalyser {
 		return metrics;
 	}
 
-	private static PositionObject parseRaw(CsvTableReader cloudgeneReader) {
+	public static PositionObject parseRaw(CsvTableReader cloudgeneReader) {
 		PositionObject obj = new PositionObject();
 
 		obj.setId(cloudgeneReader.getString("SAMPLE"));
 		obj.setPosition(cloudgeneReader.getInteger("POS"));
 
-		// TODO
 		obj.setLlrFWD(cloudgeneReader.getDouble("LLRFWD"));
-
 		obj.setLlrREV(cloudgeneReader.getDouble("LLRREV"));
-
+		
 		obj.setCovFWD(cloudgeneReader.getInteger("COV-FWD"));
 		obj.setCovREV(cloudgeneReader.getInteger("COV-REV"));
-
+		
+		obj.setLlrAFWD(cloudgeneReader.getDouble("LLRAFWD"));
+		obj.setLlrCFWD(cloudgeneReader.getDouble("LLRCFWD"));
+		obj.setLlrGFWD(cloudgeneReader.getDouble("LLRGFWD"));
+		obj.setLlrTFWD(cloudgeneReader.getDouble("LLRTFWD"));
+		
+		obj.setLlrAREV(cloudgeneReader.getDouble("LLRAREV"));
+		obj.setLlrCREV(cloudgeneReader.getDouble("LLRCREV"));
+		obj.setLlrGREV(cloudgeneReader.getDouble("LLRGREV"));
+		obj.setLlrTREV(cloudgeneReader.getDouble("LLRTREV"));
+		
+		
 		obj.setaPercentageFWD(cloudgeneReader.getDouble("%A"));
 		obj.setcPercentageFWD(cloudgeneReader.getDouble("%C"));
 		obj.setgPercentageFWD(cloudgeneReader.getDouble("%G"));
