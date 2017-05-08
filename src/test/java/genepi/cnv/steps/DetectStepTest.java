@@ -16,6 +16,7 @@ import genepi.cnv.align.AlignTool;
 import genepi.cnv.detect.DetectTool;
 import genepi.cnv.pileup.PileupTool;
 import genepi.cnv.sort.SortTool;
+import genepi.cnv.util.MultiallelicAnalyser;
 import genepi.cnv.util.QCMetric;
 import genepi.cnv.util.RawFileAnalyser;
 import genepi.cnv.util.TestCluster;
@@ -42,11 +43,11 @@ public class DetectStepTest {
 
 	@AfterClass
 	public static void tearDown() throws Exception {
-		TestCluster.getInstance().stop();
+		// TestCluster.getInstance().stop();
 	}
 
 	@Test
-	public void DetectPipelinePETest() throws IOException {
+	public void DetectPipelinemtDNAMixturePETest() throws IOException {
 
 		String inputFolder = "test-data/mtdna/fastqpe/";
 		String reference = "rcrs";
@@ -59,6 +60,7 @@ public class DetectStepTest {
 		WorkflowTestContext context = buildContext(hdfsFolder, reference, type);
 
 		context.setInput("chunkLength", "0");
+		context.setInput("baq", "true");
 
 		// create step instance
 		AlignTool align = new AlignnMock("files");
@@ -83,7 +85,7 @@ public class DetectStepTest {
 	}
 
 	@Test
-	public void DetectPipelineBAM() throws IOException {
+	public void DetectPipelinemtDNAMixtureBAMTest() throws IOException {
 
 		String inputFolder = "test-data/mtdna/mixtures/";
 		String reference = "rcrs";
@@ -94,6 +96,8 @@ public class DetectStepTest {
 
 		// create workflow context
 		WorkflowTestContext context = buildContext(hdfsFolder, reference, type);
+
+		context.setInput("baq", "true");
 
 		PileupTool pileUp = new PileupMock("files");
 		boolean result = pileUp.run(context);
@@ -130,6 +134,49 @@ public class DetectStepTest {
 		} catch (MathException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+
+	}
+
+	@Test
+	public void DetectPipelineLPAMultiallelicBAMTest() throws IOException {
+
+		String inputFolder = "test-data/lpa/lpa-exome/";
+		String reference = "kiv2_6";
+		String hdfsFolder = "input";
+		String type = "bam";
+
+		importInputdata(inputFolder, hdfsFolder);
+
+		// create workflow context
+		WorkflowTestContext context = buildContext(hdfsFolder, reference, type);
+
+		context.setInput("baq", "false");
+
+		PileupTool pileUp = new PileupMock("files");
+		boolean result = pileUp.run(context);
+		assertTrue(result);
+
+		DetectMock detect = new DetectMock("files");
+		result = detect.run(context);
+		assertTrue(result);
+
+		MultiallelicAnalyser analyser = new MultiallelicAnalyser();
+		File file = new File("test-data/tmp");
+
+		File expected = new File("test-data/lpa/lpa-exome-raw-results/stefan.txt");
+		File refPath = new File("files/kiv2_6.fasta");
+
+		double hetLevel = 0.001;
+		ArrayList<QCMetric> list = analyser.analyseFile(file.getPath() + "/raw.txt", expected.getPath(), refPath.getPath(), hetLevel);
+
+		assertTrue(list.size() == 1);
+
+		for (QCMetric metric : list) {
+
+			System.out.println("Precision: " + metric.getPrecision());
+			System.out.println("Sensitivity " + metric.getSensitivity());
+			System.out.println("Specificity " + metric.getSpecificity());
 		}
 
 	}
@@ -228,10 +275,10 @@ public class DetectStepTest {
 		context.setOutput("baseQuality", "20");
 		context.setOutput("alignQuality", "30");
 		context.setOutput("statistics", "statistics");
-		context.setOutput("baq", "true");
 
 		context.setOutput("raw", file.getAbsolutePath() + "/raw");
 		context.setOutput("variants", file.getAbsolutePath() + "/variants");
+		context.setOutput("multiallelic", file.getAbsolutePath() + "/multiallelic");
 		context.setOutput("uncovered_pos", file.getAbsolutePath() + "/uncovered");
 		context.setOutput("level", "1");
 

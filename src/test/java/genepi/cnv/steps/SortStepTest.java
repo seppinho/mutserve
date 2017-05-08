@@ -85,8 +85,8 @@ public class SortStepTest {
 		}
 
 		assertEquals(317, i);
-		;
 
+		FileUtil.deleteDirectory("test-data/tmp");
 	}
 	
 	@Test
@@ -135,6 +135,8 @@ public class SortStepTest {
 			System.out.println("sorted " + rec.getSAMString());
 		}
 		System.out.println("AMOUNT " + i);
+		
+		FileUtil.deleteDirectory("test-data/tmp");
 		
 
 	}
