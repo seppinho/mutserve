@@ -32,7 +32,7 @@ public class AlignmentStepTest {
 
 	@AfterClass
 	public static void tearDown() throws Exception {
-		//TestCluster.getInstance().stop();
+		TestCluster.getInstance().stop();
 	}
 
 	@Test
@@ -78,7 +78,7 @@ public class AlignmentStepTest {
 			br.close();
 			///bwa mem rcrs.fasta small_small.fastq_| wc -l
 			assertEquals(317, i);
-			FileUtil.deleteDirectory("test/tmp");
+			FileUtil.deleteDirectory("test-data/tmp");
 
 		}
 	}
@@ -137,7 +137,7 @@ public class AlignmentStepTest {
 			assertEquals(200, i);
 			System.out.println(i);
 			br.close();
-			FileUtil.deleteDirectory("test/tmp");
+			FileUtil.deleteDirectory("test-data/tmp");
 
 		}
 	}
