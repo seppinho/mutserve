@@ -19,7 +19,7 @@ public class PileupTool extends HadoopJobStep {
 
 		String type = context.get("inType");
 		
-		String folder = getFolder(PileupTool.class);
+		final String folder = getFolder(PileupTool.class);
 
 		String input;
 		if (type.equals("se") || type.equals("pe")) {
