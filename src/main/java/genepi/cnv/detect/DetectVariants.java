@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -26,6 +25,7 @@ public class DetectVariants {
 	private double detectionLevel = 0.01;
 	private String outputRaw;
 	private String outputFiltered;
+	private String outputMultiallelic;
 	private String uncoveredPos;
 	private String outSummary;
 
@@ -45,6 +45,8 @@ public class DetectVariants {
 
 	public static int INSERTION = 5; // deletion
 
+	public static int MULTI_ALLELIC = 6;
+
 	public DetectVariants() {
 
 		df = DecimalFormat.getInstance();
@@ -63,11 +65,13 @@ public class DetectVariants {
 
 			Text line = new Text();
 			List<PositionObject> variantPos = new ArrayList<PositionObject>();
+			List<PositionObject> multiPos = new ArrayList<PositionObject>();
 			CsvTableWriter rawWriter = new CsvTableWriter(outputRaw, '\t', false);
 			// TODO CHANGE LLR BACK TO D
 			rawWriter.setColumns(new String[] { "SAMPLE", "POS", "REF", "TOP-FWD", "MINOR-FWD", "TOP-REV", "MINOR-REV",
 					"COV-FWD", "COV-REV", "COV-TOTAL", "TYPE", "LEVEL", "%A", "%C", "%G", "%T", "%D", "%N", "%a", "%c",
-					"%g", "%t", "%d", "%n", "LLRFWD", "LLRREV" });
+					"%g", "%t", "%d", "%n", "LLRFWD", "LLRREV", "LLRAFWD", "LLRCFWD", "LLRGFWD", "LLRTFWD", "LLRAREV",
+					"LLRCREV", "LLRGREV", "LLRTREV" });
 
 			List<PositionObject> uncoveredPosList = new ArrayList<PositionObject>();
 
@@ -83,7 +87,7 @@ public class DetectVariants {
 						/** parse each line */
 						PositionObject pos = new PositionObject();
 						pos.parseLine(line.toString());
-
+						
 						if (pos.getPosition() > 0 && pos.getPosition() <= refAsString.length()) {
 
 							// write each pos; ignore insertions
@@ -109,6 +113,13 @@ public class DetectVariants {
 								variantPos.add(pos);
 							}
 
+							// quick and dirty. combine with variants
+							determineMultiAllelicSites(pos);
+
+							if (pos.getVariantType() == MULTI_ALLELIC) {
+								multiPos.add(pos);
+							}
+
 						}
 					}
 
@@ -121,6 +132,8 @@ public class DetectVariants {
 
 			writeVariantsFile(variantPos);
 
+			writeMultiAllelicSites(multiPos);
+
 			writeUncoveredPos(uncoveredPosList);
 
 			return true;
@@ -132,21 +145,80 @@ public class DetectVariants {
 
 	}
 
-	public void multiallelicSites(double posPercentFWD, double posPercentREV) {
+	public void determineMultiAllelicSites(PositionObject posObj) {
+		char[] bases = new char[] { 'A', 'C', 'G', 'T' };
+		StringBuilder multiAllelic = new StringBuilder();
+		int llrLimit = 5;
+		double currentPercentFWD = 0.0;
+		double currentPercentREV = 0.0;
+		
+		if (checkCoverage(posObj)) {
+			for (char base : bases) {
+				switch (base) {
+				case 'A':
+					currentPercentFWD = posObj.getaPercentageFWD();
+					currentPercentREV = posObj.getaPercentageREV();
+					if (checkAlleleCoverage(posObj, currentPercentFWD, currentPercentREV)) {
+						if (currentPercentFWD >= detectionLevel || currentPercentREV >= detectionLevel) {
+							if (posObj.getLlrAFWD() >= llrLimit || posObj.getLlrAREV() >= llrLimit) {
+								if (calcStrandBias(posObj, currentPercentFWD, currentPercentREV) <= 1) {
+									multiAllelic.append("A,");
+									posObj.setVariantType(MULTI_ALLELIC);
+								}
+							}
+						}
+					}
+					break;
+				case 'C':
+					currentPercentFWD = posObj.getcPercentageFWD();
+					currentPercentREV = posObj.getcPercentageREV();
+					if (checkAlleleCoverage(posObj, currentPercentFWD, currentPercentREV)) {
+						if (posObj.getcPercentageFWD() >= detectionLevel
+								|| posObj.getcPercentageREV() >= detectionLevel) {
+							if (posObj.getLlrCFWD() >= llrLimit || posObj.getLlrCREV() >= llrLimit) {
+								if (calcStrandBias(posObj, currentPercentFWD, currentPercentREV) <= 1) {
+									multiAllelic.append("C,");
+									posObj.setVariantType(MULTI_ALLELIC);
+								}
+							}
 
-		try {
-
-			/**
-			 * 10× coverage of qualified bases on both positive and negative
-			 * strands;
-			 */
-			if (posPercentFWD >= detectionLevel || posPercentREV >= detectionLevel) {
+						}
+					}
+					break;
+				case 'G':
+					currentPercentFWD = posObj.getgPercentageFWD();
+					currentPercentREV = posObj.getgPercentageREV();
+					if (checkAlleleCoverage(posObj, currentPercentFWD, currentPercentREV)) {
+						if (currentPercentFWD >= detectionLevel || currentPercentREV >= detectionLevel) {
+							if (posObj.getLlrGFWD() >= llrLimit || posObj.getLlrGREV() >= llrLimit) {
+								if (calcStrandBias(posObj, currentPercentFWD, currentPercentREV) <= 1) {
+									multiAllelic.append("G,");
+									posObj.setVariantType(MULTI_ALLELIC);
+								}
+							}
+						}
+					}
+					break;
+				case 'T':
+					currentPercentFWD = posObj.gettPercentageFWD();
+					currentPercentREV = posObj.gettPercentageREV();
+					if (checkAlleleCoverage(posObj, currentPercentFWD, currentPercentREV)) {
+						if (currentPercentFWD >= detectionLevel || currentPercentREV >= detectionLevel) {
+							if (posObj.getLlrTFWD() >= llrLimit || posObj.getLlrTREV() >= llrLimit) {
+								if (calcStrandBias(posObj, currentPercentFWD, currentPercentREV) <= 1) {
+									multiAllelic.append("T");
+									posObj.setVariantType(MULTI_ALLELIC);
+								}
+							}
+						}
+					}
+					break;
+				}
 
 			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
+
+		posObj.setMultiAllelic(multiAllelic.toString());
 
 	}
 
@@ -272,6 +344,22 @@ public class DetectVariants {
 
 			writer.setString(25, df.format(posObj.getLlrREV()) + "");
 
+			writer.setString(26, df.format(posObj.getLlrAFWD()) + "");
+
+			writer.setString(27, df.format(posObj.getLlrCFWD()) + "");
+
+			writer.setString(28, df.format(posObj.getLlrGFWD()) + "");
+
+			writer.setString(29, df.format(posObj.getLlrTFWD()) + "");
+
+			writer.setString(30, df.format(posObj.getLlrAREV()) + "");
+
+			writer.setString(31, df.format(posObj.getLlrCREV()) + "");
+
+			writer.setString(32, df.format(posObj.getLlrGREV()) + "");
+
+			writer.setString(33, df.format(posObj.getLlrTREV()) + "");
+
 			writer.next();
 
 		} catch (Exception e) {
@@ -323,6 +411,33 @@ public class DetectVariants {
 			writer.setInteger(7, posObj.getCovREV());
 
 			writer.setInteger(8, posObj.getCovFWD() + posObj.getCovREV());
+
+			writer.next();
+
+		}
+
+		writer.close();
+
+	}
+
+	private void writeMultiAllelicSites(List<PositionObject> list) {
+
+		CsvTableWriter writer = new CsvTableWriter(outputMultiallelic, '\t', false);
+		writer.setColumns(new String[] { "SampleID", "POS", "REF", "VAR" });
+
+		Collections.sort(list);
+
+		for (PositionObject posObj : list) {
+
+			char ref = refAsString.charAt(posObj.getPosition() - 1);
+
+			writer.setString(0, posObj.getId());
+
+			writer.setInteger(1, posObj.getPosition());
+
+			writer.setString(2, ref + "");
+
+			writer.setString(3, posObj.getMultiAllelic() + "");
 
 			writer.next();
 
@@ -389,6 +504,21 @@ public class DetectVariants {
 		return bias;
 	}
 
+	private double calcStrandBias(PositionObject posObj, double minorFWD, double minorREV) {
+
+		// b,d minor
+		// a,c major
+
+		double a = posObj.getTopBasePercentsFWD() * posObj.getCovFWD();
+		double c = posObj.getTopBasePercentsREV() * posObj.getCovREV();
+		double b = minorFWD * posObj.getCovFWD();
+		double d = minorREV * posObj.getCovREV();
+
+		double bias = Math.abs((b / (a + b)) - (d / (c + d))) / ((b + d) / (a + b + c + d));
+
+		return bias;
+	}
+
 	private double calcHetLevel(PositionObject posObj) {
 
 		char ref = refAsString.charAt(posObj.getPosition() - 1);
@@ -436,6 +566,19 @@ public class DetectVariants {
 
 		if ((posObj.getMinorBasePercentsREV() * posObj.getCovREV() < 3)
 				|| (posObj.getTopBasePercentsFWD() * posObj.getCovFWD()) < 3) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private boolean checkAlleleCoverage(PositionObject posObj, double minorPercentFWD, double minorPercentREV) {
+		if (posObj.getTopBasePercentsREV() * posObj.getCovREV() < 3
+				|| (posObj.getTopBasePercentsFWD() * posObj.getCovFWD()) < 3) {
+			return false;
+		}
+
+		if ((minorPercentREV * posObj.getCovREV() < 3) || (minorPercentFWD * posObj.getCovFWD()) < 3) {
 			return false;
 		}
 
@@ -594,6 +737,14 @@ public class DetectVariants {
 
 	public void setVersion(String version) {
 		this.version = version;
+	}
+
+	public String getOutputMultiallelic() {
+		return outputMultiallelic;
+	}
+
+	public void setOutputMultiallelic(String outputMultiallelic) {
+		this.outputMultiallelic = outputMultiallelic;
 	}
 
 }
