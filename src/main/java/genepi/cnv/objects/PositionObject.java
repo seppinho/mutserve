@@ -3,6 +3,7 @@ package genepi.cnv.objects;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class PositionObject implements Comparable<PositionObject> {
 
@@ -31,7 +32,16 @@ public class PositionObject implements Comparable<PositionObject> {
 	private double tPercentageREV;
 	private double nPercentageREV;
 	private double dPercentageREV;
-	private char[] pos;
+
+	private double llrAFWD;
+	private double llrCFWD;
+	private double llrGFWD;
+	private double llrTFWD;
+
+	private double llrAREV;
+	private double llrCREV;
+	private double llrGREV;
+	private double llrTREV;
 
 	private double topBasePercentsFWD;
 	private double minorBasePercentsFWD;
@@ -57,6 +67,8 @@ public class PositionObject implements Comparable<PositionObject> {
 	private double CIAC_UP_FWD;
 	private double CIAC_LOW_REV;
 	private double CIAC_UP_REV;
+	
+	private String multiAllelic;
 
 	public void parseLine(String line) {
 
@@ -64,13 +76,13 @@ public class PositionObject implements Comparable<PositionObject> {
 
 		this.setId(splits[0]);
 		this.setPosition(Integer.valueOf(splits[1]));
-		
+
 		this.setCovFWD(Integer.valueOf(splits[2]));
 		this.setCovREV(Integer.valueOf(splits[3]));
-		
+
 		this.setTopBaseFWD(splits[4].charAt(0));
 		this.setTopBaseREV(splits[5].charAt(0));
-		
+
 		this.setMinorBaseFWD(splits[6].charAt(0));
 		this.setMinorBaseREV(splits[7].charAt(0));
 
@@ -90,12 +102,22 @@ public class PositionObject implements Comparable<PositionObject> {
 
 		this.setTopBasePercentsFWD(Double.valueOf(splits[20]));
 		this.setMinorBasePercentsFWD(Double.valueOf(splits[21]));
-		
+
 		this.setTopBasePercentsREV(Double.valueOf(splits[22]));
 		this.setMinorBasePercentsREV(Double.valueOf(splits[23]));
 
 		this.setLlrFWD(Double.valueOf(splits[24]));
 		this.setLlrREV(Double.valueOf(splits[25]));
+		
+		this.setLlrAFWD(Double.valueOf(splits[26]));
+		this.setLlrCFWD(Double.valueOf(splits[27]));
+		this.setLlrGFWD(Double.valueOf(splits[28]));
+		this.setLlrTFWD(Double.valueOf(splits[29]));
+		
+		this.setLlrAREV(Double.valueOf(splits[30]));
+		this.setLlrCREV(Double.valueOf(splits[31]));
+		this.setLlrGREV(Double.valueOf(splits[32]));
+		this.setLlrTREV(Double.valueOf(splits[33]));
 
 	}
 
@@ -177,7 +199,7 @@ public class PositionObject implements Comparable<PositionObject> {
 				minorBasePercentsFWD = allelesFWD.get(1) / (double) totalFWD;
 			}
 		}
-		
+
 		ArrayList<Integer> allelesREV = new ArrayList<Integer>();
 		allelesREV.add(aREV);
 		allelesREV.add(cREV);
@@ -364,18 +386,58 @@ public class PositionObject implements Comparable<PositionObject> {
 
 		this.setTopBasePercentsREV(topBasePercentsREV);
 		this.setMinorBasePercentsREV(minorBasePercentsREV);
-		
+
+		//TODO combine this with LLR for all bases
 		if (minorBasePercentsFWD >= 0.01 || minorBasePercentsREV >= 0.01) {
-			double fm0FWD = calcFirst(base);
-			double fm1FWD = calcFirst(base) + calcSecond(base, getMinorBaseFWD());
-
-			double fm0REV = calcFirstRev(base);
-			double fm1REV = calcFirstRev(base) + calcSecondR(base,getMinorBaseREV());
-
-			this.setLlrFWD(Math.abs(fm1FWD - fm0FWD));
-			this.setLlrREV(Math.abs(fm1REV - fm0REV));
+			LlrObject llr = calcLlr(base, getMinorBaseFWD(), getMinorBaseREV());
+			this.setLlrFWD(llr.getLlrFWD());
+			this.setLlrREV(llr.getLlrREV());
 		}
 
+		if (getTopBaseFWD() != 'A') {
+			LlrObject llr = calcLlr(base, 'A');
+			this.setLlrAFWD(llr.getLlrFWD());
+			this.setLlrAREV(llr.getLlrREV());
+		}
+
+		if (getTopBaseFWD() != 'C') {
+			LlrObject llr = calcLlr(base,  'C');
+			this.setLlrCFWD(llr.getLlrFWD());
+			this.setLlrCREV(llr.getLlrREV());
+		}
+
+		if (getTopBaseFWD() != 'G') {
+			LlrObject llr = calcLlr(base,  'G');
+			this.setLlrGFWD(llr.getLlrFWD());
+			this.setLlrGREV(llr.getLlrREV());
+		}
+
+		if (getTopBaseFWD() != 'T') {
+			LlrObject llr = calcLlr(base,  'T');
+			this.setLlrTFWD(llr.getLlrFWD());
+			this.setLlrTREV(llr.getLlrREV());
+		}
+
+	}
+
+	
+	private LlrObject calcLlr(BasePosition base, char minorBaseFWD) {
+		return calcLlr(base, minorBaseFWD, minorBaseFWD);
+	}
+	
+	private LlrObject calcLlr(BasePosition base, char minorBaseFWD, char minorBaseREV) {
+
+		LlrObject llr = new LlrObject();
+		double fm0FWD = calcFirst(base);
+		double fm1FWD = calcFirst(base) + calcSecond(base, minorBaseFWD);
+
+		double fm0REV = calcFirstRev(base);
+		double fm1REV = calcFirstRev(base) + calcSecondR(base, minorBaseREV);
+
+		llr.setLlrFWD(Math.abs(fm1FWD - fm0FWD));
+		llr.setLlrREV(Math.abs(fm1REV - fm0REV));
+
+		return llr;
 	}
 
 	@Override
@@ -388,6 +450,8 @@ public class PositionObject implements Comparable<PositionObject> {
 		}
 	}
 
+	//TODO this can be a problem if ID is too long!!
+	//move all data from detect variants to REDUCER
 	@Override
 	public String toString() {
 		return id + "\t" + position + "\t" + covFWD + "\t" + covREV + "\t" + topBaseFWD + "\t" + topBaseREV + "\t"
@@ -395,7 +459,9 @@ public class PositionObject implements Comparable<PositionObject> {
 				+ gPercentageFWD + "\t" + tPercentageFWD + "\t" + nPercentageFWD + "\t" + dPercentageFWD + "\t"
 				+ aPercentageREV + "\t" + cPercentageREV + "\t" + gPercentageREV + "\t" + tPercentageREV + "\t"
 				+ nPercentageREV + "\t" + dPercentageREV + "\t" + topBasePercentsFWD + "\t" + minorBasePercentsFWD
-				+ "\t" + topBasePercentsREV + "\t" + minorBasePercentsREV + "\t" + llrFWD + "\t" + llrREV;
+				+ "\t" + topBasePercentsREV + "\t" + minorBasePercentsREV + "\t" + llrFWD + "\t" + llrREV + "\t"+ 
+				llrAFWD + "\t" + llrCFWD + "\t" + llrGFWD + "\t" + llrTFWD + "\t" + 
+				llrAREV + "\t" + llrCREV + "\t"	+ llrGREV + "\t" + llrTREV;
 	}
 
 	public double calcFirst(BasePosition base) {
@@ -579,7 +645,7 @@ public class PositionObject implements Comparable<PositionObject> {
 		}
 		return tmp;
 	}
-	
+
 	public String getId() {
 		return id;
 	}
@@ -747,7 +813,7 @@ public class PositionObject implements Comparable<PositionObject> {
 	public void setTopBaseREV(char posREV) {
 		this.topBaseREV = posREV;
 	}
-	
+
 	public boolean isVariant() {
 		return isVariant;
 	}
@@ -934,6 +1000,78 @@ public class PositionObject implements Comparable<PositionObject> {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public double getLlrAFWD() {
+		return llrAFWD;
+	}
+
+	public void setLlrAFWD(double llrAFWD) {
+		this.llrAFWD = llrAFWD;
+	}
+
+	public double getLlrCFWD() {
+		return llrCFWD;
+	}
+
+	public void setLlrCFWD(double llrCFWD) {
+		this.llrCFWD = llrCFWD;
+	}
+
+	public double getLlrGFWD() {
+		return llrGFWD;
+	}
+
+	public void setLlrGFWD(double llrGFWD) {
+		this.llrGFWD = llrGFWD;
+	}
+
+	public double getLlrTFWD() {
+		return llrTFWD;
+	}
+
+	public void setLlrTFWD(double llrTFWD) {
+		this.llrTFWD = llrTFWD;
+	}
+
+	public double getLlrAREV() {
+		return llrAREV;
+	}
+
+	public void setLlrAREV(double llrAREV) {
+		this.llrAREV = llrAREV;
+	}
+
+	public double getLlrCREV() {
+		return llrCREV;
+	}
+
+	public void setLlrCREV(double llrCREV) {
+		this.llrCREV = llrCREV;
+	}
+
+	public double getLlrGREV() {
+		return llrGREV;
+	}
+
+	public void setLlrGREV(double llrGREV) {
+		this.llrGREV = llrGREV;
+	}
+
+	public double getLlrTREV() {
+		return llrTREV;
+	}
+
+	public void setLlrTREV(double llrTREV) {
+		this.llrTREV = llrTREV;
+	}
+
+	public String getMultiAllelic() {
+		return multiAllelic;
+	}
+
+	public void setMultiAllelic(String multiAllelic) {
+		this.multiAllelic = multiAllelic;
 	}
 
 }
