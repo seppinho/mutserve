@@ -137,10 +137,10 @@ public class MultiallelicAnalyser {
 		return metrics;
 	}
 
-	private void checkKIV(Set<String> expectedPos) {
+	private void checkKIV(Set<String> missingPos) {
 		HashMap<Integer, String> positions = new HashMap<Integer, String>();
 		try {
-			LineReader read = new LineReader("test-data/lpa/lpa-exome-raw-results/2017-04_exonic_refs_allpos.txt");
+			LineReader read = new LineReader("test-data/lpa/lpa-exome-kiv2-raw-results/2017-04_exonic_refs_allpos.txt");
 			
 			while (read.next()){
 				String line = read.get();
@@ -155,16 +155,16 @@ public class MultiallelicAnalyser {
 		
 		int[] myIntArray = new int[11];
 		
-		for(String exp : expectedPos){
-			int pos = Integer.valueOf(exp.substring(0, exp.length()-1));
-			String variant = String.valueOf(exp.charAt(exp.length()-1));
-			String value = positions.get(pos);
+		for(String miss : missingPos){
+			int posMissing = Integer.valueOf(miss.substring(0, miss.length()-1));
+			String variantMissing = String.valueOf(miss.charAt(miss.length()-1));
+			String value = positions.get(posMissing);
 			String[] splits = value.split(",");
 
 			int stringPos = 0;
 			for(String split:splits){
 				
-				if (split.equals(variant)){
+				if (split.equals(variantMissing)){
 					myIntArray[stringPos]++;
 				}
 				stringPos++;	
