@@ -141,7 +141,7 @@ public class DetectStepTest {
 	@Test
 	public void DetectPipelineLPAMultiallelicBAMTest() throws IOException {
 
-		String inputFolder = "test-data/lpa/lpa-exome/";
+		String inputFolder = "test-data/lpa/lpa-exome-kiv2";
 		String reference = "kiv2_6";
 		String hdfsFolder = "input";
 		String type = "bam";
@@ -164,7 +164,7 @@ public class DetectStepTest {
 		MultiallelicAnalyser analyser = new MultiallelicAnalyser();
 		File file = new File("test-data/tmp");
 
-		File expected = new File("test-data/lpa/lpa-exome-raw-results/stefan.txt");
+		File expected = new File("test-data/lpa/lpa-exome-kiv2-raw-results/expected.txt");
 		File refPath = new File("files/kiv2_6.fasta");
 
 		double hetLevel = 0.001;
@@ -178,6 +178,31 @@ public class DetectStepTest {
 			System.out.println("Sensitivity " + metric.getSensitivity());
 			System.out.println("Specificity " + metric.getSpecificity());
 		}
+
+	}
+	
+	@Test
+	public void DetectPipelineLPAMultiallelicBAMTest2() throws IOException {
+
+		String inputFolder = "test-data/lpa/kiv7";
+		String reference = "LPA-KIV7";
+		String hdfsFolder = "input";
+		String type = "bam";
+
+		importInputdata(inputFolder, hdfsFolder);
+
+		// create workflow context
+		WorkflowTestContext context = buildContext(hdfsFolder, reference, type);
+
+		context.setInput("baq", "false");
+
+		PileupTool pileUp = new PileupMock("files");
+		boolean result = pileUp.run(context);
+		assertTrue(result);
+
+		DetectMock detect = new DetectMock("files");
+		result = detect.run(context);
+		assertTrue(result);
 
 	}
 
