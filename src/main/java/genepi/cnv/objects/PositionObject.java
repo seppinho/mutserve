@@ -138,7 +138,8 @@ public class PositionObject implements Comparable<PositionObject> {
 		int pos;
 		String id;
 
-		id = base.getId();
+		//TODO
+		id = base.getId().substring(0,15);
 		pos = base.getPos();
 
 		int aFWD = base.getaFor();
