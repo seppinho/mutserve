@@ -32,7 +32,7 @@ public class SortTool extends HadoopJobStep {
 				for (int i = 0; i < folders.size(); i++) {
 					inputs[i] = folders.get(i);
 				}
-				SortJob sort = new SortJob("sort-bam");
+				SortJob sort = new SortJob("sort-reads");
 				sort.setInput(inputs);
 				String ref = ReferenceUtil.readInReference(FileUtil.path(folder,reference + ".fasta"));
 				sort.setRefLength(ref.length() + "");
