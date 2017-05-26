@@ -18,7 +18,7 @@ public class PileupTool extends HadoopJobStep {
 	public boolean run(WorkflowContext context) {
 
 		String type = context.get("inType");
-		
+
 		final String folder = getFolder(PileupTool.class);
 
 		String input;
@@ -34,8 +34,8 @@ public class PileupTool extends HadoopJobStep {
 		String stats = context.get("statistics");
 		String reference = context.get("reference");
 		Boolean baq = Boolean.valueOf(context.get("baq"));
-		
-		PileupJob bamJob = new PileupJob("Analyse BAM"){
+
+		PileupJob bamJob = new PileupJob("Generate Pileup") {
 			@Override
 			protected void readConfigFile() {
 				File file = new File(folder + "/" + CONFIG_FILE);
@@ -91,28 +91,6 @@ public class PileupTool extends HadoopJobStep {
 				context.error("No reads passed Quality Control!");
 				return false;
 			}
-			
-			try {
-				HdfsLineWriter logWriter = new HdfsLineWriter(HdfsUtil.path(stats));
-				logWriter.write("BAM File Statistics ");
-				logWriter.write("Overall Reads\t" + bamJob.getOverall());
-				logWriter.write("Filtered Reads\t " + bamJob.getFiltered());
-				logWriter.write("Passed Reads\t " + bamJob.getUnfiltered());
-				logWriter.write("Read Mapping Quality OK\t " + bamJob.getGoodMapping());
-				logWriter.write("Read Mapping Quality BAD\t " + bamJob.getBadMapping());
-				logWriter.write("Unmapped Reads\t " + bamJob.getUnmapped());
-				logWriter.write("Wrong Reference in BAM\t " + bamJob.getWrongRef());
-				logWriter.write("Bad Alignment\t " + bamJob.getBadALigment());
-				logWriter.write("Duplicates\t " + bamJob.getDupl());
-				logWriter.write("Short Reads (<25 bp)\t " + bamJob.getShortRead());
-
-				logWriter.write("");
-				logWriter.close();
-				
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 
 		} else {
 
@@ -123,6 +101,5 @@ public class PileupTool extends HadoopJobStep {
 		return successful;
 
 	}
-	
 
 }
