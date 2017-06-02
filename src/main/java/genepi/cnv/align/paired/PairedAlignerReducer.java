@@ -65,7 +65,7 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 
 		File reference = new File(referencePath);
 
-		refString = ReferenceUtil.findFileinReferenceArchive(reference, ".fasta");
+		refString = ReferenceUtil.findFileinDir(reference, ".fasta");
 
 		/** load index, aligner */
 		index = new BwaIndex(new File(refString));
