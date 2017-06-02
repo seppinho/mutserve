@@ -130,7 +130,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 				for (htsjdk.samtools.SAMSequenceRecord record : value.get().getHeader().getSequenceDictionary()
 						.getSequences()) {
 
-					// stefan
+				/*	// stefan
 					if (record.getSequenceLength() == 5104) {
 						referenceName = record.getSequenceName();
 					}
@@ -139,6 +139,11 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 					if (record.getSequenceLength() == 16569) {
 						referenceName = record.getSequenceName();
 					}
+					
+					// stefan
+					if (record.getSequenceLength() == 1142) {
+						referenceName = record.getSequenceName();
+					}*/
 
 				}
 			}
@@ -154,7 +159,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 
 		context.getCounter("mtdna", "OVERALL-READS").increment(1);
 
-		if (samRecord.getReferenceName().equals(referenceName)) {
+		//if (samRecord.getReferenceName().equals(referenceName)) {
 
 			if (samRecord.getMappingQuality() >= mapQual) {
 				context.getCounter("mtdna", "GOOD-MAPPING").increment(1);
@@ -346,10 +351,10 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 				context.getCounter("mtdna", "BAD-MAPPING").increment(1);
 
 			}
-		} else {
-			context.getCounter("mtdna", "FILTERED").increment(1);
-			context.getCounter("mtdna", "WRONG-REF").increment(1);
-		}
+		//} else {
+		//	context.getCounter("mtdna", "FILTERED").increment(1);
+		//	context.getCounter("mtdna", "WRONG-REF").increment(1);
+		//}
 	}
 
 	private int hg19Mapper(int pos) {
