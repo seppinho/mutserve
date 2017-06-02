@@ -19,7 +19,7 @@ import genepi.io.FileUtil;
 
 public class PileupJob extends HadoopJob {
 
-	private String reference;
+	private String refArchive;
 	private String folder;
 
 	private long overall;
@@ -41,7 +41,6 @@ public class PileupJob extends HadoopJob {
 		set("mapred.map.tasks.speculative.execution", false);
 		set("mapred.reduce.tasks.speculative.execution", false);
 		set("mapreduce.map.java.opts", "-Xmx4000M");
-		set("mapreduce.reduce.java.opts", "-Xmx2000M");
 		set("mapred.child.java.opts", "-Xmx4000M");
 	}
 
@@ -63,16 +62,14 @@ public class PileupJob extends HadoopJob {
 	@Override
 	protected void setupDistributedCache(CacheStore cache) {
 
-		String archive = FileUtil.path(folder, ReferenceUtil.getSelectedReferenceArchive(reference));
-
-		String hdfsPathRef = HdfsUtil.path(Server.REF_DIRECTORY, archive);
+		String hdfsPathRef = HdfsUtil.path(Server.REF_DIRECTORY, refArchive.substring(refArchive.lastIndexOf("/") + 1));
 
 		if (!HdfsUtil.exists(hdfsPathRef)) {
-			HdfsUtil.put(archive, hdfsPathRef);
+			HdfsUtil.put(refArchive, hdfsPathRef);
 		}
 
+		log.info("Reference path is: " + hdfsPathRef);
 		cache.addArchive("reference", hdfsPathRef);
-
 	}
 
 	@Override
@@ -124,13 +121,8 @@ public class PileupJob extends HadoopJob {
 		set("baq", baq);
 	}
 
-	public String getReference() {
-		return reference;
-	}
-
-	public void setReference(String reference) {
-		set("reference", reference);
-		this.reference = reference;
+	public void setArchive(String refArchive) {
+		this.refArchive = refArchive;
 	}
 
 	public long getGoodQual() {
