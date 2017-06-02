@@ -16,11 +16,12 @@ import genepi.hadoop.HdfsUtil;
 import genepi.io.FileUtil;
 
 public class SingleAlignerJob extends HadoopJob {
-	
+
 	protected static final Log log = LogFactory.getLog(SingleAlignerJob.class);
 	private String reference;
+	private String refArchive;
 	private String folder;
-	
+
 	public SingleAlignerJob(String name) {
 
 		super(name);
@@ -37,34 +38,33 @@ public class SingleAlignerJob extends HadoopJob {
 		job.setNumReduceTasks(0);
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(BasePosition.class);
-		
+
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);
-		
+
 		job.setOutputFormatClass(TextOutputFormat.class);
 
 	}
-	
+
 	@Override
 	protected void setupDistributedCache(CacheStore cache) {
 
 		// distribute jbwa libraries
 		String hdfsPath = HdfsUtil.path(Server.REF_DIRECTORY, "jbwa-native.tar");
 		if (!HdfsUtil.exists(hdfsPath)) {
-			String jbwa = FileUtil.path(folder,"jbwa-native.tar");
+			String jbwa = FileUtil.path(folder, "jbwa-native.tar");
 			HdfsUtil.put(jbwa, hdfsPath);
 		}
-		
-		String archive = FileUtil.path(folder,ReferenceUtil.getSelectedReferenceArchive(reference));
-		String hdfsPathRef = HdfsUtil.path(Server.REF_DIRECTORY, archive);
-		
+
+		String hdfsPathRef = HdfsUtil.path(Server.REF_DIRECTORY, refArchive.substring(refArchive.lastIndexOf("/") + 1));
+
 		if (!HdfsUtil.exists(hdfsPathRef)) {
-			HdfsUtil.put(archive, hdfsPathRef);
+			HdfsUtil.put(refArchive, hdfsPathRef);
 		}
-		
-		log.info("Archive path is: "+hdfsPath);
-		log.info("Reference path is: "+hdfsPathRef);
-		
+
+		log.info("Archive path is: " + hdfsPath);
+		log.info("Reference path is: " + hdfsPathRef);
+
 		cache.addArchive("jbwaLib", hdfsPath);
 		cache.addArchive("reference", hdfsPathRef);
 
@@ -80,13 +80,12 @@ public class SingleAlignerJob extends HadoopJob {
 		return reference;
 	}
 
-	public void setReference(String reference) {
-		this.reference = reference;
+	public void setReferenceArchive(String refArchive) {
+		this.refArchive = refArchive;
 	}
-	
+
 	public void setFolder(String folder) {
 		this.folder = folder;
 	}
-	
-	
+
 }

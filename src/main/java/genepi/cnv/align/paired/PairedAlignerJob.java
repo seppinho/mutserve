@@ -2,7 +2,6 @@ package genepi.cnv.align.paired;
 
 import genepi.cnv.Server;
 import genepi.cnv.objects.SingleRead;
-import genepi.cnv.util.ReferenceUtil;
 import genepi.hadoop.CacheStore;
 import genepi.hadoop.HadoopJob;
 import genepi.hadoop.HdfsUtil;
@@ -17,7 +16,7 @@ import org.seqdoop.hadoop_bam.FastqInputFormat;
 public class PairedAlignerJob extends HadoopJob {
 
 	protected static final Log log = LogFactory.getLog(PairedAlignerJob.class);
-	private String reference;
+	private String refArchive;
 	private String folder;
 
 	public PairedAlignerJob(String name) {
@@ -52,11 +51,10 @@ public class PairedAlignerJob extends HadoopJob {
 			HdfsUtil.put(jbwa, hdfsPath);
 		}
 		
-		String archive = FileUtil.path(folder,ReferenceUtil.getSelectedReferenceArchive(reference));
-		String hdfsPathRef = HdfsUtil.path(Server.REF_DIRECTORY, archive);
+		String hdfsPathRef = HdfsUtil.path(Server.REF_DIRECTORY,refArchive.substring(refArchive.lastIndexOf("/")+1));
 		
 		if (!HdfsUtil.exists(hdfsPathRef)) {
-			HdfsUtil.put(archive, hdfsPathRef);
+			HdfsUtil.put(refArchive, hdfsPathRef);
 		}
 		
 		log.info("Archive path is: "+hdfsPath);
@@ -74,8 +72,8 @@ public class PairedAlignerJob extends HadoopJob {
 	}
 
 
-	public void setReference(String reference) {
-		this.reference = reference;
+	public void setReferenceArchive(String refArchive) {
+		this.refArchive = refArchive;
 	}
 
 	public void setFolder(String folder) {
