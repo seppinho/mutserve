@@ -96,12 +96,6 @@ public class ReferenceUtil {
 		return stringBuilder.toString();
 	}
 
-	public static String getSelectedReferenceArchive(String reference) {
-
-		return reference + ".tar.gz";
-
-	}
-
 	public static boolean ismtDNAHotSpot(int pos) {
 		return hotSpots.contains(pos);
 	}
