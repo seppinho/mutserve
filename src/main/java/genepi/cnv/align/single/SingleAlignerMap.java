@@ -56,7 +56,7 @@ public class SingleAlignerMap extends Mapper<Object, SequencedFragment, Text, Te
 
 		File reference = new File(referencePath);
 
-		String refString = ReferenceUtil.findFileinReferenceArchive(reference, ".fasta");
+		String refString = ReferenceUtil.findFileinDir(reference, ".fasta");
 		length = (ReferenceUtil.readInReference(refString)).length();
 
 		/** load index, aligner */
