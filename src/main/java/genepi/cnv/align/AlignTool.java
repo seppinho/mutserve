@@ -41,12 +41,12 @@ public class AlignTool extends HadoopJobStep {
 		String input = context.get("input");
 		String inType = context.get("inType");
 		String output = context.get("bwaOut");
-		String reference = context.get("reference");
+		String archive = context.get("archive");
 
 		if (inType.equals("se")) {
 			SingleAlignerJob job = new SingleAlignerJob(
 					"Align SingleEnd");
-			job.setReference(reference);
+			job.setReferenceArchive(archive);
 			job.setInput(input);
 			// set output dir to a static subdirectory. necessary for next step
 			// (same as in PE)
@@ -82,7 +82,7 @@ public class AlignTool extends HadoopJobStep {
 							"Align PairedEnd:" + round);
 					job.setInput(values.get(0), values.get(1));
 					job.setOutput(roundOutput);
-					job.setReference(reference);
+					job.setReferenceArchive(archive);
 					job.setChunkLength(chunkLength);
 					job.setFolder(getFolder(AlignTool.class));
 					job.setJarByClass(AlignTool.class);
