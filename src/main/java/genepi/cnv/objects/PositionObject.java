@@ -109,7 +109,7 @@ public class PositionObject implements Comparable<PositionObject> {
 		this.setLlrFWD(Double.valueOf(splits[24]));
 		this.setLlrREV(Double.valueOf(splits[25]));
 		
-		this.setLlrAFWD(Double.valueOf(splits[26]));
+	/*	this.setLlrAFWD(Double.valueOf(splits[26]));
 		this.setLlrCFWD(Double.valueOf(splits[27]));
 		this.setLlrGFWD(Double.valueOf(splits[28]));
 		this.setLlrTFWD(Double.valueOf(splits[29]));
@@ -117,7 +117,7 @@ public class PositionObject implements Comparable<PositionObject> {
 		this.setLlrAREV(Double.valueOf(splits[30]));
 		this.setLlrCREV(Double.valueOf(splits[31]));
 		this.setLlrGREV(Double.valueOf(splits[32]));
-		this.setLlrTREV(Double.valueOf(splits[33]));
+		this.setLlrTREV(Double.valueOf(splits[33]));*/
 
 	}
 
@@ -138,8 +138,7 @@ public class PositionObject implements Comparable<PositionObject> {
 		int pos;
 		String id;
 
-		//TODO
-		id = base.getId().substring(0,Integer.min(base.getId().length(), 15));
+		id = base.getId();
 		pos = base.getPos();
 
 		int aFWD = base.getaFor();
@@ -460,9 +459,17 @@ public class PositionObject implements Comparable<PositionObject> {
 				+ gPercentageFWD + "\t" + tPercentageFWD + "\t" + nPercentageFWD + "\t" + dPercentageFWD + "\t"
 				+ aPercentageREV + "\t" + cPercentageREV + "\t" + gPercentageREV + "\t" + tPercentageREV + "\t"
 				+ nPercentageREV + "\t" + dPercentageREV + "\t" + topBasePercentsFWD + "\t" + minorBasePercentsFWD
-				+ "\t" + topBasePercentsREV + "\t" + minorBasePercentsREV + "\t" + llrFWD + "\t" + llrREV + "\t"+ 
-				llrAFWD + "\t" + llrCFWD + "\t" + llrGFWD + "\t" + llrTFWD + "\t" + 
-				llrAREV + "\t" + llrCREV + "\t"	+ llrGREV + "\t" + llrTREV;
+				+ "\t" + topBasePercentsREV + "\t" + minorBasePercentsREV + "\t" + llrFWD + "\t" + llrREV;
+	
+		/*return id + "\t" + position + "\t" + covFWD + "\t" + covREV + "\t" + topBaseFWD + "\t" + topBaseREV + "\t"
+		+ minorBaseFWD + "\t" + minorBaseREV + "\t" + aPercentageFWD + "\t" + cPercentageFWD + "\t"
+		+ gPercentageFWD + "\t" + tPercentageFWD + "\t" + nPercentageFWD + "\t" + dPercentageFWD + "\t"
+		+ aPercentageREV + "\t" + cPercentageREV + "\t" + gPercentageREV + "\t" + tPercentageREV + "\t"
+		+ nPercentageREV + "\t" + dPercentageREV + "\t" + topBasePercentsFWD + "\t" + minorBasePercentsFWD
+		+ "\t" + topBasePercentsREV + "\t" + minorBasePercentsREV + "\t" + llrFWD + "\t" + llrREV + "\t"+ 
+		llrAFWD + "\t" + llrCFWD + "\t" + llrGFWD + "\t" + llrTFWD + "\t" + 
+		llrAREV + "\t" + llrCREV + "\t"	+ llrGREV + "\t" + llrTREV;*/
+	
 	}
 
 	public double calcFirst(BasePosition base) {

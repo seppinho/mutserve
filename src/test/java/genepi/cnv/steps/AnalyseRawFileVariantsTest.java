@@ -17,8 +17,8 @@ public class AnalyseRawFileVariantsTest {
 	public void HetModelTest() {
 
 		double hetLevel = 1;
-		String refPath = "files/rcrs.fasta";
-		String sanger = "test-data/mtdna/sanger.txt";
+		String refPath = "test-data/mtdna/raw-results/rCRS.fasta";
+		String sanger = "test-data/mtdna/raw-results/sanger.txt";
 
 		RawFileAnalyser model = new RawFileAnalyser();
 		File input = new File("test-data/mtdna/raw-results/raw-s4.txt");

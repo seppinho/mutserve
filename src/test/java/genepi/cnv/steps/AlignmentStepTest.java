@@ -36,7 +36,7 @@ public class AlignmentStepTest {
 	public void AlignmentSETest() throws IOException {
 
 		String inputFolder = "test-data/mtdna/fastqse/input";
-		String archive = "test-data/mtdna/fastqse/rcrs.tar.gz";
+		String archive = "test-data/mtdna/fastqse/reference/rcrs.tar.gz";
 		String hdfsFolder = "inputSE";
 		
 		importInputdata(inputFolder, hdfsFolder);
@@ -86,7 +86,7 @@ public class AlignmentStepTest {
 	public void AlignmentPETest() throws IOException {
 
 		String inputFolder = "test-data/mtdna/fastqpe/input";
-		String archive = "test-data/mtdna/fastqpe/rcrs.tar.gz";
+		String archive = "test-data/mtdna/fastqpe/reference/rcrs.tar.gz";
 		String hdfsFolder ="inputPE";
 		
 		importInputdata(inputFolder, hdfsFolder);
