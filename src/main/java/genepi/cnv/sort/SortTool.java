@@ -4,17 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.codehaus.plexus.archiver.tar.TarGZipUnArchiver;
-
-import com.google.common.cache.Cache;
-
 import genepi.cnv.objects.Extracter;
 import genepi.cnv.util.HadoopJobStep;
 import genepi.cnv.util.ReferenceUtil;
-import genepi.hadoop.CacheStore;
 import genepi.hadoop.HdfsUtil;
 import genepi.hadoop.common.WorkflowContext;
-import genepi.io.FileUtil;
 
 public class SortTool extends HadoopJobStep {
 
