@@ -114,7 +114,7 @@ public class MultiallelicAnalyser {
 			System.out.println("missing: " + expectedPos.size());
 			System.out.println("missing from expected: " + expectedPos.toString());
 			
-			checkKIV(expectedPos);
+			//checkKIV(expectedPos);
 			
 			// this is needed since EACH line is only parsed once. it happens
 			// that e.g 4778 has two alleles, but only first is checked!!
