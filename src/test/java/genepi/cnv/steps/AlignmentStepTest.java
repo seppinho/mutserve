@@ -17,9 +17,6 @@ import genepi.cnv.util.WorkflowTestContext;
 import genepi.hadoop.HdfsUtil;
 import genepi.hadoop.common.WorkflowStep;
 import genepi.io.FileUtil;
-import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.SAMLineParser;
-import htsjdk.samtools.SAMRecord;
 
 public class AlignmentStepTest {
 
@@ -38,14 +35,14 @@ public class AlignmentStepTest {
 	@Test
 	public void AlignmentSETest() throws IOException {
 
-		String inputFolder = "test-data/mtdna/fastqse/";
-		String reference = "rcrs";
+		String inputFolder = "test-data/mtdna/fastqse/input";
+		String archive = "test-data/mtdna/fastqse/rcrs.tar.gz";
 		String hdfsFolder = "inputSE";
 		
-		importInputdata(inputFolder,hdfsFolder);
+		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
-		WorkflowTestContext context = buildContext(inputFolder, reference);
+		WorkflowTestContext context = buildContext(inputFolder, archive);
 		
 		context.setInput("input", hdfsFolder);
 		context.setInput("inType", "se");
@@ -88,14 +85,14 @@ public class AlignmentStepTest {
 	@Test
 	public void AlignmentPETest() throws IOException {
 
-		String inputFolder = "test-data/mtdna/fastqpe/";
-		String reference = "rcrs";
+		String inputFolder = "test-data/mtdna/fastqpe/input";
+		String archive = "test-data/mtdna/fastqpe/rcrs.tar.gz";
 		String hdfsFolder ="inputPE";
 		
 		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
-		WorkflowTestContext context = buildContext(inputFolder, reference);
+		WorkflowTestContext context = buildContext(inputFolder, archive);
 
 		context.setInput("input", hdfsFolder);
 		context.setInput("inType", "pe");
@@ -164,7 +161,7 @@ public class AlignmentStepTest {
 		return step.run(context);
 	}
 
-	protected WorkflowTestContext buildContext(String input, String ref) {
+	protected WorkflowTestContext buildContext(String input, String archive) {
 
 		File file = new File("test-data/tmp");
 		if (file.exists()) {
@@ -175,7 +172,7 @@ public class AlignmentStepTest {
 		WorkflowTestContext context = new WorkflowTestContext();
 
 		context.setVerbose(VERBOSE);
-		context.setInput("reference", ref);
+		context.setInput("archive", archive);
 
 		FileUtil.createDirectory(file.getAbsolutePath() + "/bwaOut");
 
