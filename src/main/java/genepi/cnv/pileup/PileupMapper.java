@@ -32,7 +32,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 	boolean baq;
 	String filename;
 	String referenceName;
-	String ref;
+	// String ref;
 	IndexedFastaSequenceFile refReader;
 
 	BaqAlt baqHMMAltered;
@@ -60,7 +60,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 		alignQual = context.getConfiguration().getInt("alignQual", 30);
 		baseQual = context.getConfiguration().getInt("baseQual", 20);
 		baq = context.getConfiguration().getBoolean("baq", true);
-		
+
 		// required for BAM splits
 		if (context.getInputSplit().getClass().equals(FileVirtualSplit.class)) {
 			filename = ((FileVirtualSplit) context.getInputSplit()).getPath().getName().replace(".bam", "");
@@ -69,15 +69,15 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 					.replace(".cram", "");
 		}
 
-		ref = context.getConfiguration().get("reference");
+		// ref = context.getConfiguration().get("reference");
 
 		CacheStore cache = new CacheStore(context.getConfiguration());
 
 		File referencePath = new File(cache.getArchive("reference"));
 
-		String fastaPath = ReferenceUtil.findFileinReferenceArchive(referencePath, ".fasta");
-		String faiPath = ReferenceUtil.findFileinReferenceArchive(referencePath, ".fasta.fai");
-		
+		String fastaPath = ReferenceUtil.findFileinDir(referencePath, ".fasta");
+		String faiPath = ReferenceUtil.findFileinDir(referencePath, ".fasta.fai");
+
 		length = (ReferenceUtil.readInReference(fastaPath)).length();
 		counts = new HashMap<String, BasePosition>(length);
 
@@ -108,15 +108,16 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 		for (String pos : counts.keySet()) {
 			BasePosition basePos = counts.get(pos);
 
-			if (ref.equals("hg19")) {
-				int newPos = hg19Mapper(Integer.valueOf(pos));
-				outKey.set(filename + ":" + newPos);
-				basePos.setPos(newPos);
-				context.write(outKey, basePos);
-			} else {
-				outKey.set(filename + ":" + pos);
-				context.write(outKey, basePos);
-			}
+			outKey.set(filename + ":" + pos);
+			context.write(outKey, basePos);
+
+			/*
+			 * if (ref.equals("hg19")) { int newPos =
+			 * hg19Mapper(Integer.valueOf(pos)); outKey.set(filename + ":" +
+			 * newPos); basePos.setPos(newPos); context.write(outKey, basePos);
+			 * } else { outKey.set(filename + ":" + pos); context.write(outKey,
+			 * basePos); }
+			 */
 		}
 
 	}
@@ -129,38 +130,13 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 				for (htsjdk.samtools.SAMSequenceRecord record : value.get().getHeader().getSequenceDictionary()
 						.getSequences()) {
 
-					// mtdna
-					if (record.getSequenceLength() == 16569 || record.getSequenceLength() == 16571) {
-						referenceName = record.getSequenceName();
-					}
 					// stefan
 					if (record.getSequenceLength() == 5104) {
-						
-						
 						referenceName = record.getSequenceName();
 					}
-					
-					//kiv 7
-					if (record.getSequenceLength() == 1142) {
-						referenceName = record.getSequenceName();
-					}
-					
-					//lpa full
-					if (record.getSequenceLength() == 138893) {
-						referenceName = record.getSequenceName();
-					}
-					
-					// muc1-one
-					if (record.getSequenceLength() == 90) {
-						referenceName = record.getSequenceName();
-					}
-					// muc1-two
-					if (record.getSequenceLength() == 120) {
-						referenceName = record.getSequenceName();
-					}
+
 				}
 			}
-			
 
 			analyseBam(context, value.get());
 
@@ -172,7 +148,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 	private void analyseBam(Context context, SAMRecord samRecord) throws Exception {
 
 		context.getCounter("mtdna", "OVERALL-READS").increment(1);
-		
+
 		if (samRecord.getReferenceName().equals(referenceName)) {
 
 			if (samRecord.getMappingQuality() >= mapQual) {
@@ -183,7 +159,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 					if (!samRecord.getDuplicateReadFlag()) {
 
 						if (samRecord.getReadLength() > 25) {
-							
+
 							if (ReferenceUtil.getTagFromSamRecord(samRecord.getAttributes(), "AS") >= alignQual) {
 
 								if (baq) {

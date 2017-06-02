@@ -2,6 +2,7 @@ package genepi.cnv.detect;
 
 import java.io.File;
 
+import genepi.cnv.objects.Extracter;
 import genepi.cnv.util.ReferenceUtil;
 import genepi.hadoop.PreferenceStore;
 import genepi.hadoop.common.WorkflowContext;
@@ -14,7 +15,7 @@ public class DetectTool extends WorkflowStep {
 	@Override
 	public boolean run(WorkflowContext context) {
 
-		String reference = context.get("reference");
+		String archive = context.get("archive");
 		String input = context.get("analyseOut");
 		String outputRaw = context.get("raw");
 		String outputFiltered = context.get("variants");
@@ -27,10 +28,17 @@ public class DetectTool extends WorkflowStep {
 		String folder = getFolder(DetectTool.class);
 		PreferenceStore store = new PreferenceStore(new File(FileUtil.path(folder, "job.config")));
 		String version = store.getString("server.version");
-		String ref =  ReferenceUtil.readInReference(FileUtil.path(folder,reference+".fasta"));
+
+		
+		String archiveFolder = archive.substring(0,archive.lastIndexOf("/")+1);
+		Extracter.extract(archive,archiveFolder);
+	
+		String ref = ReferenceUtil.findFileinDir(new File(archiveFolder),"fasta");
+		String reference = ReferenceUtil.readInReference(ref);
+		
 		
 		detecter.setVersion(version);
-		detecter.setRefAsString(ref);
+		detecter.setRefAsString(reference);
 		detecter.setHdfsFolder(input);
 		detecter.setDetectionLevel(Double.valueOf(level)/100.0);
 		detecter.setOutputFiltered(outputFiltered+".txt");
