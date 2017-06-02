@@ -29,16 +29,17 @@ public class ReferenceUtil {
 	private static Set<Integer> hotSpots = new HashSet<Integer>(
 			Arrays.asList(302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 315, 316, 3105, 3106, 3107));
 
-	public static String findFileinReferenceArchive(File reference, String suffix) {
+	public static String findFileinDir(File reference, String suffix) {
 		String refPath = null;
 		if (reference.isDirectory()) {
 			File[] files = reference.listFiles();
 			for (File i : files) {
 				if (i.getName().endsWith(suffix)) {
-
 					refPath = i.getAbsolutePath();
 				}
 			}
+		} else{
+			System.out.println(reference + "not a directory");
 		}
 		System.out.println("path " + refPath);
 		return refPath;
@@ -98,12 +99,6 @@ public class ReferenceUtil {
 	public static String getSelectedReferenceArchive(String reference) {
 
 		return reference + ".tar.gz";
-
-	}
-
-	public static String getSelectedReferenceFasta(String reference) {
-
-		return reference + ".fasta";
 
 	}
 
