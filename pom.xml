@@ -24,8 +24,8 @@
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
-		
-				<repository>
+
+		<repository>
 			<id>cloudera</id>
 			<url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
 		</repository>
@@ -130,8 +130,8 @@
 			<artifactId>hadoop-bam</artifactId>
 			<version>7.7.0</version>
 		</dependency>
-		
-			<dependency>
+
+		<dependency>
 			<groupId>com.github.samtools</groupId>
 			<artifactId>htsjdk</artifactId>
 			<version>2.9.1</version>
@@ -143,20 +143,20 @@
 			<version>3.2</version>
 		</dependency>
 
-	<dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
 			<version>3.2</version>
 		</dependency>
-		
-				<dependency>
+
+		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-hdfs</artifactId>
 			<version>2.6.0-cdh5.10.0</version>
@@ -177,7 +177,10 @@
 			<artifactId>hadoop-test</artifactId>
 			<version>2.6.0-mr1-cdh5.10.0</version>
 			<scope>test</scope>
-</dependency>
+		</dependency>
+
+
+		
 
 	</dependencies>
 

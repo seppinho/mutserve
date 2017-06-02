@@ -67,7 +67,7 @@ public class DetectVariants {
 			List<PositionObject> variantPos = new ArrayList<PositionObject>();
 			List<PositionObject> multiPos = new ArrayList<PositionObject>();
 			CsvTableWriter rawWriter = new CsvTableWriter(outputRaw, '\t', false);
-			// TODO CHANGE LLR BACK TO D
+
 			rawWriter.setColumns(new String[] { "SAMPLE", "POS", "REF", "TOP-FWD", "MINOR-FWD", "TOP-REV", "MINOR-REV",
 					"COV-FWD", "COV-REV", "COV-TOTAL", "TYPE", "LEVEL", "%A", "%C", "%G", "%T", "%D", "%N", "%a", "%c",
 					"%g", "%t", "%d", "%n", "LLRFWD", "LLRREV", "LLRAFWD", "LLRCFWD", "LLRGFWD", "LLRTFWD", "LLRAREV",
@@ -146,7 +146,7 @@ public class DetectVariants {
 	}
 
 	public void determineMultiAllelicSites(PositionObject posObj) {
-		char[] bases = new char[] { 'A', 'C', 'G', 'T' };
+		char[] bases = new char[] { 'A', 'C', 'G', 'T', 'D'};
 		StringBuilder multiAllelic = new StringBuilder();
 		int llrLimit = 5;
 		double currentPercentFWD = 0.0;
@@ -213,6 +213,18 @@ public class DetectVariants {
 						}
 					}
 					break;
+				case 'D':
+					currentPercentFWD = posObj.getdPercentageFWD();
+					currentPercentREV = posObj.getdPercentageREV();
+					if (checkAlleleCoverage(posObj, currentPercentFWD, currentPercentREV)) {
+						if (currentPercentFWD >= detectionLevel || currentPercentREV >= detectionLevel) {
+								if (calcStrandBias(posObj, currentPercentFWD, currentPercentREV) <= 1) {
+									multiAllelic.append("D,");
+									posObj.setVariantType(MULTI_ALLELIC);
+								}
+						}
+					}
+					break;	
 				}
 
 			}

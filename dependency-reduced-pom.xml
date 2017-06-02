@@ -37,6 +37,8 @@
                   <include>org.seqdoop:hadoop-bam:*:*</include>
                   <include>gatk:gatk-jar:*:*</include>
                   <include>com.github.samtools:htsjdk:*:*</include>
+                  <include>org.codehaus.plexus:plexus-archiver:*:*</include>
+                  <include>org.codehaus.plexus:plexus-container-default:*:*</include>
                 </includes>
               </artifactSet>
             </configuration>
