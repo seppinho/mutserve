@@ -49,15 +49,15 @@ public class DetectStepTest {
 	@Test
 	public void DetectPipelinemtDNAMixturePETest() throws IOException {
 
-		String inputFolder = "test-data/mtdna/fastqpe/";
-		String reference = "rcrs";
+		String inputFolder = "test-data/mtdna/fastqpe/input";
+		String archive = "test-data/mtdna/fastqpe/rcrs.tar.gz";
 		String hdfsFolder = "input";
 		String type = "pe";
 
 		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
-		WorkflowTestContext context = buildContext(hdfsFolder, reference, type);
+		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		context.setInput("chunkLength", "0");
 		context.setInput("baq", "true");
@@ -87,15 +87,18 @@ public class DetectStepTest {
 	@Test
 	public void DetectPipelinemtDNAMixtureBAMTest() throws IOException {
 
-		String inputFolder = "test-data/mtdna/mixtures/";
-		String reference = "rcrs";
+		String inputFolder = "test-data/mtdna/mixtures/input";
+		String archive = "test-data/mtdna/mixtures/reference/rcrs.tar.gz";
 		String hdfsFolder = "input";
 		String type = "bam";
+		
+		String refPath = "test-data/mtdna/mixtures/reference/rCRS.fasta";
+		String sanger = "test-data/mtdna/mixtures/expected/sanger.txt";
 
 		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
-		WorkflowTestContext context = buildContext(hdfsFolder, reference, type);
+		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		context.setInput("baq", "true");
 
@@ -108,8 +111,6 @@ public class DetectStepTest {
 		assertTrue(result);
 
 		double hetLevel = Double.valueOf(context.get("level"));
-		String refPath = "files/rcrs.fasta";
-		String sanger = "test-data/mtdna/sanger.txt";
 
 		RawFileAnalyser analyser = new RawFileAnalyser();
 		File file = new File("test-data/tmp");
@@ -139,17 +140,21 @@ public class DetectStepTest {
 	}
 
 	@Test
-	public void DetectPipelineLPAMultiallelicBAMTest() throws IOException {
+	public void DetectPipelineLPAMultiallelicBAMTestKIV2() throws IOException {
 
-		String inputFolder = "test-data/lpa/lpa-exome-kiv2";
-		String reference = "kiv2_6";
+		String inputFolder = "test-data/lpa/lpa-exome-kiv2/input";
+		String archive = "test-data/lpa/lpa-exome-kiv2/reference/kiv2_6.tar.gz";
 		String hdfsFolder = "input";
 		String type = "bam";
 
+		File expected = new File("test-data/lpa/lpa-exome-kiv2/expected/expected.txt");
+		File refPath = new File("test-data/lpa/lpa-exome-kiv2/reference/kiv2_6.fasta");
+
+		
 		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
-		WorkflowTestContext context = buildContext(hdfsFolder, reference, type);
+		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		context.setInput("baq", "false");
 
@@ -163,9 +168,6 @@ public class DetectStepTest {
 
 		MultiallelicAnalyser analyser = new MultiallelicAnalyser();
 		File file = new File("test-data/tmp");
-
-		File expected = new File("test-data/lpa/lpa-exome-kiv2-raw-results/expected.txt");
-		File refPath = new File("files/kiv2_6.fasta");
 
 		double hetLevel = 0.001;
 		ArrayList<QCMetric> list = analyser.analyseFile(file.getPath() + "/raw.txt", expected.getPath(), refPath.getPath(), hetLevel);
@@ -182,17 +184,17 @@ public class DetectStepTest {
 	}
 	
 	@Test
-	public void DetectPipelineLPAMultiallelicBAMTest2() throws IOException {
+	public void DetectPipelineLPAMultiallelicBAMTestKIV7() throws IOException {
 
-		String inputFolder = "test-data/lpa/kiv7";
-		String reference = "LPA-KIV7";
+		String inputFolder = "test-data/lpa/lpa-exome-kiv7/input";
+		String archive = "test-data/lpa/lpa-exome-kiv7/reference/LPA-KIV7.tar.gz";
 		String hdfsFolder = "input";
 		String type = "bam";
 
 		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
-		WorkflowTestContext context = buildContext(hdfsFolder, reference, type);
+		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		context.setInput("baq", "false");
 
@@ -292,7 +294,7 @@ public class DetectStepTest {
 		context.setInput("input", input);
 		context.setInput("inType", type);
 		context.setVerbose(VERBOSE);
-		context.setInput("reference", ref);
+		context.setInput("archive", ref);
 		context.setOutput("bwaOut", "cloudgene-bwaOutSe");
 		context.setOutput("outputBam", "outputBam");
 		context.setOutput("analyseOut", "analyseOut");
