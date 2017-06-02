@@ -42,7 +42,7 @@ public class SortStepTest {
 	public void SortTestSE() throws IOException {
 
 		String inputFolder = "test-data/mtdna/fastqse/input";
-		String archive = "test-data/mtdna/fastqse/rcrs.tar.gz";
+		String archive = "test-data/mtdna/fastqse/reference/rcrs.tar.gz";
 		String hdfsFolder = "input";
 		String type = "se";
 
@@ -53,6 +53,8 @@ public class SortStepTest {
 
 		// create step instance
 		AlignTool align = new AlignnMock("files");
+		context.setOutput("bwaOut", "cloudgene-bwaOutSe");
+		context.setOutput("outputBam", "outputBam1");
 
 		boolean result = align.run(context);
 
@@ -62,9 +64,9 @@ public class SortStepTest {
 		result = sort.run(context);
 		assertTrue(result);
 
-		assertTrue(HdfsUtil.exists("outputBam"));
+		assertTrue(HdfsUtil.exists("outputBam1"));
 
-		List<String> files = HdfsUtil.getFiles("outputBam");
+		List<String> files = HdfsUtil.getFiles("outputBam1");
 		String out = "test-data/tmp/out.bam";
 
 		for (String file : files) {
@@ -93,7 +95,7 @@ public class SortStepTest {
 	public void SortTestPE() throws IOException {
 
 		String inputFolder = "test-data/mtdna/fastqpe/input";
-		String archive = "test-data/mtdna/fastqpe/rcrs.tar.gz";
+		String archive = "test-data/mtdna/fastqpe/reference/rcrs.tar.gz";
 		String hdfsFolder = "input";
 		String type = "pe";
 
@@ -105,6 +107,8 @@ public class SortStepTest {
 		// create step instance
 		AlignTool align = new AlignnMock("files");
 		context.setInput("chunkLength", "0");
+		context.setOutput("bwaOut", "cloudgene-bwaOutPe");
+		context.setOutput("outputBam", "outputBam2");
 
 		boolean result = align.run(context);
 
@@ -114,9 +118,9 @@ public class SortStepTest {
 		result = sort.run(context);
 		assertTrue(result);
 
-		assertTrue(HdfsUtil.exists("outputBam"));
+		assertTrue(HdfsUtil.exists("outputBam2"));
 
-		List<String> files = HdfsUtil.getFiles("outputBam");
+		List<String> files = HdfsUtil.getFiles("outputBam2");
 		String out = "test-data/tmp/out.bam";
 
 		for (String file : files) {
@@ -194,8 +198,6 @@ public class SortStepTest {
 		context.setInput("inType", type);
 		context.setVerbose(VERBOSE);
 		context.setInput("archive", archive);
-		context.setOutput("bwaOut", "cloudgene-bwaOutSe");
-		context.setOutput("outputBam", "outputBam");
 
 		return context;
 

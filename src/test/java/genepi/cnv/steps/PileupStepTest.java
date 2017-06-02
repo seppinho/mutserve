@@ -44,7 +44,7 @@ public class PileupStepTest {
 	public void PileupTestPE() throws IOException {
 
 		String inputFolder = "test-data/mtdna/fastqpe/input";
-		String archive = "test-data/mtdna/fastqpe/rcrs.tar.gz";
+		String archive = "test-data/mtdna/fastqpe/reference/rcrs.tar.gz";
 		String hdfsFolder = "input";
 		String type = "pe";
 
@@ -57,6 +57,9 @@ public class PileupStepTest {
 
 		// create step instance
 		AlignTool align = new AlignnMock("files");
+		context.setOutput("bwaOut", "cloudgene-bwaOutPe1");
+		context.setOutput("outputBam", "outputBam1");
+		context.setOutput("analyseOut", "analyseOut1");
 
 		boolean result = align.run(context);
 
@@ -66,13 +69,13 @@ public class PileupStepTest {
 		result = sort.run(context);
 		assertTrue(result);
 
-		assertTrue(HdfsUtil.exists("outputBam"));
+		assertTrue(HdfsUtil.exists("outputBam1"));
 
 		PileupTool pileUp = new PileupMock("files");
 		result = pileUp.run(context);
 		assertTrue(result);
 
-		List<String> files = HdfsUtil.getFiles("analyseOut");
+		List<String> files = HdfsUtil.getFiles("analyseOut1");
 
 		for (String file : files) {
 			System.out.println(file);
@@ -84,7 +87,7 @@ public class PileupStepTest {
 	public void PileupTestBAM() throws IOException {
 
 		String inputFolder = "test-data/mtdna/bam/input";
-		String archive = "test-data/mtdna/bam/rcrs.tar.gz";
+		String archive = "test-data/mtdna/bam/reference/rcrs.tar.gz";
 		String hdfsFolder = "input";
 		String type = "bam";
 
@@ -94,10 +97,12 @@ public class PileupStepTest {
 		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		PileupTool pileUp = new PileupMock("files");
+		context.setOutput("analyseOut", "analyseOut2");
+		
 		boolean result = pileUp.run(context);
 		assertTrue(result);
 
-		List<String> files = HdfsUtil.getFiles("analyseOut");
+		List<String> files = HdfsUtil.getFiles("analyseOut2");
 
 		String out = "test-data/tmp/out.txt";
 
@@ -185,9 +190,6 @@ public class PileupStepTest {
 		context.setInput("inType", type);
 		context.setVerbose(VERBOSE);
 		context.setInput("archive", archive);
-		context.setOutput("bwaOut", "cloudgene-bwaOutSe");
-		context.setOutput("outputBam", "outputBam");
-		context.setOutput("analyseOut", "analyseOut");
 		context.setOutput("mapQuality", "20");
 		context.setOutput("baseQuality", "20");
 		context.setOutput("alignQuality", "30");
