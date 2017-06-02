@@ -43,15 +43,15 @@ public class PileupStepTest {
 	@Test
 	public void PileupTestPE() throws IOException {
 
-		String inputFolder = "test-data/mtdna/fastqpe/";
-		String reference = "rcrs";
+		String inputFolder = "test-data/mtdna/fastqpe/input";
+		String archive = "test-data/mtdna/fastqpe/rcrs.tar.gz";
 		String hdfsFolder = "input";
 		String type = "pe";
 
 		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
-		WorkflowTestContext context = buildContext(hdfsFolder, reference, type);
+		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		context.setInput("chunkLength", "0");
 
@@ -83,15 +83,15 @@ public class PileupStepTest {
 	@Test
 	public void PileupTestBAM() throws IOException {
 
-		String inputFolder = "test-data/mtdna/bam/";
-		String reference = "rcrs";
+		String inputFolder = "test-data/mtdna/bam/input";
+		String archive = "test-data/mtdna/bam/rcrs.tar.gz";
 		String hdfsFolder = "input";
 		String type = "bam";
 
 		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
-		WorkflowTestContext context = buildContext(hdfsFolder, reference, type);
+		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		PileupTool pileUp = new PileupMock("files");
 		boolean result = pileUp.run(context);
@@ -171,7 +171,7 @@ public class PileupStepTest {
 		return step.run(context);
 	}
 
-	protected WorkflowTestContext buildContext(String input, String ref, String type) {
+	protected WorkflowTestContext buildContext(String input, String archive, String type) {
 
 		File file = new File("test-data/tmp");
 		if (file.exists()) {
@@ -184,7 +184,7 @@ public class PileupStepTest {
 		context.setInput("input", input);
 		context.setInput("inType", type);
 		context.setVerbose(VERBOSE);
-		context.setInput("reference", ref);
+		context.setInput("archive", archive);
 		context.setOutput("bwaOut", "cloudgene-bwaOutSe");
 		context.setOutput("outputBam", "outputBam");
 		context.setOutput("analyseOut", "analyseOut");

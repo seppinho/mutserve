@@ -134,6 +134,11 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 					if (record.getSequenceLength() == 5104) {
 						referenceName = record.getSequenceName();
 					}
+					
+					// stefan
+					if (record.getSequenceLength() == 16569) {
+						referenceName = record.getSequenceName();
+					}
 
 				}
 			}

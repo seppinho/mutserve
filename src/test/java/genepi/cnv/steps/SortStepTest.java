@@ -41,15 +41,15 @@ public class SortStepTest {
 	@Test
 	public void SortTestSE() throws IOException {
 
-		String inputFolder = "test-data/mtdna/fastqse/";
-		String reference = "rcrs";
+		String inputFolder = "test-data/mtdna/fastqse/input";
+		String archive = "test-data/mtdna/fastqse/rcrs.tar.gz";
 		String hdfsFolder = "input";
 		String type = "se";
 
 		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
-		WorkflowTestContext context = buildContext(inputFolder, reference,type);
+		WorkflowTestContext context = buildContext(inputFolder, archive, type);
 
 		// create step instance
 		AlignTool align = new AlignnMock("files");
@@ -92,15 +92,15 @@ public class SortStepTest {
 	@Test
 	public void SortTestPE() throws IOException {
 
-		String inputFolder = "test-data/mtdna/fastqpe/";
-		String reference = "rcrs";
+		String inputFolder = "test-data/mtdna/fastqpe/input";
+		String archive = "test-data/mtdna/fastqpe/rcrs.tar.gz";
 		String hdfsFolder = "input";
 		String type = "pe";
 
 		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
-		WorkflowTestContext context = buildContext(inputFolder, reference, type);
+		WorkflowTestContext context = buildContext(inputFolder, archive, type);
 
 		// create step instance
 		AlignTool align = new AlignnMock("files");
@@ -180,7 +180,7 @@ public class SortStepTest {
 		return step.run(context);
 	}
 
-	protected WorkflowTestContext buildContext(String input, String ref, String type) {
+	protected WorkflowTestContext buildContext(String input, String archive, String type) {
 
 		File file = new File("test-data/tmp");
 		if (file.exists()) {
@@ -193,7 +193,7 @@ public class SortStepTest {
 		context.setInput("input", "input");
 		context.setInput("inType", type);
 		context.setVerbose(VERBOSE);
-		context.setInput("reference", ref);
+		context.setInput("archive", archive);
 		context.setOutput("bwaOut", "cloudgene-bwaOutSe");
 		context.setOutput("outputBam", "outputBam");
 
