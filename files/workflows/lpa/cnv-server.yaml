@@ -34,8 +34,9 @@ mapred:
       generates: $bwaOut
 
     - name: Sort Aligned Reads
+      classname: genepi.cnv.sort.SortTool
       jar: cnv-mutation-server-1.0.jar
-      params: sort --input $bwaOut --reference $reference --output $outputBam --inType $inType --statistics $stat.txt --local-output $localOutput
+      generates: $localOutput
 #set( $input = $outputBam )
 #end
 
