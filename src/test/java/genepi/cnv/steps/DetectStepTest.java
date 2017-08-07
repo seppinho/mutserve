@@ -43,7 +43,7 @@ public class DetectStepTest {
 
 	@AfterClass
 	public static void tearDown() throws Exception {
-		// TestCluster.getInstance().stop();
+		TestCluster.getInstance().stop();
 	}
 
 	@Test
@@ -142,7 +142,7 @@ public class DetectStepTest {
 		}
 
 	}
-
+	
 	@Test
 	public void DetectPipelineLPAMultiallelicBAMTestKIV2() throws IOException {
 
@@ -188,32 +188,6 @@ public class DetectStepTest {
 
 	}
 	
-	@Test
-	public void DetectPipelineLPAMultiallelicBAMTestKIV7() throws IOException {
-
-		String inputFolder = "test-data/lpa/lpa-exome-kiv7/input";
-		String archive = "test-data/lpa/lpa-exome-kiv7/reference/LPA-KIV7.tar.gz";
-		String hdfsFolder = "input";
-		String type = "bam";
-
-		importInputdata(inputFolder, hdfsFolder);
-
-		// create workflow context
-		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
-
-		context.setInput("baq", "false");
-		context.setOutput("analyseOut", "analyseOut4");
-
-		PileupTool pileUp = new PileupMock("files");
-		boolean result = pileUp.run(context);
-		assertTrue(result);
-
-		DetectMock detect = new DetectMock("files");
-		result = detect.run(context);
-		assertTrue(result);
-
-	}
-
 	class AlignnMock extends AlignTool {
 
 		private String folder;
@@ -310,7 +284,7 @@ public class DetectStepTest {
 		context.setOutput("variants", file.getAbsolutePath() + "/variants");
 		context.setOutput("multiallelic", file.getAbsolutePath() + "/multiallelic");
 		context.setOutput("uncovered_pos", file.getAbsolutePath() + "/uncovered");
-		context.setOutput("level", "1");
+		context.setOutput("level", "0.7");
 
 		return context;
 
