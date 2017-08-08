@@ -18,6 +18,9 @@ import org.junit.Test;
 import genepi.cnv.align.AlignTool;
 import genepi.cnv.pileup.PileupTool;
 import genepi.cnv.sort.SortTool;
+import genepi.cnv.steps.DetectStepTest.DetectMock;
+import genepi.cnv.steps.DetectStepTest.PileupMock;
+import genepi.cnv.util.MultiallelicAnalyser;
 import genepi.cnv.util.QCMetric;
 import genepi.cnv.util.RawFileAnalyser;
 import genepi.cnv.util.TestCluster;
@@ -102,7 +105,8 @@ public class PileupStepTest {
 		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		PileupTool pileUp = new PileupMock("files");
-		context.setOutput("analyseOut", "analyseOutBAM");
+		context.setOutput("rawHdfs", "rawHdfs");
+		context.setOutput("rawLocal", "rawLocal");
 		context.setOutput("variantsHdfs", "variantsHdfs");
 		context.setOutput("variantsLocal", "variantsLocal");
 		context.setOutput("baq", "true");
@@ -110,14 +114,6 @@ public class PileupStepTest {
 		boolean result = pileUp.run(context);
 		assertTrue(result);
 
-		String variants = "test-data/tmp/variants.txt";
-		
-		//HdfsUtil.merge(variants, "variantsHdfs",false);
-		
-		//String raw = "test-data/tmp/raw.txt";
-		
-		//HdfsUtil.merge(raw, "analyseOutBAM",false);
-		
 		LineReader reader = new LineReader("variantsLocal");
 		HashSet<Integer> results = new HashSet<Integer>();
 		
@@ -131,9 +127,114 @@ public class PileupStepTest {
 		
 		assertEquals(true, results.equals(expected));
 		
+		reader = new LineReader("rawLocal");
 	
-	
+		int i = 0;
+		while(reader.next()){
+			if(i<10){
+			System.out.println(reader.get());
+			}
+			i++;
+		}
 
+
+	}
+	
+	
+	@Test
+	public void DetectPipelinemtDNAMixtureBAMTest() throws IOException {
+
+		String inputFolder = "test-data/mtdna/mixtures/input";
+		String archive = "test-data/mtdna/mixtures/reference/rcrs.tar.gz";
+		String hdfsFolder = "input";
+		String type = "bam";
+		
+		String refPath = "test-data/mtdna/mixtures/reference/rCRS.fasta";
+		String sanger = "test-data/mtdna/mixtures/expected/sanger.txt";
+
+		importInputdata(inputFolder, hdfsFolder);
+
+		// create workflow context
+		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
+
+		PileupTool pileUp = new PileupMock("files");
+		context.setOutput("rawHdfs", "rawHdfs");
+		context.setOutput("rawLocal", "rawLocal");
+		context.setOutput("variantsHdfs", "variantsHdfs");
+		context.setOutput("variantsLocal", "variantsLocal");
+		context.setOutput("baq", "true");
+		
+		boolean result = pileUp.run(context);
+		assertTrue(result);
+
+		double hetLevel = 0.01;
+
+		RawFileAnalyser analyser = new RawFileAnalyser();
+
+		try {
+			ArrayList<QCMetric> list = analyser.analyseFile("rawLocal", refPath, sanger,
+					hetLevel);
+
+			assertTrue(list.size() == 1);
+
+			for (QCMetric metric : list) {
+
+				System.out.println(metric.getPrecision());
+				System.out.println(metric.getSensitivity());
+				System.out.println(metric.getSpecificity());
+
+				assertEquals(100, metric.getPrecision(), 0);
+				assertEquals(59.259, metric.getSensitivity(), 0.1);
+				assertEquals(100, metric.getSpecificity(), 0);
+			}
+			assertEquals(true, result);
+		} catch (MathException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	@Test
+	public void DetectPipelineLPAMultiallelicBAMTestKIV2() throws IOException {
+
+		String inputFolder = "test-data/lpa/lpa-exome-kiv2/input";
+		String archive = "test-data/lpa/lpa-exome-kiv2/reference/kiv2_6.tar.gz";
+		String hdfsFolder = "input";
+		String type = "bam";
+
+		File expected = new File("test-data/lpa/lpa-exome-kiv2/expected/expected.txt");
+		File refPath = new File("test-data/lpa/lpa-exome-kiv2/reference/kiv2_6.fasta");
+
+		
+		importInputdata(inputFolder, hdfsFolder);
+
+		// create workflow context
+		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
+
+		PileupTool pileUp = new PileupMock("files");
+		context.setOutput("rawHdfs", "rawHdfs");
+		context.setOutput("rawLocal", "rawLocal");
+		context.setOutput("variantsHdfs", "variantsHdfs");
+		context.setOutput("variantsLocal", "variantsLocal");
+		context.setOutput("baq", "false");
+		
+		boolean result = pileUp.run(context);
+		assertTrue(result);
+
+		MultiallelicAnalyser analyser = new MultiallelicAnalyser();
+
+		double hetLevel = 0.001;
+		ArrayList<QCMetric> list = analyser.analyseFile("rawLocal", expected.getPath(), refPath.getPath(), hetLevel);
+
+		assertTrue(list.size() == 1);
+
+		for (QCMetric metric : list) {
+
+			System.out.println("Precision: " + metric.getPrecision());
+			System.out.println("Sensitivity " + metric.getSensitivity());
+			System.out.println("Specificity " + metric.getSpecificity());
+		}
 
 	}
 

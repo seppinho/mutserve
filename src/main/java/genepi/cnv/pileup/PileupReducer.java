@@ -112,11 +112,12 @@ public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
 		PositionObject positionObj = new PositionObject();
 		positionObj.analysePosition(posInput);
 
-		if (positionObj.getPosition() > 0 && positionObj.getPosition() <= reference.length()) {
+		int pos = positionObj.getPosition();
+		if (pos > 0 && pos <= reference.length()) {
 		
 		// write raw file
 		char ref = reference.charAt(positionObj.getPosition() - 1);
-		context.write(null, new Text(positionObj.writeRawFile(ref)));
+		context.write(null, new Text(positionObj.toRawString(ref)));
 
 		//write heteroplasmy files
 
