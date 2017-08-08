@@ -224,7 +224,7 @@ public class PileupStepTest {
 
 		MultiallelicAnalyser analyser = new MultiallelicAnalyser();
 
-		double hetLevel = 0.001;
+		double hetLevel = 0.01;
 		ArrayList<QCMetric> list = analyser.analyseFile("rawLocal", expected.getPath(), refPath.getPath(), hetLevel);
 
 		assertTrue(list.size() == 1);
