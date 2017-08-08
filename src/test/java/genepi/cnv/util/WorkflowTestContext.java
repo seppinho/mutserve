@@ -223,4 +223,16 @@ public class WorkflowTestContext extends WorkflowContext {
 		return verbose;
 	}
 
+	@Override
+	public void setConfig(Map<String, String> config) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getConfig(String param) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
