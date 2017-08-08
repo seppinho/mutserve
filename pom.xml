@@ -122,7 +122,7 @@
 		<dependency>
 			<groupId>genepi</groupId>
 			<artifactId>genepi-hadoop</artifactId>
-			<version>mr1-1.1.6</version>
+			<version>mr1-1.1.9</version>
 		</dependency>
 
 		<dependency>
