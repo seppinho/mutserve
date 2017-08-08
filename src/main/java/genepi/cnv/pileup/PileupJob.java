@@ -80,7 +80,6 @@ public class PileupJob extends HadoopJob {
 		try {
 
 			String header = "SampleID\tPos\tRef\tVariant\tMajor/Minor\tVariant-Level\tCoverage-FWD\tCoverage-Rev\tCoverage-Total";
-			
 			HdfsUtil.mergeFolderBinary(pathVariantsLocal, pathVariantsHDFS, header);
 			
 			CounterGroup counters = job.getCounters().getGroup("mtdna");
