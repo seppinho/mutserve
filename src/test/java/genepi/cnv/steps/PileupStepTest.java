@@ -5,7 +5,12 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 
+import org.apache.commons.math.MathException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,18 +18,15 @@ import org.junit.Test;
 import genepi.cnv.align.AlignTool;
 import genepi.cnv.pileup.PileupTool;
 import genepi.cnv.sort.SortTool;
+import genepi.cnv.util.QCMetric;
+import genepi.cnv.util.RawFileAnalyser;
 import genepi.cnv.util.TestCluster;
 import genepi.cnv.util.WorkflowTestContext;
 import genepi.hadoop.HdfsUtil;
 import genepi.hadoop.common.WorkflowStep;
 import genepi.io.FileUtil;
 import genepi.io.text.LineReader;
-import htsjdk.samtools.DefaultSAMRecordFactory;
-import htsjdk.samtools.SAMRecord;
-import htsjdk.samtools.SAMRecordIterator;
-import htsjdk.samtools.SamReader;
-import htsjdk.samtools.SamReaderFactory;
-import htsjdk.samtools.ValidationStringency;
+import junit.framework.Assert;
 
 public class PileupStepTest {
 
@@ -37,7 +39,7 @@ public class PileupStepTest {
 
 	@AfterClass
 	public static void tearDown() throws Exception {
-		TestCluster.getInstance().stop();
+		//TestCluster.getInstance().stop();
 	}
 
 	@Test
@@ -60,6 +62,7 @@ public class PileupStepTest {
 		context.setOutput("bwaOut", "cloudgene-bwaOutPe1");
 		context.setOutput("outputBam", "outputBam1");
 		context.setOutput("analyseOut", "analyseOut1");
+		context.setOutput("variants2", "analyseOut2");
 
 		boolean result = align.run(context);
 
@@ -84,39 +87,61 @@ public class PileupStepTest {
 	}
 
 	@Test
-	public void PileupTestBAM() throws IOException {
+	public void Pileup1000GBamTest() throws IOException {
 
 		String inputFolder = "test-data/mtdna/bam/input";
 		String archive = "test-data/mtdna/bam/reference/rcrs.tar.gz";
 		String hdfsFolder = "input";
 		String type = "bam";
-
+		
+		Set<Integer> expected = new HashSet<Integer>(Arrays.asList(1456,2746,3200,12410,14071,14569,15463,16093,16360,10394,1438,152,15326,15340,16519,263,4769,750,8592,8860));
+		
 		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
 		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		PileupTool pileUp = new PileupMock("files");
-		context.setOutput("analyseOut", "analyseOut2");
+		context.setOutput("analyseOut", "analyseOutBAM");
+		context.setOutput("variants2", "variants2");
+		context.setOutput("baq", "true");
 		
 		boolean result = pileUp.run(context);
 		assertTrue(result);
 
-		List<String> files = HdfsUtil.getFiles("analyseOut2");
-
-		String out = "test-data/tmp/out.txt";
-
-		for (String file : files) {
-			HdfsUtil.get(file, out);
+		String variants = "test-data/tmp/variants.txt";
+		
+		HdfsUtil.merge(variants, "variants2",false);
+		
+		String raw = "test-data/tmp/raw.txt";
+		
+		HdfsUtil.merge(raw, "analyseOutBAM",false);
+		
+		LineReader reader = new LineReader(variants);
+		
+		HashSet<Integer> results = new HashSet<Integer>();
+		while(reader.next()){
+			String[] splits = reader.get().split("\t");
+			int pos = Integer.valueOf(splits[1]);
+			results.add(pos);
 		}
-
-		LineReader reader = new LineReader(out);
-		while (reader.next()) {
-			String line = reader.get();
-			if (line.contains("15289")) {
-				System.out.println(line);
-			}
+		
+		RawFileAnalyser analyser = new RawFileAnalyser();
+		String refPath = "test-data/mtdna/mixtures/reference/rCRS.fasta";
+		String sanger = "test-data/mtdna/mixtures/expected/sanger.txt";
+		try {
+			ArrayList<QCMetric> list = analyser.analyseFile(raw, refPath, sanger,
+					1 / 100);
+		} catch (MathException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
+		assertEquals(true, results.equals(expected));
+		
+	
+	
+
 
 	}
 

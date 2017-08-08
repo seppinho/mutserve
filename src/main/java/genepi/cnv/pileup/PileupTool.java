@@ -28,6 +28,8 @@ public class PileupTool extends HadoopJobStep {
 			input = context.get("input");
 		}
 		String output = context.get("analyseOut");
+		String variantsHdfs = context.get("variantsHdfs");
+		String variantsLocal = context.get("variantsLocal");
 		String mappingQual = context.get("mapQuality");
 		String baseQual = context.get("baseQuality");
 		String alignQual = context.get("alignQuality");
@@ -55,6 +57,8 @@ public class PileupTool extends HadoopJobStep {
 		};
 		bamJob.setInput(input);
 		bamJob.setOutput(output);
+		bamJob.setVariantsPathHdfs(variantsHdfs);
+		bamJob.setVariantsPathLocal(variantsLocal);
 		bamJob.setMappingQuality(mappingQual);
 		bamJob.setBaseQuality(baseQual);
 		bamJob.setAlignmentQuality(alignQual);

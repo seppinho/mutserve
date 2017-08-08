@@ -54,6 +54,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 
 	}
 
+
 	protected void setup(Context context) throws IOException, InterruptedException {
 
 		mapQual = context.getConfiguration().getInt("mapQual", 20);
@@ -68,8 +69,6 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 			filename = ((FileSplit) context.getInputSplit()).getPath().getName().replace(".bam", "").replace(".sam", "")
 					.replace(".cram", "");
 		}
-
-		// ref = context.getConfiguration().get("reference");
 
 		CacheStore cache = new CacheStore(context.getConfiguration());
 
@@ -196,6 +195,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 										context.getCounter("mtdna", "GOOD-QUAL").increment(1);
 
 										BasePosition basePos = counts.get(currentPos + "");
+										
 										if (basePos == null) {
 											basePos = new BasePosition();
 											counts.put(currentPos + "", basePos);
@@ -351,10 +351,6 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 				context.getCounter("mtdna", "BAD-MAPPING").increment(1);
 
 			}
-		//} else {
-		//	context.getCounter("mtdna", "FILTERED").increment(1);
-		//	context.getCounter("mtdna", "WRONG-REF").increment(1);
-		//}
 	}
 
 	private int hg19Mapper(int pos) {

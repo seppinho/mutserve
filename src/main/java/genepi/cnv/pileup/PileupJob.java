@@ -1,7 +1,11 @@
 package genepi.cnv.pileup;
 
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.util.List;
 
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.CounterGroup;
 import org.apache.hadoop.mapreduce.Job;
@@ -10,18 +14,16 @@ import org.seqdoop.hadoop_bam.AnySAMInputFormat;
 
 import genepi.cnv.Server;
 import genepi.cnv.objects.BasePosition;
-import genepi.cnv.objects.PositionObject;
-import genepi.cnv.util.ReferenceUtil;
 import genepi.hadoop.CacheStore;
 import genepi.hadoop.HadoopJob;
 import genepi.hadoop.HdfsUtil;
-import genepi.io.FileUtil;
 
 public class PileupJob extends HadoopJob {
 
 	private String refArchive;
 	private String folder;
-
+	private String pathVariantsHDFS;
+	private String pathVariantsLocal;
 	private long overall;
 	private long goodQual;
 	private long goodMapping;
@@ -54,7 +56,7 @@ public class PileupJob extends HadoopJob {
 		job.setMapOutputValueClass(BasePosition.class);
 
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(PositionObject.class);
+		job.setOutputValueClass(Text.class);
 
 		job.setOutputFormatClass(TextOutputFormat.class);
 	}
@@ -77,6 +79,10 @@ public class PileupJob extends HadoopJob {
 
 		try {
 
+			String header = "SampleID\tPos\tRef\tVariant\tMajor/Minor\tVariant-Level\tCoverage-FWD\tCoverage-Rev\tCoverage-Total";
+			
+			HdfsUtil.mergeFolderBinary(pathVariantsLocal, pathVariantsHDFS, header);
+			
 			CounterGroup counters = job.getCounters().getGroup("mtdna");
 			overall = counters.findCounter("OVERALL-READS").getValue();
 			goodQual = counters.findCounter("GOOD-QUAL").getValue();
@@ -103,6 +109,17 @@ public class PileupJob extends HadoopJob {
 	public void setOutput(String output) {
 
 		super.setOutput(output);
+	}
+	
+	public void setVariantsPathHdfs(String hdfsPath) {
+
+		set("variantsHdfs", hdfsPath);
+		this.pathVariantsHDFS = hdfsPath;
+	}
+	
+	public void setVariantsPathLocal(String localPath) {
+
+		this.pathVariantsLocal = localPath;
 	}
 
 	public void setMappingQuality(String mapQual) {
