@@ -103,7 +103,8 @@ public class PileupStepTest {
 
 		PileupTool pileUp = new PileupMock("files");
 		context.setOutput("analyseOut", "analyseOutBAM");
-		context.setOutput("variants2", "variants2");
+		context.setOutput("variantsHdfs", "variantsHdfs");
+		context.setOutput("variantsLocal", "variantsLocal");
 		context.setOutput("baq", "true");
 		
 		boolean result = pileUp.run(context);
@@ -111,30 +112,21 @@ public class PileupStepTest {
 
 		String variants = "test-data/tmp/variants.txt";
 		
-		HdfsUtil.merge(variants, "variants2",false);
+		//HdfsUtil.merge(variants, "variantsHdfs",false);
 		
-		String raw = "test-data/tmp/raw.txt";
+		//String raw = "test-data/tmp/raw.txt";
 		
-		HdfsUtil.merge(raw, "analyseOutBAM",false);
+		//HdfsUtil.merge(raw, "analyseOutBAM",false);
 		
-		LineReader reader = new LineReader(variants);
-		
+		LineReader reader = new LineReader("variantsLocal");
 		HashSet<Integer> results = new HashSet<Integer>();
+		
+		//header
+		reader.next();
 		while(reader.next()){
 			String[] splits = reader.get().split("\t");
 			int pos = Integer.valueOf(splits[1]);
 			results.add(pos);
-		}
-		
-		RawFileAnalyser analyser = new RawFileAnalyser();
-		String refPath = "test-data/mtdna/mixtures/reference/rCRS.fasta";
-		String sanger = "test-data/mtdna/mixtures/expected/sanger.txt";
-		try {
-			ArrayList<QCMetric> list = analyser.analyseFile(raw, refPath, sanger,
-					1 / 100);
-		} catch (MathException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		
 		assertEquals(true, results.equals(expected));
