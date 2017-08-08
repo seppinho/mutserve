@@ -450,22 +450,9 @@ public class PositionObject implements Comparable<PositionObject> {
 		}
 	}
 
-	@Override
-	public String toString() {
-return id + "\t" + position + "\t" + covFWD + "\t" + covREV + "\t" + topBaseFWD + "\t" + topBaseREV + "\t"
-		+ minorBaseFWD + "\t" + minorBaseREV + "\t" + aPercentageFWD + "\t" + cPercentageFWD + "\t"
-		+ gPercentageFWD + "\t" + tPercentageFWD + "\t" + nPercentageFWD + "\t" + dPercentageFWD + "\t"
-		+ aPercentageREV + "\t" + cPercentageREV + "\t" + gPercentageREV + "\t" + tPercentageREV + "\t"
-		+ nPercentageREV + "\t" + dPercentageREV + "\t" + topBasePercentsFWD + "\t" + minorBasePercentsFWD
-		+ "\t" + topBasePercentsREV + "\t" + minorBasePercentsREV + "\t" + llrFWD + "\t" + llrREV + "\t"+ 
-		llrAFWD + "\t" + llrCFWD + "\t" + llrGFWD + "\t" + llrTFWD + "\t" + 
-		llrAREV + "\t" + llrCREV + "\t"	+ llrGREV + "\t" + llrTREV;
-	
-	}
-	
-	public String writeRawFile(char ref) {
+	public String toRawString(char ref) {
 return id + "\t" + position + "\t" + ref + "\t" + topBaseFWD + "\t" + minorBaseFWD + "\t"
-		+ topBaseREV + "\t" + minorBaseREV + "\t" + covFWD + "\t" + covREV + "\t" + (covFWD+covREV) + "\t" + aPercentageFWD + "\t" + cPercentageFWD + "\t"
+		+ topBaseREV + "\t" + minorBaseREV + "\t" + covFWD + "\t" + covREV + "\t" + (covFWD+covREV) + "\t" + type + "\t" + varLevel + "\t" + aPercentageFWD + "\t" + cPercentageFWD + "\t"
 		+ gPercentageFWD + "\t" + tPercentageFWD + "\t" + dPercentageFWD + "\t" + nPercentageFWD + "\t"
 		+ aPercentageREV + "\t" + cPercentageREV + "\t" + gPercentageREV + "\t" + tPercentageREV + "\t"
 		+ dPercentageREV + "\t" + nPercentageREV + "\t" + llrFWD + "\t" + llrREV + "\t"+ 

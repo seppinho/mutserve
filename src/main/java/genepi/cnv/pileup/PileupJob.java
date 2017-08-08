@@ -22,6 +22,7 @@ public class PileupJob extends HadoopJob {
 
 	private String refArchive;
 	private String folder;
+	private String pathRawLocal;
 	private String pathVariantsHDFS;
 	private String pathVariantsLocal;
 	private long overall;
@@ -78,9 +79,14 @@ public class PileupJob extends HadoopJob {
 	public void cleanupJob(Job job) {
 
 		try {
-
+			//write raw file
+			String headerRaw = "SAMPLE\tPOS\tREF\tTOP-FWD\tMINOR-FWD\tTOP-REV\tMINOR-REV\tCOV-FWD\tCOV-REV\tCOV-TOTAL\tTYPE\tLEVEL\t%A\t%C\t%G\t%T\t%D\t%N\t%a\t%c\t%g\t%t\t%d\t%n\tLLRFWD\tLLRREV\tLLRAFWD\tLLRCFWD\tLLRGFWD\tLLRTFWD\tLLRAREV\tLLRCREV\tLLRGREV\tLLRTREV";
+			HdfsUtil.mergeFolderBinary(pathRawLocal, super.getOutput(), headerRaw);
+			
+			//write variants file
 			String header = "SampleID\tPos\tRef\tVariant\tMajor/Minor\tVariant-Level\tCoverage-FWD\tCoverage-Rev\tCoverage-Total";
 			HdfsUtil.mergeFolderBinary(pathVariantsLocal, pathVariantsHDFS, header);
+			
 			
 			CounterGroup counters = job.getCounters().getGroup("mtdna");
 			overall = counters.findCounter("OVERALL-READS").getValue();
@@ -108,6 +114,11 @@ public class PileupJob extends HadoopJob {
 	public void setOutput(String output) {
 
 		super.setOutput(output);
+	}
+	
+	public void setRawLocal(String localPath) {
+
+		this.pathRawLocal = localPath;
 	}
 	
 	public void setVariantsPathHdfs(String hdfsPath) {
