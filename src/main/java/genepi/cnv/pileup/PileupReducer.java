@@ -158,7 +158,7 @@ public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
 		build.append(posOut.getCovFWD() + "\t");
 		build.append(posOut.getCovREV() + "\t");
 		build.append(posOut.getCovFWD() + posOut.getCovREV());
-
+		build.append("\r");
 		return build.toString();
 	};
 
