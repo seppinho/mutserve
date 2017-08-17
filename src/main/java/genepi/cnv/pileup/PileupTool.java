@@ -84,7 +84,7 @@ public class PileupTool extends HadoopJobStep {
 			text.append("Filtered Reads: " + df.format(bamJob.getFiltered()) + "<br>");
 			text.append("Passed Reads: " + df.format(bamJob.getUnfiltered()) + "<br>");
 			text.append("<br>");
-			text.append("Read Mapping Quality OK: " + df.format(bamJob.getGoodMapping()) + "<br>");
+			text.append("Filtered Reads:" + "<br>");
 			text.append("Read Mapping Quality BAD: " + df.format(bamJob.getBadMapping()) + "<br>");
 			text.append("Unmapped Reads: " + df.format(bamJob.getUnmapped()) + "<br>");
 			text.append("Wrong Reference in BAM: " + df.format(bamJob.getWrongRef()) + "<br>");
@@ -93,7 +93,7 @@ public class PileupTool extends HadoopJobStep {
 			text.append("Short Reads (<25 bp): " + df.format(bamJob.getShortRead()) + "<br>");
 			context.ok(text.toString());
 
-			if (bamJob.getUnfiltered() == 0 || bamJob.getGoodQual() == 0) {
+			if (bamJob.getUnfiltered() == 0) {
 				context.error("No reads passed Quality Control!");
 				return false;
 			}

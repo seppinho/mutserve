@@ -32,7 +32,6 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 	boolean baq;
 	String filename;
 	String referenceName;
-	// String ref;
 	IndexedFastaSequenceFile refReader;
 
 	BaqAlt baqHMMAltered;
@@ -53,7 +52,6 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 		MTDNA, GENOME
 
 	}
-
 
 	protected void setup(Context context) throws IOException, InterruptedException {
 
@@ -109,14 +107,6 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 
 			outKey.set(filename + ":" + pos);
 			context.write(outKey, basePos);
-
-			/*
-			 * if (ref.equals("hg19")) { int newPos =
-			 * hg19Mapper(Integer.valueOf(pos)); outKey.set(filename + ":" +
-			 * newPos); basePos.setPos(newPos); context.write(outKey, basePos);
-			 * } else { outKey.set(filename + ":" + pos); context.write(outKey,
-			 * basePos); }
-			 */
 		}
 
 	}
@@ -124,28 +114,6 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 	public void map(LongWritable key, SAMRecordWritable value, Context context)
 			throws IOException, InterruptedException {
 		try {
-
-			if (referenceName == null) {
-				for (htsjdk.samtools.SAMSequenceRecord record : value.get().getHeader().getSequenceDictionary()
-						.getSequences()) {
-
-				/*	// stefan
-					if (record.getSequenceLength() == 5104) {
-						referenceName = record.getSequenceName();
-					}
-					
-					// stefan
-					if (record.getSequenceLength() == 16569) {
-						referenceName = record.getSequenceName();
-					}
-					
-					// stefan
-					if (record.getSequenceLength() == 1142) {
-						referenceName = record.getSequenceName();
-					}*/
-
-				}
-			}
 
 			analyseBam(context, value.get());
 
@@ -158,201 +126,165 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 
 		context.getCounter("mtdna", "OVERALL-READS").increment(1);
 
-		//if (samRecord.getReferenceName().equals(referenceName)) {
+		if (samRecord.getMappingQuality() < mapQual) {
+			context.getCounter("mtdna", "FILTERED").increment(1);
+			context.getCounter("mtdna", "BAD-MAPPING").increment(1);
+			return;
+		}
 
-			if (samRecord.getMappingQuality() >= mapQual) {
-				context.getCounter("mtdna", "GOOD-MAPPING").increment(1);
+		if (samRecord.getReadUnmappedFlag()) {
+			context.getCounter("mtdna", "FILTERED").increment(1);
+			context.getCounter("mtdna", "UNMAPPED").increment(1);
+			return;
+		}
 
-				if (!samRecord.getReadUnmappedFlag()) {
+		if (samRecord.getDuplicateReadFlag()) {
+			context.getCounter("mtdna", "FILTERED").increment(1);
+			context.getCounter("mtdna", "DUPLICATE").increment(1);
+			return;
+		}
 
-					if (!samRecord.getDuplicateReadFlag()) {
+		if (samRecord.getReadLength() <= 25) {
+			context.getCounter("mtdna", "FILTERED").increment(1);
+			context.getCounter("mtdna", "SHORT-READ").increment(1);
+			return;
+		}
 
-						if (samRecord.getReadLength() > 25) {
+		if (ReferenceUtil.getTagFromSamRecord(samRecord.getAttributes(), "AS") < alignQual) {
+			context.getCounter("mtdna", "FILTERED").increment(1);
+			context.getCounter("mtdna", "BAD-ALIGNMENT").increment(1);
+			return;
+		}
 
-							if (ReferenceUtil.getTagFromSamRecord(samRecord.getAttributes(), "AS") >= alignQual) {
+		context.getCounter("mtdna", "UNFILTERED").increment(1);
 
-								if (baq) {
-									if (version.equalsIgnoreCase(versionEnum.MTDNA.name())) {
-										baqHMMAltered.baqRead(samRecord, refReader,
-												genepi.cnv.util.BaqAlt.CalculationMode.CALCULATE_AS_NECESSARY,
-												genepi.cnv.util.BaqAlt.QualityMode.OVERWRITE_QUALS);
-									} else {
-										baqHMM.baqRead(samRecord, refReader,
-												org.broadinstitute.gatk.utils.baq.BAQ.CalculationMode.CALCULATE_AS_NECESSARY,
-												org.broadinstitute.gatk.utils.baq.BAQ.QualityMode.OVERWRITE_QUALS);
-									}
-								}
+		if (baq) {
+			if (version.equalsIgnoreCase(versionEnum.MTDNA.name())) {
+				baqHMMAltered.baqRead(samRecord, refReader,
+						genepi.cnv.util.BaqAlt.CalculationMode.CALCULATE_AS_NECESSARY,
+						genepi.cnv.util.BaqAlt.QualityMode.OVERWRITE_QUALS);
+			} else {
+				baqHMM.baqRead(samRecord, refReader,
+						org.broadinstitute.gatk.utils.baq.BAQ.CalculationMode.CALCULATE_AS_NECESSARY,
+						org.broadinstitute.gatk.utils.baq.BAQ.QualityMode.OVERWRITE_QUALS);
+			}
+		}
 
-								String readString = samRecord.getReadString();
-								context.getCounter("mtdna", "UNFILTERED").increment(1);
+		String readString = samRecord.getReadString();
 
-								for (int i = 0; i < readString.length(); i++) {
+		for (int i = 0; i < readString.length(); i++) {
 
-									int currentPos = samRecord.getReferencePositionAtReadPosition(i + 1);
+			int currentPos = samRecord.getReferencePositionAtReadPosition(i + 1);
 
-									if (samRecord.getBaseQualities()[i] >= baseQual) {
+			if (samRecord.getBaseQualities()[i] >= baseQual) {
 
-										context.getCounter("mtdna", "GOOD-QUAL").increment(1);
+				context.getCounter("mtdna", "GOOD-QUAL").increment(1);
 
-										BasePosition basePos = counts.get(currentPos + "");
-										
-										if (basePos == null) {
-											basePos = new BasePosition();
-											counts.put(currentPos + "", basePos);
-										}
+				BasePosition basePos = counts.get(currentPos + "");
 
-										char base = readString.charAt(i);
+				if (basePos == null) {
+					basePos = new BasePosition();
+					counts.put(currentPos + "", basePos);
+				}
 
-										if ((samRecord.getFlags() & 0x10) == 0x10) {
-											context.getCounter("mtdna", "REV-READ").increment(1);
-											switch (base) {
-											case 'A':
-												basePos.addaRev(1);
-												basePos.addaRevQ(samRecord.getBaseQualities()[i]);
-												break;
-											case 'C':
-												basePos.addcRev(1);
-												basePos.addcRevQ(samRecord.getBaseQualities()[i]);
-												break;
-											case 'G':
-												basePos.addgRev(1);
-												basePos.addgRevQ(samRecord.getBaseQualities()[i]);
-												break;
-											case 'T':
-												basePos.addtRev(1);
-												basePos.addtRevQ(samRecord.getBaseQualities()[i]);
-												break;
-											case 'N':
-												basePos.addnRev(1);
-												break;
-											default:
-												break;
-											}
-										} else {
-											context.getCounter("mtdna", "FWD-READ").increment(1);
-											switch (base) {
-											case 'A':
-												basePos.addaFor(1);
-												basePos.addaForQ(samRecord.getBaseQualities()[i]);
-												break;
-											case 'C':
-												basePos.addcFor(1);
-												basePos.addcForQ(samRecord.getBaseQualities()[i]);
-												break;
-											case 'G':
-												basePos.addgFor(1);
-												basePos.addgForQ(samRecord.getBaseQualities()[i]);
-												break;
-											case 'T':
-												basePos.addtFor(1);
-												basePos.addtForQ(samRecord.getBaseQualities()[i]);
-												break;
-											case 'N':
-												basePos.addnFor(1);
-												break;
-											default:
-												break;
-											}
-										}
+				char base = readString.charAt(i);
 
-									} else {
-										context.getCounter("mtdna", "BAD-QUAL").increment(1);
-									}
-								}
-
-								/** for deletions */
-								Integer currentReferencePos = samRecord.getAlignmentStart();
-
-								for (CigarElement cigarElement : samRecord.getCigar().getCigarElements()) {
-
-									if (cigarElement.getOperator() == CigarOperator.D) {
-
-										Integer cigarElementStart = currentReferencePos;
-										Integer cigarElementLength = cigarElement.getLength();
-										Integer cigarElementEnd = currentReferencePos + cigarElementLength;
-
-										while (cigarElementStart < cigarElementEnd) {
-
-											BasePosition basePos = counts.get(cigarElementStart + "");
-
-											if (basePos == null) {
-												basePos = new BasePosition();
-												counts.put(cigarElementStart + "", basePos);
-											}
-
-											if ((samRecord.getFlags() & 0x10) == 0x10) {
-												basePos.adddRev(1);
-											} else {
-												basePos.adddFor(1);
-											}
-
-											cigarElementStart++;
-										}
-
-									}
-
-									/*
-									 * if (cigarElement.getOperator() ==
-									 * CigarOperator.I) {
-									 * 
-									 * Integer cigarElementStart =
-									 * currentReferencePos; Integer
-									 * cigarElementLength = cigarElement
-									 * .getLength();
-									 * 
-									 * int i = 1; while (i <=
-									 * cigarElementLength) {
-									 * 
-									 * BasePosition basePos = counts
-									 * .get(cigarElementStart + "." + i + "C");
-									 * 
-									 * if (basePos == null) { basePos = new
-									 * BasePosition();
-									 * counts.put(cigarElementStart + "." + i +
-									 * "C", basePos); }
-									 * 
-									 * if ((samRecord.getFlags() & 0x10) ==
-									 * 0x10) { basePos.addcRev(1); } else {
-									 * basePos.addcFor(1); }
-									 * 
-									 * i++; } }
-									 */
-
-									if (cigarElement.getOperator().consumesReferenceBases()) {
-										currentReferencePos = currentReferencePos + cigarElement.getLength();
-									}
-
-								}
-
-							} else {
-								context.getCounter("mtdna", "FILTERED").increment(1);
-								context.getCounter("mtdna", "BAD-ALIGNMENT").increment(1);
-							}
-
-						}
-
-						else {
-							context.getCounter("mtdna", "FILTERED").increment(1);
-							context.getCounter("mtdna", "SHORT-READ").increment(1);
-						}
-					} else {
-						context.getCounter("mtdna", "FILTERED").increment(1);
-						context.getCounter("mtdna", "DUPLICATE").increment(1);
-
+				if ((samRecord.getFlags() & 0x10) == 0x10) {
+					context.getCounter("mtdna", "REV-READ").increment(1);
+					switch (base) {
+					case 'A':
+						basePos.addaRev(1);
+						basePos.addaRevQ(samRecord.getBaseQualities()[i]);
+						break;
+					case 'C':
+						basePos.addcRev(1);
+						basePos.addcRevQ(samRecord.getBaseQualities()[i]);
+						break;
+					case 'G':
+						basePos.addgRev(1);
+						basePos.addgRevQ(samRecord.getBaseQualities()[i]);
+						break;
+					case 'T':
+						basePos.addtRev(1);
+						basePos.addtRevQ(samRecord.getBaseQualities()[i]);
+						break;
+					case 'N':
+						basePos.addnRev(1);
+						break;
+					default:
+						break;
 					}
 				} else {
-					context.getCounter("mtdna", "FILTERED").increment(1);
-					context.getCounter("mtdna", "UNMAPPED").increment(1);
-
+					context.getCounter("mtdna", "FWD-READ").increment(1);
+					switch (base) {
+					case 'A':
+						basePos.addaFor(1);
+						basePos.addaForQ(samRecord.getBaseQualities()[i]);
+						break;
+					case 'C':
+						basePos.addcFor(1);
+						basePos.addcForQ(samRecord.getBaseQualities()[i]);
+						break;
+					case 'G':
+						basePos.addgFor(1);
+						basePos.addgForQ(samRecord.getBaseQualities()[i]);
+						break;
+					case 'T':
+						basePos.addtFor(1);
+						basePos.addtForQ(samRecord.getBaseQualities()[i]);
+						break;
+					case 'N':
+						basePos.addnFor(1);
+						break;
+					default:
+						break;
+					}
 				}
 
 			} else {
-				context.getCounter("mtdna", "FILTERED").increment(1);
-				context.getCounter("mtdna", "BAD-MAPPING").increment(1);
+				context.getCounter("mtdna", "BAD-QUAL").increment(1);
+			}
+		}
+
+		/** for deletions */
+		Integer currentReferencePos = samRecord.getAlignmentStart();
+
+		for (CigarElement cigarElement : samRecord.getCigar().getCigarElements()) {
+
+			if (cigarElement.getOperator() == CigarOperator.D) {
+
+				Integer cigarElementStart = currentReferencePos;
+				Integer cigarElementLength = cigarElement.getLength();
+				Integer cigarElementEnd = currentReferencePos + cigarElementLength;
+
+				while (cigarElementStart < cigarElementEnd) {
+
+					BasePosition basePos = counts.get(cigarElementStart + "");
+
+					if (basePos == null) {
+						basePos = new BasePosition();
+						counts.put(cigarElementStart + "", basePos);
+					}
+
+					if ((samRecord.getFlags() & 0x10) == 0x10) {
+						basePos.adddRev(1);
+					} else {
+						basePos.adddFor(1);
+					}
+
+					cigarElementStart++;
+				}
 
 			}
+
+			if (cigarElement.getOperator().consumesReferenceBases()) {
+				currentReferencePos = currentReferencePos + cigarElement.getLength();
+			}
+
+		}
 	}
 
+	// needed for hg19 reference
 	private int hg19Mapper(int pos) {
 
 		int updatedPos = 0;
