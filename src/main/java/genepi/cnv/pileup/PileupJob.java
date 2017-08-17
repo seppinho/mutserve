@@ -204,10 +204,6 @@ public class PileupJob extends HadoopJob {
 		return unmapped;
 	}
 
-	public long getGoodMapping() {
-		return goodMapping;
-	}
-
 	public void setUnmapped(long unmapped) {
 		this.unmapped = unmapped;
 	}
