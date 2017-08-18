@@ -27,10 +27,11 @@ public class RawFileAnalyser {
 	private static Set<Integer> hotspots = new HashSet<Integer>(
 			Arrays.asList(302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 315, 316, 3105, 3106, 3107));
 
-	ArrayList<QCMetric> metrics = new ArrayList<QCMetric>();
 	
 	public ArrayList<QCMetric> analyseFile(String in, String refpath, String sangerpos, double hetLevel) throws MathException {
 
+		ArrayList<QCMetric> metrics = new ArrayList<QCMetric>();
+		
 		NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
 		DecimalFormat df = (DecimalFormat) nf;
 		df.setMinimumFractionDigits(2);
