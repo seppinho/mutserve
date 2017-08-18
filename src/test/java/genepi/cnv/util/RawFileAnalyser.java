@@ -13,10 +13,10 @@ import java.util.TreeSet;
 
 import org.apache.commons.math.MathException;
 
-import genepi.cnv.detect.DetectVariants;
-import genepi.cnv.objects.PositionObject;
-import genepi.cnv.util.ReferenceUtil;
 import genepi.io.table.reader.CsvTableReader;
+import genepi.mut.detect.DetectVariants;
+import genepi.mut.objects.PositionObject;
+import genepi.mut.util.ReferenceUtil;
 
 public class RawFileAnalyser {
 

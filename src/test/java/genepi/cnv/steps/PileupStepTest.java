@@ -15,9 +15,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import genepi.cnv.align.AlignTool;
-import genepi.cnv.pileup.PileupTool;
-import genepi.cnv.sort.SortTool;
 import genepi.cnv.steps.DetectStepTest.DetectMock;
 import genepi.cnv.steps.DetectStepTest.PileupMock;
 import genepi.cnv.util.MultiallelicAnalyser;
@@ -29,6 +26,9 @@ import genepi.hadoop.HdfsUtil;
 import genepi.hadoop.common.WorkflowStep;
 import genepi.io.FileUtil;
 import genepi.io.text.LineReader;
+import genepi.mut.align.AlignTool;
+import genepi.mut.pileup.PileupTool;
+import genepi.mut.sort.SortTool;
 import junit.framework.Assert;
 
 public class PileupStepTest {
@@ -42,51 +42,7 @@ public class PileupStepTest {
 
 	@AfterClass
 	public static void tearDown() throws Exception {
-		//TestCluster.getInstance().stop();
-	}
-
-	@Test
-	public void PileupTestPE() throws IOException {
-
-		String inputFolder = "test-data/mtdna/fastqpe/input";
-		String archive = "test-data/mtdna/fastqpe/reference/rcrs.tar.gz";
-		String hdfsFolder = "input";
-		String type = "pe";
-
-		importInputdata(inputFolder, hdfsFolder);
-
-		// create workflow context
-		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
-
-		context.setInput("chunkLength", "0");
-
-		// create step instance
-		AlignTool align = new AlignnMock("files");
-		context.setOutput("bwaOut", "cloudgene-bwaOutPe1");
-		context.setOutput("outputBam", "outputBam1");
-		context.setOutput("analyseOut", "analyseOut1");
-		context.setOutput("variants2", "analyseOut2");
-
-		boolean result = align.run(context);
-
-		assertTrue(result);
-
-		SortTool sort = new SortMock("files");
-		result = sort.run(context);
-		assertTrue(result);
-
-		assertTrue(HdfsUtil.exists("outputBam1"));
-
-		PileupTool pileUp = new PileupMock("files");
-		result = pileUp.run(context);
-		assertTrue(result);
-
-		List<String> files = HdfsUtil.getFiles("analyseOut1");
-
-		for (String file : files) {
-			System.out.println(file);
-		}
-
+		TestCluster.getInstance().stop();
 	}
 
 	@Test
