@@ -1,4 +1,4 @@
-package genepi.cnv.steps;
+package genepi.mut.steps;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import org.apache.commons.math.MathException;
 import org.junit.Test;
 
-import genepi.cnv.util.QCMetric;
-import genepi.cnv.util.RawFileAnalyser;
+import genepi.mut.util.QCMetric;
+import genepi.mut.util.RawFileAnalyser;
 
 public class AnalyseRawFileVariantsTest {
 

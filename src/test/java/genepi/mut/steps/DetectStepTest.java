@@ -1,4 +1,4 @@
-package genepi.cnv.steps;
+package genepi.mut.steps;
 
 import static org.junit.Assert.*;
 
@@ -12,11 +12,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import genepi.cnv.util.MultiallelicAnalyser;
-import genepi.cnv.util.QCMetric;
-import genepi.cnv.util.RawFileAnalyser;
-import genepi.cnv.util.TestCluster;
-import genepi.cnv.util.WorkflowTestContext;
 import genepi.hadoop.HdfsUtil;
 import genepi.hadoop.common.WorkflowStep;
 import genepi.io.FileUtil;
@@ -25,6 +20,11 @@ import genepi.mut.align.AlignTool;
 import genepi.mut.detect.DetectTool;
 import genepi.mut.pileup.PileupTool;
 import genepi.mut.sort.SortTool;
+import genepi.mut.util.MultiallelicAnalyser;
+import genepi.mut.util.QCMetric;
+import genepi.mut.util.RawFileAnalyser;
+import genepi.mut.util.TestCluster;
+import genepi.mut.util.WorkflowTestContext;
 import htsjdk.samtools.DefaultSAMRecordFactory;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMRecordIterator;
