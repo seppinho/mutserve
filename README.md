@@ -9,3 +9,11 @@ Mutation Server detects variants and heteroplasmies in mitochondrial DNA. Users 
 * Pileup: Calculating base-pair information at each chromosomal position. It also applies several models, which are included in the pileup file.
 * Variant detection: Detect variants and low-level variants
 * Statistics: Generate sample statistics.
+
+## First steps
+
+* Check out repository  
+* Import Maven project into Eclipse
+* Add gatk-jar-3.2.jar to libs/gatk/gatk-jar/3.2/ (needed for BAQ)
+* Maven -> Update Project
+* Run Test Cases
