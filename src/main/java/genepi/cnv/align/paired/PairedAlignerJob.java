@@ -1,11 +1,11 @@
 package genepi.cnv.align.paired;
 
-import genepi.cnv.Server;
 import genepi.cnv.objects.SingleRead;
 import genepi.hadoop.CacheStore;
 import genepi.hadoop.HadoopJob;
 import genepi.hadoop.HdfsUtil;
 import genepi.io.FileUtil;
+import genepi.mut.Server;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

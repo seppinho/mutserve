@@ -12,11 +12,11 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.seqdoop.hadoop_bam.AnySAMInputFormat;
 
-import genepi.cnv.Server;
 import genepi.cnv.objects.BasePosition;
 import genepi.hadoop.CacheStore;
 import genepi.hadoop.HadoopJob;
 import genepi.hadoop.HdfsUtil;
+import genepi.mut.Server;
 
 public class PileupJob extends HadoopJob {
 
