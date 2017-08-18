@@ -70,7 +70,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>genepi.cnv.Server</mainClass>
+									<mainClass>genepi.mut.Server</mainClass>
 								</transformer>
 							</transformers>
 
