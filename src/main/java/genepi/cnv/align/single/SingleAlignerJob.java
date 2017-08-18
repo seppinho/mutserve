@@ -7,13 +7,13 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.seqdoop.hadoop_bam.FastqInputFormat;
 
-import genepi.cnv.Server;
 import genepi.cnv.objects.BasePosition;
 import genepi.cnv.util.ReferenceUtil;
 import genepi.hadoop.CacheStore;
 import genepi.hadoop.HadoopJob;
 import genepi.hadoop.HdfsUtil;
 import genepi.io.FileUtil;
+import genepi.mut.Server;
 
 public class SingleAlignerJob extends HadoopJob {
 

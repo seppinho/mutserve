@@ -1,4 +1,4 @@
-package genepi.cnv;
+package genepi.mut;
 
 import genepi.base.Toolbox;
 import genepi.cnv.align.AlignTool;
