@@ -43,13 +43,13 @@ public class SortStepTest {
 
 		String inputFolder = "test-data/mtdna/fastqse/input";
 		String archive = "test-data/mtdna/fastqse/reference/rcrs.tar.gz";
-		String hdfsFolder = "input";
+		String hdfsFolder = "inputSE";
 		String type = "se";
 
 		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
-		WorkflowTestContext context = buildContext(inputFolder, archive, type);
+		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		// create step instance
 		AlignTool align = new AlignnMock("files");
@@ -96,13 +96,13 @@ public class SortStepTest {
 
 		String inputFolder = "test-data/mtdna/fastqpe/input";
 		String archive = "test-data/mtdna/fastqpe/reference/rcrs.tar.gz";
-		String hdfsFolder = "input";
+		String hdfsFolder = "inputPE";
 		String type = "pe";
 
 		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
-		WorkflowTestContext context = buildContext(inputFolder, archive, type);
+		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		// create step instance
 		AlignTool align = new AlignnMock("files");
@@ -194,7 +194,7 @@ public class SortStepTest {
 
 		WorkflowTestContext context = new WorkflowTestContext();
 
-		context.setInput("input", "input");
+		context.setInput("input", input);
 		context.setInput("inType", type);
 		context.setVerbose(VERBOSE);
 		context.setInput("archive", archive);

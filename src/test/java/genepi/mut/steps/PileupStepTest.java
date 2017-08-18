@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,14 +21,11 @@ import genepi.io.text.LineReader;
 import genepi.mut.align.AlignTool;
 import genepi.mut.pileup.PileupTool;
 import genepi.mut.sort.SortTool;
-import genepi.mut.steps.DetectStepTest.DetectMock;
-import genepi.mut.steps.DetectStepTest.PileupMock;
 import genepi.mut.util.MultiallelicAnalyser;
 import genepi.mut.util.QCMetric;
 import genepi.mut.util.RawFileAnalyser;
 import genepi.mut.util.TestCluster;
 import genepi.mut.util.WorkflowTestContext;
-import junit.framework.Assert;
 
 public class PileupStepTest {
 
@@ -96,13 +92,12 @@ public class PileupStepTest {
 
 	}
 	
-	
 	@Test
 	public void DetectPipelinemtDNAMixtureBAMTest() throws IOException {
 
 		String inputFolder = "test-data/mtdna/mixtures/input";
 		String archive = "test-data/mtdna/mixtures/reference/rcrs.tar.gz";
-		String hdfsFolder = "input";
+		String hdfsFolder = "input2";
 		String type = "bam";
 		
 		String refPath = "test-data/mtdna/mixtures/reference/rCRS.fasta";
@@ -114,10 +109,10 @@ public class PileupStepTest {
 		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		PileupTool pileUp = new PileupMock("files");
-		context.setOutput("rawHdfs", "rawHdfs");
-		context.setOutput("rawLocal", "rawLocal");
-		context.setOutput("variantsHdfs", "variantsHdfs");
-		context.setOutput("variantsLocal", "variantsLocal");
+		context.setOutput("rawHdfs", "rawHdfs1");
+		context.setOutput("rawLocal", "rawLocal1");
+		context.setOutput("variantsHdfs", "variantsHdfs1");
+		context.setOutput("variantsLocal", "variantsLocal1");
 		context.setOutput("baq", "true");
 		
 		boolean result = pileUp.run(context);
@@ -128,7 +123,7 @@ public class PileupStepTest {
 		RawFileAnalyser analyser = new RawFileAnalyser();
 
 		try {
-			ArrayList<QCMetric> list = analyser.analyseFile("rawLocal", refPath, sanger,
+			ArrayList<QCMetric> list = analyser.analyseFile("rawLocal1", refPath, sanger,
 					hetLevel);
 
 			assertTrue(list.size() == 1);
@@ -151,49 +146,6 @@ public class PileupStepTest {
 
 	}
 	
-	@Test
-	public void DetectPipelineLPAMultiallelicBAMTestKIV2() throws IOException {
-
-		String inputFolder = "test-data/lpa/lpa-exome-kiv2/input";
-		String archive = "test-data/lpa/lpa-exome-kiv2/reference/kiv2_6.tar.gz";
-		String hdfsFolder = "input";
-		String type = "bam";
-
-		File expected = new File("test-data/lpa/lpa-exome-kiv2/expected/expected.txt");
-		File refPath = new File("test-data/lpa/lpa-exome-kiv2/reference/kiv2_6.fasta");
-
-		
-		importInputdata(inputFolder, hdfsFolder);
-
-		// create workflow context
-		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
-
-		PileupTool pileUp = new PileupMock("files");
-		context.setOutput("rawHdfs", "rawHdfs");
-		context.setOutput("rawLocal", "rawLocal");
-		context.setOutput("variantsHdfs", "variantsHdfs");
-		context.setOutput("variantsLocal", "variantsLocal");
-		context.setOutput("baq", "false");
-		
-		boolean result = pileUp.run(context);
-		assertTrue(result);
-
-		MultiallelicAnalyser analyser = new MultiallelicAnalyser();
-
-		double hetLevel = 0.01;
-		ArrayList<QCMetric> list = analyser.analyseFile("rawLocal", expected.getPath(), refPath.getPath(), hetLevel);
-
-		assertTrue(list.size() == 1);
-
-		for (QCMetric metric : list) {
-
-			System.out.println("Precision: " + metric.getPrecision());
-			System.out.println("Sensitivity " + metric.getSensitivity());
-			System.out.println("Specificity " + metric.getSpecificity());
-		}
-
-	}
-
 	class AlignnMock extends AlignTool {
 
 		private String folder;

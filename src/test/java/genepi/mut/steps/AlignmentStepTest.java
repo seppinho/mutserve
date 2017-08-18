@@ -42,9 +42,8 @@ public class AlignmentStepTest {
 		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
-		WorkflowTestContext context = buildContext(inputFolder, archive);
+		WorkflowTestContext context = buildContext(hdfsFolder, archive);
 		
-		context.setInput("input", hdfsFolder);
 		context.setInput("inType", "se");
 		context.setOutput("bwaOut", "cloudgene-bwaOutSe");
 
@@ -92,9 +91,8 @@ public class AlignmentStepTest {
 		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
-		WorkflowTestContext context = buildContext(inputFolder, archive);
+		WorkflowTestContext context = buildContext(hdfsFolder, archive);
 
-		context.setInput("input", hdfsFolder);
 		context.setInput("inType", "pe");
 		context.setInput("chunkLength", "0");
 		context.setOutput("bwaOut", "cloudgene-bwaOutPe");
@@ -173,6 +171,7 @@ public class AlignmentStepTest {
 
 		context.setVerbose(VERBOSE);
 		context.setInput("archive", archive);
+		context.setInput("input", input);
 
 		FileUtil.createDirectory(file.getAbsolutePath() + "/bwaOut");
 
