@@ -1,11 +1,11 @@
 package genepi.mut;
 
 import genepi.base.Toolbox;
-import genepi.cnv.align.AlignTool;
-import genepi.cnv.detect.DetectTool;
-import genepi.cnv.pileup.PileupTool;
-import genepi.cnv.sort.SortTool;
-import genepi.cnv.stats.StatisticsTool;
+import genepi.mut.align.AlignTool;
+import genepi.mut.detect.DetectTool;
+import genepi.mut.pileup.PileupTool;
+import genepi.mut.sort.SortTool;
+import genepi.mut.stats.StatisticsTool;
 
 import java.lang.reflect.InvocationTargetException;
 
