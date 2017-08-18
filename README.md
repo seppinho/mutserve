@@ -14,6 +14,6 @@ Mutation Server detects variants and heteroplasmies in mitochondrial DNA. Users 
 
 * Check out repository  
 * Import Maven project into Eclipse
-* Add gatk-jar-3.2.jar to libs/gatk/gatk-jar/3.2/ (needed for BAQ)
+* Add gatk-jar-3.2.jar to libs/gatk/gatk-jar/3.2/ (GATK4 change soon)
 * Maven -> Update Project
 * Run Test Cases
