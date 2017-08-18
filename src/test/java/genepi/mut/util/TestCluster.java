@@ -1,4 +1,4 @@
-package genepi.cnv.util;
+package genepi.mut.util;
 
 import genepi.hadoop.HdfsUtil;
 import genepi.io.FileUtil;

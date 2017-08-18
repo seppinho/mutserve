@@ -1,4 +1,4 @@
-package genepi.cnv.steps;
+package genepi.mut.steps;
 
 import static org.junit.Assert.*;
 
@@ -11,12 +11,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import genepi.cnv.util.TestCluster;
-import genepi.cnv.util.WorkflowTestContext;
 import genepi.hadoop.HdfsUtil;
 import genepi.hadoop.common.WorkflowStep;
 import genepi.io.FileUtil;
 import genepi.mut.align.AlignTool;
+import genepi.mut.util.TestCluster;
+import genepi.mut.util.WorkflowTestContext;
 
 public class AlignmentStepTest {
 

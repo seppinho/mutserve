@@ -1,4 +1,4 @@
-package genepi.cnv.util;
+package genepi.mut.util;
 
 public class QCMetric {
 
