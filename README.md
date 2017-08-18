@@ -6,8 +6,7 @@ Mutation Server detects variants and heteroplasmies in mitochondrial DNA. Users 
 
 * Align: Aligning single-end and paired-end reads with BWA. It uses the JNI bindings from [JBWA](https://github.com/lindenb/jbwa). 
 * Sort: Sorting aligned reads and creating a BAM file. It uses the secondary sort mechanism of Hadoop. 
-* Pileup: Calculating base-pair information at each chromosomal position. It also applies several models, which are included in the pileup file.
-* Variant detection: Detect variants and low-level variants
+* Pileup: Calculating base-pair information at each chromosomal position. It also applies several models, which are included in the pileup file. Output file includes variants and heteroplasmies.
 * Statistics: Generate sample statistics.
 
 ## Checkout and contribute
