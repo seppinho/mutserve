@@ -58,15 +58,15 @@ public class PileupStepTest {
 
 		PileupTool pileUp = new PileupMock("files");
 		context.setOutput("rawHdfs", "rawHdfs");
-		context.setOutput("rawLocal", "rawLocal");
+		context.setOutput("rawLocal", "test-data/tmp/rawLocal1000G");
 		context.setOutput("variantsHdfs", "variantsHdfs");
-		context.setOutput("variantsLocal", "variantsLocal");
+		context.setOutput("variantsLocal", "test-data/tmp/variantsLocal1000G");
 		context.setOutput("baq", "true");
 		
 		boolean result = pileUp.run(context);
 		assertTrue(result);
 
-		LineReader reader = new LineReader("variantsLocal");
+		LineReader reader = new LineReader("test-data/tmp/variantsLocal1000G");
 		HashSet<Integer> results = new HashSet<Integer>();
 		
 		//header
@@ -79,7 +79,7 @@ public class PileupStepTest {
 		
 		assertEquals(true, results.equals(expected));
 		
-		reader = new LineReader("rawLocal");
+		reader = new LineReader("test-data/tmp/rawLocal1000G");
 	
 		int i = 0;
 		while(reader.next()){
@@ -110,9 +110,9 @@ public class PileupStepTest {
 
 		PileupTool pileUp = new PileupMock("files");
 		context.setOutput("rawHdfs", "rawHdfs1");
-		context.setOutput("rawLocal", "rawLocal1");
+		context.setOutput("rawLocal", "test-data/tmp/rawLocalMixture");
 		context.setOutput("variantsHdfs", "variantsHdfs1");
-		context.setOutput("variantsLocal", "variantsLocal1");
+		context.setOutput("variantsLocal", "test-data/tmp/variantsLocalMixture");
 		context.setOutput("baq", "true");
 		
 		boolean result = pileUp.run(context);
@@ -123,7 +123,7 @@ public class PileupStepTest {
 		RawFileAnalyser analyser = new RawFileAnalyser();
 
 		try {
-			ArrayList<QCMetric> list = analyser.analyseFile("rawLocal1", refPath, sanger,
+			ArrayList<QCMetric> list = analyser.analyseFile("test-data/tmp/rawLocalMixture", refPath, sanger,
 					hetLevel);
 
 			assertTrue(list.size() == 1);
