@@ -80,7 +80,7 @@ public class PileupJob extends HadoopJob {
 
 		try {
 			//write raw file
-			String headerRaw = "SAMPLE\tPOS\tREF\tTOP-FWD\tMINOR-FWD\tTOP-REV\tMINOR-REV\tCOV-FWD\tCOV-REV\tCOV-TOTAL\tTYPE\tLEVEL\t%A\t%C\t%G\t%T\t%D\t%N\t%a\t%c\t%g\t%t\t%d\t%n\tLLRFWD\tLLRREV\tLLRAFWD\tLLRCFWD\tLLRGFWD\tLLRTFWD\tLLRAREV\tLLRCREV\tLLRGREV\tLLRTREV";
+			String headerRaw = "SAMPLE\tPOS\tREF\tTOP-FWD\tMINOR-FWD\tTOP-REV\tMINOR-REV\tCOV-FWD\tCOV-REV\tCOV-TOTAL\tTYPE\tLEVEL\t%A\t%C\t%G\t%T\t%D\t%N\t%a\t%c\t%g\t%t\t%d\t%n\tTOP-FWD-PERCENT\tTOP-REV-PERCENT\tMINOR-FWD-PERCENT\tMINOR-REV-PERCENT\tLLRFWD\tLLRREV\tLLRAFWD\tLLRCFWD\tLLRGFWD\tLLRTFWD\tLLRAREV\tLLRCREV\tLLRGREV\tLLRTREV";
 			HdfsUtil.mergeFolderBinary(pathRawLocal, super.getOutput(), headerRaw);
 			
 			//write variants file

@@ -69,7 +69,9 @@ public class RawFileAnalyser {
 
 			while (cloudgeneReader.next()) {
 
-				PositionObject obj = parseRaw(cloudgeneReader);
+				PositionObject obj = new PositionObject();
+				
+				obj.parseLine(cloudgeneReader);
 
 				if (id.equals(obj.getId())) {
 
@@ -83,7 +85,7 @@ public class RawFileAnalyser {
 
 							if (obj.getVariantType() == PositionObject.LOW_LEVEL_VARIANT) {
 
-								System.out.println("----" + obj.getPosition());
+								System.out.println("Lowlevel Variant: " + obj.getPosition());
 								
 								hetero.add(cloudgeneReader.getDouble("LEVEL"));
 
@@ -154,7 +156,10 @@ public class RawFileAnalyser {
 			System.out.println("  Precision -> " + " values " + truePositiveCount + "/"
 					+ (truePositiveCount + falsePositiveCount));*/
 
-			System.out.println(prec + " / " + sens + " / " + spec);
+			System.out.println("");
+			System.out.println("Precision\t" +prec);
+			System.out.println("Sensitivity\t" +  sens);
+			System.out.println("Specificity\t" + spec);
 			
 			QCMetric metric = new QCMetric();
 			metric.setId(id);
@@ -165,77 +170,6 @@ public class RawFileAnalyser {
 			metrics.add(metric);
 		}
 		return metrics;
-	}
-
-	public static PositionObject parseRaw(CsvTableReader cloudgeneReader) {
-		
-		
-		PositionObject obj = new PositionObject();
-
-		obj.setId(cloudgeneReader.getString("SAMPLE"));
-		obj.setPosition(cloudgeneReader.getInteger("POS"));
-		obj.setRef(cloudgeneReader.getString("REF").charAt(0));
-		
-		obj.setLlrFWD(cloudgeneReader.getDouble("LLRFWD"));
-		obj.setLlrREV(cloudgeneReader.getDouble("LLRREV"));
-		
-		obj.setCovFWD(cloudgeneReader.getInteger("COV-FWD"));
-		obj.setCovREV(cloudgeneReader.getInteger("COV-REV"));
-		
-		obj.setLlrAFWD(cloudgeneReader.getDouble("LLRAFWD"));
-		obj.setLlrCFWD(cloudgeneReader.getDouble("LLRCFWD"));
-		obj.setLlrGFWD(cloudgeneReader.getDouble("LLRGFWD"));
-		obj.setLlrTFWD(cloudgeneReader.getDouble("LLRTFWD"));
-		
-		obj.setLlrAREV(cloudgeneReader.getDouble("LLRAREV"));
-		obj.setLlrCREV(cloudgeneReader.getDouble("LLRCREV"));
-		obj.setLlrGREV(cloudgeneReader.getDouble("LLRGREV"));
-		obj.setLlrTREV(cloudgeneReader.getDouble("LLRTREV"));
-		
-		
-		obj.setaPercentageFWD(cloudgeneReader.getDouble("%A"));
-		obj.setcPercentageFWD(cloudgeneReader.getDouble("%C"));
-		obj.setgPercentageFWD(cloudgeneReader.getDouble("%G"));
-		obj.settPercentageFWD(cloudgeneReader.getDouble("%T"));
-
-		obj.setaPercentageREV(cloudgeneReader.getDouble("%a"));
-		obj.setcPercentageREV(cloudgeneReader.getDouble("%c"));
-		obj.setgPercentageREV(cloudgeneReader.getDouble("%g"));
-		obj.settPercentageREV(cloudgeneReader.getDouble("%t"));
-
-		ArrayList<Double> allelesFWD = new ArrayList<Double>();
-		allelesFWD.add(obj.getaPercentageFWD());
-		allelesFWD.add(obj.getcPercentageFWD());
-		allelesFWD.add(obj.getgPercentageFWD());
-		allelesFWD.add(obj.gettPercentageFWD());
-
-		Collections.sort(allelesFWD, Collections.reverseOrder());
-
-		double topBasePercentsFWD = allelesFWD.get(0);
-		double minorBasePercentsFWD = allelesFWD.get(1);
-
-		obj.setTopBasePercentsFWD(topBasePercentsFWD);
-		obj.setMinorBasePercentsFWD(minorBasePercentsFWD);
-
-		ArrayList<Double> allelesREV = new ArrayList<Double>();
-		allelesREV.add(obj.getaPercentageREV());
-		allelesREV.add(obj.getcPercentageREV());
-		allelesREV.add(obj.getgPercentageREV());
-		allelesREV.add(obj.gettPercentageREV());
-
-		Collections.sort(allelesREV, Collections.reverseOrder());
-		double topBasePercentsREV = allelesREV.get(0);
-		double minorBasePercentsREV = allelesREV.get(1);
-
-		obj.setTopBasePercentsREV(topBasePercentsREV);
-		obj.setMinorBasePercentsREV(minorBasePercentsREV);
-
-		obj.setTopBaseFWD(cloudgeneReader.getString("TOP-FWD").charAt(0));
-		obj.setTopBaseREV(cloudgeneReader.getString("TOP-REV").charAt(0));
-		obj.setMinorBaseFWD(cloudgeneReader.getString("MINOR-FWD").charAt(0));
-		obj.setMinorBaseREV(cloudgeneReader.getString("MINOR-REV").charAt(0));
-
-		return obj;
 	}
 
 	public static boolean isSampleMutation(int pos) {

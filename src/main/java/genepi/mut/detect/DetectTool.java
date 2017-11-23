@@ -1,4 +1,4 @@
-package genepi.mut.detect;
+/*package genepi.mut.detect;
 
 import java.io.File;
 
@@ -56,3 +56,4 @@ public class DetectTool extends WorkflowStep {
 	}
 
 }
+*/

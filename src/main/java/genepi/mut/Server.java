@@ -2,7 +2,6 @@ package genepi.mut;
 
 import genepi.base.Toolbox;
 import genepi.mut.align.AlignTool;
-import genepi.mut.detect.DetectTool;
 import genepi.mut.pileup.PileupTool;
 import genepi.mut.sort.SortTool;
 import genepi.mut.stats.StatisticsTool;
@@ -26,9 +25,6 @@ public class Server {
 
 		// read in BAM file and count per POS with MapReduce
 		toolbox.addTool("analyse", PileupTool.class);
-
-		// detect low level variants
-		toolbox.addTool("detect", DetectTool.class);
 
 		// generate statistics
 		toolbox.addTool("stats", StatisticsTool.class);

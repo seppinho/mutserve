@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
 
+import genepi.io.table.reader.CsvTableReader;
 import genepi.mut.util.StatUtil;
 
 
@@ -92,8 +93,55 @@ public class PositionObject implements Comparable<PositionObject> {
 		df.setMaximumFractionDigits(4);
 		df.setGroupingUsed(false);
 	}
+	
+	public void parseLine(CsvTableReader cloudgeneReader) {
+		
+		this.setId(cloudgeneReader.getString("SAMPLE"));
+		this.setPosition(cloudgeneReader.getInteger("POS"));
+		this.setRef(cloudgeneReader.getString("REF").charAt(0));
+		
+		this.setLlrFWD(cloudgeneReader.getDouble("LLRFWD"));
+		this.setLlrREV(cloudgeneReader.getDouble("LLRREV"));
+		
+		this.setCovFWD(cloudgeneReader.getInteger("COV-FWD"));
+		this.setCovREV(cloudgeneReader.getInteger("COV-REV"));
+		
+		this.setLlrAFWD(cloudgeneReader.getDouble("LLRAFWD"));
+		this.setLlrCFWD(cloudgeneReader.getDouble("LLRCFWD"));
+		this.setLlrGFWD(cloudgeneReader.getDouble("LLRGFWD"));
+		this.setLlrTFWD(cloudgeneReader.getDouble("LLRTFWD"));
+		
+		this.setLlrAREV(cloudgeneReader.getDouble("LLRAREV"));
+		this.setLlrCREV(cloudgeneReader.getDouble("LLRCREV"));
+		this.setLlrGREV(cloudgeneReader.getDouble("LLRGREV"));
+		this.setLlrTREV(cloudgeneReader.getDouble("LLRTREV"));
+		
+		
+		this.setaPercentageFWD(cloudgeneReader.getDouble("%A"));
+		this.setcPercentageFWD(cloudgeneReader.getDouble("%C"));
+		this.setgPercentageFWD(cloudgeneReader.getDouble("%G"));
+		this.settPercentageFWD(cloudgeneReader.getDouble("%T"));
 
-	public void parseLine(String line) {
+		this.setaPercentageREV(cloudgeneReader.getDouble("%a"));
+		this.setcPercentageREV(cloudgeneReader.getDouble("%c"));
+		this.setgPercentageREV(cloudgeneReader.getDouble("%g"));
+		this.settPercentageREV(cloudgeneReader.getDouble("%t"));
+
+
+		this.setTopBasePercentsFWD(cloudgeneReader.getDouble("TOP-FWD-PERCENT"));
+		this.setMinorBasePercentsFWD(cloudgeneReader.getDouble("MINOR-FWD-PERCENT"));
+
+		this.setTopBasePercentsREV(cloudgeneReader.getDouble("TOP-REV-PERCENT"));
+		this.setMinorBasePercentsREV(cloudgeneReader.getDouble("MINOR-REV-PERCENT"));
+
+		this.setTopBaseFWD(cloudgeneReader.getString("TOP-FWD").charAt(0));
+		this.setTopBaseREV(cloudgeneReader.getString("TOP-REV").charAt(0));
+		this.setMinorBaseFWD(cloudgeneReader.getString("MINOR-FWD").charAt(0));
+		this.setMinorBaseREV(cloudgeneReader.getString("MINOR-REV").charAt(0));
+
+	}
+
+	public void parseLineOld(String line) {
 
 		String[] splits = line.split("\t");
 
@@ -478,7 +526,7 @@ return id + "\t" + position + "\t" + ref + "\t" + topBaseFWD + "\t" + minorBaseF
 		+ topBaseREV + "\t" + minorBaseREV + "\t" + covFWD + "\t" + covREV + "\t" + (covFWD+covREV) + "\t" + type + "\t" + varLevel + "\t" + aPercentageFWD + "\t" + cPercentageFWD + "\t"
 		+ gPercentageFWD + "\t" + tPercentageFWD + "\t" + dPercentageFWD + "\t" + nPercentageFWD + "\t"
 		+ aPercentageREV + "\t" + cPercentageREV + "\t" + gPercentageREV + "\t" + tPercentageREV + "\t"
-		+ dPercentageREV + "\t" + nPercentageREV + "\t" + llrFWD + "\t" + llrREV + "\t"+ 
+		+ dPercentageREV + "\t" + nPercentageREV + "\t" + topBasePercentsFWD + "\t" + topBasePercentsREV + "\t" + minorBasePercentsFWD + "\t" + minorBasePercentsREV + "\t" + llrFWD + "\t" + llrREV + "\t"+ 
 		llrAFWD + "\t" + llrCFWD + "\t" + llrGFWD + "\t" + llrTFWD + "\t" + 
 		llrAREV + "\t" + llrCREV + "\t"	+ llrGREV + "\t" + llrTREV;
 	

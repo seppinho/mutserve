@@ -5,16 +5,13 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.text.LineReader;
-import genepi.mut.detect.DetectVariants;
 import genepi.mut.objects.PositionObject;
-import genepi.mut.util.ReferenceUtil;
 
 public class MultiallelicAnalyser {
 
@@ -44,22 +41,22 @@ public class MultiallelicAnalyser {
 			int falseNegativeCount = 0;
 
 			CsvTableReader expectedReader = new CsvTableReader(expected, '\t');
-			DetectVariants detecter = new DetectVariants();
-			detecter.setRefAsString(ReferenceUtil.readInReference(refpath));
-			detecter.setDetectionLevel(hetLevel);
+			//DetectVariants detecter = new DetectVariants();
+			//detecter.setRefAsString(ReferenceUtil.readInReference(refpath));
+			//detecter.setDetectionLevel(hetLevel);
 
 			while (expectedReader.next()) {
 				int pos = expectedReader.getInteger("POS");
 				String variant = expectedReader.getString("VAR");
 				String[] splits = variant.split(",");
-				char ref = detecter.getRefAsString().charAt(pos - 1);
+				//char ref = detecter.getRefAsString().charAt(pos - 1);
 				for (String split : splits) {
-					if (!split.equals(String.valueOf(ref))) {
+			//		if (!split.equals(String.valueOf(ref))) {
 						// TODO DELETIONS need to be included at the end
 						if (!split.equals("D")) {
 							expectedPos.add(pos + split);
 							allPos.add(pos + split);
-						}
+				//		}
 					}
 				}
 			}
@@ -69,15 +66,16 @@ public class MultiallelicAnalyser {
 
 			while (cloudgeneReader.next()) {
 
-				PositionObject posObj = RawFileAnalyser.parseRaw(cloudgeneReader);
+				PositionObject posObj = new PositionObject();
+				posObj.parseLine(cloudgeneReader);
 
 				// look at exome only
 				if ((posObj.getPosition() >= 581 && posObj.getPosition() <= 740)
 						|| (posObj.getPosition() >= 4744 && posObj.getPosition() <= 4925)) {
 
-					detecter.determineMultiAllelicSites(posObj);
+					//detecter.determineMultiAllelicSites(posObj);
 
-					if (posObj.getVariantType() == DetectVariants.MULTI_ALLELIC) {
+					if (posObj.getVariantType() == PositionObject.MULTI_ALLELIC) {
 
 						String variant = posObj.getMultiAllelic();
 						String[] splits = variant.split(",");

@@ -27,7 +27,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>genepi.cnv.Server</mainClass>
+                  <mainClass>genepi.mut.Server</mainClass>
                 </transformer>
               </transformers>
               <artifactSet>

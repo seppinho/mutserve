@@ -1,4 +1,4 @@
-package genepi.mut.detect;
+/*package genepi.mut.detect;
 
 import genepi.hadoop.HdfsUtil;
 import genepi.io.table.writer.CsvTableWriter;
@@ -84,9 +84,9 @@ public class DetectVariants {
 
 					while (hdfsReader.readLine(line, 500) > 0) {
 
-						/** parse each line */
+						*//** parse each line *//*
 						PositionObject pos = new PositionObject();
-						pos.parseLine(line.toString());
+						pos.parseLineOld(line.toString());
 						
 						if (pos.getPosition() > 0 && pos.getPosition() <= refAsString.length()) {
 
@@ -240,33 +240,33 @@ public class DetectVariants {
 		double minorBasePercentsREV = posObj.getMinorBasePercentsREV();
 		try {
 
-			/**
+			*//**
 			 * 10× coverage of qualified bases on both positive and negative
 			 * strands;
-			 */
+			 *//*
 			if (checkCoverage(posObj)) {
 
 				if (checkBases(posObj)) {
 
 					if (checkDeletion(posObj)) {
 
-						/**
+						*//**
 						 * all alleles have support from at least two reads on
 						 * each strand
-						 **/
+						 **//*
 						if (checkAlleleCoverage(posObj)) {
 
-							/**
+							*//**
 							 * the raw frequency for the minor allele is no less
 							 * than 1% on both strands
-							 **/
+							 **//*
 							if (minorBasePercentsFWD >= detectionLevel || minorBasePercentsREV >= detectionLevel) {
 
-								/**
+								*//**
 								 * high-confidence heteroplasmy was defined as
 								 * candidate heteroplasmy with LLR no less than
 								 * 5
-								 **/
+								 **//*
 								if (posObj.getLlrFWD() >= 5 || posObj.getLlrREV() >= 5) {
 
 									if (calcStrandBias(posObj) <= 1) {
@@ -760,3 +760,4 @@ public class DetectVariants {
 	}
 
 }
+*/
