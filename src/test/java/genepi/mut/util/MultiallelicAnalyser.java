@@ -11,7 +11,7 @@ import java.util.TreeSet;
 
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.text.LineReader;
-import genepi.mut.objects.PositionObject;
+import genepi.mut.objects.VariantLine;
 
 public class MultiallelicAnalyser {
 
@@ -66,7 +66,7 @@ public class MultiallelicAnalyser {
 
 			while (cloudgeneReader.next()) {
 
-				PositionObject posObj = new PositionObject();
+				VariantLine posObj = new VariantLine();
 				posObj.parseLine(cloudgeneReader);
 
 				// look at exome only
@@ -75,7 +75,7 @@ public class MultiallelicAnalyser {
 
 					//detecter.determineMultiAllelicSites(posObj);
 
-					if (posObj.getVariantType() == PositionObject.MULTI_ALLELIC) {
+					if (posObj.getVariantType() == VariantLine.MULTI_ALLELIC) {
 
 						String variant = posObj.getMultiAllelic();
 						String[] splits = variant.split(",");

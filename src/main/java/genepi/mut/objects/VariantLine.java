@@ -10,7 +10,7 @@ import java.util.Locale;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.mut.util.StatUtil;
 
-public class PositionObject implements Comparable<PositionObject> {
+public class VariantLine implements Comparable<VariantLine> {
 
 	public static int VARIANT = 1;
 
@@ -85,7 +85,7 @@ public class PositionObject implements Comparable<PositionObject> {
 	NumberFormat df;
 	private String multiAllelic;
 
-	public PositionObject() {
+	public VariantLine() {
 		Locale.setDefault(new Locale("en", "US"));
 		df = DecimalFormat.getInstance(Locale.US);
 		df.setMinimumFractionDigits(2);
@@ -457,7 +457,7 @@ public class PositionObject implements Comparable<PositionObject> {
 	}
 
 	@Override
-	public int compareTo(PositionObject o) {
+	public int compareTo(VariantLine o) {
 
 		if (id.equals(o.getId())) {
 			return position > o.getPosition() ? 1 : -1;
@@ -1258,7 +1258,7 @@ public class PositionObject implements Comparable<PositionObject> {
 		}
 	}
 
-	private char getVariantBase(PositionObject posObj) {
+	private char getVariantBase(VariantLine posObj) {
 
 		if (posObj.getTopBaseFWD() == this.ref) {
 

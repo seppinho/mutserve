@@ -16,7 +16,7 @@ import genepi.hadoop.HdfsUtil;
 import genepi.hadoop.PreferenceStore;
 import genepi.hadoop.io.HdfsLineWriter;
 import genepi.mut.objects.BasePosition;
-import genepi.mut.objects.PositionObject;
+import genepi.mut.objects.VariantLine;
 import genepi.mut.util.ReferenceUtil;
 import genepi.mut.util.StatUtil;
 
@@ -93,7 +93,7 @@ public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
 
 			char ref = reference.charAt(pos - 1);
 
-			PositionObject positionObj = new PositionObject();
+			VariantLine positionObj = new VariantLine();
 			
 			positionObj.setRef(ref);
 
@@ -110,8 +110,8 @@ public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
 				positionObj.determineVariants();
 			}
 
-			if (positionObj.getVariantType() == PositionObject.VARIANT
-					|| positionObj.getVariantType() == PositionObject.LOW_LEVEL_VARIANT) {
+			if (positionObj.getVariantType() == VariantLine.VARIANT
+					|| positionObj.getVariantType() == VariantLine.LOW_LEVEL_VARIANT) {
 				writer.write(positionObj.writeVariant());
 			}
 		}

@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import org.apache.commons.math.MathException;
 import genepi.io.table.reader.CsvTableReader;
-import genepi.mut.objects.PositionObject;
+import genepi.mut.objects.VariantLine;
 import genepi.mut.util.ReferenceUtil;
 
 public class RawFileAnalyser {
@@ -69,7 +69,7 @@ public class RawFileAnalyser {
 
 			while (cloudgeneReader.next()) {
 
-				PositionObject obj = new PositionObject();
+				VariantLine obj = new VariantLine();
 				
 				obj.parseLine(cloudgeneReader);
 
@@ -83,7 +83,7 @@ public class RawFileAnalyser {
 							
 							obj.determineLowLevelVariant();
 
-							if (obj.getVariantType() == PositionObject.LOW_LEVEL_VARIANT) {
+							if (obj.getVariantType() == VariantLine.LOW_LEVEL_VARIANT) {
 
 								System.out.println("Lowlevel Variant: " + obj.getPosition());
 								
