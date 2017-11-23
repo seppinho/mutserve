@@ -176,11 +176,14 @@ public class RawFileAnalyser {
 	}
 
 	public static PositionObject parseRaw(CsvTableReader cloudgeneReader) {
+		
+		
 		PositionObject obj = new PositionObject();
 
 		obj.setId(cloudgeneReader.getString("SAMPLE"));
 		obj.setPosition(cloudgeneReader.getInteger("POS"));
-
+		obj.setRef(cloudgeneReader.getString("REF").charAt(0));
+		
 		obj.setLlrFWD(cloudgeneReader.getDouble("LLRFWD"));
 		obj.setLlrREV(cloudgeneReader.getDouble("LLRREV"));
 		

@@ -1,15 +1,30 @@
 package genepi.mut.objects;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Locale;
+
+import genepi.mut.util.StatUtil;
+
 
 public class PositionObject implements Comparable<PositionObject> {
 
+	public static int VARIANT = 1;
+
+	public static int LOW_LEVEL_VARIANT = 2; 
+
+	public static int DELETION = 4; 
+
+	public static int INSERTION = 5; 
+
+	public static int MULTI_ALLELIC = 6;
+	
 	private String id;
 	private int position;
-
+	private char ref;
 	private int covFWD;
 	private int covREV;
 
@@ -67,8 +82,16 @@ public class PositionObject implements Comparable<PositionObject> {
 	private double CIAC_UP_FWD;
 	private double CIAC_LOW_REV;
 	private double CIAC_UP_REV;
-	
+	NumberFormat df;
 	private String multiAllelic;
+	
+	public PositionObject(){
+		Locale.setDefault(new Locale("en", "US"));
+		df = DecimalFormat.getInstance(Locale.US);
+		df.setMinimumFractionDigits(2);
+		df.setMaximumFractionDigits(4);
+		df.setGroupingUsed(false);
+	}
 
 	public void parseLine(String line) {
 
@@ -450,7 +473,7 @@ public class PositionObject implements Comparable<PositionObject> {
 		}
 	}
 
-	public String toRawString(char ref) {
+	public String toRawString() {
 return id + "\t" + position + "\t" + ref + "\t" + topBaseFWD + "\t" + minorBaseFWD + "\t"
 		+ topBaseREV + "\t" + minorBaseREV + "\t" + covFWD + "\t" + covREV + "\t" + (covFWD+covREV) + "\t" + type + "\t" + varLevel + "\t" + aPercentageFWD + "\t" + cPercentageFWD + "\t"
 		+ gPercentageFWD + "\t" + tPercentageFWD + "\t" + dPercentageFWD + "\t" + nPercentageFWD + "\t"
@@ -1069,6 +1092,240 @@ return id + "\t" + position + "\t" + ref + "\t" + topBaseFWD + "\t" + minorBaseF
 
 	public void setMultiAllelic(String multiAllelic) {
 		this.multiAllelic = multiAllelic;
+	}
+	
+	public String writeVariant() throws IOException {
+		StringBuilder build = new StringBuilder();
+		build.setLength(0);
+
+		build.append(this.getId() + "\t");
+		build.append(this.getPosition() + "\t");
+		build.append(this.ref + "\t");
+		build.append(getVariantBase(this) + "\t");
+
+		if (this.getVariantType() == 1) {
+			build.append("-" + "\t");
+			build.append("1.0" + "\t");
+		} else {
+			build.append(this.getTopBaseFWD() + "/" + this.getMinorBaseFWD() + "\t");
+			build.append(df.format(getVariantLevel()) + "\t");
+		}
+		build.append(this.getCovFWD() + "\t");
+		build.append(this.getCovREV() + "\t");
+		build.append(this.getCovFWD() + this.getCovREV());
+		build.append("\r");
+		return build.toString();
+	};
+
+	public void determineVariants() {
+
+		if (this.getTopBaseFWD() == this.getTopBaseREV()) {
+
+			if (this.getTopBaseFWD() != this.ref && (this.getCovFWD() * this.getCovREV() / 2) > 10 * 2) {
+
+				if (this.getTopBaseFWD() == 'd') {
+					this.setDeletion(true);
+					this.setVariantType(DELETION);
+				} else {
+					this.setVariant(true);
+					this.setVariantType(VARIANT);
+				}
+			}
+		}
+	}
+
+	public void determineLowLevelVariant() {
+
+		double minorBasePercentsFWD = this.getMinorPercentsFWD();
+		double minorBasePercentsREV = this.getMinorBasePercentsREV();
+		try {
+
+			/**
+			 * 10× coverage of qualified bases on both positive and negative
+			 * strands;
+			 */
+			if (checkCoverage()) {
+				
+				if (checkBases()) {
+					
+					if (checkDeletion()) {
+						/**
+						 * all alleles have support from at least two reads on
+						 * each strand
+						 **/
+						if (checkAlleleCoverage()) {
+							/**
+							 * the raw frequency for the minor allele is no less
+							 * than 1% on both strands
+							 **/
+							if (minorBasePercentsFWD >= 0.01 || minorBasePercentsREV >= 0.01) {
+								/**
+								 * high-confidence heteroplasmy was defined as
+								 * candidate heteroplasmy with LLR no less than
+								 * 5
+								 **/
+								if (this.getLlrFWD() >= 5 || this.getLlrREV() >= 5) {
+									if (calcStrandBias() <= 1) {
+										this.setVariantType(LOW_LEVEL_VARIANT);
+										this.setVariantLevel(calcHetLevel());
+
+										calcConfidence();
+
+									}
+								}
+							}
+						}
+					}
+				}
+			} else {
+				this.setMessage("Position coverage not sufficient. No model can be applied");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private double calcStrandBias() {
+
+		// b,d minor
+		// a,c major
+
+		double a = this.getTopBasePercentsFWD() * this.getCovFWD();
+		double c = this.getTopBasePercentsREV() * this.getCovREV();
+		double b = this.getMinorBasePercentsFWD() * this.getCovFWD();
+		double d = this.getMinorBasePercentsREV() * this.getCovREV();
+
+		double bias = Math.abs((b / (a + b)) - (d / (c + d))) / ((b + d) / (a + b + c + d));
+
+		return bias;
+	}
+
+	private double calcHetLevel() {
+
+		double fwd;
+		double rev;
+
+		if (this.getTopBaseFWD() == this.ref) {
+			fwd = this.getMinorPercentsFWD() * this.getCovFWD();
+			rev = this.getMinorBasePercentsREV() * this.getCovREV();
+		} else {
+			fwd = this.getTopBasePercentsFWD() * this.getCovFWD();
+			rev = this.getTopBasePercentsREV() * this.getCovREV();
+		}
+
+		return (fwd + rev) / (this.getCovFWD() + this.getCovREV());
+	}
+
+	private boolean checkBases() {
+		return (this.getMinorBaseFWD() == this.getMinorBaseREV()
+				&& this.getTopBaseFWD() == this.getTopBaseREV())
+				|| ((this.getMinorBaseFWD() == this.getTopBaseREV()
+						&& this.getTopBaseFWD() == this.getMinorBaseREV()));
+	}
+
+	private boolean checkDeletion() {
+
+		if (this.getTopBaseREV() != 'd' && this.getMinorBaseREV() != '-') {
+			return true;
+		}
+		if (this.getTopBaseFWD() != 'd' && this.getMinorBaseFWD() != '-') {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean checkAlleleCoverage() {
+		if (this.getTopBasePercentsREV() * this.getCovREV() < 3
+				|| (this.getTopBasePercentsFWD() * this.getCovFWD()) < 3) {
+			return false;
+		}
+
+		if ((this.getMinorBasePercentsREV() * this.getCovREV() < 3)
+				|| (this.getTopBasePercentsFWD() * this.getCovFWD()) < 3) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private boolean checkCoverage() {
+		if (this.getCovREV() < 10 || this.getCovFWD() < 10) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private void calcConfidence() {
+		if ((this.getCovFWD() * this.getCovREV() / 2) < 40) {
+			generateWilsonInterval();
+		} else {
+			generateAgrestiInterval();
+		}
+	}
+
+	private char getVariantBase(PositionObject posObj) {
+
+		if (posObj.getTopBaseFWD() == this.ref) {
+
+			return posObj.getMinorBaseFWD();
+
+		} else {
+
+			return posObj.getTopBaseFWD();
+
+		}
+	}
+
+	private void generateAgrestiInterval() {
+
+		// here the input is just the base coverage
+		double covBaseFWD = (this.getMinorBasePercentsFWD() * this.getCovFWD());
+		double covBaseREV = (this.getMinorBasePercentsREV() * this.getCovREV());
+
+		double lowFWD = StatUtil.CIAC_LOW(covBaseFWD, this.getCovFWD());
+		double upFWD = StatUtil.CIAC_UP(covBaseFWD, this.getCovFWD());
+
+		this.setCIAC_LOW_FWD(lowFWD);
+		this.setCIAC_UP_FWD(upFWD);
+
+		double lowREV = StatUtil.CIAC_LOW(covBaseREV, this.getCovREV());
+		double upREV = StatUtil.CIAC_UP(covBaseREV, this.getCovREV());
+
+		this.setCIAC_LOW_REV(lowREV);
+		this.setCIAC_UP_REV(upREV);
+
+	}
+
+	private void generateWilsonInterval() {
+
+		// p is read depth of variant allele divided by the
+		// complete coverage
+		double p1 = ((this.getMinorBasePercentsFWD() * this.getCovFWD()) / this.getCovFWD());
+		double p2 = ((this.getMinorBasePercentsREV() * this.getCovREV()) / this.getCovREV());
+
+		double lowFWD = StatUtil.CIW_LOW(p1, this.getCovFWD());
+		double upFWD = StatUtil.CIW_UP(p1, this.getCovFWD());
+
+		this.setCIW_LOW_FWD(lowFWD);
+		this.setCIW_UP_FWD(upFWD);
+
+		double lowREV = StatUtil.CIW_LOW(p2, this.getCovREV());
+		double upREV = StatUtil.CIW_UP(p2, this.getCovREV());
+
+		this.setCIW_LOW_REV(lowREV);
+		this.setCIW_UP_REV(upREV);
+
+	}
+
+	public char getRef() {
+		return ref;
+	}
+
+	public void setRef(char ref) {
+		this.ref = ref;
 	}
 
 }
