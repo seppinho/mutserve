@@ -10,11 +10,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.apache.commons.math.MathException;
-
 import genepi.io.table.reader.CsvTableReader;
-import genepi.mut.detect.DetectVariants;
 import genepi.mut.objects.PositionObject;
 import genepi.mut.util.ReferenceUtil;
 
@@ -36,9 +33,6 @@ public class RawFileAnalyser {
 		DecimalFormat df = (DecimalFormat) nf;
 		df.setMinimumFractionDigits(2);
 		df.setMaximumFractionDigits(3);
-		DetectVariants detecter = new DetectVariants();
-		detecter.setRefAsString(ReferenceUtil.readInReference(refpath));
-		detecter.setDetectionLevel(hetLevel);
 		Set<Integer> allPos = new TreeSet<Integer>();
 		Set<Integer> sangerPos = new TreeSet<Integer>();
 		Set<String> falsePositives = new TreeSet<String>();
@@ -83,13 +77,11 @@ public class RawFileAnalyser {
 
 						if (!isSampleMutation(obj.getPosition())) {
 
-							List<PositionObject> uncoveredPosList = new ArrayList<PositionObject>();
-							detecter.determineLowLevelVariants(obj, uncoveredPosList);
-
 							int position = obj.getPosition();
+							
+							obj.determineLowLevelVariant();
 
-							if (obj.getVariantType() == DetectVariants.LOW_LEVEL_VARIANT
-									|| obj.getVariantType() == DetectVariants.SUSPICOUS_LOW_LEVEL_VARIANT) {
+							if (obj.getVariantType() == PositionObject.LOW_LEVEL_VARIANT) {
 
 								System.out.println("----" + obj.getPosition());
 								
