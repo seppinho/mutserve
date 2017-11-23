@@ -10,19 +10,18 @@ import java.util.Locale;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.mut.util.StatUtil;
 
-
 public class PositionObject implements Comparable<PositionObject> {
 
 	public static int VARIANT = 1;
 
-	public static int LOW_LEVEL_VARIANT = 2; 
+	public static int LOW_LEVEL_VARIANT = 2;
 
-	public static int DELETION = 4; 
+	public static int DELETION = 4;
 
-	public static int INSERTION = 5; 
+	public static int INSERTION = 5;
 
 	public static int MULTI_ALLELIC = 6;
-	
+
 	private String id;
 	private int position;
 	private char ref;
@@ -85,38 +84,37 @@ public class PositionObject implements Comparable<PositionObject> {
 	private double CIAC_UP_REV;
 	NumberFormat df;
 	private String multiAllelic;
-	
-	public PositionObject(){
+
+	public PositionObject() {
 		Locale.setDefault(new Locale("en", "US"));
 		df = DecimalFormat.getInstance(Locale.US);
 		df.setMinimumFractionDigits(2);
 		df.setMaximumFractionDigits(4);
 		df.setGroupingUsed(false);
 	}
-	
+
 	public void parseLine(CsvTableReader cloudgeneReader) {
-		
+
 		this.setId(cloudgeneReader.getString("SAMPLE"));
 		this.setPosition(cloudgeneReader.getInteger("POS"));
 		this.setRef(cloudgeneReader.getString("REF").charAt(0));
-		
+
 		this.setLlrFWD(cloudgeneReader.getDouble("LLRFWD"));
 		this.setLlrREV(cloudgeneReader.getDouble("LLRREV"));
-		
+
 		this.setCovFWD(cloudgeneReader.getInteger("COV-FWD"));
 		this.setCovREV(cloudgeneReader.getInteger("COV-REV"));
-		
+
 		this.setLlrAFWD(cloudgeneReader.getDouble("LLRAFWD"));
 		this.setLlrCFWD(cloudgeneReader.getDouble("LLRCFWD"));
 		this.setLlrGFWD(cloudgeneReader.getDouble("LLRGFWD"));
 		this.setLlrTFWD(cloudgeneReader.getDouble("LLRTFWD"));
-		
+
 		this.setLlrAREV(cloudgeneReader.getDouble("LLRAREV"));
 		this.setLlrCREV(cloudgeneReader.getDouble("LLRCREV"));
 		this.setLlrGREV(cloudgeneReader.getDouble("LLRGREV"));
 		this.setLlrTREV(cloudgeneReader.getDouble("LLRTREV"));
-		
-		
+
 		this.setaPercentageFWD(cloudgeneReader.getDouble("%A"));
 		this.setcPercentageFWD(cloudgeneReader.getDouble("%C"));
 		this.setgPercentageFWD(cloudgeneReader.getDouble("%G"));
@@ -126,7 +124,6 @@ public class PositionObject implements Comparable<PositionObject> {
 		this.setcPercentageREV(cloudgeneReader.getDouble("%c"));
 		this.setgPercentageREV(cloudgeneReader.getDouble("%g"));
 		this.settPercentageREV(cloudgeneReader.getDouble("%t"));
-
 
 		this.setTopBasePercentsFWD(cloudgeneReader.getDouble("TOP-FWD-PERCENT"));
 		this.setMinorBasePercentsFWD(cloudgeneReader.getDouble("MINOR-FWD-PERCENT"));
@@ -138,57 +135,6 @@ public class PositionObject implements Comparable<PositionObject> {
 		this.setTopBaseREV(cloudgeneReader.getString("TOP-REV").charAt(0));
 		this.setMinorBaseFWD(cloudgeneReader.getString("MINOR-FWD").charAt(0));
 		this.setMinorBaseREV(cloudgeneReader.getString("MINOR-REV").charAt(0));
-
-	}
-
-	public void parseLineOld(String line) {
-
-		String[] splits = line.split("\t");
-
-		this.setId(splits[0]);
-		this.setPosition(Integer.valueOf(splits[1]));
-
-		this.setCovFWD(Integer.valueOf(splits[2]));
-		this.setCovREV(Integer.valueOf(splits[3]));
-
-		this.setTopBaseFWD(splits[4].charAt(0));
-		this.setTopBaseREV(splits[5].charAt(0));
-
-		this.setMinorBaseFWD(splits[6].charAt(0));
-		this.setMinorBaseREV(splits[7].charAt(0));
-
-		this.setaPercentageFWD(Double.valueOf(splits[8]));
-		this.setcPercentageFWD(Double.valueOf(splits[9]));
-		this.setgPercentageFWD(Double.valueOf(splits[10]));
-		this.settPercentageFWD(Double.valueOf(splits[11]));
-		this.setnPercentageFWD(Double.valueOf(splits[12]));
-		this.setdPercentageFWD(Double.valueOf(splits[13]));
-
-		this.setaPercentageREV(Double.valueOf(splits[14]));
-		this.setcPercentageREV(Double.valueOf(splits[15]));
-		this.setgPercentageREV(Double.valueOf(splits[16]));
-		this.settPercentageREV(Double.valueOf(splits[17]));
-		this.setnPercentageREV(Double.valueOf(splits[18]));
-		this.setdPercentageREV(Double.valueOf(splits[19]));
-
-		this.setTopBasePercentsFWD(Double.valueOf(splits[20]));
-		this.setMinorBasePercentsFWD(Double.valueOf(splits[21]));
-
-		this.setTopBasePercentsREV(Double.valueOf(splits[22]));
-		this.setMinorBasePercentsREV(Double.valueOf(splits[23]));
-
-		this.setLlrFWD(Double.valueOf(splits[24]));
-		this.setLlrREV(Double.valueOf(splits[25]));
-		
-		this.setLlrAFWD(Double.valueOf(splits[26]));
-		this.setLlrCFWD(Double.valueOf(splits[27]));
-		this.setLlrGFWD(Double.valueOf(splits[28]));
-		this.setLlrTFWD(Double.valueOf(splits[29]));
-		
-		this.setLlrAREV(Double.valueOf(splits[30]));
-		this.setLlrCREV(Double.valueOf(splits[31]));
-		this.setLlrGREV(Double.valueOf(splits[32]));
-		this.setLlrTREV(Double.valueOf(splits[33]));
 
 	}
 
@@ -458,7 +404,7 @@ public class PositionObject implements Comparable<PositionObject> {
 		this.setTopBasePercentsREV(topBasePercentsREV);
 		this.setMinorBasePercentsREV(minorBasePercentsREV);
 
-		//TODO combine this with LLR for all bases
+		// TODO combine this with LLR for all bases
 		if (minorBasePercentsFWD >= 0.01 || minorBasePercentsREV >= 0.01) {
 			LlrObject llr = calcLlr(base, getMinorBaseFWD(), getMinorBaseREV());
 			this.setLlrFWD(llr.getLlrFWD());
@@ -472,30 +418,29 @@ public class PositionObject implements Comparable<PositionObject> {
 		}
 
 		if (getTopBaseFWD() != 'C') {
-			LlrObject llr = calcLlr(base,  'C');
+			LlrObject llr = calcLlr(base, 'C');
 			this.setLlrCFWD(llr.getLlrFWD());
 			this.setLlrCREV(llr.getLlrREV());
 		}
 
 		if (getTopBaseFWD() != 'G') {
-			LlrObject llr = calcLlr(base,  'G');
+			LlrObject llr = calcLlr(base, 'G');
 			this.setLlrGFWD(llr.getLlrFWD());
 			this.setLlrGREV(llr.getLlrREV());
 		}
 
 		if (getTopBaseFWD() != 'T') {
-			LlrObject llr = calcLlr(base,  'T');
+			LlrObject llr = calcLlr(base, 'T');
 			this.setLlrTFWD(llr.getLlrFWD());
 			this.setLlrTREV(llr.getLlrREV());
 		}
 
 	}
 
-	
 	private LlrObject calcLlr(BasePosition base, char minorBaseFWD) {
 		return calcLlr(base, minorBaseFWD, minorBaseFWD);
 	}
-	
+
 	private LlrObject calcLlr(BasePosition base, char minorBaseFWD, char minorBaseREV) {
 
 		LlrObject llr = new LlrObject();
@@ -522,14 +467,15 @@ public class PositionObject implements Comparable<PositionObject> {
 	}
 
 	public String toRawString() {
-return id + "\t" + position + "\t" + ref + "\t" + topBaseFWD + "\t" + minorBaseFWD + "\t"
-		+ topBaseREV + "\t" + minorBaseREV + "\t" + covFWD + "\t" + covREV + "\t" + (covFWD+covREV) + "\t" + type + "\t" + varLevel + "\t" + aPercentageFWD + "\t" + cPercentageFWD + "\t"
-		+ gPercentageFWD + "\t" + tPercentageFWD + "\t" + dPercentageFWD + "\t" + nPercentageFWD + "\t"
-		+ aPercentageREV + "\t" + cPercentageREV + "\t" + gPercentageREV + "\t" + tPercentageREV + "\t"
-		+ dPercentageREV + "\t" + nPercentageREV + "\t" + topBasePercentsFWD + "\t" + topBasePercentsREV + "\t" + minorBasePercentsFWD + "\t" + minorBasePercentsREV + "\t" + llrFWD + "\t" + llrREV + "\t"+ 
-		llrAFWD + "\t" + llrCFWD + "\t" + llrGFWD + "\t" + llrTFWD + "\t" + 
-		llrAREV + "\t" + llrCREV + "\t"	+ llrGREV + "\t" + llrTREV;
-	
+		return id + "\t" + position + "\t" + ref + "\t" + topBaseFWD + "\t" + minorBaseFWD + "\t" + topBaseREV + "\t"
+				+ minorBaseREV + "\t" + covFWD + "\t" + covREV + "\t" + (covFWD + covREV) + "\t" + type + "\t"
+				+ varLevel + "\t" + aPercentageFWD + "\t" + cPercentageFWD + "\t" + gPercentageFWD + "\t"
+				+ tPercentageFWD + "\t" + dPercentageFWD + "\t" + nPercentageFWD + "\t" + aPercentageREV + "\t"
+				+ cPercentageREV + "\t" + gPercentageREV + "\t" + tPercentageREV + "\t" + dPercentageREV + "\t"
+				+ nPercentageREV + "\t" + topBasePercentsFWD + "\t" + topBasePercentsREV + "\t" + minorBasePercentsFWD
+				+ "\t" + minorBasePercentsREV + "\t" + llrFWD + "\t" + llrREV + "\t" + llrAFWD + "\t" + llrCFWD + "\t"
+				+ llrGFWD + "\t" + llrTFWD + "\t" + llrAREV + "\t" + llrCREV + "\t" + llrGREV + "\t" + llrTREV;
+
 	}
 
 	public double calcFirst(BasePosition base) {
@@ -1141,7 +1087,7 @@ return id + "\t" + position + "\t" + ref + "\t" + topBaseFWD + "\t" + minorBaseF
 	public void setMultiAllelic(String multiAllelic) {
 		this.multiAllelic = multiAllelic;
 	}
-	
+
 	public String writeVariant() throws IOException {
 		StringBuilder build = new StringBuilder();
 		build.setLength(0);
@@ -1193,9 +1139,9 @@ return id + "\t" + position + "\t" + ref + "\t" + topBaseFWD + "\t" + minorBaseF
 			 * strands;
 			 */
 			if (checkCoverage()) {
-				
+
 				if (checkBases()) {
-					
+
 					if (checkDeletion()) {
 						/**
 						 * all alleles have support from at least two reads on
@@ -1267,10 +1213,8 @@ return id + "\t" + position + "\t" + ref + "\t" + topBaseFWD + "\t" + minorBaseF
 	}
 
 	private boolean checkBases() {
-		return (this.getMinorBaseFWD() == this.getMinorBaseREV()
-				&& this.getTopBaseFWD() == this.getTopBaseREV())
-				|| ((this.getMinorBaseFWD() == this.getTopBaseREV()
-						&& this.getTopBaseFWD() == this.getMinorBaseREV()));
+		return (this.getMinorBaseFWD() == this.getMinorBaseREV() && this.getTopBaseFWD() == this.getTopBaseREV())
+				|| ((this.getMinorBaseFWD() == this.getTopBaseREV() && this.getTopBaseFWD() == this.getMinorBaseREV()));
 	}
 
 	private boolean checkDeletion() {
