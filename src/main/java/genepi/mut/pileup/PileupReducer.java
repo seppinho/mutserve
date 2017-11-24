@@ -56,34 +56,40 @@ public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
 		List<Byte> combinedCFor = new ArrayList<Byte>();
 		List<Byte> combinedGFor = new ArrayList<Byte>();
 		List<Byte> combinedTFor = new ArrayList<Byte>();
+		List<Byte> combinedDFor = new ArrayList<Byte>();
 		List<Byte> combinedARev = new ArrayList<Byte>();
 		List<Byte> combinedCRev = new ArrayList<Byte>();
 		List<Byte> combinedGRev = new ArrayList<Byte>();
 		List<Byte> combinedTRev = new ArrayList<Byte>();
+		List<Byte> combinedDRev = new ArrayList<Byte>();
 
 		for (BasePosition value : values) {
 
 			posInput.add(value);
+
 			combinedAFor.addAll(value.getaForQ());
 			combinedCFor.addAll(value.getcForQ());
 			combinedGFor.addAll(value.getgForQ());
 			combinedTFor.addAll(value.gettForQ());
+			combinedDFor.addAll(value.getdForQ());
 			combinedARev.addAll(value.getaRevQ());
 			combinedCRev.addAll(value.getcRevQ());
 			combinedGRev.addAll(value.getgRevQ());
 			combinedTRev.addAll(value.gettRevQ());
-
+			combinedDRev.addAll(value.getdRevQ());
 		}
 
 		posInput.setaForQ(combinedAFor);
 		posInput.setcForQ(combinedCFor);
 		posInput.setgForQ(combinedGFor);
 		posInput.settForQ(combinedTFor);
+		posInput.setdForQ(combinedDFor);
 
 		posInput.setaRevQ(combinedARev);
 		posInput.setcRevQ(combinedCRev);
 		posInput.setgRevQ(combinedGRev);
 		posInput.settRevQ(combinedTRev);
+		posInput.setdRevQ(combinedDRev);
 
 		posInput.setId(key.toString().split(":")[0]);
 		int pos = Integer.valueOf(key.toString().split(":")[1]);

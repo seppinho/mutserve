@@ -46,11 +46,13 @@ public class BasePosition implements Writable {
 	private List<Byte> cForQ = new ArrayList<Byte>();
 	private List<Byte> gForQ = new ArrayList<Byte>();
 	private List<Byte> tForQ = new ArrayList<Byte>();
-
+	private List<Byte> dForQ = new ArrayList<Byte>();
+	
 	private List<Byte> aRevQ = new ArrayList<Byte>();
 	private List<Byte> cRevQ = new ArrayList<Byte>();
 	private List<Byte> gRevQ = new ArrayList<Byte>();
 	private List<Byte> tRevQ = new ArrayList<Byte>();
+	private List<Byte> dRevQ = new ArrayList<Byte>();
 
 	public void add(BasePosition postion) {
 		aFor += postion.aFor;
@@ -142,9 +144,19 @@ public class BasePosition implements Writable {
 	public void adddFor(int dFor) {
 		this.dFor += dFor;
 	}
+	
+	public void adddForQ(byte quality) {
+
+		this.dForQ.add(quality);
+	}
 
 	public void adddRev(int dRev) {
 		this.dRev += dRev;
+	}
+	
+	public void adddRevQ(byte quality) {
+
+		this.dRevQ.add(quality);
 	}
 
 	public void addnFor(int nFor) {
@@ -169,14 +181,18 @@ public class BasePosition implements Writable {
 		tRev = 0;
 		dRev = 0;
 		nRev = 0;
+		
 		aForQ = new ArrayList<>();
 		cForQ = new ArrayList<>();
 		gForQ = new ArrayList<>();
 		tForQ = new ArrayList<>();
+		dForQ = new ArrayList<>();
+		
 		aRevQ = new ArrayList<>();
 		cRevQ = new ArrayList<>();
 		gRevQ = new ArrayList<>();
 		tRevQ = new ArrayList<>();
+		dRevQ = new ArrayList<>();
 	}
 
 	public int getaFor() {
@@ -290,26 +306,27 @@ public class BasePosition implements Writable {
 		cFor = arg0.readInt();
 		gFor = arg0.readInt();
 		tFor = arg0.readInt();
+		dFor = arg0.readInt();
 		nFor = arg0.readInt();
 
 		aRev = arg0.readInt();
 		cRev = arg0.readInt();
 		gRev = arg0.readInt();
 		tRev = arg0.readInt();
-		nRev = arg0.readInt();
-
-		dFor = arg0.readInt();
 		dRev = arg0.readInt();
+		nRev = arg0.readInt();
 
 		aForQ.clear();
 		cForQ.clear();
 		gForQ.clear();
 		tForQ.clear();
+		dForQ.clear();
 
 		aRevQ.clear();
 		cRevQ.clear();
 		gRevQ.clear();
 		tRevQ.clear();
+		dRevQ.clear();
 
 		for (int i = 0; i < aFor; i++) {
 			aForQ.add(arg0.readByte());
@@ -323,6 +340,9 @@ public class BasePosition implements Writable {
 		for (int i = 0; i < tFor; i++) {
 			tForQ.add(arg0.readByte());
 		}
+		for (int i = 0; i < dFor; i++) {
+			dForQ.add(arg0.readByte());
+		}
 		for (int i = 0; i < aRev; i++) {
 			aRevQ.add(arg0.readByte());
 		}
@@ -335,6 +355,9 @@ public class BasePosition implements Writable {
 		for (int i = 0; i < tRev; i++) {
 			tRevQ.add(arg0.readByte());
 		}
+		for (int i = 0; i < dRev; i++) {
+			dRevQ.add(arg0.readByte());
+		}
 	}
 
 	@Override
@@ -344,16 +367,16 @@ public class BasePosition implements Writable {
 		arg0.writeInt(cFor);
 		arg0.writeInt(gFor);
 		arg0.writeInt(tFor);
+		arg0.writeInt(dFor);
 		arg0.writeInt(nFor);
 
 		arg0.writeInt(aRev);
 		arg0.writeInt(cRev);
 		arg0.writeInt(gRev);
 		arg0.writeInt(tRev);
-		arg0.writeInt(nRev);
-
-		arg0.writeInt(dFor);
 		arg0.writeInt(dRev);
+		arg0.writeInt(nRev);
+		
 
 		for (int i = 0; i < aFor; i++) {
 			arg0.writeByte(aForQ.get(i));
@@ -370,6 +393,10 @@ public class BasePosition implements Writable {
 		for (int i = 0; i < tFor; i++) {
 			arg0.writeByte(tForQ.get(i));
 		}
+		
+		for (int i = 0; i < dFor; i++) {
+			arg0.writeByte(dForQ.get(i));
+		}
 
 		for (int i = 0; i < aRev; i++) {
 			arg0.writeByte(aRevQ.get(i));
@@ -382,8 +409,13 @@ public class BasePosition implements Writable {
 		for (int i = 0; i < gRev; i++) {
 			arg0.writeByte(gRevQ.get(i));
 		}
+		
 		for (int i = 0; i < tRev; i++) {
 			arg0.writeByte(tRevQ.get(i));
+		}
+		
+		for (int i = 0; i < dRev; i++) {
+			arg0.writeByte(dRevQ.get(i));
 		}
 
 	}
@@ -419,6 +451,14 @@ public class BasePosition implements Writable {
 	public void settForQ(List<Byte> tForQ) {
 		this.tForQ = tForQ;
 	}
+	
+	public List<Byte> getdForQ() {
+		return dForQ;
+	}
+
+	public void setdForQ(List<Byte> dForQ) {
+		this.dForQ = dForQ;
+	}
 
 	public List<Byte> getaRevQ() {
 		return aRevQ;
@@ -450,6 +490,14 @@ public class BasePosition implements Writable {
 
 	public void settRevQ(List<Byte> tRevQ) {
 		this.tRevQ = tRevQ;
+	}
+	
+	public List<Byte> getdRevQ() {
+		return dRevQ;
+	}
+
+	public void setdRevQ(List<Byte> dRevQ) {
+		this.dRevQ = dRevQ;
 	}
 
 	public int getPos() {

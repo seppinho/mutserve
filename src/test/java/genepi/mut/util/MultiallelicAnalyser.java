@@ -67,7 +67,7 @@ public class MultiallelicAnalyser {
 			while (cloudgeneReader.next()) {
 
 				VariantLine posObj = new VariantLine();
-				posObj.parseLine(cloudgeneReader);
+				posObj.parseLineFromFile(cloudgeneReader);
 
 				// look at exome only
 				if ((posObj.getPosition() >= 581 && posObj.getPosition() <= 740)

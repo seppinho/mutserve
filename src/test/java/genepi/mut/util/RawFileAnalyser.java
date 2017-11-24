@@ -71,7 +71,7 @@ public class RawFileAnalyser {
 
 				VariantLine obj = new VariantLine();
 				
-				obj.parseLine(cloudgeneReader);
+				obj.parseLineFromFile(cloudgeneReader);
 
 				if (id.equals(obj.getId())) {
 

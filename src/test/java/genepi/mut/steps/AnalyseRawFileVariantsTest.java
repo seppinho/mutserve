@@ -21,7 +21,7 @@ public class AnalyseRawFileVariantsTest {
 		String sanger = "test-data/mtdna/raw-results/sanger.txt";
 
 		RawFileAnalyser model = new RawFileAnalyser();
-		File input = new File("test-data/mtdna/raw-results/raw-s4-improved.txt");
+		File input = new File("test-data/mtdna/raw-results/raw-s4.txt");
 
 			System.out.println("input file is " + input.getName());
 				try {

@@ -57,6 +57,9 @@ public class VariantLine implements Comparable<VariantLine> {
 	private double llrCREV;
 	private double llrGREV;
 	private double llrTREV;
+	
+	private double llrDFWD;
+	private double llrDREV;
 
 	private double topBasePercentsFWD;
 	private double minorBasePercentsFWD;
@@ -93,7 +96,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		df.setGroupingUsed(false);
 	}
 
-	public void parseLine(CsvTableReader cloudgeneReader) {
+	public void parseLineFromFile(CsvTableReader cloudgeneReader) {
 
 		this.setId(cloudgeneReader.getString("SAMPLE"));
 		this.setPosition(cloudgeneReader.getInteger("POS"));
@@ -114,6 +117,9 @@ public class VariantLine implements Comparable<VariantLine> {
 		this.setLlrCREV(cloudgeneReader.getDouble("LLRCREV"));
 		this.setLlrGREV(cloudgeneReader.getDouble("LLRGREV"));
 		this.setLlrTREV(cloudgeneReader.getDouble("LLRTREV"));
+		
+		this.setLlrDFWD(cloudgeneReader.getDouble("LLRDFWD"));
+		this.setLlrDREV(cloudgeneReader.getDouble("LLRDREV"));
 
 		this.setaPercentageFWD(cloudgeneReader.getDouble("%A"));
 		this.setcPercentageFWD(cloudgeneReader.getDouble("%C"));
@@ -434,6 +440,12 @@ public class VariantLine implements Comparable<VariantLine> {
 			this.setLlrTFWD(llr.getLlrFWD());
 			this.setLlrTREV(llr.getLlrREV());
 		}
+		
+		if (getTopBaseFWD() != 'D') {
+			LlrObject llr = calcLlr(base, 'D');
+			this.setLlrDFWD(llr.getLlrFWD());
+			this.setLlrDREV(llr.getLlrREV());
+		}
 
 	}
 
@@ -474,7 +486,7 @@ public class VariantLine implements Comparable<VariantLine> {
 				+ cPercentageREV + "\t" + gPercentageREV + "\t" + tPercentageREV + "\t" + dPercentageREV + "\t"
 				+ nPercentageREV + "\t" + topBasePercentsFWD + "\t" + topBasePercentsREV + "\t" + minorBasePercentsFWD
 				+ "\t" + minorBasePercentsREV + "\t" + llrFWD + "\t" + llrREV + "\t" + llrAFWD + "\t" + llrCFWD + "\t"
-				+ llrGFWD + "\t" + llrTFWD + "\t" + llrAREV + "\t" + llrCREV + "\t" + llrGREV + "\t" + llrTREV;
+				+ llrGFWD + "\t" + llrTFWD + "\t" + llrAREV + "\t" + llrCREV + "\t" + llrGREV + "\t" + llrTREV + "\t" + llrDFWD + "\t" + llrDREV;
 
 	}
 
@@ -517,6 +529,14 @@ public class VariantLine implements Comparable<VariantLine> {
 				tmp = majorCalc(tmp, f, p);
 			}
 			break;
+		case 'D':
+			int dFWD = base.getdFor();
+			for (int i = 0; i < dFWD; i++) {
+				Byte err = base.getdForQ().get(i);
+				double p = Math.pow(10, (-err / 10));
+				tmp = majorCalc(tmp, f, p);
+			}
+			break;	
 		default:
 			break;
 		}
@@ -560,6 +580,14 @@ public class VariantLine implements Comparable<VariantLine> {
 				tmp = minorCalc(tmp, f, p);
 			}
 			break;
+		case 'D':
+			int dFWD = base.getdFor();
+			for (int i = 0; i < dFWD; i++) {
+				Byte err = base.getdForQ().get(i);
+				double p = Math.pow(10, (-err / 10));
+				tmp = minorCalc(tmp, f, p);
+			}
+			break;	
 		default:
 			break;
 		}
@@ -611,6 +639,14 @@ public class VariantLine implements Comparable<VariantLine> {
 				tmp = majorCalc(tmp, f, p);
 			}
 			break;
+		case 'D':
+			int dREV = base.getdRev();
+			for (int i = 0; i < dREV; i++) {
+				Byte quality = base.getdRevQ().get(i);
+				double p = Math.pow(10, (-quality / 10));
+				tmp = majorCalc(tmp, f, p);
+			}
+			break;	
 		default:
 			break;
 		}
@@ -654,6 +690,14 @@ public class VariantLine implements Comparable<VariantLine> {
 				tmp = minorCalc(tmp, f, p);
 			}
 			break;
+		case 'D':
+			int dREV = base.getdRev();
+			for (int i = 0; i < dREV; i++) {
+				Byte quality = base.getdRevQ().get(i);
+				double p = Math.pow(10, (-quality / 10));
+				tmp = minorCalc(tmp, f, p);
+			}
+			break;	
 		default:
 			break;
 		}
@@ -1318,6 +1362,22 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	public void setRef(char ref) {
 		this.ref = ref;
+	}
+
+	public double getLlrDFWD() {
+		return llrDFWD;
+	}
+
+	public void setLlrDFWD(double llrDFWD) {
+		this.llrDFWD = llrDFWD;
+	}
+
+	public double getLlrDREV() {
+		return llrDREV;
+	}
+
+	public void setLlrDREV(double llrDREV) {
+		this.llrDREV = llrDREV;
 	}
 
 }
