@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -13,7 +12,6 @@ import java.util.TreeSet;
 import org.apache.commons.math.MathException;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.mut.objects.VariantLine;
-import genepi.mut.util.ReferenceUtil;
 
 public class RawFileAnalyser {
 
@@ -24,6 +22,9 @@ public class RawFileAnalyser {
 	private static Set<Integer> hotspots = new HashSet<Integer>(
 			Arrays.asList(302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 315, 316, 3105, 3106, 3107));
 
+	
+	private boolean callDel;
+	
 	
 	public ArrayList<QCMetric> analyseFile(String in, String refpath, String sangerpos, double hetLevel) throws MathException {
 
@@ -69,23 +70,28 @@ public class RawFileAnalyser {
 
 			while (cloudgeneReader.next()) {
 
-				VariantLine obj = new VariantLine();
+				VariantLine line = new VariantLine();
 				
-				obj.parseLineFromFile(cloudgeneReader);
+				line.parseLineFromFile(cloudgeneReader);
 
-				if (id.equals(obj.getId())) {
+				if (id.equals(line.getId())) {
 
-					if (!isHotspot(obj.getPosition())) {
+					if (!isHotspot(line.getPosition())) {
 
-						if (!isSampleMutation(obj.getPosition())) {
+						if (!isSampleMutation(line.getPosition())) {
 
-							int position = obj.getPosition();
+							int position = line.getPosition();
 							
-							obj.determineLowLevelVariant();
+							line.determineLowLevelVariant();
+							
+							// only execute if no low-level variant has been detected
+							if (line.getVariantType() == 0) {
+								line.determineVariants();
+							}
+							
+							if (line.getVariantType() == VariantLine.LOW_LEVEL_VARIANT || (callDel && line.getVariantType() == VariantLine.LOW_LEVEL_DELETION)) {
 
-							if (obj.getVariantType() == VariantLine.LOW_LEVEL_VARIANT) {
-
-								System.out.println("Lowlevel Variant: " + obj.getPosition());
+								System.out.println("Lowlevel Variant: " + line.getPosition());
 								
 								hetero.add(cloudgeneReader.getDouble("LEVEL"));
 
@@ -93,11 +99,11 @@ public class RawFileAnalyser {
 
 									sangerPos.remove(position);
 									truePositiveCount++;
-									both.add(position + " (" + Math.abs(obj.getLlrFWD()) + ")");
+									both.add(position + " (" + Math.abs(line.getLlrFWD()) + ")");
 
 								} else {
 
-									falsePositives.add(position + " (" + Math.abs(obj.getLlrFWD()) + ")");
+									falsePositives.add(position + " (" + Math.abs(line.getLlrFWD()) + ")");
 									falsePositiveCount++;
 
 								}
@@ -178,6 +184,14 @@ public class RawFileAnalyser {
 
 	public static boolean isHotspot(int pos) {
 		return hotspots.contains(pos);
+	}
+
+	public boolean isCallDel() {
+		return callDel;
+	}
+
+	public void setCallDel(boolean callDel) {
+		this.callDel = callDel;
 	}
 
 }

@@ -49,7 +49,7 @@ public class PileupStepTest {
 		String hdfsFolder = "input";
 		String type = "bam";
 		
-		Set<Integer> expected = new HashSet<Integer>(Arrays.asList(1456,2746,3200,12410,14071,14569,15463,16093,16360,10394,1438,152,15326,15340,16519,263,4769,750,8592,8860));
+		Set<Integer> expected = new HashSet<Integer>(Arrays.asList(3107,1456,2746,3200,12410,14071,14569,15463,16093,16360,10394,1438,152,15326,15340,16519,263,4769,750,8592,8860));
 		
 		importInputdata(inputFolder, hdfsFolder);
 
@@ -62,6 +62,7 @@ public class PileupStepTest {
 		context.setOutput("variantsHdfs", "variantsHdfs");
 		context.setOutput("variantsLocal", "test-data/tmp/variantsLocal1000G");
 		context.setOutput("baq", "true");
+		context.setOutput("callDel", "false");
 		
 		boolean result = pileUp.run(context);
 		assertTrue(result);
@@ -107,13 +108,14 @@ public class PileupStepTest {
 
 		// create workflow context
 		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
-
+		
 		PileupTool pileUp = new PileupMock("files");
 		context.setOutput("rawHdfs", "rawHdfs1");
 		context.setOutput("rawLocal", "test-data/tmp/rawLocalMixture");
 		context.setOutput("variantsHdfs", "variantsHdfs1");
 		context.setOutput("variantsLocal", "test-data/tmp/variantsLocalMixture");
 		context.setOutput("baq", "true");
+		context.setOutput("callDel", "false");
 		
 		boolean result = pileUp.run(context);
 		assertTrue(result);
@@ -121,7 +123,8 @@ public class PileupStepTest {
 		double hetLevel = 0.01;
 
 		RawFileAnalyser analyser = new RawFileAnalyser();
-
+		analyser.setCallDel(false);
+		
 		try {
 			ArrayList<QCMetric> list = analyser.analyseFile("test-data/tmp/rawLocalMixture", refPath, sanger,
 					hetLevel);

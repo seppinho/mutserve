@@ -16,6 +16,8 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	public static int LOW_LEVEL_VARIANT = 2;
 
+	public static int LOW_LEVEL_DELETION = 3;
+
 	public static int DELETION = 4;
 
 	public static int INSERTION = 5;
@@ -27,6 +29,8 @@ public class VariantLine implements Comparable<VariantLine> {
 	private char ref;
 	private int covFWD;
 	private int covREV;
+
+	private boolean callDel;
 
 	private double llrFWD;
 	private double llrREV;
@@ -57,7 +61,7 @@ public class VariantLine implements Comparable<VariantLine> {
 	private double llrCREV;
 	private double llrGREV;
 	private double llrTREV;
-	
+
 	private double llrDFWD;
 	private double llrDREV;
 
@@ -117,7 +121,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		this.setLlrCREV(cloudgeneReader.getDouble("LLRCREV"));
 		this.setLlrGREV(cloudgeneReader.getDouble("LLRGREV"));
 		this.setLlrTREV(cloudgeneReader.getDouble("LLRTREV"));
-		
+
 		this.setLlrDFWD(cloudgeneReader.getDouble("LLRDFWD"));
 		this.setLlrDREV(cloudgeneReader.getDouble("LLRDREV"));
 
@@ -215,8 +219,8 @@ public class VariantLine implements Comparable<VariantLine> {
 		if (totalFWD > 0) {
 			topBasePercentsFWD = allelesFWD.get(0) / (double) totalFWD;
 
-			// ignore deletions on minor base
-			if (allelesFWD.get(1).equals(dFWD)) {
+			// ignore deletions on minor base if deletions are excluded 
+			if (!callDel && allelesFWD.get(1).equals(dFWD)) {
 				minorBasePercentsFWD = allelesFWD.get(2) / (double) totalFWD;
 			} else {
 				minorBasePercentsFWD = allelesFWD.get(1) / (double) totalFWD;
@@ -236,7 +240,10 @@ public class VariantLine implements Comparable<VariantLine> {
 
 		if (totalREV > 0) {
 			topBasePercentsREV = allelesREV.get(0) / (double) totalREV;
-			if (allelesREV.get(1).equals(dREV)) {
+
+			// ignore deletions on minor base if deletions are excluded from
+			// user
+			if (!callDel && allelesREV.get(1).equals(dREV)) {
 				minorBasePercentsREV = allelesREV.get(2) / (double) totalREV;
 			} else {
 				minorBasePercentsREV = allelesREV.get(1) / (double) totalREV;
@@ -285,7 +292,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		}
 
 		else if (dFWD >= cFWD && dFWD >= gFWD && dFWD >= aFWD && dFWD >= tFWD && dFWD > 0) {
-			topBaseFWD = 'd';
+			topBaseFWD = 'D';
 		}
 
 		char topBaseREV = '-';
@@ -335,7 +342,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		}
 
 		else if (dREV >= cREV && dREV >= gREV && dREV >= aREV && dREV >= tREV && dREV > 0) {
-			topBaseREV = 'd';
+			topBaseREV = 'D';
 		}
 
 		if (minorBasePercentsFWD > 0 && minorBasePercentsFWD < 0.5) {
@@ -354,6 +361,8 @@ public class VariantLine implements Comparable<VariantLine> {
 
 			else if (minorBasePercentsFWD == tFWDPercents) {
 				minorBaseFWD = 'T';
+			} else if (minorBasePercentsFWD == dFWDPercents) {
+				minorBaseFWD = 'D';
 			}
 
 		}
@@ -374,6 +383,10 @@ public class VariantLine implements Comparable<VariantLine> {
 
 			else if (minorBasePercentsREV == tREVPercents) {
 				minorBaseREV = 'T';
+			} 
+			
+			else if (minorBasePercentsREV == dREVPercents) {
+				minorBaseREV = 'D';
 			}
 
 		}
@@ -440,7 +453,7 @@ public class VariantLine implements Comparable<VariantLine> {
 			this.setLlrTFWD(llr.getLlrFWD());
 			this.setLlrTREV(llr.getLlrREV());
 		}
-		
+
 		if (getTopBaseFWD() != 'D') {
 			LlrObject llr = calcLlr(base, 'D');
 			this.setLlrDFWD(llr.getLlrFWD());
@@ -486,7 +499,8 @@ public class VariantLine implements Comparable<VariantLine> {
 				+ cPercentageREV + "\t" + gPercentageREV + "\t" + tPercentageREV + "\t" + dPercentageREV + "\t"
 				+ nPercentageREV + "\t" + topBasePercentsFWD + "\t" + topBasePercentsREV + "\t" + minorBasePercentsFWD
 				+ "\t" + minorBasePercentsREV + "\t" + llrFWD + "\t" + llrREV + "\t" + llrAFWD + "\t" + llrCFWD + "\t"
-				+ llrGFWD + "\t" + llrTFWD + "\t" + llrAREV + "\t" + llrCREV + "\t" + llrGREV + "\t" + llrTREV + "\t" + llrDFWD + "\t" + llrDREV;
+				+ llrGFWD + "\t" + llrTFWD + "\t" + llrAREV + "\t" + llrCREV + "\t" + llrGREV + "\t" + llrTREV + "\t"
+				+ llrDFWD + "\t" + llrDREV;
 
 	}
 
@@ -536,7 +550,7 @@ public class VariantLine implements Comparable<VariantLine> {
 				double p = Math.pow(10, (-err / 10));
 				tmp = majorCalc(tmp, f, p);
 			}
-			break;	
+			break;
 		default:
 			break;
 		}
@@ -587,7 +601,7 @@ public class VariantLine implements Comparable<VariantLine> {
 				double p = Math.pow(10, (-err / 10));
 				tmp = minorCalc(tmp, f, p);
 			}
-			break;	
+			break;
 		default:
 			break;
 		}
@@ -646,7 +660,7 @@ public class VariantLine implements Comparable<VariantLine> {
 				double p = Math.pow(10, (-quality / 10));
 				tmp = majorCalc(tmp, f, p);
 			}
-			break;	
+			break;
 		default:
 			break;
 		}
@@ -697,7 +711,7 @@ public class VariantLine implements Comparable<VariantLine> {
 				double p = Math.pow(10, (-quality / 10));
 				tmp = minorCalc(tmp, f, p);
 			}
-			break;	
+			break;
 		default:
 			break;
 		}
@@ -1182,11 +1196,11 @@ public class VariantLine implements Comparable<VariantLine> {
 			 * 10× coverage of qualified bases on both positive and negative
 			 * strands;
 			 */
+
 			if (checkCoverage()) {
 
 				if (checkBases()) {
 
-					if (checkDeletion()) {
 						/**
 						 * all alleles have support from at least two reads on
 						 * each strand
@@ -1203,16 +1217,22 @@ public class VariantLine implements Comparable<VariantLine> {
 								 * 5
 								 **/
 								if (this.getLlrFWD() >= 5 || this.getLlrREV() >= 5) {
+									
 									if (calcStrandBias() <= 1) {
-										
-										this.setVariantType(LOW_LEVEL_VARIANT);
+
+										//D can either be on TOP or MINOR base
+										if (this.minorBaseFWD == 'D' || this.topBaseFWD == 'D') {
+											this.setVariantType(LOW_LEVEL_DELETION);
+										} else {
+											this.setVariantType(LOW_LEVEL_VARIANT);
+										}
+
 										this.setVariantLevel(calcHetLevel());
 
 										calcConfidence();
 
 									}
 								}
-							}
 						}
 					}
 				}
@@ -1262,20 +1282,20 @@ public class VariantLine implements Comparable<VariantLine> {
 				|| ((this.getMinorBaseFWD() == this.getTopBaseREV() && this.getTopBaseFWD() == this.getMinorBaseREV()));
 	}
 
-	private boolean checkDeletion() {
+	private boolean checkDeletion2() {
 
-		if (this.getTopBaseREV() != 'd' && this.getMinorBaseREV() != '-') {
+		if (this.getTopBaseREV() != 'D' && this.getMinorBaseREV() != '-') {
 			return true;
 		}
-		if (this.getTopBaseFWD() != 'd' && this.getMinorBaseFWD() != '-') {
+		if (this.getTopBaseFWD() != 'D' && this.getMinorBaseFWD() != '-') {
 			return true;
 		}
 		return false;
 	}
-	
-	private boolean checkDeletion2() {
 
-		if (this.getTopBaseREV() == 'd' || this.getTopBaseFWD() == 'd') {
+	private boolean checkDeletion() {
+
+		if (this.getTopBaseREV() == 'D' || this.getTopBaseFWD() == 'D') {
 			return true;
 		}
 		return false;
@@ -1387,6 +1407,14 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	public void setLlrDREV(double llrDREV) {
 		this.llrDREV = llrDREV;
+	}
+
+	public boolean isCallDel() {
+		return callDel;
+	}
+
+	public void setCallDel(boolean callDel) {
+		this.callDel = callDel;
 	}
 
 }

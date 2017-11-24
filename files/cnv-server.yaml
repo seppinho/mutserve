@@ -95,6 +95,15 @@ mapred:
         true: true
         false: false
       value: false
+
+    - id: callDel
+      description: Call low-level deletions?
+      type: checkbox
+      visible: true
+      values:
+        true: true
+        false: false
+      value: false
       
     - id: fileSize
       description: Filesize to upload

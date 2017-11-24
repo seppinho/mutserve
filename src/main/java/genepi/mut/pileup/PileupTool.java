@@ -36,6 +36,7 @@ public class PileupTool extends HadoopJobStep {
 		String alignQual = context.get("alignQuality");
 		String archive = context.get("archive");
 		Boolean baq = Boolean.valueOf(context.get("baq"));
+		Boolean callDel = Boolean.valueOf(context.get("callDel"));
 
 		PileupJob bamJob = new PileupJob("Generate Pileup") {
 			@Override
@@ -66,6 +67,7 @@ public class PileupTool extends HadoopJobStep {
 		bamJob.setBaseQuality(baseQual);
 		bamJob.setAlignmentQuality(alignQual);
 		bamJob.setBAQ(baq);
+		bamJob.setCallDel(callDel);
 		bamJob.setArchive(archive);
 		bamJob.setJarByClass(PileupTool.class);
 		bamJob.setFolder(folder);

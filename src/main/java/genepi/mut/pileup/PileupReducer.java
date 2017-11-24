@@ -31,6 +31,8 @@ public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
 	HdfsLineWriter writer;
 
 	String version;
+	
+	boolean callDel;
 
 	protected void setup(Context context) throws IOException, InterruptedException {
 
@@ -42,6 +44,9 @@ public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
 		File referencePath = new File(cache.getArchive("reference"));
 		String fastaPath = ReferenceUtil.findFileinDir(referencePath, ".fasta");
 		reference = ReferenceUtil.readInReference(fastaPath);
+		
+		//default is to ignore deletions
+		callDel = context.getConfiguration().getBoolean("callDel", false);
 
 		hdfsVariants = context.getConfiguration().get("variantsHdfs");
 		HdfsUtil.create(hdfsVariants + "/" + context.getTaskAttemptID());
@@ -99,26 +104,32 @@ public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
 
 			char ref = reference.charAt(pos - 1);
 
-			VariantLine positionObj = new VariantLine();
+			VariantLine line = new VariantLine();
 			
-			positionObj.setRef(ref);
+			//needed to ignore bases when sorting them
+			line.setCallDel(callDel);
+			
+			line.setRef(ref);
 
-			positionObj.analysePosition(posInput);
+			line.analysePosition(posInput);
 
-			context.write(null, new Text(positionObj.toRawString()));
+			context.write(null, new Text(line.toRawString()));
 
 			// write heteroplasmy files
+			line.determineLowLevelVariant();
 
-			positionObj.determineLowLevelVariant();
-
-			// only execute if no low-level variants have been detected
-			if (positionObj.getVariantType() == 0) {
-				positionObj.determineVariants();
+			// only execute if no low-level variant has been detected
+			if (line.getVariantType() == 0) {
+				line.determineVariants();
 			}
 
-			if (positionObj.getVariantType() == VariantLine.VARIANT
-					|| positionObj.getVariantType() == VariantLine.LOW_LEVEL_VARIANT) {
-				writer.write(positionObj.writeVariant());
+			if (line.getVariantType() == VariantLine.VARIANT
+					|| line.getVariantType() == VariantLine.LOW_LEVEL_VARIANT) {
+				writer.write(line.writeVariant());
+			}
+			
+			if(callDel && line.getVariantType() == VariantLine.LOW_LEVEL_DELETION){
+				writer.write(line.writeVariant());
 			}
 		}
 
