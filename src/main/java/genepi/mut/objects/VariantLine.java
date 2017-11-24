@@ -1282,25 +1282,6 @@ public class VariantLine implements Comparable<VariantLine> {
 				|| ((this.getMinorBaseFWD() == this.getTopBaseREV() && this.getTopBaseFWD() == this.getMinorBaseREV()));
 	}
 
-	private boolean checkDeletion2() {
-
-		if (this.getTopBaseREV() != 'D' && this.getMinorBaseREV() != '-') {
-			return true;
-		}
-		if (this.getTopBaseFWD() != 'D' && this.getMinorBaseFWD() != '-') {
-			return true;
-		}
-		return false;
-	}
-
-	private boolean checkDeletion() {
-
-		if (this.getTopBaseREV() == 'D' || this.getTopBaseFWD() == 'D') {
-			return true;
-		}
-		return false;
-	}
-
 	private boolean checkAlleleCoverage() {
 		if (this.getTopBasePercentsREV() * this.getCovREV() < 3
 				|| (this.getTopBasePercentsFWD() * this.getCovFWD()) < 3) {
