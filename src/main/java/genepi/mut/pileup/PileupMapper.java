@@ -249,7 +249,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 		/** for deletions */
 		Integer currentReferencePos = samRecord.getAlignmentStart();
 		for (CigarElement cigarElement : samRecord.getCigar().getCigarElements()) {
-
+			int count = 0;
 			if (cigarElement.getOperator() == CigarOperator.D) {
 
 				Integer cigarElementStart = currentReferencePos;
@@ -267,10 +267,10 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 
 					if ((samRecord.getFlags() & 0x10) == 0x10) {
 						basePos.adddRev(1);
-						basePos.adddRevQ(samRecord.getBaseQualities()[cigarElementStart]);
+						basePos.adddRevQ(samRecord.getBaseQualities()[count]);
 					} else {
 						basePos.adddFor(1);
-						basePos.adddForQ(samRecord.getBaseQualities()[cigarElementStart]);
+						basePos.adddForQ(samRecord.getBaseQualities()[count]);
 					}
 
 					cigarElementStart++;
@@ -281,6 +281,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 			if (cigarElement.getOperator().consumesReferenceBases()) {
 				currentReferencePos = currentReferencePos + cigarElement.getLength();
 			}
+			count++;
 		}
 	}
 

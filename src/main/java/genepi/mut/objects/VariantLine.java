@@ -1204,6 +1204,7 @@ public class VariantLine implements Comparable<VariantLine> {
 								 **/
 								if (this.getLlrFWD() >= 5 || this.getLlrREV() >= 5) {
 									if (calcStrandBias() <= 1) {
+										
 										this.setVariantType(LOW_LEVEL_VARIANT);
 										this.setVariantLevel(calcHetLevel());
 
@@ -1267,6 +1268,14 @@ public class VariantLine implements Comparable<VariantLine> {
 			return true;
 		}
 		if (this.getTopBaseFWD() != 'd' && this.getMinorBaseFWD() != '-') {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean checkDeletion2() {
+
+		if (this.getTopBaseREV() == 'd' || this.getTopBaseFWD() == 'd') {
 			return true;
 		}
 		return false;
