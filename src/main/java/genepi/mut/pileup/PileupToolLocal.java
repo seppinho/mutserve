@@ -146,11 +146,11 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "/home/seb/git/mutation-server/test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam";
+		String input = "/home/seb/git/mutation-server/test-data/mtdna/mixtures/input/s4.bam";
 
 		PileupToolLocal pileup = new PileupToolLocal(
 				new String[] { "--input", input, "--reference", "/home/seb/Desktop/rcrs/rCRS.fasta", "--out-prefix",
-						"/home/seb/Desktop/prefix_1KP3", "--indel", "false" });
+						"/home/seb/Desktop/prefix_1KP3", "--indel", "true" });
 
 		pileup.start();
 
