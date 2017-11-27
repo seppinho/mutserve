@@ -12,11 +12,6 @@
 	<repositories>
 
 		<repository>
-			<id>hadoop-bam-sourceforge</id>
-			<url>http://hadoop-bam.sourceforge.net/maven/</url>
-		</repository>
-
-		<repository>
 			<id>genepi</id>
 			<url>https://raw.github.com/genepi/maven-repository/mvn-repo/</url>
 			<snapshots>

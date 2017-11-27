@@ -39,7 +39,7 @@ public class ReferenceUtil {
 				}
 			}
 		} else{
-			System.out.println(reference + "not a directory");
+			System.out.println(reference + " not a directory");
 		}
 		System.out.println("path " + refPath);
 		return refPath;

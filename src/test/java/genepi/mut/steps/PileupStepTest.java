@@ -76,6 +76,7 @@ public class PileupStepTest {
 			String[] splits = reader.get().split("\t");
 			int pos = Integer.valueOf(splits[1]);
 			results.add(pos);
+			System.out.println(pos);
 		}
 		
 		assertEquals(true, results.equals(expected));

@@ -30,15 +30,11 @@ public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
 
 	HdfsLineWriter writer;
 
-	String version;
-	
 	boolean callDel;
 
 	protected void setup(Context context) throws IOException, InterruptedException {
 
 		HdfsUtil.setDefaultConfiguration(context.getConfiguration());
-		PreferenceStore store = new PreferenceStore(context.getConfiguration());
-		version = store.getString("server.version");
 
 		CacheStore cache = new CacheStore(context.getConfiguration());
 		File referencePath = new File(cache.getArchive("reference"));
@@ -97,7 +93,9 @@ public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
 		posInput.setdRevQ(combinedDRev);
 
 		posInput.setId(key.toString().split(":")[0]);
+		
 		int pos = Integer.valueOf(key.toString().split(":")[1]);
+		
 		posInput.setPos(pos);
 
 		if (pos > 0 && pos <= reference.length()) {
