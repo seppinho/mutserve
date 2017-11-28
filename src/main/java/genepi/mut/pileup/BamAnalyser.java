@@ -67,13 +67,22 @@ public class BamAnalyser {
 		this.baq = baq;
 
 		this.version = version;
+		
+		System.out.println("base quality -> " + baseQual);
+		System.out.println("map quality -> " + mapQual);
+		System.out.println("align quality -> " + alignQual);
+		System.out.println("baq -> " + baq);
 
 		if (version.equalsIgnoreCase(versionEnum.MTDNA.name())) {
+			
+			System.out.println("BAQ mtDNA");
 			
 			baqHMMAltered = new BaqAlt(1e-4, 1e-2, 7, (byte) 0, true);
 
 		} else {
 
+			System.out.println("BAQ default");
+			
 			baqHMM = new BAQ(1e-4, 1e-2, 7, (byte) 0, true);
 		}
 

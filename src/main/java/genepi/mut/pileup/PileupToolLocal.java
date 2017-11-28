@@ -2,6 +2,8 @@ package genepi.mut.pileup;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import genepi.base.Tool;
 import genepi.io.FileUtil;
@@ -23,10 +25,11 @@ public class PileupToolLocal extends Tool {
 	@Override
 	public void createParameters() {
 
-		addParameter("input", "input folder", Tool.STRING);
+		addParameter("input", "input bam folder", Tool.STRING);
 		addParameter("output", "output folder", Tool.STRING);
 		addParameter("reference", "reference as fasta", Tool.STRING);
-		addOptionalParameter("indel", "call indels?", Tool.STRING);
+		addParameter("indel", "call indels?", Tool.STRING);
+		addParameter("baq", "apply BAQ?", Tool.STRING);
 	}
 
 	@Override
@@ -37,13 +40,25 @@ public class PileupToolLocal extends Tool {
 	@Override
 	public int run() {
 
+		String version = "mtdna";
+
 		String input = (String) getValue("input");
 
 		String output = (String) getValue("output");
 
 		String indel = (String) getValue("indel");
 
+		String baq = (String) getValue("baq");
+
+		int baseQ = 20;
+
+		int mapQ = 20;
+
+		int alignQ = 30;
+
 		String refPath = (String) getValue("reference");
+
+		LineWriter writer = null;
 
 		File folderIn = new File(input);
 
@@ -59,31 +74,53 @@ public class PileupToolLocal extends Tool {
 
 		File[] files = folderIn.listFiles();
 
+		try {
+
+			String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
+
+			String outputFiltered = FileUtil.path(output, "variants_" + timeStamp + ".txt");
+
+			writer = new LineWriter(outputFiltered);
+
+			writer.write(
+					"SampleID\tPos\tRef\tVariant\tMajor/Minor\tVariant-Level\tCoverage-FWD\tCoverage-Rev\tCoverage-Total");
+
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
 		for (File file : files) {
 
 			long start = System.currentTimeMillis();
 
 			System.out.println(" Processing: " + file.getName());
 
-			BamAnalyser analyser = new BamAnalyser(file.getName(), refPath);
+			BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, Boolean.valueOf(baq),
+					version);
 
 			try {
 
 				analyseReads(file, analyser);
 
-				String outputPath = FileUtil.path(output, file.getName().substring(0, file.getName().lastIndexOf(".")));
-
-				determineVariants(analyser, outputPath, Boolean.valueOf(indel));
+				determineVariants(analyser, writer, Boolean.valueOf(indel));
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-			System.out.println("Fin. Took " + (System.currentTimeMillis() - start) / 1000 + " sec");
+			System.out.println("Took " + (System.currentTimeMillis() - start) / 1000 + " sec");
 
 		}
 
+		try {
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Fin.");
 		return 0;
 	}
 
@@ -108,14 +145,7 @@ public class PileupToolLocal extends Tool {
 	}
 
 	// reducer
-	private void determineVariants(BamAnalyser analyser, String output, boolean indel) throws IOException {
-
-		String outputFiltered = output + "_filtered.txt";
-
-		LineWriter writer = new LineWriter(outputFiltered);
-
-		writer.write(
-				"SampleID\tPos\tRef\tVariant\tMajor/Minor\tVariant-Level\tCoverage-FWD\tCoverage-Rev\tCoverage-Total");
+	private void determineVariants(BamAnalyser analyser, LineWriter writer, boolean indel) throws IOException {
 
 		HashMap<String, BasePosition> counts = analyser.getCounts();
 
@@ -154,7 +184,6 @@ public class PileupToolLocal extends Tool {
 			}
 
 		}
-		writer.close();
 	}
 
 	public static void main(String[] args) {
@@ -162,7 +191,7 @@ public class PileupToolLocal extends Tool {
 		String input = "test-data/mtdna/bam/input/";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference",
-				"/home/seb/Desktop/rcrs/rCRS.fasta", "--output", "testdata/tmp/", "--indel", "true" });
+				"/home/seb/Desktop/rcrs/rCRS.fasta", "--output", "testdata/tmp","--baq", "true", "--indel", "false" });
 
 		pileup.start();
 
