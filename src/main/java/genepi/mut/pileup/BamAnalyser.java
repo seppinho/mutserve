@@ -48,7 +48,7 @@ public class BamAnalyser {
 		
 	}
 
-	public BamAnalyser(String file, String fastaPath, int baseQual, int mapQual, int alignQual, boolean baq, String version) {
+	public BamAnalyser(String filename, String fastaPath, int baseQual, int mapQual, int alignQual, boolean baq, String version) {
 		
 		this.referenceString = ReferenceUtil.readInReference(fastaPath);
 		
@@ -62,7 +62,7 @@ public class BamAnalyser {
 
 		this.alignQual = alignQual;
 		
-		this.filename = file;
+		this.filename = filename;
 
 		this.baq = baq;
 
@@ -70,24 +70,12 @@ public class BamAnalyser {
 
 		if (version.equalsIgnoreCase(versionEnum.MTDNA.name())) {
 			
-			System.out.println("initalize baq...");
-			
 			baqHMMAltered = new BaqAlt(1e-4, 1e-2, 7, (byte) 0, true);
 
 		} else {
 
 			baqHMM = new BAQ(1e-4, 1e-2, 7, (byte) 0, true);
 		}
-
-		System.out.println("BAQ " + baq);
-
-		System.out.println("Server-Version " + version);
-
-		System.out.println("baseQual " + baseQual);
-
-		System.out.println("mapQual " + mapQual);
-
-		System.out.println("alignQual " + alignQual);
 
 	}
 
@@ -148,11 +136,13 @@ public class BamAnalyser {
 
 				// context.getCounter("mtdna", "GOOD-QUAL").increment(1);
 
-				BasePosition basePos = counts.get(currentPos + "");
+				String key = filename+":"+currentPos;
+				
+				BasePosition basePos = counts.get(key);
 
 				if (basePos == null) {
 					basePos = new BasePosition();
-					counts.put(currentPos + "", basePos);
+					counts.put(key, basePos);
 				}
 
 				char base = readString.charAt(i);
@@ -225,12 +215,14 @@ public class BamAnalyser {
 				Integer cigarElementEnd = currentReferencePos + cigarElementLength;
 
 				while (cigarElementStart < cigarElementEnd) {
+					
+					String key = filename+":"+cigarElementStart;
 
-					BasePosition basePos = counts.get(cigarElementStart + "");
+					BasePosition basePos = counts.get(key);
 
 					if (basePos == null) {
 						basePos = new BasePosition();
-						counts.put(cigarElementStart + "", basePos);
+						counts.put(key, basePos);
 					}
 
 					if ((samRecord.getFlags() & 0x10) == 0x10) {
@@ -259,10 +251,6 @@ public class BamAnalyser {
 
 	public void setReferenceString(String referenceString) {
 		this.referenceString = referenceString;
-	}
-
-	public String getFilename() {
-		return filename;
 	}
 
 	public void setFilename(String filename) {

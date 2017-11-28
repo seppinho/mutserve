@@ -42,6 +42,9 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 			filename = ((FileSplit) context.getInputSplit()).getPath().getName().replace(".bam", "").replace(".sam", "")
 					.replace(".cram", "");
 		}
+		
+		//replace all non digits/chars with an underscore
+		filename = filename.replaceAll("\\W+", "_");
 
 		CacheStore cache = new CacheStore(context.getConfiguration());
 
@@ -74,11 +77,11 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 
 		Text outKey = new Text();
 
-		for (String pos : counts.keySet()) {
+		for (String key : counts.keySet()) {
 
-			BasePosition basePos = counts.get(pos);
+			BasePosition basePos = counts.get(key);
 
-			outKey.set(filename + ":" + pos);
+			outKey.set(key);
 
 			context.write(outKey, basePos);
 

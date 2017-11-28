@@ -104,7 +104,7 @@ public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
 
 			VariantLine line = new VariantLine();
 			
-			//needed to ignore bases when sorting them
+			//needed so we can ignore bases when sorting them (e.g. ignore if minor is D)
 			line.setCallDel(callDel);
 			
 			line.setRef(ref);
@@ -113,20 +113,9 @@ public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
 
 			context.write(null, new Text(line.toRawString()));
 
-			// write heteroplasmy files
-			line.determineLowLevelVariant();
+			line.callVariants();
 
-			// only execute if no low-level variant has been detected
-			if (line.getVariantType() == 0) {
-				line.determineVariants();
-			}
-
-			if (line.getVariantType() == VariantLine.VARIANT
-					|| line.getVariantType() == VariantLine.LOW_LEVEL_VARIANT) {
-				writer.write(line.writeVariant());
-			}
-			
-			if(callDel && line.getVariantType() == VariantLine.LOW_LEVEL_DELETION){
+			if (line.isFinalVariant()) {
 				writer.write(line.writeVariant());
 			}
 		}

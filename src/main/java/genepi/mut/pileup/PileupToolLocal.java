@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import genepi.base.Tool;
+import genepi.io.FileUtil;
 import genepi.io.text.LineWriter;
 import genepi.mut.objects.BasePosition;
 import genepi.mut.objects.VariantLine;
@@ -22,9 +23,9 @@ public class PileupToolLocal extends Tool {
 	@Override
 	public void createParameters() {
 
-		addParameter("input", "input bam file", Tool.STRING);
+		addParameter("input", "input folder", Tool.STRING);
+		addParameter("output", "output folder", Tool.STRING);
 		addParameter("reference", "reference as fasta", Tool.STRING);
-		addParameter("out-prefix", "output prefix", Tool.STRING);
 		addOptionalParameter("indel", "call indels?", Tool.STRING);
 	}
 
@@ -35,44 +36,64 @@ public class PileupToolLocal extends Tool {
 
 	@Override
 	public int run() {
-		
-		long start = System.currentTimeMillis();
 
 		String input = (String) getValue("input");
 
-		String outputPrefix = (String) getValue("out-prefix");
+		String output = (String) getValue("output");
 
 		String indel = (String) getValue("indel");
 
 		String refPath = (String) getValue("reference");
 
-		try {
+		File folderIn = new File(input);
 
-			BamAnalyser analyser = new BamAnalyser(input, refPath);
+		File folderOut = new File(output);
 
-			analyseReads(analyser);
+		if (!folderIn.exists() || !folderOut.exists()) {
 
-			determineVariants(analyser, outputPrefix, Boolean.valueOf(indel));
-
-		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("Please check if input/output folders exist");
+			System.out.println("input: " + folderIn.getAbsolutePath());
+			System.out.println("output: " + folderOut.getAbsolutePath());
+			return 0;
 		}
-		
-		System.out.println("Fin. Took "+ (System.currentTimeMillis() - start)/1000 +" sec");
-		
-		System.out.println("Output location: " + outputPrefix+".filtered.txt");
+
+		File[] files = folderIn.listFiles();
+
+		for (File file : files) {
+
+			long start = System.currentTimeMillis();
+
+			System.out.println(" Processing: " + file.getName());
+
+			BamAnalyser analyser = new BamAnalyser(file.getName(), refPath);
+
+			try {
+
+				analyseReads(file, analyser);
+
+				String outputPath = FileUtil.path(output, file.getName().substring(0, file.getName().lastIndexOf(".")));
+
+				determineVariants(analyser, outputPath, Boolean.valueOf(indel));
+
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			System.out.println("Fin. Took " + (System.currentTimeMillis() - start) / 1000 + " sec");
+
+		}
 
 		return 0;
-
 	}
 
 	// mapper
-	private void analyseReads(BamAnalyser analyser) throws Exception, IOException {
+	private void analyseReads(File file, BamAnalyser analyser) throws Exception, IOException {
 
 		// TODO double check if primary and secondary alignment is used for
 		// CNV-Server
 		final SamReader reader = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.LENIENT)
-				.open(new File(analyser.getFilename()));
+				.open(file);
 
 		SAMRecordIterator fileIterator = reader.iterator();
 
@@ -102,13 +123,15 @@ public class PileupToolLocal extends Tool {
 
 		for (String key : counts.keySet()) {
 
-			int pos = Integer.valueOf(key);
+			String id = key.split(":")[0];
+
+			int pos = Integer.valueOf(key.split(":")[1]);
 
 			if (pos > 0 && pos <= reference.length()) {
 
 				BasePosition basePos = counts.get(key);
 
-				basePos.setId(new File(analyser.getFilename()).getName());
+				basePos.setId(id);
 
 				basePos.setPos(pos);
 
@@ -122,19 +145,9 @@ public class PileupToolLocal extends Tool {
 
 				line.analysePosition(basePos);
 
-				line.determineLowLevelVariant();
+				line.callVariants();
 
-				// only execute if no low-level variant has been detected
-				if (line.getVariantType() == 0) {
-					line.determineVariants();
-				}
-
-				if (line.getVariantType() == VariantLine.VARIANT
-						|| line.getVariantType() == VariantLine.LOW_LEVEL_VARIANT) {
-					writer.write((line.writeVariant()));
-				}
-
-				if (indel && line.getVariantType() == VariantLine.LOW_LEVEL_DELETION) {
+				if (line.isFinalVariant()) {
 					writer.write(line.writeVariant());
 				}
 
@@ -146,11 +159,10 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "/home/seb/git/mutation-server/test-data/mtdna/mixtures/input/s4.bam";
+		String input = "test-data/mtdna/bam/input/";
 
-		PileupToolLocal pileup = new PileupToolLocal(
-				new String[] { "--input", input, "--reference", "/home/seb/Desktop/rcrs/rCRS.fasta", "--out-prefix",
-						"/home/seb/Desktop/prefix_1KP3", "--indel", "true" });
+		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference",
+				"/home/seb/Desktop/rcrs/rCRS.fasta", "--output", "testdata/tmp/", "--indel", "true" });
 
 		pileup.start();
 

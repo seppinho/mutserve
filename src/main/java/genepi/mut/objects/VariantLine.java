@@ -219,7 +219,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		if (totalFWD > 0) {
 			topBasePercentsFWD = allelesFWD.get(0) / (double) totalFWD;
 
-			// ignore deletions on minor base if deletions are excluded 
+			// ignore deletions on minor base if deletions are excluded
 			if (!callDel && allelesFWD.get(1).equals(dFWD)) {
 				minorBasePercentsFWD = allelesFWD.get(2) / (double) totalFWD;
 			} else {
@@ -383,8 +383,8 @@ public class VariantLine implements Comparable<VariantLine> {
 
 			else if (minorBasePercentsREV == tREVPercents) {
 				minorBaseREV = 'T';
-			} 
-			
+			}
+
 			else if (minorBasePercentsREV == dREVPercents) {
 				minorBaseREV = 'D';
 			}
@@ -1186,6 +1186,17 @@ public class VariantLine implements Comparable<VariantLine> {
 		}
 	}
 
+	public void callVariants() {
+
+		this.determineLowLevelVariant();
+
+		// only execute if no low-level variant has been detected
+		if (this.getVariantType() == 0) {
+			this.determineVariants();
+		}
+
+	}
+
 	public void determineLowLevelVariant() {
 
 		double minorBasePercentsFWD = this.getMinorPercentsFWD();
@@ -1201,38 +1212,37 @@ public class VariantLine implements Comparable<VariantLine> {
 
 				if (checkBases()) {
 
+					/**
+					 * all alleles have support from at least two reads on each
+					 * strand
+					 **/
+					if (checkAlleleCoverage()) {
 						/**
-						 * all alleles have support from at least two reads on
-						 * each strand
+						 * the raw frequency for the minor allele is no less
+						 * than 1% on both strands
 						 **/
-						if (checkAlleleCoverage()) {
+						if (minorBasePercentsFWD >= 0.01 || minorBasePercentsREV >= 0.01) {
 							/**
-							 * the raw frequency for the minor allele is no less
-							 * than 1% on both strands
+							 * high-confidence heteroplasmy was defined as
+							 * candidate heteroplasmy with LLR no less than 5
 							 **/
-							if (minorBasePercentsFWD >= 0.01 || minorBasePercentsREV >= 0.01) {
-								/**
-								 * high-confidence heteroplasmy was defined as
-								 * candidate heteroplasmy with LLR no less than
-								 * 5
-								 **/
-								if (this.getLlrFWD() >= 5 || this.getLlrREV() >= 5) {
-									
-									if (calcStrandBias() <= 1) {
+							if (this.getLlrFWD() >= 5 || this.getLlrREV() >= 5) {
 
-										//D can either be on TOP or MINOR base
-										if (this.minorBaseFWD == 'D' || this.topBaseFWD == 'D') {
-											this.setVariantType(LOW_LEVEL_DELETION);
-										} else {
-											this.setVariantType(LOW_LEVEL_VARIANT);
-										}
+								if (calcStrandBias() <= 1) {
 
-										this.setVariantLevel(calcHetLevel());
-
-										calcConfidence();
-
+									// D can either be on TOP or MINOR base
+									if (this.minorBaseFWD == 'D' || this.topBaseFWD == 'D') {
+										this.setVariantType(LOW_LEVEL_DELETION);
+									} else {
+										this.setVariantType(LOW_LEVEL_VARIANT);
 									}
+
+									this.setVariantLevel(calcHetLevel());
+
+									calcConfidence();
+
 								}
+							}
 						}
 					}
 				}
@@ -1323,6 +1333,19 @@ public class VariantLine implements Comparable<VariantLine> {
 			return posObj.getTopBaseFWD();
 
 		}
+	}
+
+	public boolean isFinalVariant() {
+
+		if (this.getVariantType() == VariantLine.VARIANT || this.getVariantType() == VariantLine.LOW_LEVEL_VARIANT) {
+			return true;
+		}
+
+		if (callDel && this.getVariantType() == VariantLine.LOW_LEVEL_DELETION) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private void generateAgrestiInterval() {
