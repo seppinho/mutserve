@@ -235,4 +235,10 @@ public class WorkflowTestContext extends WorkflowContext {
 		return null;
 	}
 
+	@Override
+	public boolean sendNotification(String arg0) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

@@ -45,6 +45,7 @@ public class PileupJob extends HadoopJob {
 		set("mapred.reduce.tasks.speculative.execution", false);
 		set("mapreduce.map.java.opts", "-Xmx4000M");
 		set("mapred.child.java.opts", "-Xmx4000M");
+		//TODO check effect on reads. this happens when circular reads are split
 		set("hadoopbam.samheaderreader.validation-stringency", "LENIENT");
 	}
 
