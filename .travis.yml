@@ -5,7 +5,7 @@ jdk:
 
 before_install:
   - pwd 
-  - wget https://mtdna-server.uibk.ac.at/static/downloads/gatk-jar-3.2.jar -O mutation-server/libs/gatk/gatk-jar/3.2/gatk-jar-3.2.jar
+  - wget https://mtdna-server.uibk.ac.at/static/downloads/gatk-jar-3.2.jar -O seppinho/mutation-server/libs/gatk/gatk-jar/3.2/gatk-jar-3.2.jar
   - cat /etc/hosts # optionally check the content *before*
   - sudo hostname "$(hostname | cut -c1-63)"
   - sed -e "s/^\\(127\\.0\\.0\\.1.*\\)/\\1 $(hostname | cut -c1-63)/" /etc/hosts | sudo tee /etc/hosts
