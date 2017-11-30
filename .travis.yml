@@ -4,7 +4,6 @@ jdk:
   - oraclejdk8
 
 before_install:
-  - ls -lh /home/travis/build/seppinho/mutation-server/libs/gatk/gatk-jar/3.2/
   - wget https://mtdna-server.uibk.ac.at/static/downloads/gatk-jar-3.2.jar -O /home/travis/build/seppinho/mutation-server/libs/gatk/gatk-jar/3.2/gatk-jar-3.2.jar
   - cat /etc/hosts # optionally check the content *before*
   - sudo hostname "$(hostname | cut -c1-63)"
