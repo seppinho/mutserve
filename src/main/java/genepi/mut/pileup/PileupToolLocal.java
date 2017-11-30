@@ -189,9 +189,10 @@ public class PileupToolLocal extends Tool {
 	public static void main(String[] args) {
 
 		String input = "test-data/mtdna/bam/input/";
+		String ref = "/home/seb/Desktop/rcrs/rCRS.fasta";
 
-		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference",
-				"/home/seb/Desktop/rcrs/rCRS.fasta", "--output", "testdata/tmp","--baq", "true", "--indel", "false" });
+		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", ref, "--output",
+				"testdata/tmp", "--baq", "true", "--indel", "false" });
 
 		pileup.start();
 
