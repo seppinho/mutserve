@@ -1,16 +1,16 @@
 language: java
-
 jdk:
-  - oraclejdk8
-
+- oraclejdk8
 before_install:
-  - wget https://mtdna-server.uibk.ac.at/static/downloads/gatk-jar-3.2.jar -O /home/travis/build/seppinho/mutation-server/libs/gatk/gatk-jar/3.2/gatk-jar-3.2.jar
-  - cat /etc/hosts # optionally check the content *before*
-  - sudo hostname "$(hostname | cut -c1-63)"
-  - sed -e "s/^\\(127\\.0\\.0\\.1.*\\)/\\1 $(hostname | cut -c1-63)/" /etc/hosts | sudo tee /etc/hosts
-  - cat /etc/hosts # optionally check the content *after*
-
+- wget https://mtdna-server.uibk.ac.at/static/downloads/gatk-jar-3.2.jar -O /home/travis/build/seppinho/mutation-server/libs/gatk/gatk-jar/3.2/gatk-jar-3.2.jar
+- cat /etc/hosts
+- sudo hostname "$(hostname | cut -c1-63)"
+- sed -e "s/^\\(127\\.0\\.0\\.1.*\\)/\\1 $(hostname | cut -c1-63)/" /etc/hosts | sudo
+  tee /etc/hosts
+- cat /etc/hosts
 script: mvn clean test jacoco:report
-
 after_success:
-  - mvn coveralls:report
+- mvn coveralls:report
+notifications:
+  slack:
+    secure: KiVuBg6p2GFRe+rdLYyQdXc6bP8tgPA34JJcluBfXJ/Dz52G/6/CCKcjHOcSahT0H2w1/Gry1XPqpoYHxNvL24kziqON/jCj2/U0LI8RvqsbUP3eNNvohS9ww7Ri3dATpoFBF94K4Z3pJqhhobAewPTPB6vL+SAmY2O6Dmy+3YxhbPeTiL6rNCdWAaDRYSxA0SMBbiV5gzYR6LbcJtk+67ju+0E3GCaAGKif1+PBHw1sYwv4pXZ8SOvRJTyd7gkUwpnKZOBoDjg6AWOYD4uXVmZnupiPQCarqeQizOced832UlMXbWVQkJ2PNWtmuuceypHGtDE8LXKM6zwVsiiwm1Y8OB1FLxv6Jy4qhdo+46fXNE6E+Nkf6oafiGkpR2MODXlRdzTNKQBH+yQUEx8V2ABgaD+y/3dwSOCfnWFbiDhGNEX8Pad5DliRDYpyACbI2SCHjmomp+2zgKYiqr9x/ilT49CBRBdWYh4ZOm056KN7vcnwbEwZSAKDWDVJaFpDctaDzlkMSLBQgsqnwpdTDt1Scnyir/ENxYMNLbIc5xNnZcb3r55fFJYyva5ZECweHSrmKYZkYumfbVpNxo5Mdot1SSiXnY8QBlZNcRRe4ROcolP9zBIFwQTyQDZWQTZTi8QWXS/Ik4585FdS8EyEgBzzAdrpxAr6zHVGea1L9xU=
