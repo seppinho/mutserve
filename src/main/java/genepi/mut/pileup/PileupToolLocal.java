@@ -1,10 +1,15 @@
 package genepi.mut.pileup;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+
+import org.broadinstitute.gatk.tools.walkers.fasta.FastaSequence;
+
 import genepi.base.Tool;
 import genepi.io.FileUtil;
 import genepi.io.text.LineWriter;
@@ -15,6 +20,10 @@ import htsjdk.samtools.SAMRecordIterator;
 import htsjdk.samtools.SamReader;
 import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.ValidationStringency;
+import htsjdk.samtools.reference.FastaSequenceFile;
+import htsjdk.samtools.reference.FastaSequenceIndex;
+import htsjdk.samtools.reference.FastaSequenceIndexCreator;
+import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 
 public class PileupToolLocal extends Tool {
 
@@ -30,6 +39,9 @@ public class PileupToolLocal extends Tool {
 		addParameter("reference", "reference as fasta", Tool.STRING);
 		addParameter("indel", "call indels?", Tool.STRING);
 		addParameter("baq", "apply BAQ?", Tool.STRING);
+		addParameter("baseQ", "base quality", Tool.INTEGER);
+		addParameter("mapQ", "mapping quality", Tool.INTEGER);
+		addParameter("alignQ", "alignment quality", Tool.INTEGER);
 	}
 
 	@Override
@@ -50,11 +62,11 @@ public class PileupToolLocal extends Tool {
 
 		String baq = (String) getValue("baq");
 
-		int baseQ = 20;
+		int baseQ = (int) getValue("baseQ");
 
-		int mapQ = 20;
+		int mapQ = (int) getValue("mapQ");
 
-		int alignQ = 30;
+		int alignQ = (int) getValue("alignQ");
 
 		String refPath = (String) getValue("reference");
 
@@ -189,10 +201,20 @@ public class PileupToolLocal extends Tool {
 	public static void main(String[] args) {
 
 		String input = "test-data/mtdna/bam/input/";
-		String ref = "/home/seb/Desktop/rcrs/rCRS.fasta";
+		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
-		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", ref, "--output",
-				"testdata/tmp", "--baq", "true", "--indel", "false" });
+		try {
+			Path fastaPath = new File(fasta).toPath();
+			FastaSequenceIndex fg = FastaSequenceIndexCreator.buildFromFasta(fastaPath);
+			fg.write(new File(fasta + ".fai").toPath());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		PileupToolLocal pileup = new PileupToolLocal(
+				new String[] { "--input", input, "--reference", fasta, "--output", "testdata/tmp", "--baq", "true",
+						"--indel", "false", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
 
 		pileup.start();
 
