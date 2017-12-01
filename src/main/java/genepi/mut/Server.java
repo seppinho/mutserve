@@ -11,8 +11,6 @@ import java.lang.reflect.InvocationTargetException;
 
 public class Server {
 
-	public static final String REF_DIRECTORY = "/tmp/mutation-server-data";
-
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, SecurityException,
 			NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
 
@@ -27,7 +25,7 @@ public class Server {
 		// read in BAM file and count per POS with MapReduce
 		toolbox.addTool("analyse", PileupTool.class);
 
-		// read in BAM file and count per POS with MapReduce
+		// read in BAM file and count per POS locally
 		toolbox.addTool("analyse-local", PileupToolLocal.class);
 
 		// generate statistics

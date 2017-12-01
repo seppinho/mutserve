@@ -11,7 +11,6 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -24,6 +23,8 @@ import genepi.mut.align.single.SingleAlignerJob;
 import genepi.mut.util.HadoopJobStep;
 
 public class AlignTool extends HadoopJobStep {
+	
+	public static final String REF_DIRECTORY = "/tmp/mutation-server-data";
 
 	HashMap<String, List<String>> mapPairs = new HashMap<String, List<String>>();
 	protected static final Log log = LogFactory.getLog(AlignTool.class);

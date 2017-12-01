@@ -12,6 +12,7 @@ import genepi.hadoop.HadoopJob;
 import genepi.hadoop.HdfsUtil;
 import genepi.io.FileUtil;
 import genepi.mut.Server;
+import genepi.mut.align.AlignTool;
 import genepi.mut.objects.BasePosition;
 import genepi.mut.util.ReferenceUtil;
 
@@ -50,13 +51,13 @@ public class SingleAlignerJob extends HadoopJob {
 	protected void setupDistributedCache(CacheStore cache) {
 
 		// distribute jbwa libraries
-		String hdfsPath = HdfsUtil.path(Server.REF_DIRECTORY, "jbwa-native.tar");
+		String hdfsPath = HdfsUtil.path(AlignTool.REF_DIRECTORY, "jbwa-native.tar");
 		if (!HdfsUtil.exists(hdfsPath)) {
 			String jbwa = FileUtil.path(folder, "jbwa-native.tar");
 			HdfsUtil.put(jbwa, hdfsPath);
 		}
 
-		String hdfsPathRef = HdfsUtil.path(Server.REF_DIRECTORY, refArchive.substring(refArchive.lastIndexOf("/") + 1));
+		String hdfsPathRef = HdfsUtil.path(AlignTool.REF_DIRECTORY, refArchive.substring(refArchive.lastIndexOf("/") + 1));
 
 		if (!HdfsUtil.exists(hdfsPathRef)) {
 			HdfsUtil.put(refArchive, hdfsPathRef);
