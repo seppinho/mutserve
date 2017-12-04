@@ -37,6 +37,7 @@
                   <include>org.seqdoop:hadoop-bam:*:*</include>
                   <include>gatk:gatk-jar:*:*</include>
                   <include>com.github.samtools:htsjdk:*:*</include>
+                  <include>commons-cli:commons-cli:*:*</include>
                 </includes>
               </artifactSet>
             </configuration>

@@ -16,6 +16,7 @@ import genepi.hadoop.HdfsUtil;
 import genepi.hadoop.PreferenceStore;
 import genepi.hadoop.io.HdfsLineWriter;
 import genepi.mut.objects.BasePosition;
+import genepi.mut.objects.BasePosition2;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.util.ReferenceUtil;
 import genepi.mut.util.ReferenceUtilHdfs;
@@ -23,7 +24,7 @@ import genepi.mut.util.StatUtil;
 
 public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
 
-	private BasePosition posInput = new BasePosition();
+	private BasePosition2 posInput = new BasePosition2();
 
 	String reference;
 
@@ -50,7 +51,7 @@ public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
 		writer = new HdfsLineWriter(hdfsVariants + "/" + context.getTaskAttemptID());
 	}
 
-	protected void reduce(Text key, java.lang.Iterable<BasePosition> values, Context context)
+	protected void reduce(Text key, java.lang.Iterable<BasePosition2> values, Context context)
 			throws java.io.IOException, InterruptedException {
 
 		posInput.clear();

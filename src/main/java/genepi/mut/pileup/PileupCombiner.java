@@ -6,13 +6,13 @@ import java.util.List;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-import genepi.mut.objects.BasePosition;
+import genepi.mut.objects.BasePosition2;
 
-public class PileupCombiner extends Reducer<Text, BasePosition, Text, BasePosition> {
+public class PileupCombiner extends Reducer<Text, BasePosition2, Text, BasePosition2> {
 
-	private BasePosition valueOut = new BasePosition();
+	private BasePosition2 valueOut = new BasePosition2();
 
-	protected void reduce(Text key, java.lang.Iterable<BasePosition> values, Context context)
+	protected void reduce(Text key, java.lang.Iterable<BasePosition2> values, Context context)
 			throws java.io.IOException, InterruptedException {
 
 		valueOut.clear();
@@ -28,7 +28,7 @@ public class PileupCombiner extends Reducer<Text, BasePosition, Text, BasePositi
 		List<Byte> combinedTRev = new ArrayList<Byte>();
 		List<Byte> combinedDRev = new ArrayList<Byte>();
 
-		for (BasePosition value : values) {
+		for (BasePosition2 value : values) {
 
 			valueOut.add(value);
 			combinedAFor.addAll(value.getaForQ());
