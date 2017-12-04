@@ -2,29 +2,24 @@ package genepi.mut.pileup;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
 import genepi.hadoop.CacheStore;
 import genepi.hadoop.HdfsUtil;
-import genepi.hadoop.PreferenceStore;
 import genepi.hadoop.io.HdfsLineWriter;
 import genepi.mut.objects.BasePosition;
 import genepi.mut.objects.BasePositionHadoop;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.util.ReferenceUtil;
 import genepi.mut.util.ReferenceUtilHdfs;
-import genepi.mut.util.StatUtil;
 
-public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
+public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text> {
 
-	private BasePositionHadoop posInput = new BasePositionHadoop();
+	private BasePosition posInput = new BasePosition();
 
 	String reference;
 
@@ -66,7 +61,9 @@ public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
 		List<Byte> combinedTRev = new ArrayList<Byte>();
 		List<Byte> combinedDRev = new ArrayList<Byte>();
 
-		for (BasePosition value : values) {
+		for (BasePositionHadoop valueHadoop : values) {
+			
+			BasePosition value = valueHadoop.getBasePosition();
 
 			posInput.add(value);
 

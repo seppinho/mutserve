@@ -36,7 +36,7 @@ import htsjdk.samtools.SamReader;
 import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.ValidationStringency;
 
-public class MutationServerTests {
+public class MutationServerTest {
 
 	public static final boolean VERBOSE = true;
 

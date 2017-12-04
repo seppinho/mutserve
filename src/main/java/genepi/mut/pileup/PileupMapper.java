@@ -3,6 +3,7 @@ package genepi.mut.pileup;
 import genepi.hadoop.CacheStore;
 import genepi.hadoop.PreferenceStore;
 import genepi.mut.objects.BasePosition;
+import genepi.mut.objects.BasePositionHadoop;
 import genepi.mut.util.ReferenceUtil;
 import genepi.mut.util.ReferenceUtilHdfs;
 import htsjdk.samtools.SAMRecord;
@@ -18,7 +19,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.seqdoop.hadoop_bam.FileVirtualSplit;
 import org.seqdoop.hadoop_bam.SAMRecordWritable;
 
-public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, BasePosition> {
+public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, BasePositionHadoop> {
 
 	enum Counters {
 
@@ -74,6 +75,8 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 	@Override
 	protected void cleanup(Context context) throws IOException, InterruptedException {
 
+		BasePositionHadoop baseHadoop = new BasePositionHadoop();
+		
 		HashMap<String, BasePosition> counts = analyser.getCounts();
 
 		Text outKey = new Text();
@@ -84,7 +87,9 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 
 			outKey.set(key);
 
-			context.write(outKey, basePos);
+			baseHadoop.setBasePosition(basePos);
+			
+			context.write(outKey, baseHadoop);
 
 		}
 

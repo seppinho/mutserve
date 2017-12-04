@@ -6,11 +6,12 @@ import java.util.List;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
+import genepi.mut.objects.BasePosition;
 import genepi.mut.objects.BasePositionHadoop;
 
 public class PileupCombiner extends Reducer<Text, BasePositionHadoop, Text, BasePositionHadoop> {
 
-	private BasePositionHadoop valueOut = new BasePositionHadoop();
+	private BasePosition valueOut = new BasePosition();
 
 	protected void reduce(Text key, java.lang.Iterable<BasePositionHadoop> values, Context context)
 			throws java.io.IOException, InterruptedException {
@@ -28,9 +29,12 @@ public class PileupCombiner extends Reducer<Text, BasePositionHadoop, Text, Base
 		List<Byte> combinedTRev = new ArrayList<Byte>();
 		List<Byte> combinedDRev = new ArrayList<Byte>();
 
-		for (BasePositionHadoop value : values) {
+		for (BasePositionHadoop valueHadoop : values) {
+			
+			BasePosition value = valueHadoop.getBasePosition();
 
 			valueOut.add(value);
+			
 			combinedAFor.addAll(value.getaForQ());
 			combinedCFor.addAll(value.getcForQ());
 			combinedGFor.addAll(value.getgForQ());
@@ -56,7 +60,9 @@ public class PileupCombiner extends Reducer<Text, BasePositionHadoop, Text, Base
 		valueOut.settRevQ(combinedTRev);
 		valueOut.setdRevQ(combinedDRev);
 
-		context.write(key, valueOut);
+		BasePositionHadoop baseHadoop = new BasePositionHadoop();
+		baseHadoop.setBasePosition(valueOut);
+		context.write(key, baseHadoop);
 	};
 
 }
