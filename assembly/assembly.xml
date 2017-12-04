@@ -28,7 +28,7 @@
 		<file>
 			<outputDirectory>/</outputDirectory>
 			<source>${project.build.directory}/${project.artifactId}-${project.version}.jar</source>
-			<destName>mtdna/${project.artifactId}.jar</destName>
+			<destName>${project.artifactId}-${project.version}.jar</destName>
 		</file>
 	</files>
 
