@@ -19,7 +19,7 @@ import genepi.mut.util.ReferenceUtilHdfs;
 
 public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text> {
 
-	private BasePosition posInput = new BasePosition();
+	private BasePosition basePos = new BasePosition();
 
 	String reference;
 
@@ -49,7 +49,8 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 	protected void reduce(Text key, java.lang.Iterable<BasePositionHadoop> values, Context context)
 			throws java.io.IOException, InterruptedException {
 
-		posInput.clear();
+		basePos.clear();
+		
 		List<Byte> combinedAFor = new ArrayList<Byte>();
 		List<Byte> combinedCFor = new ArrayList<Byte>();
 		List<Byte> combinedGFor = new ArrayList<Byte>();
@@ -65,7 +66,7 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 			
 			BasePosition value = valueHadoop.getBasePosition();
 
-			posInput.add(value);
+			basePos.add(value);
 
 			combinedAFor.addAll(value.getaForQ());
 			combinedCFor.addAll(value.getcForQ());
@@ -79,23 +80,23 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 			combinedDRev.addAll(value.getdRevQ());
 		}
 
-		posInput.setaForQ(combinedAFor);
-		posInput.setcForQ(combinedCFor);
-		posInput.setgForQ(combinedGFor);
-		posInput.settForQ(combinedTFor);
-		posInput.setdForQ(combinedDFor);
+		basePos.setaForQ(combinedAFor);
+		basePos.setcForQ(combinedCFor);
+		basePos.setgForQ(combinedGFor);
+		basePos.settForQ(combinedTFor);
+		basePos.setdForQ(combinedDFor);
 
-		posInput.setaRevQ(combinedARev);
-		posInput.setcRevQ(combinedCRev);
-		posInput.setgRevQ(combinedGRev);
-		posInput.settRevQ(combinedTRev);
-		posInput.setdRevQ(combinedDRev);
+		basePos.setaRevQ(combinedARev);
+		basePos.setcRevQ(combinedCRev);
+		basePos.setgRevQ(combinedGRev);
+		basePos.settRevQ(combinedTRev);
+		basePos.setdRevQ(combinedDRev);
 
-		posInput.setId(key.toString().split(":")[0]);
+		basePos.setId(key.toString().split(":")[0]);
 		
 		int pos = Integer.valueOf(key.toString().split(":")[1]);
 		
-		posInput.setPos(pos);
+		basePos.setPos(pos);
 
 		if (pos > 0 && pos <= reference.length()) {
 
@@ -108,7 +109,7 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 			
 			line.setRef(ref);
 
-			line.analysePosition(posInput);
+			line.analysePosition(basePos);
 
 			context.write(null, new Text(line.toRawString()));
 

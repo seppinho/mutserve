@@ -61,8 +61,11 @@ public class PileupCombiner extends Reducer<Text, BasePositionHadoop, Text, Base
 		valueOut.setdRevQ(combinedDRev);
 
 		BasePositionHadoop baseHadoop = new BasePositionHadoop();
+		
 		baseHadoop.setBasePosition(valueOut);
+		
 		context.write(key, baseHadoop);
+		
 	};
 
 }
