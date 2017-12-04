@@ -18,6 +18,7 @@ import genepi.hadoop.io.HdfsLineWriter;
 import genepi.mut.objects.BasePosition;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.util.ReferenceUtil;
+import genepi.mut.util.ReferenceUtilHdfs;
 import genepi.mut.util.StatUtil;
 
 public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
@@ -38,7 +39,7 @@ public class PileupReducer extends Reducer<Text, BasePosition, Text, Text> {
 
 		CacheStore cache = new CacheStore(context.getConfiguration());
 		File referencePath = new File(cache.getArchive("reference"));
-		String fastaPath = ReferenceUtil.findFileinDir(referencePath, ".fasta");
+		String fastaPath = ReferenceUtilHdfs.findFileinDir(referencePath, ".fasta");
 		reference = ReferenceUtil.readInReference(fastaPath);
 		
 		//default is to ignore deletions

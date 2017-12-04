@@ -14,7 +14,7 @@ import genepi.io.FileUtil;
 import genepi.mut.Server;
 import genepi.mut.align.AlignTool;
 import genepi.mut.objects.BasePosition;
-import genepi.mut.util.ReferenceUtil;
+import genepi.mut.util.ReferenceUtilHdfs;
 
 public class SingleAlignerJob extends HadoopJob {
 
