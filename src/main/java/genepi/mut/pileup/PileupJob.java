@@ -19,7 +19,7 @@ import genepi.mut.Server;
 import genepi.mut.align.AlignTool;
 import genepi.mut.align.paired.PairedAlignerJob;
 import genepi.mut.objects.BasePosition;
-import genepi.mut.objects.BasePosition2;
+import genepi.mut.objects.BasePositionHadoop;
 
 public class PileupJob extends HadoopJob {
 
@@ -59,7 +59,7 @@ public class PileupJob extends HadoopJob {
 		job.setCombinerClass(PileupCombiner.class);
 		job.setReducerClass(PileupReducer.class);
 		job.setMapOutputKeyClass(Text.class);
-		job.setMapOutputValueClass(BasePosition2.class);
+		job.setMapOutputValueClass(BasePositionHadoop.class);
 
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(Text.class);

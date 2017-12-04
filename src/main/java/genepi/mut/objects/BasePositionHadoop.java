@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.apache.hadoop.io.Writable;
 
-public class BasePosition2 extends BasePosition implements Writable {
+public class BasePositionHadoop extends BasePosition implements Writable {
 
 	@Override
 	public void readFields(DataInput arg0) throws IOException {
