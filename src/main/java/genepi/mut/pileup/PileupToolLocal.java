@@ -1,14 +1,12 @@
 package genepi.mut.pileup;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.broadinstitute.gatk.tools.walkers.fasta.FastaSequence;
 
 import genepi.base.Tool;
 import genepi.io.FileUtil;
@@ -20,10 +18,8 @@ import htsjdk.samtools.SAMRecordIterator;
 import htsjdk.samtools.SamReader;
 import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.ValidationStringency;
-import htsjdk.samtools.reference.FastaSequenceFile;
 import htsjdk.samtools.reference.FastaSequenceIndex;
 import htsjdk.samtools.reference.FastaSequenceIndexCreator;
-import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 
 public class PileupToolLocal extends Tool {
 

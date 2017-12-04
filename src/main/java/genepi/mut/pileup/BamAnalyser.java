@@ -6,7 +6,6 @@ import org.broadinstitute.gatk.utils.baq.BAQ;
 import genepi.mut.objects.BasePosition;
 import genepi.mut.util.BaqAlt;
 import genepi.mut.util.ReferenceUtil;
-import genepi.mut.util.ReferenceUtilHdfs;
 import htsjdk.samtools.CigarElement;
 import htsjdk.samtools.CigarOperator;
 import htsjdk.samtools.SAMRecord;
