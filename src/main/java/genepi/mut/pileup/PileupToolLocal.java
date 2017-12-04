@@ -131,6 +131,7 @@ public class PileupToolLocal extends Tool {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return 0;
 		}
 		System.out.println("Fin.");
 		return 0;
