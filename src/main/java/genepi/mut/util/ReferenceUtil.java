@@ -1,12 +1,8 @@
 package genepi.mut.util;
 
-import htsjdk.samtools.SAMSequenceDictionary;
-import htsjdk.samtools.SAMSequenceRecord;
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord.SAMTagAndValue;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -15,12 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-
-import genepi.hadoop.HdfsUtil;
 
 public class ReferenceUtil {
 	
@@ -84,57 +74,4 @@ public class ReferenceUtil {
 		return hotSpots.contains(pos);
 	}
 	
-	
-	
-	public static Reference determineReference(String input) {
-
-		FileStatus[] fileList = null;
-		FileSystem fileSystem = null;
-		Reference ref = Reference.UNKNOWN;
-		int rcrs = 0, hg19 = 0;
-
-		try {
-
-			fileSystem = FileSystem.get(HdfsUtil.getConfiguration());
-			fileList = fileSystem.listStatus(new Path(input));
-
-			for (FileStatus file : fileList) {
-
-				FSDataInputStream in = fileSystem.open(file.getPath());
-
-				// check for length
-				SAMFileReader reader = new SAMFileReader(in);
-				SAMSequenceDictionary dict = reader.getFileHeader()
-						.getSequenceDictionary();
-
-				for (SAMSequenceRecord record : dict.getSequences()) {
-					if (record.getSequenceLength() == 16571) {
-						ref = Reference.hg19;
-						hg19++;
-						in.close();
-						reader.close();
-					}
-					if (record.getSequenceLength() == 16569) {
-						ref = Reference.rcrs;
-						rcrs++;
-						in.close();
-						reader.close();
-					}
-				}
-				
-				in.close();
-				reader.close();
-
-			}
-			
-			if(rcrs > 0 && hg19 > 0){
-				ref = Reference.MISLEADING;
-			}
-			
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		}
-		return ref;
-	}
-
 }
