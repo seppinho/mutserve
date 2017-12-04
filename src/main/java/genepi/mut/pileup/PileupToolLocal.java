@@ -120,6 +120,7 @@ public class PileupToolLocal extends Tool {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				return 0;
 			}
 
 			System.out.println("Took " + (System.currentTimeMillis() - start) / 1000 + " sec");
@@ -131,7 +132,6 @@ public class PileupToolLocal extends Tool {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return 0;
 		}
 		System.out.println("Fin.");
 		return 0;
