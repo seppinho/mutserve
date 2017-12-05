@@ -286,6 +286,7 @@ public class MutationServerTest {
 		context.setOutput("variantsLocal", "test-data/tmp/variantsLocal1000G");
 		context.setOutput("baq", "true");
 		context.setOutput("callDel", "false");
+		context.setOutput("level", "0.01");
 		
 		boolean result = pileUp.run(context);
 		assertTrue(result);
@@ -325,6 +326,8 @@ public class MutationServerTest {
 		String hdfsFolder = "input2";
 		String type = "bam";
 		
+		String level = "0.01";
+		
 		String refPath = "test-data/mtdna/mixtures/reference/rCRS.fasta";
 		String sanger = "test-data/mtdna/mixtures/expected/sanger.txt";
 
@@ -340,18 +343,19 @@ public class MutationServerTest {
 		context.setOutput("variantsLocal", "test-data/tmp/variantsLocalMixture3");
 		context.setOutput("baq", "true");
 		context.setOutput("callDel", "false");
+		context.setOutput("level", level);
 		
 		boolean result = pileUp.run(context);
 		assertTrue(result);
 
-		double hetLevel = 0.01;
-
+		
+		
 		RawFileAnalyser analyser = new RawFileAnalyser();
 		analyser.setCallDel(false);
 		
 		try {
-			ArrayList<QCMetric> list = analyser.analyseFile("test-data/tmp/rawLocalMixture3", refPath, sanger,
-					hetLevel);
+			ArrayList<QCMetric> list = analyser.calculateLowLevelForTest("test-data/tmp/rawLocalMixture3", refPath, sanger,
+					Double.valueOf(level));
 
 			assertTrue(list.size() == 1);
 

@@ -47,6 +47,11 @@ mapred:
       type: local-file
       visible: true
 
+    - id: reference
+      description: Reference Fasta 
+      type: local-file
+      visible: true
+
     - id: inType
       description: Input Format
       type: list
@@ -60,7 +65,7 @@ mapred:
     - id: level
       description: Detection Level in %
       type: number
-      value: 0.9
+      value: 0.01
       visible: true
       
     - id: mapQuality

@@ -142,6 +142,10 @@ public class PileupJob extends HadoopJob {
 	public void setBAQ(boolean baq) {
 		set("baq", baq);
 	}
+	
+	public void setLevel(String level) {
+		set("level", level);
+	}
 
 	public void setCallDel(boolean callDel) {
 		set("callDel", callDel);

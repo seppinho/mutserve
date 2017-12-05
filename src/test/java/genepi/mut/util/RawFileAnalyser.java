@@ -26,7 +26,7 @@ public class RawFileAnalyser {
 	private boolean callDel;
 	
 	
-	public ArrayList<QCMetric> analyseFile(String in, String refpath, String sangerpos, double hetLevel) throws MathException {
+	public ArrayList<QCMetric> calculateLowLevelForTest(String in, String refpath, String sangerpos, double hetLevel) throws MathException {
 
 		ArrayList<QCMetric> metrics = new ArrayList<QCMetric>();
 		
@@ -82,12 +82,8 @@ public class RawFileAnalyser {
 
 							int position = line.getPosition();
 							
-							line.determineLowLevelVariant();
+							line.determineLowLevelVariant(hetLevel);
 							
-							// only execute if no low-level variant has been detected
-							if (line.getVariantType() == 0) {
-								line.determineVariants();
-							}
 							
 							if (line.getVariantType() == VariantLine.LOW_LEVEL_VARIANT || (callDel && line.getVariantType() == VariantLine.LOW_LEVEL_DELETION)) {
 

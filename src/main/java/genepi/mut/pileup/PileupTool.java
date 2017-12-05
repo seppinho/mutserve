@@ -1,13 +1,10 @@
 package genepi.mut.pileup;
 
-import genepi.hadoop.HdfsUtil;
 import genepi.hadoop.PreferenceStore;
 import genepi.hadoop.common.WorkflowContext;
-import genepi.hadoop.io.HdfsLineWriter;
 import genepi.mut.util.HadoopJobStep;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -35,6 +32,7 @@ public class PileupTool extends HadoopJobStep {
 		String baseQual = context.get("baseQuality");
 		String alignQual = context.get("alignQuality");
 		String archive = context.get("archive");
+		String level = context.get("level");
 		Boolean baq = Boolean.valueOf(context.get("baq"));
 		Boolean callDel = Boolean.valueOf(context.get("callDel"));
 
@@ -67,6 +65,7 @@ public class PileupTool extends HadoopJobStep {
 		bamJob.setBaseQuality(baseQual);
 		bamJob.setAlignmentQuality(alignQual);
 		bamJob.setBAQ(baq);
+		bamJob.setLevel(level);
 		bamJob.setCallDel(callDel);
 		bamJob.setArchive(archive);
 		bamJob.setJarByClass(PileupTool.class);

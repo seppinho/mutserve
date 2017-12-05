@@ -148,7 +148,7 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	}
 
-	public void analysePosition(BasePosition base) throws IOException {
+	public void analysePosition(BasePosition base, double level) throws IOException {
 
 		double aFWDPercents = 0;
 		double cFWDPercents = 0;
@@ -424,7 +424,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		this.setMinorBasePercentsREV(minorBasePercentsREV);
 
 		// TODO combine this with LLR for all bases
-		if (minorBasePercentsFWD >= 0.01 || minorBasePercentsREV >= 0.01) {
+		if (minorBasePercentsFWD >= level || minorBasePercentsREV >= level) {
 			LlrObject llr = calcLlr(base, getMinorBaseFWD(), getMinorBaseREV());
 			this.setLlrFWD(llr.getLlrFWD());
 			this.setLlrREV(llr.getLlrREV());
@@ -1186,9 +1186,9 @@ public class VariantLine implements Comparable<VariantLine> {
 		}
 	}
 
-	public void callVariants() {
+	public void callVariants(double level) {
 
-		this.determineLowLevelVariant();
+		this.determineLowLevelVariant(level);
 
 		// only execute if no low-level variant has been detected
 		if (this.getVariantType() == 0) {
@@ -1197,7 +1197,7 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	}
 
-	public void determineLowLevelVariant() {
+	public void determineLowLevelVariant(double level) {
 
 		double minorBasePercentsFWD = this.getMinorPercentsFWD();
 		double minorBasePercentsREV = this.getMinorBasePercentsREV();
@@ -1219,9 +1219,9 @@ public class VariantLine implements Comparable<VariantLine> {
 					if (checkAlleleCoverage()) {
 						/**
 						 * the raw frequency for the minor allele is no less
-						 * than 1% on both strands
+						 * than 1% on one of the strands
 						 **/
-						if (minorBasePercentsFWD >= 0.01 || minorBasePercentsREV >= 0.01) {
+						if (minorBasePercentsFWD >= level || minorBasePercentsREV >= level) {
 							/**
 							 * high-confidence heteroplasmy was defined as
 							 * candidate heteroplasmy with LLR no less than 5

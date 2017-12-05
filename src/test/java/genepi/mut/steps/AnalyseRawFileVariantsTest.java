@@ -26,7 +26,7 @@ public class AnalyseRawFileVariantsTest {
 
 			System.out.println("input file is " + input.getName());
 				try {
-					ArrayList<QCMetric> metrics = rawAnalyser.analyseFile(input.getPath(), refPath, sanger, hetLevel);
+					ArrayList<QCMetric> metrics = rawAnalyser.calculateLowLevelForTest(input.getPath(), refPath, sanger, hetLevel);
 					for(QCMetric  metric : metrics){
 						assertEquals(100, metric.getPrecision(), 0);
 						assertEquals(59.259, metric.getSensitivity(), 0.1);

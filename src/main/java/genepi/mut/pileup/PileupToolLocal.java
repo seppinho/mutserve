@@ -32,6 +32,7 @@ public class PileupToolLocal extends Tool {
 		addParameter("input", "input bam folder", Tool.STRING);
 		addParameter("outputRaw", "output raw file", Tool.STRING);
 		addParameter("outputVar", "output variants file", Tool.STRING);
+		addParameter("detectionLevel", "detection level", Tool.DOUBLE);
 		addParameter("reference", "reference as fasta", Tool.STRING);
 		addParameter("indel", "call indels?", Tool.STRING);
 		addParameter("baq", "apply BAQ?", Tool.STRING);
@@ -59,6 +60,8 @@ public class PileupToolLocal extends Tool {
 		String indel = (String) getValue("indel");
 
 		String baq = (String) getValue("baq");
+
+		double level = (double) getValue("detectionLevel");
 
 		int baseQ = (int) getValue("baseQ");
 
@@ -119,7 +122,7 @@ public class PileupToolLocal extends Tool {
 
 				analyseReads(file, analyser);
 
-				determineVariants(analyser, writerRaw, writerVar, Boolean.valueOf(indel));
+				determineVariants(analyser, writerRaw, writerVar, level, Boolean.valueOf(indel));
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -164,8 +167,8 @@ public class PileupToolLocal extends Tool {
 	}
 
 	// reducer
-	private void determineVariants(BamAnalyser analyser, LineWriter writerRaw, LineWriter writerVar, boolean indel)
-			throws IOException {
+	private void determineVariants(BamAnalyser analyser, LineWriter writerRaw, LineWriter writerVar, double level,
+			boolean indel) throws IOException {
 
 		HashMap<String, BasePosition> counts = analyser.getCounts();
 
@@ -193,9 +196,9 @@ public class PileupToolLocal extends Tool {
 
 				line.setRef(ref);
 
-				line.analysePosition(basePos);
+				line.analysePosition(basePos, level);
 
-				line.callVariants();
+				line.callVariants(level);
 
 				if (line.isFinalVariant()) {
 					writerVar.write(line.writeVariant());
@@ -218,8 +221,8 @@ public class PileupToolLocal extends Tool {
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
-				"--outputVar", outputVar, "--outputRaw", outputRaw, "--baq", "true", "--indel", "false", "--baseQ",
-				"20", "--mapQ", "20", "--alignQ", "30" });
+				"--outputVar", outputVar, "--outputRaw", outputRaw, "--detectionLevel", "0.01", "--baq", "true",
+				"--indel", "false", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
 
 		pileup.start();
 

@@ -28,6 +28,8 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 	HdfsLineWriter writer;
 
 	boolean callDel;
+	
+	double level; 
 
 	protected void setup(Context context) throws IOException, InterruptedException {
 
@@ -40,6 +42,9 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 		
 		//default is to ignore deletions
 		callDel = context.getConfiguration().getBoolean("callDel", false);
+		
+		//default is to ignore deletions
+		level = context.getConfiguration().getDouble("level", 0.01);
 
 		hdfsVariants = context.getConfiguration().get("variantsHdfs");
 		HdfsUtil.create(hdfsVariants + "/" + context.getTaskAttemptID());
@@ -109,11 +114,13 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 			
 			line.setRef(ref);
 
-			line.analysePosition(basePos);
+			//level needed for LLR
+			line.analysePosition(basePos, level);
 
 			context.write(null, new Text(line.toRawString()));
 
-			line.callVariants();
+			//level needed for actual calling
+			line.callVariants(level);
 
 			if (line.isFinalVariant()) {
 				writer.write(line.writeVariant());
