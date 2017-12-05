@@ -1,9 +1,9 @@
 [![Build Status](https://travis-ci.org/seppinho/mutation-server.svg?branch=master)](https://travis-ci.org/seppinho/mutation-server)
 [![Twitter Follow](https://img.shields.io/twitter/follow/mtdnaserver.svg?style=social&label=Follow)](https://twitter.com/mtdnaserver)
 
-# Mutation Server (aka mtDNA-Server)
+# CNV Mutation Server (aka mtDNA-Server)
 
-Mutation Server is a [cloud service](https://mtdna-server.uibk.ac.at) to detects variants and heteroplasmies in mitochondrial DNA in NGS data. 
+CNV Mutation Server is a [cloud service](https://mtdna-server.uibk.ac.at) to detect variants and heteroplasmies in mitochondrial NGS DNA. 
 
 ## Citation
 
@@ -19,6 +19,8 @@ java -jar target/cnv-mutation-server-1.0.jar  analyse-local --input <input-folde
 ```
 
 ## Included workflow steps:
+
+The following steps are available online. For local execution, only the Pileup step is executed:
 
 * Align: Aligning single-end and paired-end reads with BWA. It uses the JNI bindings from [JBWA](https://github.com/lindenb/jbwa). 
 * Sort: Sorting aligned reads and creating a BAM file. It uses the secondary sort mechanism of Hadoop. 
