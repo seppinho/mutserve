@@ -11,7 +11,7 @@ If you use the service, please cite [this paper](http://nar.oxfordjournals.org/c
 
 ## Run mtDNA-Server locally
 
-For local executions, pleas use BAM files as an input.
+For local execution, please use BAM files as an input.
 
 * git clone https://github.com/seppinho/mutation-server
 * maven install -Dmaven.test.skip=true
@@ -32,6 +32,6 @@ The following steps are available online. For local execution, only the Pileup s
 
 ## Checkout and contribute
 
-* Check out repository  
+* git clone https://github.com/seppinho/mutation-server
 * Import Maven project into Eclipse
 * maven install
