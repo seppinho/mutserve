@@ -1,6 +1,7 @@
 package genepi.mut.pileup;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -84,8 +85,6 @@ public class PileupToolLocal extends Tool {
 			return 0;
 		}
 
-		File[] files = folderIn.listFiles();
-
 		try {
 
 			File outRaw = new File(outputRaw);
@@ -118,6 +117,12 @@ public class PileupToolLocal extends Tool {
 
 		long start = System.currentTimeMillis();
 
+		File[] files = folderIn.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.toLowerCase().endsWith(".bam");
+			}
+		});
+		
 		for (File file : files) {
 
 			BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, Boolean.valueOf(baq),

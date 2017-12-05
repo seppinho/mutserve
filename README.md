@@ -10,12 +10,15 @@ CNV Mutation Server is a [cloud service](https://mtdna-server.uibk.ac.at) to det
 If you use the service, please cite [this paper](http://nar.oxfordjournals.org/content/early/2016/04/15/nar.gkw247.full).
 
 ## Run mtDNA-Server locally
+
+for local executions, pleas use BAM files as an input.
+
 * git clone https://github.com/seppinho/mutation-server
 * maven install -Dmaven.test.skip=true
-* Run the jar
+* Run the jar like this:
 
 ```
-java -jar target/cnv-mutation-server-1.0.jar  analyse-local --input <input-folder> --baq true --baseQ 20 --indel false --mapQ 20 --alignQ 30 --reference <rCRS fasta file> --level 0.01 --outputRaw raw.txt --outputVar var.txt
+java -jar target/cnv-mutation-server-1.0.jar  analyse-local --input <input-bam-folder> --baq true --baseQ 20 --indel false --mapQ 20 --alignQ 30 --reference <rCRS fasta file> --level 0.01 --outputRaw raw.txt --outputVar var.txt
 ```
 
 ## Included workflow steps:
