@@ -11,7 +11,7 @@ If you use the service, please cite [this paper](http://nar.oxfordjournals.org/c
 
 ## Run mtDNA-Server locally
 
-for local executions, pleas use BAM files as an input.
+For local executions, pleas use BAM files as an input.
 
 * git clone https://github.com/seppinho/mutation-server
 * maven install -Dmaven.test.skip=true
