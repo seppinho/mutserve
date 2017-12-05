@@ -14,7 +14,7 @@ If you use the service, please cite [this paper](http://nar.oxfordjournals.org/c
 For local execution, please use BAM files as an input.
 
 * git clone https://github.com/seppinho/mutation-server
-* maven install -Dmaven.test.skip=true
+* mvn install -Dmaven.test.skip=true
 * Run the jar like this:
 
 ```
