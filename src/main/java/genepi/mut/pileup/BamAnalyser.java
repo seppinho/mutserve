@@ -13,13 +13,17 @@ import htsjdk.samtools.reference.FastaSequenceIndex;
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 
 public class BamAnalyser {
-	
+
+	final static String headerRaw = "SAMPLE\tPOS\tREF\tTOP-FWD\tMINOR-FWD\tTOP-REV\tMINOR-REV\tCOV-FWD\tCOV-REV\tCOV-TOTAL\tTYPE\tLEVEL\t%A\t%C\t%G\t%T\t%D\t%N\t%a\t%c\t%g\t%t\t%d\t%n\tTOP-FWD-PERCENT\tTOP-REV-PERCENT\tMINOR-FWD-PERCENT\tMINOR-REV-PERCENT\tLLRFWD\tLLRREV\tLLRAFWD\tLLRCFWD\tLLRGFWD\tLLRTFWD\tLLRAREV\tLLRCREV\tLLRGREV\tLLRTREV\tLLRDFWD\tLLRDREV";
+
+	final static String headerVariants = "SampleID\tPos\tRef\tVariant\tMajor/Minor\tVariant-Level\tCoverage-FWD\tCoverage-Rev\tCoverage-Total";
+
 	HashMap<String, BasePosition> counts;
 
 	IndexedFastaSequenceFile refReader;
-	
+
 	String filename;
-	
+
 	String referenceString;
 
 	BaqAlt baqHMMAltered;
@@ -44,43 +48,40 @@ public class BamAnalyser {
 
 	public BamAnalyser(String file, String fastaPath) {
 
-		 this(file, fastaPath, 20, 20, 30, true, "mtdna");
-		
+		this(file, fastaPath, 20, 20, 30, true, "mtdna");
+
 	}
 
-	public BamAnalyser(String filename, String fastaPath, int baseQual, int mapQual, int alignQual, boolean baq, String version) {
-		
+	public BamAnalyser(String filename, String fastaPath, int baseQual, int mapQual, int alignQual, boolean baq,
+			String version) {
+
 		this.referenceString = ReferenceUtil.readInReference(fastaPath);
-		
-		this.refReader = new IndexedFastaSequenceFile(new File(fastaPath), new FastaSequenceIndex(new File(fastaPath+".fai")));
+
+		this.refReader = new IndexedFastaSequenceFile(new File(fastaPath),
+				new FastaSequenceIndex(new File(fastaPath + ".fai")));
 
 		this.counts = new HashMap<String, BasePosition>(referenceString.length());
-		
+
 		this.baseQual = baseQual;
 
 		this.mapQual = mapQual;
 
 		this.alignQual = alignQual;
-		
+
 		this.filename = filename;
 
 		this.baq = baq;
 
 		this.version = version;
-		
-		System.out.println("base quality -> " + baseQual);
-		System.out.println("map quality -> " + mapQual);
-		System.out.println("align quality -> " + alignQual);
-		System.out.println("baq -> " + baq);
 
 		if (version.equalsIgnoreCase(versionEnum.MTDNA.name())) {
-			
+
 			baqHMMAltered = new BaqAlt(1e-4, 1e-2, 7, (byte) 0, true);
 
 		} else {
 
 			System.out.println("BAQ default");
-			
+
 			baqHMM = new BAQ(1e-4, 1e-2, 7, (byte) 0, true);
 		}
 
@@ -117,9 +118,9 @@ public class BamAnalyser {
 		}
 
 		if (baq) {
-			
+
 			if (version.equalsIgnoreCase(versionEnum.MTDNA.name())) {
-				
+
 				baqHMMAltered.baqRead(samRecord, refReader,
 						genepi.mut.util.BaqAlt.CalculationMode.CALCULATE_AS_NECESSARY,
 						genepi.mut.util.BaqAlt.QualityMode.OVERWRITE_QUALS);
@@ -143,8 +144,8 @@ public class BamAnalyser {
 
 				// context.getCounter("mtdna", "GOOD-QUAL").increment(1);
 
-				String key = filename+":"+currentPos;
-				
+				String key = filename + ":" + currentPos;
+
 				BasePosition basePos = counts.get(key);
 
 				if (basePos == null) {
@@ -222,8 +223,8 @@ public class BamAnalyser {
 				Integer cigarElementEnd = currentReferencePos + cigarElementLength;
 
 				while (cigarElementStart < cigarElementEnd) {
-					
-					String key = filename+":"+cigarElementStart;
+
+					String key = filename + ":" + cigarElementStart;
 
 					BasePosition basePos = counts.get(key);
 

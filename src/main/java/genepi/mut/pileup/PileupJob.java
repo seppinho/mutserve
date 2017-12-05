@@ -1,11 +1,7 @@
 package genepi.mut.pileup;
 
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.util.List;
 
-import org.apache.commons.compress.utils.IOUtils;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.CounterGroup;
 import org.apache.hadoop.mapreduce.Job;
@@ -15,10 +11,7 @@ import org.seqdoop.hadoop_bam.AnySAMInputFormat;
 import genepi.hadoop.CacheStore;
 import genepi.hadoop.HadoopJob;
 import genepi.hadoop.HdfsUtil;
-import genepi.mut.Server;
 import genepi.mut.align.AlignTool;
-import genepi.mut.align.paired.PairedAlignerJob;
-import genepi.mut.objects.BasePosition;
 import genepi.mut.objects.BasePositionHadoop;
 
 public class PileupJob extends HadoopJob {
@@ -41,7 +34,7 @@ public class PileupJob extends HadoopJob {
 	private long filtered;
 	private long unfiltered;
 	private long fwdRead, revRead;
-
+	
 	public PileupJob(String name) {
 		super(name);
 		set("mapred.map.tasks.speculative.execution", false);
@@ -85,12 +78,10 @@ public class PileupJob extends HadoopJob {
 
 		try {
 			// write raw file
-			String headerRaw = "SAMPLE\tPOS\tREF\tTOP-FWD\tMINOR-FWD\tTOP-REV\tMINOR-REV\tCOV-FWD\tCOV-REV\tCOV-TOTAL\tTYPE\tLEVEL\t%A\t%C\t%G\t%T\t%D\t%N\t%a\t%c\t%g\t%t\t%d\t%n\tTOP-FWD-PERCENT\tTOP-REV-PERCENT\tMINOR-FWD-PERCENT\tMINOR-REV-PERCENT\tLLRFWD\tLLRREV\tLLRAFWD\tLLRCFWD\tLLRGFWD\tLLRTFWD\tLLRAREV\tLLRCREV\tLLRGREV\tLLRTREV\tLLRDFWD\tLLRDREV";
-			HdfsUtil.mergeFolderBinary(pathRawLocal, super.getOutput(), headerRaw);
+			HdfsUtil.mergeFolderBinary(pathRawLocal, super.getOutput(), BamAnalyser.headerRaw);
 
 			// write variants file
-			String header = "SampleID\tPos\tRef\tVariant\tMajor/Minor\tVariant-Level\tCoverage-FWD\tCoverage-Rev\tCoverage-Total";
-			HdfsUtil.mergeFolderBinary(pathVariantsLocal, pathVariantsHDFS, header);
+			HdfsUtil.mergeFolderBinary(pathVariantsLocal, pathVariantsHDFS, BamAnalyser.headerVariants);
 
 			CounterGroup counters = job.getCounters().getGroup("mtdna");
 			overall = counters.findCounter("OVERALL-READS").getValue();

@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
-
 import genepi.base.Tool;
 import genepi.io.FileUtil;
 import genepi.io.text.LineWriter;
@@ -31,7 +30,8 @@ public class PileupToolLocal extends Tool {
 	public void createParameters() {
 
 		addParameter("input", "input bam folder", Tool.STRING);
-		addParameter("output", "output folder", Tool.STRING);
+		addParameter("outputRaw", "output raw file", Tool.STRING);
+		addParameter("outputVar", "output variants file", Tool.STRING);
 		addParameter("reference", "reference as fasta", Tool.STRING);
 		addParameter("indel", "call indels?", Tool.STRING);
 		addParameter("baq", "apply BAQ?", Tool.STRING);
@@ -52,7 +52,9 @@ public class PileupToolLocal extends Tool {
 
 		String input = (String) getValue("input");
 
-		String output = (String) getValue("output");
+		String outputRaw = (String) getValue("outputRaw");
+
+		String outputVar = (String) getValue("outputVar");
 
 		String indel = (String) getValue("indel");
 
@@ -66,52 +68,68 @@ public class PileupToolLocal extends Tool {
 
 		String refPath = (String) getValue("reference");
 
-		LineWriter writer = null;
+		LineWriter writerRaw = null;
+
+		LineWriter writerVar = null;
 
 		File folderIn = new File(input);
 
-		File folderOut = new File(output);
+		if (!folderIn.exists()) {
 
-		if (!folderIn.exists() || !folderOut.exists()) {
-
-			System.out.println("Please check if input/output folders exist");
-			System.out.println("input: " + folderIn.getAbsolutePath());
-			System.out.println("output: " + folderOut.getAbsolutePath());
+			System.out.println("Please check if input exists");
+			System.out.println(folderIn.getAbsolutePath());
 			return 0;
+		}
+
+		Path fastaPath = new File(refPath).toPath();
+		FastaSequenceIndex fg;
+		try {
+			fg = FastaSequenceIndexCreator.buildFromFasta(fastaPath);
+			fg.write(new File(refPath + ".fai").toPath());
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
 		}
 
 		File[] files = folderIn.listFiles();
 
 		try {
 
-			String timeStamp = new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
+			File outRaw = new File(outputRaw);
 
-			String outputFiltered = FileUtil.path(output, "variants_" + timeStamp + ".txt");
+			File outVar = new File(outputVar);
 
-			writer = new LineWriter(outputFiltered);
+			outRaw.getParentFile().mkdirs();
 
-			writer.write(
-					"SampleID\tPos\tRef\tVariant\tMajor/Minor\tVariant-Level\tCoverage-FWD\tCoverage-Rev\tCoverage-Total");
+			outVar.getParentFile().mkdirs();
+
+			writerRaw = new LineWriter(outRaw.getAbsolutePath());
+
+			writerVar = new LineWriter(outVar.getAbsolutePath());
+
+			writerRaw.write(BamAnalyser.headerRaw);
+
+			writerVar.write(BamAnalyser.headerVariants);
 
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
+		long start = System.currentTimeMillis();
+
 		for (File file : files) {
-
-			long start = System.currentTimeMillis();
-
-			System.out.println(" Processing: " + file.getName());
 
 			BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, Boolean.valueOf(baq),
 					version);
+			
+			System.out.println(" Processing: " + file.getName());
 
 			try {
 
 				analyseReads(file, analyser);
 
-				determineVariants(analyser, writer, Boolean.valueOf(indel));
+				determineVariants(analyser, writerRaw, writerVar, Boolean.valueOf(indel));
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -119,17 +137,19 @@ public class PileupToolLocal extends Tool {
 				return 0;
 			}
 
-			System.out.println("Took " + (System.currentTimeMillis() - start) / 1000 + " sec");
-
 		}
 
 		try {
-			writer.close();
+			writerVar.close();
+			writerRaw.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Fin.");
+
+		System.out.println("Raw file written to " + new File(outputRaw).getAbsolutePath());
+		System.out.println("Variants file written to " + new File(outputVar).getAbsolutePath());
+		System.out.println("Time: " + (System.currentTimeMillis() - start) / 1000 + " sec");
 		return 0;
 	}
 
@@ -154,7 +174,8 @@ public class PileupToolLocal extends Tool {
 	}
 
 	// reducer
-	private void determineVariants(BamAnalyser analyser, LineWriter writer, boolean indel) throws IOException {
+	private void determineVariants(BamAnalyser analyser, LineWriter writerRaw, LineWriter writerVar, boolean indel)
+			throws IOException {
 
 		HashMap<String, BasePosition> counts = analyser.getCounts();
 
@@ -187,8 +208,12 @@ public class PileupToolLocal extends Tool {
 				line.callVariants();
 
 				if (line.isFinalVariant()) {
-					writer.write(line.writeVariant());
+					writerVar.write(line.writeVariant());
 				}
+
+				// raw data
+				String raw = line.toRawString();
+				writerRaw.write(raw);
 
 			}
 
@@ -198,20 +223,13 @@ public class PileupToolLocal extends Tool {
 	public static void main(String[] args) {
 
 		String input = "test-data/mtdna/bam/input/";
+		String outputVar = "test-data/tmp/out_var.txt";
+		String outputRaw = "test-data/tmp/out_raw.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
-		try {
-			Path fastaPath = new File(fasta).toPath();
-			FastaSequenceIndex fg = FastaSequenceIndexCreator.buildFromFasta(fastaPath);
-			fg.write(new File(fasta + ".fai").toPath());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		PileupToolLocal pileup = new PileupToolLocal(
-				new String[] { "--input", input, "--reference", fasta, "--output", "testdata/tmp", "--baq", "true",
-						"--indel", "false", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
+		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
+				"--outputVar", outputVar, "--outputRaw", outputRaw, "--baq", "true", "--indel", "false", "--baseQ",
+				"20", "--mapQ", "20", "--alignQ", "30" });
 
 		pileup.start();
 
