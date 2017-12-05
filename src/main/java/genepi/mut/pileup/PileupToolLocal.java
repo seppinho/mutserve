@@ -79,7 +79,7 @@ public class PileupToolLocal extends Tool {
 
 		if (!folderIn.exists()) {
 
-			System.out.println("Please check if input exists");
+			System.out.println("Please check if input folder exists");
 			System.out.println(folderIn.getAbsolutePath());
 			return 0;
 		}
@@ -92,9 +92,16 @@ public class PileupToolLocal extends Tool {
 
 			File outVar = new File(outputVar);
 
-			outRaw.getParentFile().mkdirs();
+			File parentRaw = outRaw.getParentFile();
+			File parentVar = outVar.getParentFile();
 
-			outVar.getParentFile().mkdirs();
+			if (parentRaw != null) {
+				outRaw.getParentFile().mkdirs();
+			}
+
+			if (parentVar != null) {
+				outVar.getParentFile().mkdirs();
+			}
 
 			writerRaw = new LineWriter(outRaw.getAbsolutePath());
 
@@ -221,8 +228,8 @@ public class PileupToolLocal extends Tool {
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
-				"--outputVar", outputVar, "--outputRaw", outputRaw, "--detectionLevel", "0.01", "--baq", "true",
-				"--indel", "false", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
+				"--outputVar", outputVar, "--outputRaw", outputRaw, "--level", "0.01", "--baq", "true", "--indel",
+				"false", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
 
 		pileup.start();
 

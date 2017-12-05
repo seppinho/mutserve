@@ -4,6 +4,11 @@
 
 Mutation Server detects variants and heteroplasmies in mitochondrial DNA. Users can specify FASTQ (Single-End or Paired-End), BAM and CRAM files as an input and receive annotated variants in return. To provide it as a service to everyone, [Cloudgene](http://cloudgene.uibk.ac.at) has been used. The underlying methods have been applied to mitochondrial DNA ([see publication](http://nar.oxfordjournals.org/content/early/2016/04/15/nar.gkw247.full)).
 
+
+## Run mtDNA-Server locally
+* git clone https://github.com/seppinho/mutation-server
+* maven install -Dmaven.test.skip=true
+
 ## Included workflow steps:
 
 * Align: Aligning single-end and paired-end reads with BWA. It uses the JNI bindings from [JBWA](https://github.com/lindenb/jbwa). 
