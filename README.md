@@ -2,12 +2,19 @@
 
 # Mutation Server (aka mtDNA-Server)
 
-Mutation Server is a cloud service available [here](https://mtdna-server.uibk.ac.at). It detects variants and heteroplasmies in mitochondrial DNA. Users can specify FASTQ (Single-End or Paired-End), BAM and CRAM files as an input and receive annotated variants in return. The underlying methods have been applied to mitochondrial DNA ([see publication](http://nar.oxfordjournals.org/content/early/2016/04/15/nar.gkw247.full)).
+Mutation Server is a cloud service and currently available for mitochondrial DNA (mtDNA) [here](https://mtdna-server.uibk.ac.at). It detects variants and heteroplasmies in mitochondrial DNA. Users can specify FASTQ (Single-End or Paired-End), BAM and CRAM files as an input and receive annotated variants in return. 
 
 
 ## Run mtDNA-Server locally
 * git clone https://github.com/seppinho/mutation-server
 * maven install -Dmaven.test.skip=true
+
+## Citation
+
+
+Please cite [this paper](http://nar.oxfordjournals.org/content/early/2016/04/15/nar.gkw247.full) paper if you use the service.
+
+
 
 ## Included workflow steps:
 
