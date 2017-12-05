@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.seqdoop.hadoop_bam.BAMRecordReader;
 import org.seqdoop.hadoop_bam.FastqInputFormat;
 
 import genepi.hadoop.CacheStore;
@@ -14,7 +15,6 @@ import genepi.io.FileUtil;
 import genepi.mut.Server;
 import genepi.mut.align.AlignTool;
 import genepi.mut.objects.BasePosition;
-import genepi.mut.util.ReferenceUtilHdfs;
 
 public class SingleAlignerJob extends HadoopJob {
 
@@ -33,7 +33,7 @@ public class SingleAlignerJob extends HadoopJob {
 	@Override
 	public void setupJob(Job job) {
 
-		job.setJarByClass(SingleAlignerJob.class);
+		job.setJarByClass(BAMRecordReader.class);
 		job.setInputFormatClass(FastqInputFormat.class);
 		job.setMapperClass(SingleAlignerMap.class);
 		job.setNumReduceTasks(0);

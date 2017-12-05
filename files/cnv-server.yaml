@@ -44,12 +44,7 @@ mapred:
 
     - id: archive
       description: Reference Archive (tar.gz)
-      type: local-file
-      visible: true
-
-    - id: reference
-      description: Reference Fasta 
-      type: local-file
+      type: hdfs-file
       visible: true
 
     - id: inType

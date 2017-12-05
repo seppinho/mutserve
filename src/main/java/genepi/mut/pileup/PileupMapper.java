@@ -5,7 +5,6 @@ import genepi.hadoop.PreferenceStore;
 import genepi.mut.objects.BasePosition;
 import genepi.mut.objects.BasePositionHadoop;
 import genepi.mut.util.ReferenceUtil;
-import genepi.mut.util.ReferenceUtilHdfs;
 import htsjdk.samtools.SAMRecord;
 
 import java.io.File;
@@ -66,8 +65,8 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 		
 		File referencePath = new File(refAsArchive);
 
-		String fastaPath = ReferenceUtilHdfs.findFileinDir(referencePath, ".fasta");
-
+		String fastaPath = ReferenceUtil.findFileinDir(referencePath, ".fasta");
+		
 		analyser = new BamAnalyser(filename, fastaPath, baseQual, mapQual, alignQual, baq, version);
 
 	}

@@ -9,7 +9,6 @@ import genepi.hadoop.common.WorkflowContext;
 import genepi.mut.objects.Extracter;
 import genepi.mut.util.HadoopJobStep;
 import genepi.mut.util.ReferenceUtil;
-import genepi.mut.util.ReferenceUtilHdfs;
 
 public class SortTool extends HadoopJobStep {
 
@@ -36,7 +35,7 @@ public class SortTool extends HadoopJobStep {
 				String folder = archive.substring(0,archive.lastIndexOf("/")+1);
 				Extracter.extract(archive,folder);
 			
-				String ref = ReferenceUtilHdfs.findFileinDir(new File(folder),"fasta");
+				String ref = ReferenceUtil.findFileinDir(new File(folder),"fasta");
 				String reference = ReferenceUtil.readInReference(ref);
 				SortJob sort = new SortJob("sort-reads");
 				sort.setInput(inputs);

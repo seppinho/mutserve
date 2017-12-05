@@ -32,7 +32,7 @@ public class PileupToolLocal extends Tool {
 		addParameter("input", "input bam folder", Tool.STRING);
 		addParameter("outputRaw", "output raw file", Tool.STRING);
 		addParameter("outputVar", "output variants file", Tool.STRING);
-		addParameter("detectionLevel", "detection level", Tool.DOUBLE);
+		addParameter("level", "detection level", Tool.DOUBLE);
 		addParameter("reference", "reference as fasta", Tool.STRING);
 		addParameter("indel", "call indels?", Tool.STRING);
 		addParameter("baq", "apply BAQ?", Tool.STRING);
@@ -61,7 +61,7 @@ public class PileupToolLocal extends Tool {
 
 		String baq = (String) getValue("baq");
 
-		double level = (double) getValue("detectionLevel");
+		double level = (double) getValue("level");
 
 		int baseQ = (int) getValue("baseQ");
 

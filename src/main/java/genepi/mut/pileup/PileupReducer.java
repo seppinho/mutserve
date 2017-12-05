@@ -15,7 +15,6 @@ import genepi.mut.objects.BasePosition;
 import genepi.mut.objects.BasePositionHadoop;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.util.ReferenceUtil;
-import genepi.mut.util.ReferenceUtilHdfs;
 
 public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text> {
 
@@ -37,7 +36,7 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 
 		CacheStore cache = new CacheStore(context.getConfiguration());
 		File referencePath = new File(cache.getArchive("reference"));
-		String fastaPath = ReferenceUtilHdfs.findFileinDir(referencePath, ".fasta");
+		String fastaPath = ReferenceUtil.findFileinDir(referencePath, ".fasta");
 		reference = ReferenceUtil.readInReference(fastaPath);
 		
 		//default is to ignore deletions
@@ -45,7 +44,7 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 		
 		//default is to ignore deletions
 		level = context.getConfiguration().getDouble("level", 0.01);
-
+		
 		hdfsVariants = context.getConfiguration().get("variantsHdfs");
 		HdfsUtil.create(hdfsVariants + "/" + context.getTaskAttemptID());
 		writer = new HdfsLineWriter(hdfsVariants + "/" + context.getTaskAttemptID());

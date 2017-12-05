@@ -463,7 +463,7 @@ public class MutationServerTest {
 		System.out.println("Import Data:");
 		String[] files = FileUtil.getFiles(folder, "*.*");
 		for (String file : files) {
-			String target = HdfsUtil.path(input, FileUtil.getFilename(file));
+			String target = HdfsUtil.makeAbsolute(HdfsUtil.path(input, FileUtil.getFilename(file)));
 			System.out.println("  Import " + file + " to " + target);
 			HdfsUtil.put(file, target);
 		}

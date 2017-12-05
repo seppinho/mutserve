@@ -8,7 +8,7 @@ import java.util.List;
 import genepi.hadoop.CacheStore;
 import genepi.io.FileUtil;
 import genepi.mut.objects.SingleRead;
-import genepi.mut.util.ReferenceUtilHdfs;
+import genepi.mut.util.ReferenceUtil;
 import htsjdk.samtools.DefaultSAMRecordFactory;
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMLineParser;
@@ -65,7 +65,7 @@ public class PairedAlignerReducer extends Reducer<Text, SingleRead, Text, Text> 
 
 		File reference = new File(referencePath);
 
-		refString = ReferenceUtilHdfs.findFileinDir(reference, ".fasta");
+		refString = ReferenceUtil.findFileinDir(reference, ".fasta");
 
 		/** load index, aligner */
 		index = new BwaIndex(new File(refString));
