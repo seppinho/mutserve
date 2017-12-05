@@ -63,10 +63,13 @@ public class BamAnalyser {
 		FastaSequenceIndex fg;
 
 		try {
-			
-			fg = FastaSequenceIndexCreator.buildFromFasta(path);
+			if (!new File(fastaPath + ".fai").exists()) {
+				
+				fg = FastaSequenceIndexCreator.buildFromFasta(path);
 
-			fg.write(new File(fastaPath + ".fai").toPath());
+				fg.write(new File(fastaPath + ".fai").toPath());
+
+			}
 
 		} catch (IOException e2) {
 			// TODO Auto-generated catch block
