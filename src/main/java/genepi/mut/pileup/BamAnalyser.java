@@ -1,6 +1,8 @@
 package genepi.mut.pileup;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import org.broadinstitute.gatk.utils.baq.BAQ;
 import genepi.mut.objects.BasePosition;
@@ -10,6 +12,7 @@ import htsjdk.samtools.CigarElement;
 import htsjdk.samtools.CigarOperator;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.reference.FastaSequenceIndex;
+import htsjdk.samtools.reference.FastaSequenceIndexCreator;
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 
 public class BamAnalyser {
@@ -54,6 +57,21 @@ public class BamAnalyser {
 
 	public BamAnalyser(String filename, String fastaPath, int baseQual, int mapQual, int alignQual, boolean baq,
 			String version) {
+
+		Path path = new File(fastaPath).toPath();
+
+		FastaSequenceIndex fg;
+
+		try {
+			
+			fg = FastaSequenceIndexCreator.buildFromFasta(path);
+
+			fg.write(new File(fastaPath + ".fai").toPath());
+
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 
 		this.referenceString = ReferenceUtil.readInReference(fastaPath);
 

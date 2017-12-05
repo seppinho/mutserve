@@ -81,16 +81,6 @@ public class PileupToolLocal extends Tool {
 			return 0;
 		}
 
-		Path fastaPath = new File(refPath).toPath();
-		FastaSequenceIndex fg;
-		try {
-			fg = FastaSequenceIndexCreator.buildFromFasta(fastaPath);
-			fg.write(new File(refPath + ".fai").toPath());
-		} catch (IOException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
-
 		File[] files = folderIn.listFiles();
 
 		try {
@@ -122,7 +112,7 @@ public class PileupToolLocal extends Tool {
 
 			BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, Boolean.valueOf(baq),
 					version);
-			
+
 			System.out.println(" Processing: " + file.getName());
 
 			try {
