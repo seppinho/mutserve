@@ -2,7 +2,6 @@ language: java
 jdk:
 - oraclejdk8
 before_install:
-- wget https://mtdna-server.uibk.ac.at/static/downloads/gatk-jar-3.2.jar -O /home/travis/build/seppinho/mutation-server/libs/gatk/gatk-jar/3.2/gatk-jar-3.2.jar
 - cat /etc/hosts
 - sudo hostname "$(hostname | cut -c1-63)"
 - sed -e "s/^\\(127\\.0\\.0\\.1.*\\)/\\1 $(hostname | cut -c1-63)/" /etc/hosts | sudo
