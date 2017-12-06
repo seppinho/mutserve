@@ -5,10 +5,6 @@
 
 CNV Mutation Server is a [cloud service](https://mtdna-server.uibk.ac.at) to detect variants and heteroplasmies in mitochondrial NGS DNA. 
 
-## Citation
-
-If you use the service, please cite [this paper](http://nar.oxfordjournals.org/content/early/2016/04/15/nar.gkw247.full).
-
 ## Run mtDNA-Server locally
 
 For local execution, only BAM is accepted as an input format. Please note that the indel feature is currently in beta. 
@@ -20,6 +16,10 @@ For local execution, only BAM is accepted as an input format. Please note that t
 ```
 java -jar cnv-mutation-server-1.0.jar  analyse-local --input <input-bam-folder>  --reference <rCRS fasta file> --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel false
 ```
+
+## Citation
+
+If you use the service, please cite [this paper](http://nar.oxfordjournals.org/content/early/2016/04/15/nar.gkw247.full).
 
 ## Included workflow steps:
 
