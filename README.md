@@ -13,6 +13,7 @@ If you use the service, please cite [this paper](http://nar.oxfordjournals.org/c
 
 For local execution, only BAM is accepted as an input format. Please note that the indel feature is currently in beta. 
 
+* Java 8 required
 * Download it [here](https://github.com/seppinho/mutation-server/releases/download/1.0/cnv-mutation-server-1.0.jar)
 * Run it like this:
 
