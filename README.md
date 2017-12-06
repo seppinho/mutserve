@@ -15,10 +15,10 @@ For local execution, only BAM is accepted as an input format. Please note that t
 
 * Java 8 required
 * Download the latest jar [here](https://github.com/seppinho/mutation-server/releases/download/1.0/cnv-mutation-server-1.0.jar)
-* Run it like this:
+* The following command should produce the exact same output as the cloud service:
 
 ```
-java -jar cnv-mutation-server-1.0.jar  analyse-local --input <input-bam-folder> --baq true --baseQ 20 --indel false --mapQ 20 --alignQ 30 --reference <rCRS fasta file> --level 0.01 --outputRaw raw.txt --outputVar var.txt
+java -jar cnv-mutation-server-1.0.jar  analyse-local --input <input-bam-folder>  --reference <rCRS fasta file> --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel false
 ```
 
 ## Included workflow steps:
