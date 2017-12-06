@@ -11,11 +11,10 @@ If you use the service, please cite [this paper](http://nar.oxfordjournals.org/c
 
 ## Run mtDNA-Server locally
 
-For local execution, please use BAM files as an input.
+For local execution, only BAM is accepted as an input format. Please note that the indel feature is currently in beta. 
 
-* git clone https://github.com/seppinho/mutation-server
-* mvn install -Dmaven.test.skip=true
-* Run the jar like this:
+* Download it [here](https://github.com/seppinho/mutation-server/releases/download/1.0/cnv-mutation-server-1.0.jar)
+* Run it like this:
 
 ```
 java -jar target/cnv-mutation-server-1.0.jar  analyse-local --input <input-bam-folder> --baq true --baseQ 20 --indel false --mapQ 20 --alignQ 30 --reference <rCRS fasta file> --level 0.01 --outputRaw raw.txt --outputVar var.txt
