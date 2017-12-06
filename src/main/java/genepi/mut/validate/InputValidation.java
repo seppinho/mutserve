@@ -5,7 +5,10 @@ import genepi.hadoop.common.WorkflowContext;
 import genepi.hadoop.common.WorkflowStep;
 import genepi.hadoop.importer.IImporter;
 import genepi.hadoop.importer.ImporterFactory;
-import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SamInputResource;
+import htsjdk.samtools.SamReader;
+import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.fastq.FastqReader;
 
 import java.io.BufferedReader;
@@ -205,16 +208,14 @@ public class InputValidation extends WorkflowStep {
 				FSDataInputStream in = fileSystem.open(file.getPath());
 
 				// BAM CHECK
-				SAMFileReader reader = new SAMFileReader(in);
+				final SamReader reader = SamReaderFactory.makeDefault().open(SamInputResource.of(in));
 
-				if (reader.isBinary()) {
+				SAMFileHeader header = reader.getFileHeader();
 
-					reader.getFileHeader().getSequenceDictionary().getSequence(0).getSequenceLength();
-
-					amountBams++;
-				}
+				amountBams++;
 
 				in.close();
+				
 				reader.close();
 
 			} catch (Exception e) {
@@ -360,13 +361,15 @@ public class InputValidation extends WorkflowStep {
 
 						if (importer != null) {
 
-						/*	// if http url and bam file, use our own importer!
-							if ((importer instanceof ImporterHttp || importer instanceof ImporterFtp)
-									&& context.get("inType").equals("bam")) {
-								importer = new ImporterBamHttp(url, target);
-								context.updateTask("Import only mitochondrial part from " + url2 + "...",
-										WorkflowContext.RUNNING);
-							}*/
+							/*
+							 * // if http url and bam file, use our own
+							 * importer! if ((importer instanceof ImporterHttp
+							 * || importer instanceof ImporterFtp) &&
+							 * context.get("inType").equals("bam")) { importer =
+							 * new ImporterBamHttp(url, target); context.
+							 * updateTask("Import only mitochondrial part from "
+							 * + url2 + "...", WorkflowContext.RUNNING); }
+							 */
 
 							boolean successful = importer.importFiles(".bam|.fq|.fastq|.gz");
 

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.util.ArrayList;
 
-import org.apache.commons.math.MathException;
 import org.junit.Test;
 
 import genepi.mut.util.QCMetric;
@@ -25,7 +24,6 @@ public class AnalyseRawFileVariantsTest {
 		File input = new File("test-data/mtdna/raw-results/raw-s4-nodel.txt");
 
 			System.out.println("input file is " + input.getName());
-				try {
 					ArrayList<QCMetric> metrics = rawAnalyser.calculateLowLevelForTest(input.getPath(), refPath, sanger, hetLevel);
 					for(QCMetric  metric : metrics){
 						assertEquals(100, metric.getPrecision(), 0);
@@ -34,11 +32,7 @@ public class AnalyseRawFileVariantsTest {
 					}
 					
 					
-				} catch (MathException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		
+				
 
 	}
 }

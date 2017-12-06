@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
-import org.apache.commons.math.MathException;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.mut.objects.VariantLine;
 
@@ -26,7 +25,7 @@ public class RawFileAnalyser {
 	private boolean callDel;
 	
 	
-	public ArrayList<QCMetric> calculateLowLevelForTest(String in, String refpath, String sangerpos, double hetLevel) throws MathException {
+	public ArrayList<QCMetric> calculateLowLevelForTest(String in, String refpath, String sangerpos, double hetLevel) {
 
 		ArrayList<QCMetric> metrics = new ArrayList<QCMetric>();
 		

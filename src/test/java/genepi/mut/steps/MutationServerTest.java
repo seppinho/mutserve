@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import org.apache.commons.math.MathException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,7 +23,6 @@ import genepi.io.text.LineReader;
 import genepi.mut.align.AlignTool;
 import genepi.mut.pileup.PileupTool;
 import genepi.mut.sort.SortTool;
-import genepi.mut.util.MultiallelicAnalyser;
 import genepi.mut.util.QCMetric;
 import genepi.mut.util.RawFileAnalyser;
 import genepi.mut.util.TestCluster;
@@ -50,21 +48,20 @@ public class MutationServerTest {
 		TestCluster.getInstance().stop();
 	}
 
-
 	@Test
 	public void AlignmentSETest() throws IOException {
 
 		String inputFolder = "test-data/mtdna/fastqse/input";
 		String archive = "test-data/mtdna/fastqse/reference/rcrs.tar.gz";
 		String hdfsFolder = "inputSE";
-		
+
 		importInputdata(inputFolder, hdfsFolder);
 
-		String type = "se"; 
-		
+		String type = "se";
+
 		// create workflow context
 		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
-		
+
 		context.setOutput("bwaOut", "cloudgene-bwaOutSe");
 
 		// create step instance
@@ -82,7 +79,7 @@ public class MutationServerTest {
 			while ((line = br.readLine()) != null) {
 				if (line.length() > 0) {
 					if (line.contains("QS6LK:01441:00464")) {
-						String splits [] = line.split("\t");
+						String splits[] = line.split("\t");
 						assertEquals("rCRS", splits[3]);
 						assertEquals("1", splits[4]);
 						assertEquals("60", splits[5]);
@@ -92,25 +89,23 @@ public class MutationServerTest {
 				}
 			}
 			br.close();
-			///bwa mem rcrs.fasta small_small.fastq_| wc -l
+			/// bwa mem rcrs.fasta small_small.fastq_| wc -l
 			assertEquals(317, i);
 			FileUtil.deleteDirectory("test-data/tmp");
 
 		}
 	}
-	
-	
 
 	@Test
 	public void AlignmentPETest() throws IOException {
 
 		String inputFolder = "test-data/mtdna/fastqpe/input";
 		String archive = "test-data/mtdna/fastqpe/reference/rcrs.tar.gz";
-		String hdfsFolder ="inputPE";
-		
+		String hdfsFolder = "inputPE";
+
 		importInputdata(inputFolder, hdfsFolder);
 
-		String type = "pe"; 
+		String type = "pe";
 		// create workflow context
 		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
@@ -128,27 +123,29 @@ public class MutationServerTest {
 		HdfsUtil.merge(new File(tmpFile).getPath(), "cloudgene-bwaOutPe/0", false);
 
 		try (BufferedReader br = new BufferedReader(new FileReader(new File(tmpFile)))) {
-			
+
 			String line;
 			int i = 0;
 			while ((line = br.readLine()) != null) {
 				if (line.length() > 0) {
-					if(line.contains("HWI-ST301L:236:C0EJ5ACXX:3:1101:4808:2302:0")){
-						String splits [] = line.split("\t");
+					if (line.contains("HWI-ST301L:236:C0EJ5ACXX:3:1101:4808:2302:0")) {
+						String splits[] = line.split("\t");
 						assertEquals("rCRS", splits[3]);
 						assertEquals("101M", splits[6]);
 					}
-					//if(line.contains("HWI-ST301L:236:C0EJ5ACXX:3:1101:15916:2104")){
-						System.out.println("aligned \t " + line);
-					
-					//}
+					// if(line.contains("HWI-ST301L:236:C0EJ5ACXX:3:1101:15916:2104")){
+					System.out.println("aligned \t " + line);
+
+					// }
 					i++;
 				}
 
 			}
-			///bwa mem rcrs.fasta small_r1.fastq small_r2.fastq_small | wc -l
+			/// bwa mem rcrs.fasta small_r1.fastq small_r2.fastq_small | wc -l
 			// there is one additional line which is ignored
-			//HWI-ST301L:236:C0EJ5ACXX:3:1101:15916:2104 has two reads, flags 73 and 133 (unmapped), since one AS tag is smaller <30 its ignored!
+			// HWI-ST301L:236:C0EJ5ACXX:3:1101:15916:2104 has two reads, flags
+			/// 73 and 133 (unmapped), since one AS tag is smaller <30 its
+			/// ignored!
 			assertEquals(200, i);
 			System.out.println(i);
 			br.close();
@@ -199,8 +196,8 @@ public class MutationServerTest {
 		int i = 0;
 		while (s.hasNext()) {
 			SAMRecord rec = s.next();
-			if(rec.getReadName().equals("QS6LK:01421:01280")){
-				assertEquals("rCRS",rec.getContig());
+			if (rec.getReadName().equals("QS6LK:01421:01280")) {
+				assertEquals("rCRS", rec.getContig());
 			}
 			i++;
 		}
@@ -209,7 +206,7 @@ public class MutationServerTest {
 
 		FileUtil.deleteDirectory("test-data/tmp");
 	}
-	
+
 	@Test
 	public void SortTestPE() throws IOException {
 
@@ -258,9 +255,8 @@ public class MutationServerTest {
 			System.out.println("sorted " + rec.getSAMString());
 		}
 		System.out.println("AMOUNT " + i);
-		
+
 		FileUtil.deleteDirectory("test-data/tmp");
-		
 
 	}
 
@@ -271,9 +267,10 @@ public class MutationServerTest {
 		String archive = "test-data/mtdna/bam/reference/rcrs.tar.gz";
 		String hdfsFolder = "input";
 		String type = "bam";
-		
-		Set<Integer> expected = new HashSet<Integer>(Arrays.asList(3107,1456,2746,3200,12410,14071,14569,15463,16093,16360,10394,1438,152,15326,15340,16519,263,4769,750,8592,8860));
-		
+
+		Set<Integer> expected = new HashSet<Integer>(Arrays.asList(3107, 1456, 2746, 3200, 12410, 14071, 14569, 15463,
+				16093, 16360, 10394, 1438, 152, 15326, 15340, 16519, 263, 4769, 750, 8592, 8860));
+
 		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
@@ -287,37 +284,36 @@ public class MutationServerTest {
 		context.setOutput("baq", "true");
 		context.setOutput("callDel", "false");
 		context.setOutput("level", "0.01");
-		
+
 		boolean result = pileUp.run(context);
 		assertTrue(result);
 
 		LineReader reader = new LineReader("test-data/tmp/variantsLocal1000G");
 		HashSet<Integer> results = new HashSet<Integer>();
-		
-		//header
+
+		// header
 		reader.next();
-		while(reader.next()){
+		while (reader.next()) {
 			String[] splits = reader.get().split("\t");
 			int pos = Integer.valueOf(splits[1]);
 			results.add(pos);
 			System.out.println(pos);
 		}
-		
+
 		assertEquals(true, results.equals(expected));
-		
+
 		reader = new LineReader("test-data/tmp/rawLocal1000G");
-	
+
 		int i = 0;
-		while(reader.next()){
-			if(i<10){
-			System.out.println(reader.get());
+		while (reader.next()) {
+			if (i < 10) {
+				System.out.println(reader.get());
 			}
 			i++;
 		}
 
-
 	}
-	
+
 	@Test
 	public void DetectPipelinemtDNAMixtureBAMTest() throws IOException {
 
@@ -325,9 +321,9 @@ public class MutationServerTest {
 		String archive = "test-data/mtdna/mixtures/reference/rcrs.tar.gz";
 		String hdfsFolder = "input2";
 		String type = "bam";
-		
+
 		String level = "0.01";
-		
+
 		String refPath = "test-data/mtdna/mixtures/reference/rCRS.fasta";
 		String sanger = "test-data/mtdna/mixtures/expected/sanger.txt";
 
@@ -335,7 +331,7 @@ public class MutationServerTest {
 
 		// create workflow context
 		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
-		
+
 		PileupTool pileUp = new PileupMock("files");
 		context.setOutput("rawHdfs", "rawHdfs3");
 		context.setOutput("rawLocal", "test-data/tmp/rawLocalMixture3");
@@ -344,39 +340,32 @@ public class MutationServerTest {
 		context.setOutput("baq", "true");
 		context.setOutput("callDel", "false");
 		context.setOutput("level", level);
-		
+
 		boolean result = pileUp.run(context);
 		assertTrue(result);
 
-		
-		
 		RawFileAnalyser analyser = new RawFileAnalyser();
 		analyser.setCallDel(false);
-		
-		try {
-			ArrayList<QCMetric> list = analyser.calculateLowLevelForTest("test-data/tmp/rawLocalMixture3", refPath, sanger,
-					Double.valueOf(level));
 
-			assertTrue(list.size() == 1);
+		ArrayList<QCMetric> list = analyser.calculateLowLevelForTest("test-data/tmp/rawLocalMixture3", refPath, sanger,
+				Double.valueOf(level));
 
-			for (QCMetric metric : list) {
+		assertTrue(list.size() == 1);
 
-				System.out.println(metric.getPrecision());
-				System.out.println(metric.getSensitivity());
-				System.out.println(metric.getSpecificity());
+		for (QCMetric metric : list) {
 
-				assertEquals(100, metric.getPrecision(), 0);
-				assertEquals(59.259, metric.getSensitivity(), 0.1);
-				assertEquals(100, metric.getSpecificity(), 0);
-			}
-			assertEquals(true, result);
-		} catch (MathException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(metric.getPrecision());
+			System.out.println(metric.getSensitivity());
+			System.out.println(metric.getSpecificity());
+
+			assertEquals(100, metric.getPrecision(), 0);
+			assertEquals(59.259, metric.getSensitivity(), 0.1);
+			assertEquals(100, metric.getSpecificity(), 0);
 		}
+		assertEquals(true, result);
 
 	}
-	
+
 	class AlignnMock extends AlignTool {
 
 		private String folder;
@@ -454,7 +443,7 @@ public class MutationServerTest {
 		context.setOutput("baq", "true");
 
 		FileUtil.createDirectory(file.getAbsolutePath() + "/bwaOut");
-		
+
 		return context;
 
 	}
