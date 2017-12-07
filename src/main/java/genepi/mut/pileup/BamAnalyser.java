@@ -160,6 +160,9 @@ public class BamAnalyser {
 		for (int i = 0; i < readString.length(); i++) {
 
 			int currentPos = samRecord.getReferencePositionAtReadPosition(i + 1);
+			
+			//if e.g softclips are included pos is 0, so skip them immediately! 
+			if(currentPos > 0) {
 
 			if (samRecord.getBaseQualities()[i] >= baseQual) {
 
@@ -231,6 +234,7 @@ public class BamAnalyser {
 			} else {
 				// context.getCounter("mtdna", "BAD-QUAL").increment(1);
 			}
+		}
 		}
 
 		

@@ -196,6 +196,13 @@ public class MutationServerTest {
 		int i = 0;
 		while (s.hasNext()) {
 			SAMRecord rec = s.next();
+			
+			//read having two alignments (first, secondary). 
+			if(rec.getReadName().equals("QS6LK:01115:01248")){
+				System.out.println("sorted " + rec.getSAMString());
+			}
+			
+			
 			if (rec.getReadName().equals("QS6LK:01421:01280")) {
 				assertEquals("rCRS", rec.getContig());
 			}
@@ -204,7 +211,7 @@ public class MutationServerTest {
 
 		assertEquals(317, i);
 
-		FileUtil.deleteDirectory("test-data/tmp");
+		//FileUtil.deleteDirectory("test-data/tmp");
 	}
 
 	@Test
@@ -259,6 +266,48 @@ public class MutationServerTest {
 		FileUtil.deleteDirectory("test-data/tmp");
 
 	}
+	
+	@Test
+	public void PileupFromFastqTest() throws IOException {
+
+		String inputFolder = "test-data/mtdna/fastqse/input";
+		String archive = "test-data/mtdna/fastqse/reference/rcrs.tar.gz";
+		String hdfsFolder = "inputSE";
+		String type = "se";
+
+		importInputdata(inputFolder, hdfsFolder);
+
+		// create workflow context
+		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
+
+		// create step instance
+		AlignStep align = new AlignnMock("files");
+		context.setOutput("bwaOut", "cloudgene-bwaOutSortSe3");
+		context.setOutput("outputBam", "outputBam3");
+
+		boolean result = align.run(context);
+
+		assertTrue(result);
+
+		SortStep sort = new SortMock("files");
+		result = sort.run(context);
+
+		
+		PileupStep pileUp = new PileupMock("files");
+		context.setOutput("rawHdfs", "rawHdfs4");
+		context.setOutput("rawLocal", "test-data/tmp/rawLocal1000G");
+		context.setOutput("variantsHdfs", "variantsHdfs4");
+		context.setOutput("variantsLocal", "test-data/tmp/variantsLocal1000G");
+		context.setOutput("baq", "true");
+		context.setOutput("callDel", "true");
+		context.setOutput("level", "0.01");
+
+		result = pileUp.run(context);
+		assertTrue(result);
+
+		FileUtil.deleteDirectory("test-data/tmp");
+	}
+
 
 	@Test
 	public void Pileup1000GBamTest() throws IOException {

@@ -7,7 +7,7 @@ CNV Mutation Server is a [cloud service](https://mtdna-server.uibk.ac.at) to det
 
 ## Run mtDNA-Server locally
 
-For local execution, only BAM is accepted as an input format. Please note that the indel feature is currently in beta. 
+For local execution, only BAM is accepted as an input format. Use bwa mem to align your fastq files (circular aligner!). Please note that the indel feature is currently in beta. For alignment use 
 
 * Java 8 required
 * Download the latest jar [here](https://github.com/seppinho/mutation-server/releases/download/1.0/cnv-mutation-server-1.0.jar)
