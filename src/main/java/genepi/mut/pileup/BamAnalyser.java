@@ -267,7 +267,7 @@ public class BamAnalyser {
 
 			}
 
-			if (cigarElement.getOperator().consumesReferenceBases()) {
+			if (cigarElement.getOperator().consumesReferenceBases() || cigarElement.getOperator() == CigarOperator.SOFT_CLIP) {
 				currentReferencePos = currentReferencePos + cigarElement.getLength();
 			}
 			count++;
