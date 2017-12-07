@@ -24,7 +24,7 @@ public class ReadBamTest {
 
 			SAMRecord samRecord = d.next();
 
-			if (samRecord.getReadName().equals("SRR062641.3033963")) {
+			if (samRecord.getReadName().equals("SRR062635.20477607")) {
 
 				System.out.println(samRecord.getSAMString());
 

@@ -234,15 +234,19 @@ public class BamAnalyser {
 		}
 
 		
-		if(indelCalling){
+		if(indelCalling) {
 			
 		Integer currentReferencePos = samRecord.getAlignmentStart();
+		
+		int currentPos = 0;
+		
 		for (CigarElement cigarElement : samRecord.getCigar().getCigarElements()) {
 
+			Integer cigarElementLength = cigarElement.getLength();
+			
 			if (cigarElement.getOperator() == CigarOperator.D) {
 
 				Integer cigarElementStart = currentReferencePos;
-				Integer cigarElementLength = cigarElement.getLength();
 				Integer cigarElementEnd = currentReferencePos + cigarElementLength;
 
 				while (cigarElementStart < cigarElementEnd) {
@@ -268,6 +272,93 @@ public class BamAnalyser {
 
 					cigarElementStart++;
 				}
+				
+				//to get correct position for insertions
+				if (currentPos > 0) {
+					currentPos = currentPos - cigarElementLength;
+				}
+
+			}
+			
+			//currently not used. 
+			if (false && cigarElement.getOperator() == CigarOperator.I) {
+				
+				Integer cigarElementStart = currentReferencePos;
+
+				int i = 0;
+				
+				while (i < 1) {
+					
+					char insBase = samRecord.getReadString().charAt(currentPos + i);
+					
+					byte quality = samRecord.getBaseQualities()[currentPos + i];
+					
+					i++;
+					
+					String key = filename + ":" + cigarElementStart + "." + i;
+
+					BasePosition basePos = counts.get(key);
+
+					if (basePos == null) {
+						basePos = new BasePosition();
+						counts.put(key, basePos);
+					}
+					
+					if ((samRecord.getFlags() & 0x10) == 0x10) {
+						// context.getCounter("mtdna", "REV-READ").increment(1);
+						switch (insBase) {
+						case 'A':
+							basePos.addaRev(1);
+							basePos.addaRevQ(quality);
+							break;
+						case 'C':
+							basePos.addcRev(1);
+							basePos.addcRevQ(quality);
+							break;
+						case 'G':
+							basePos.addgRev(1);
+							basePos.addgRevQ(quality);
+							break;
+						case 'T':
+							basePos.addtRev(1);
+							basePos.addtRevQ(quality);
+							break;
+						case 'N':
+							basePos.addnRev(1);
+							break;
+						default:
+							break;
+						}
+					} else {
+
+						switch (insBase) {
+						case 'A':
+							basePos.addaFor(1);
+							basePos.addaForQ(quality);
+							break;
+						case 'C':
+							basePos.addcFor(1);
+							basePos.addcForQ(quality);
+							break;
+						case 'G':
+							basePos.addgFor(1);
+							basePos.addgForQ(quality);
+							break;
+						case 'T':
+							basePos.addtFor(1);
+							basePos.addtForQ(quality);
+							break;
+						case 'N':
+							basePos.addnFor(1);
+							break;
+						default:
+							break;
+						}
+					}
+				}
+
+				//update positions for insertions
+				currentPos = currentPos + cigarElement.getLength();
 
 			}
 
