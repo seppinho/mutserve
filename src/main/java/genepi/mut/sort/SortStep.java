@@ -10,7 +10,7 @@ import genepi.mut.objects.Extracter;
 import genepi.mut.util.HadoopJobStep;
 import genepi.mut.util.ReferenceUtil;
 
-public class SortTool extends HadoopJobStep {
+public class SortStep extends HadoopJobStep {
 
 	@Override
 	public boolean run(WorkflowContext context) {

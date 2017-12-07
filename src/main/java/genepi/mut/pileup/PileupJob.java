@@ -11,7 +11,7 @@ import org.seqdoop.hadoop_bam.AnySAMInputFormat;
 import genepi.hadoop.CacheStore;
 import genepi.hadoop.HadoopJob;
 import genepi.hadoop.HdfsUtil;
-import genepi.mut.align.AlignTool;
+import genepi.mut.align.AlignStep;
 import genepi.mut.objects.BasePositionHadoop;
 
 public class PileupJob extends HadoopJob {
@@ -63,7 +63,7 @@ public class PileupJob extends HadoopJob {
 	@Override
 	protected void setupDistributedCache(CacheStore cache) {
 
-		String hdfsPathRef = HdfsUtil.path(AlignTool.REF_DIRECTORY, refArchive.substring(refArchive.lastIndexOf("/") + 1));
+		String hdfsPathRef = HdfsUtil.path(AlignStep.REF_DIRECTORY, refArchive.substring(refArchive.lastIndexOf("/") + 1));
 
 		if (!HdfsUtil.exists(hdfsPathRef)) {
 			HdfsUtil.put(refArchive, hdfsPathRef);

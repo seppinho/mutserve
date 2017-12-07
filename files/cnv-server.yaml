@@ -20,19 +20,19 @@ mapred:
  
 #if( $inType == "se" || $inType == "pe")
     - name: Align Reads
-      classname: genepi.mut.align.AlignTool
+      classname: genepi.mut.align.AlignStep
       jar: cnv-mutation-server-1.0.jar
       generates: $bwaOut
 
     - name: Sort Aligned Reads
-      classname: genepi.mut.sort.SortTool
+      classname: genepi.mut.sort.SortStep
       jar: cnv-mutation-server-1.0.jar
       generates: $localOutput
 #set( $input = $outputBam )
 #end
 
     - name: Generate Pileup File
-      classname: genepi.mut.pileup.PileupTool
+      classname: genepi.mut.pileup.PileupStep
       jar: cnv-mutation-server-1.0.jar
       generates: $rawHdfs $statisticsBam
   

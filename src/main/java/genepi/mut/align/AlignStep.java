@@ -22,12 +22,12 @@ import genepi.mut.align.paired.PairedAlignerJob;
 import genepi.mut.align.single.SingleAlignerJob;
 import genepi.mut.util.HadoopJobStep;
 
-public class AlignTool extends HadoopJobStep {
+public class AlignStep extends HadoopJobStep {
 	
 	public static final String REF_DIRECTORY = "/tmp/mutation-server-data";
 
 	HashMap<String, List<String>> mapPairs = new HashMap<String, List<String>>();
-	protected static final Log log = LogFactory.getLog(AlignTool.class);
+	protected static final Log log = LogFactory.getLog(AlignStep.class);
 
 	enum DATA_TYPE {
 
@@ -52,8 +52,8 @@ public class AlignTool extends HadoopJobStep {
 			// set output dir to a static subdirectory. necessary for next step
 			// (same as in PE)
 			job.setOutput(output + "/0");
-			job.setFolder(getFolder(AlignTool.class));
-			job.setJarByClass(AlignTool.class);
+			job.setFolder(getFolder(AlignStep.class));
+			job.setJarByClass(AlignStep.class);
 			successful = executeHadoopJob(job, context);
 
 		}
@@ -85,8 +85,8 @@ public class AlignTool extends HadoopJobStep {
 					job.setOutput(roundOutput);
 					job.setReferenceArchive(archive);
 					job.setChunkLength(chunkLength);
-					job.setFolder(getFolder(AlignTool.class));
-					job.setJarByClass(AlignTool.class);
+					job.setFolder(getFolder(AlignStep.class));
+					job.setJarByClass(AlignStep.class);
 					successful = executeHadoopJob(job, context);
 
 					/** for several files */

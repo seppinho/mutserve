@@ -9,14 +9,14 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class PileupTool extends HadoopJobStep {
+public class PileupStep extends HadoopJobStep {
 
 	@Override
 	public boolean run(WorkflowContext context) {
 
 		String type = context.get("inType");
 
-		final String folder = getFolder(PileupTool.class);
+		final String folder = getFolder(PileupStep.class);
 
 		String input;
 		if (type.equals("se") || type.equals("pe")) {
@@ -68,7 +68,7 @@ public class PileupTool extends HadoopJobStep {
 		bamJob.setLevel(level);
 		bamJob.setCallDel(callDel);
 		bamJob.setArchive(archive);
-		bamJob.setJarByClass(PileupTool.class);
+		bamJob.setJarByClass(PileupStep.class);
 		bamJob.setFolder(folder);
 
 		boolean successful = executeHadoopJob(bamJob, context);

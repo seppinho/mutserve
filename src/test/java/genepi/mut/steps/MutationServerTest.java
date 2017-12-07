@@ -20,9 +20,9 @@ import genepi.hadoop.HdfsUtil;
 import genepi.hadoop.common.WorkflowStep;
 import genepi.io.FileUtil;
 import genepi.io.text.LineReader;
-import genepi.mut.align.AlignTool;
-import genepi.mut.pileup.PileupTool;
-import genepi.mut.sort.SortTool;
+import genepi.mut.align.AlignStep;
+import genepi.mut.pileup.PileupStep;
+import genepi.mut.sort.SortStep;
 import genepi.mut.util.QCMetric;
 import genepi.mut.util.RawFileAnalyser;
 import genepi.mut.util.TestCluster;
@@ -65,7 +65,7 @@ public class MutationServerTest {
 		context.setOutput("bwaOut", "cloudgene-bwaOutSe");
 
 		// create step instance
-		AlignTool align = new AlignnMock("files");
+		AlignStep align = new AlignnMock("files");
 
 		boolean result = align.run(context);
 
@@ -113,7 +113,7 @@ public class MutationServerTest {
 		context.setOutput("bwaOut", "cloudgene-bwaOutPe");
 
 		// create step instance
-		AlignTool align = new AlignnMock("files");
+		AlignStep align = new AlignnMock("files");
 
 		boolean result = align.run(context);
 
@@ -168,7 +168,7 @@ public class MutationServerTest {
 		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		// create step instance
-		AlignTool align = new AlignnMock("files");
+		AlignStep align = new AlignnMock("files");
 		context.setOutput("bwaOut", "cloudgene-bwaOutSortSe");
 		context.setOutput("outputBam", "outputBam1");
 
@@ -176,7 +176,7 @@ public class MutationServerTest {
 
 		assertTrue(result);
 
-		SortTool sort = new SortMock("files");
+		SortStep sort = new SortMock("files");
 		result = sort.run(context);
 		assertTrue(result);
 
@@ -221,7 +221,7 @@ public class MutationServerTest {
 		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		// create step instance
-		AlignTool align = new AlignnMock("files");
+		AlignStep align = new AlignnMock("files");
 		context.setInput("chunkLength", "0");
 		context.setOutput("bwaOut", "cloudgene-bwaOutSortPe");
 		context.setOutput("outputBam", "outputBam2");
@@ -230,7 +230,7 @@ public class MutationServerTest {
 
 		assertTrue(result);
 
-		SortTool sort = new SortMock("files");
+		SortStep sort = new SortMock("files");
 		result = sort.run(context);
 		assertTrue(result);
 
@@ -276,7 +276,7 @@ public class MutationServerTest {
 		// create workflow context
 		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
-		PileupTool pileUp = new PileupMock("files");
+		PileupStep pileUp = new PileupMock("files");
 		context.setOutput("rawHdfs", "rawHdfs1");
 		context.setOutput("rawLocal", "test-data/tmp/rawLocal1000G");
 		context.setOutput("variantsHdfs", "variantsHdfs");
@@ -332,7 +332,7 @@ public class MutationServerTest {
 		// create workflow context
 		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
-		PileupTool pileUp = new PileupMock("files");
+		PileupStep pileUp = new PileupMock("files");
 		context.setOutput("rawHdfs", "rawHdfs3");
 		context.setOutput("rawLocal", "test-data/tmp/rawLocalMixture3");
 		context.setOutput("variantsHdfs", "variantsHdfs3");
@@ -366,7 +366,7 @@ public class MutationServerTest {
 
 	}
 
-	class AlignnMock extends AlignTool {
+	class AlignnMock extends AlignStep {
 
 		private String folder;
 
@@ -383,7 +383,7 @@ public class MutationServerTest {
 
 	}
 
-	class SortMock extends SortTool {
+	class SortMock extends SortStep {
 
 		private String folder;
 
@@ -400,7 +400,7 @@ public class MutationServerTest {
 
 	}
 
-	class PileupMock extends PileupTool {
+	class PileupMock extends PileupStep {
 
 		private String folder;
 
