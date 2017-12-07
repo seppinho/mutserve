@@ -26,8 +26,6 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 
 	HdfsLineWriter writer;
 
-	boolean callDel;
-	
 	double level; 
 
 	protected void setup(Context context) throws IOException, InterruptedException {
@@ -39,10 +37,6 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 		String fastaPath = ReferenceUtil.findFileinDir(referencePath, ".fasta");
 		reference = ReferenceUtil.readInReference(fastaPath);
 		
-		//default is to ignore deletions
-		callDel = context.getConfiguration().getBoolean("callDel", false);
-		
-		//default is to ignore deletions
 		level = context.getConfiguration().getDouble("level", 0.01);
 		
 		hdfsVariants = context.getConfiguration().get("variantsHdfs");
@@ -107,9 +101,6 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 			char ref = reference.charAt(pos - 1);
 
 			VariantLine line = new VariantLine();
-			
-			//needed so we can ignore bases when sorting them (e.g. ignore if minor is D)
-			line.setCallDel(callDel);
 			
 			line.setRef(ref);
 

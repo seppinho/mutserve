@@ -116,7 +116,7 @@ public class BamAnalyser {
 		this.counts = counts;
 	}
 
-	public void analyseRead(SAMRecord samRecord) throws Exception {
+	public void analyseRead(SAMRecord samRecord, boolean indelCalling) throws Exception {
 
 		if (samRecord.getMappingQuality() < mapQual) {
 			return;
@@ -233,10 +233,12 @@ public class BamAnalyser {
 			}
 		}
 
-		/** for deletions */
+		
+		if(indelCalling){
+			
 		Integer currentReferencePos = samRecord.getAlignmentStart();
 		for (CigarElement cigarElement : samRecord.getCigar().getCigarElements()) {
-			int count = 0;
+
 			if (cigarElement.getOperator() == CigarOperator.D) {
 
 				Integer cigarElementStart = currentReferencePos;
@@ -256,10 +258,12 @@ public class BamAnalyser {
 
 					if ((samRecord.getFlags() & 0x10) == 0x10) {
 						basePos.adddRev(1);
-						basePos.adddRevQ(samRecord.getBaseQualities()[count]);
+						//no quality for missing value, set fake
+						basePos.adddRevQ((byte) 40);
 					} else {
 						basePos.adddFor(1);
-						basePos.adddForQ(samRecord.getBaseQualities()[count]);
+						//no quality for missing value, set fake
+						basePos.adddForQ((byte) 40);
 					}
 
 					cigarElementStart++;
@@ -270,7 +274,8 @@ public class BamAnalyser {
 			if (cigarElement.getOperator().consumesReferenceBases() || cigarElement.getOperator() == CigarOperator.SOFT_CLIP) {
 				currentReferencePos = currentReferencePos + cigarElement.getLength();
 			}
-			count++;
+		}
+		
 		}
 	}
 

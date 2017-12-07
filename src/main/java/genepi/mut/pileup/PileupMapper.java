@@ -33,6 +33,8 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 	int mapQual;
 
 	int alignQual;
+	
+	boolean indelCalling;
 
 	protected void setup(Context context) throws IOException, InterruptedException {
 
@@ -68,6 +70,9 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 		String fastaPath = ReferenceUtil.findFileinDir(referencePath, ".fasta");
 		
 		analyser = new BamAnalyser(filename, fastaPath, baseQual, mapQual, alignQual, baq, version);
+		
+		//default is to ignore deletions
+		indelCalling = context.getConfiguration().getBoolean("callDel", false);
 
 	}
 
@@ -101,7 +106,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 			countStats(context, value.get());
 					
 			//analyse SAM read			
-			analyser.analyseRead(value.get());
+			analyser.analyseRead(value.get(), indelCalling);
 
 		} catch (Exception e) {
 			e.printStackTrace();

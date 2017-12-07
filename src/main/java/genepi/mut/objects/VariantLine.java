@@ -30,8 +30,6 @@ public class VariantLine implements Comparable<VariantLine> {
 	private int covFWD;
 	private int covREV;
 
-	private boolean callDel;
-
 	private double llrFWD;
 	private double llrREV;
 
@@ -217,14 +215,11 @@ public class VariantLine implements Comparable<VariantLine> {
 		double minorBasePercentsFWD = 0.0;
 
 		if (totalFWD > 0) {
+
 			topBasePercentsFWD = allelesFWD.get(0) / (double) totalFWD;
 
-			// ignore deletions on minor base if deletions are excluded
-			if (!callDel && allelesFWD.get(1).equals(dFWD)) {
-				minorBasePercentsFWD = allelesFWD.get(2) / (double) totalFWD;
-			} else {
-				minorBasePercentsFWD = allelesFWD.get(1) / (double) totalFWD;
-			}
+			minorBasePercentsFWD = allelesFWD.get(1) / (double) totalFWD;
+
 		}
 
 		ArrayList<Integer> allelesREV = new ArrayList<Integer>();
@@ -241,13 +236,8 @@ public class VariantLine implements Comparable<VariantLine> {
 		if (totalREV > 0) {
 			topBasePercentsREV = allelesREV.get(0) / (double) totalREV;
 
-			// ignore deletions on minor base if deletions are excluded from
-			// user
-			if (!callDel && allelesREV.get(1).equals(dREV)) {
-				minorBasePercentsREV = allelesREV.get(2) / (double) totalREV;
-			} else {
-				minorBasePercentsREV = allelesREV.get(1) / (double) totalREV;
-			}
+			minorBasePercentsREV = allelesREV.get(1) / (double) totalREV;
+
 		}
 
 		char topBaseFWD = '-';
@@ -1341,7 +1331,7 @@ public class VariantLine implements Comparable<VariantLine> {
 			return true;
 		}
 
-		if (callDel && this.getVariantType() == VariantLine.LOW_LEVEL_DELETION) {
+		if (this.getVariantType() == VariantLine.LOW_LEVEL_DELETION) {
 			return true;
 		}
 
@@ -1411,14 +1401,6 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	public void setLlrDREV(double llrDREV) {
 		this.llrDREV = llrDREV;
-	}
-
-	public boolean isCallDel() {
-		return callDel;
-	}
-
-	public void setCallDel(boolean callDel) {
-		this.callDel = callDel;
 	}
 
 }

@@ -132,9 +132,9 @@ public class PileupToolLocal extends Tool {
 
 			try {
 
-				analyseReads(file, analyser);
+				analyseReads(file, analyser, Boolean.valueOf(indel));
 
-				determineVariants(analyser, writerRaw, writerVar, level, Boolean.valueOf(indel));
+				determineVariants(analyser, writerRaw, writerVar, level);
 
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -159,7 +159,7 @@ public class PileupToolLocal extends Tool {
 	}
 
 	// mapper
-	private void analyseReads(File file, BamAnalyser analyser) throws Exception, IOException {
+	private void analyseReads(File file, BamAnalyser analyser, boolean indelCalling) throws Exception, IOException {
 
 		// TODO double check if primary and secondary alignment is used for
 		// CNV-Server
@@ -172,15 +172,14 @@ public class PileupToolLocal extends Tool {
 
 			SAMRecord record = fileIterator.next();
 
-			analyser.analyseRead(record);
+			analyser.analyseRead(record, indelCalling);
 
 		}
 		reader.close();
 	}
 
 	// reducer
-	private void determineVariants(BamAnalyser analyser, LineWriter writerRaw, LineWriter writerVar, double level,
-			boolean indel) throws IOException {
+	private void determineVariants(BamAnalyser analyser, LineWriter writerRaw, LineWriter writerVar, double level) throws IOException {
 
 		HashMap<String, BasePosition> counts = analyser.getCounts();
 
@@ -203,8 +202,6 @@ public class PileupToolLocal extends Tool {
 				char ref = reference.charAt(pos - 1);
 
 				VariantLine line = new VariantLine();
-
-				line.setCallDel(indel);
 
 				line.setRef(ref);
 
