@@ -1,4 +1,4 @@
-name: Mutation Server (Local)
+name: CNV Mutation Server (Local)
 description: Mutation Server is able to detect both variants in genomic CNV regions and heteroplasmies in mitochondrial DNA. Users can specify fastq (SE or PE), BAM and CRAM files as an input and receive annotated variant files in return.
 version: 1.0
 
