@@ -13,9 +13,6 @@ For local execution, only BAM files are accepted. Note: Since mTDNA is circular,
 ```
 mkdir mutation-server
 wget https://github.com/seppinho/mutation-server/releases/download/1.0/cnv-mutation-server-1.0.jar -O mutation-server/cnv-mutation-server-1.0.jar
-mkdir mutation-server/input-files
-wget https://mtdna-server.uibk.ac.at/static/bam/rCRS.fasta -O mutation-server/input-files/rCRS.fasta
-wget https://mtdna-server.uibk.ac.at/static/bam/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam  -O mutation-server/input-files/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam
 ```
 ### Download Test Data
 
