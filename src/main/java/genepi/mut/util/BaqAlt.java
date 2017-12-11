@@ -63,7 +63,6 @@ import org.broadinstitute.gatk.utils.sam.ReadUtils;
  state[i] being wrong.
  */
 public class BaqAlt {
-	private final static Logger logger = Logger.getLogger(BaqAlt.class);
 	private final static boolean DEBUG = false;
 
 	public enum  CalculationMode {
