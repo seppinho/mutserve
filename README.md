@@ -7,14 +7,20 @@ CNV Mutation Server is a [cloud service](https://mtdna-server.uibk.ac.at) to det
 
 ## Run mtDNA-Server locally
 
-For local execution, only BAM is accepted as an input format. Use bwa mem to align your fastq files (circular aligner!). Please note that the indel feature is currently in beta. For alignment use 
+For local execution, only BAM files are accepted. Note: Since mTDNA is circular, use e.g. bwa mem to align your fastq files. Please note that the indel feature is currently in beta. 
 
-* Java 8 required
-* Download the latest jar [here](https://github.com/seppinho/mutation-server/releases/download/1.0/cnv-mutation-server-1.0.jar)
-* The following command should produce the exact same output as the cloud service:
-
+### Download test data
 ```
-java -jar cnv-mutation-server-1.0.jar  analyse-local --input <input-bam-folder>  --reference <rCRS fasta file> --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel false
+mkdir mutation-server
+mkdir mutation-server/input-files
+wget https://mtdna-server.uibk.ac.at/static/bam/rCRS.fasta -O mutation-server/input-files/.
+wget https://github.com/seppinho/mutation-server/releases/download/1.0/cnv-mutation-server-1.0.jar -O mutation-server/.
+wget https://mtdna-server.uibk.ac.at/static/bam/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam  -O mutation-server/input-files/.
+```
+### Run locally
+```
+cd mutation-server
+java -jar cnv-mutation-server-1.0.jar  analyse-local --input input-files  --reference input-files/rCRS.fasta --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel false
 ```
 
 ## Citation
