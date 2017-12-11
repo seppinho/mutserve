@@ -7,7 +7,7 @@ CNV Mutation Server is an online [cloud service](https://mtdna-server.uibk.ac.at
 
 ## Run mtDNA-Server locally
 
-For local execution, only BAM files are currently accepted. Note: Please use aligners which can deal with circular genomes (e.g. [bwa mem](https://github.com/lh3/bwa)). 
+For local execution, only BAM files are currently accepted. Note: For read mapping, please use a circular mapper  (e.g. [bwa mem](https://github.com/lh3/bwa)). 
 
 ### Download Tool
 ```
