@@ -7,7 +7,7 @@ CNV Mutation Server is an online [cloud service](https://mtdna-server.uibk.ac.at
 
 ## Run mtDNA-Server locally
 
-For local execution, only BAM files are accepted. Note: Please use aligners for circular genomes (like bwa mem) to create your BAM files from fastQ. The indel feature is currently in beta. 
+For local execution, only BAM files are currently accepted. Note: Please use aligners which can deal with circular genomes (e.g. [bwa mem](https://github.com/lh3/bwa)) to process your files. 
 
 ### Download Tool
 ```
@@ -26,6 +26,7 @@ wget https://mtdna-server.uibk.ac.at/static/bam/HG00096.mapped.ILLUMINA.bwa.GBR.
 cd mutation-server
 java -jar cnv-mutation-server-1.0.jar  analyse-local --input input-files  --reference input-files/rCRS.fasta --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel false
 ```
+The indel feature is currently in beta. 
 
 ## Citation
 
