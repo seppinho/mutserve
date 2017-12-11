@@ -7,7 +7,7 @@ CNV Mutation Server is an online [cloud service](https://mtdna-server.uibk.ac.at
 
 ## Run mtDNA-Server locally
 
-For local execution, only BAM files are accepted. Note: Since mTDNA is circular, use e.g. bwa mem to align your fastq files. Please note that the indel feature is currently in beta. 
+For local execution, only BAM files are accepted. Note: Please use aligners for circular genomes (like bwa mem) to create your BAM files from fastQ. The indel feature is currently in beta. 
 
 ### Download Tool
 ```
