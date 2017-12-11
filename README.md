@@ -19,7 +19,7 @@ java -jar cnv-mutation-server-1.0.jar  analyse-local --input <input-bam-folder> 
 
 ## Citation
 
-If you use the service, please cite [this paper](http://nar.oxfordjournals.org/content/early/2016/04/15/nar.gkw247.full).
+If you use this tool, please cite [this paper](http://nar.oxfordjournals.org/content/early/2016/04/15/nar.gkw247.full).
 
 ## Included workflow steps:
 
