@@ -441,7 +441,7 @@ public class MutationServerTest {
 		context.setOutput("variantsHdfs", "variantsHdfs");
 		context.setOutput("variantsLocal", "test-data/tmp/variantsLocalMixture");
 		context.setOutput("baq", "true");
-		context.setOutput("callDel", "true");
+		context.setOutput("callDel", "false");
 		context.setOutput("level", level);
 
 		boolean result = pileUp.run(context);
