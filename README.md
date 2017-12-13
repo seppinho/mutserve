@@ -3,23 +3,34 @@
 
 # CNV Mutation Server (aka mtDNA-Server)
 
-CNV Mutation Server is a [cloud service](https://mtdna-server.uibk.ac.at) to detect variants and heteroplasmies in mitochondrial NGS DNA. 
+CNV Mutation Server is an online [cloud service](https://mtdna-server.uibk.ac.at) to detect variants and heteroplasmies in mitochondrial NGS DNA. For scalability, the tool is parallelized with Hadoop MapReduce. 
 
 ## Run mtDNA-Server locally
 
-For local execution, only BAM is accepted as an input format. Use bwa mem to align your fastq files (circular aligner!). Please note that the indel feature is currently in beta. For alignment use 
+We also provide a local version of mtDNA-Server without the need to transfer data to our service (BAM input only). Note: For mapping the reads (FASTQ to BAM) of the circular mitchondrial genome, we recommend [bwa mem](https://github.com/lh3/bwa). 
 
-* Java 8 required
-* Download the latest jar [here](https://github.com/seppinho/mutation-server/releases/download/1.0/cnv-mutation-server-1.0.jar)
-* The following command should produce the exact same output as the cloud service:
+### Download Tool
+```
+mkdir mutation-server
+wget https://github.com/seppinho/mutation-server/releases/download/1.0/cnv-mutation-server-1.0.jar -O mutation-server/cnv-mutation-server-1.0.jar
+```
+### Download Test Data
 
 ```
-java -jar cnv-mutation-server-1.0.jar  analyse-local --input <input-bam-folder>  --reference <rCRS fasta file> --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel false
+mkdir mutation-server/input-files
+wget https://mtdna-server.uibk.ac.at/static/bam/rCRS.fasta -O mutation-server/input-files/rCRS.fasta
+wget https://mtdna-server.uibk.ac.at/static/bam/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam  -O mutation-server/input-files/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam
 ```
+### Run Tool
+```
+cd mutation-server
+java -jar cnv-mutation-server-1.0.jar  analyse-local --input input-files  --reference input-files/rCRS.fasta --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel false
+```
+The indel feature is currently in beta. 
 
 ## Citation
 
-If you use the service, please cite [this paper](http://nar.oxfordjournals.org/content/early/2016/04/15/nar.gkw247.full).
+If you use this tool, please cite [this paper](http://nar.oxfordjournals.org/content/early/2016/04/15/nar.gkw247.full).
 
 ## Included workflow steps:
 
