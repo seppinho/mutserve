@@ -55,6 +55,8 @@ public class VariantLine implements Comparable<VariantLine> {
 	private double llrGFWD;
 	private double llrTFWD;
 
+	private String insPosition;
+
 	private double llrAREV;
 	private double llrCREV;
 	private double llrGREV;
@@ -1137,26 +1139,46 @@ public class VariantLine implements Comparable<VariantLine> {
 	}
 
 	public String writeVariant() throws IOException {
+
 		StringBuilder build = new StringBuilder();
+
 		build.setLength(0);
 
 		build.append(this.getId() + "\t");
+
 		build.append(this.getPosition() + "\t");
+
 		build.append(this.ref + "\t");
+
 		build.append(getVariantBase(this) + "\t");
 
 		if (this.getVariantType() == 1) {
+
 			build.append("-" + "\t");
+
 			build.append("1.0" + "\t");
+
 		} else {
+
 			build.append(this.getTopBaseFWD() + "/" + this.getMinorBaseFWD() + "\t");
+
 			build.append(df.format(getVariantLevel()) + "\t");
+
 		}
 		build.append(this.getCovFWD() + "\t");
+
 		build.append(this.getCovREV() + "\t");
+
 		build.append(this.getCovFWD() + this.getCovREV());
+
+		if (getInsPosition() != null) {
+			build.append("\t" + this.getInsPosition());
+		}
+
 		build.append("\r");
+
 		return build.toString();
+
 	};
 
 	public void determineVariants() {
@@ -1401,6 +1423,14 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	public void setLlrDREV(double llrDREV) {
 		this.llrDREV = llrDREV;
+	}
+
+	public String getInsPosition() {
+		return insPosition;
+	}
+
+	public void setInsPosition(String insPosition) {
+		this.insPosition = insPosition;
 	}
 
 }

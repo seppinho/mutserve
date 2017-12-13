@@ -26,7 +26,7 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 
 	HdfsLineWriter writer;
 
-	double level; 
+	double level;
 
 	protected void setup(Context context) throws IOException, InterruptedException {
 
@@ -36,9 +36,9 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 		File referencePath = new File(cache.getArchive("reference"));
 		String fastaPath = ReferenceUtil.findFileinDir(referencePath, ".fasta");
 		reference = ReferenceUtil.readInReference(fastaPath);
-		
+
 		level = context.getConfiguration().getDouble("level", 0.01);
-		
+
 		hdfsVariants = context.getConfiguration().get("variantsHdfs");
 		HdfsUtil.create(hdfsVariants + "/" + context.getTaskAttemptID());
 		writer = new HdfsLineWriter(hdfsVariants + "/" + context.getTaskAttemptID());
@@ -48,7 +48,7 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 			throws java.io.IOException, InterruptedException {
 
 		basePos.clear();
-		
+
 		List<Byte> combinedAFor = new ArrayList<Byte>();
 		List<Byte> combinedCFor = new ArrayList<Byte>();
 		List<Byte> combinedGFor = new ArrayList<Byte>();
@@ -61,7 +61,7 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 		List<Byte> combinedDRev = new ArrayList<Byte>();
 
 		for (BasePositionHadoop valueHadoop : values) {
-			
+
 			BasePosition value = valueHadoop.getBasePosition();
 
 			basePos.add(value);
@@ -91,25 +91,44 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 		basePos.setdRevQ(combinedDRev);
 
 		basePos.setId(key.toString().split(":")[0]);
-		
-		int pos = Integer.valueOf(key.toString().split(":")[1]);
-		
+
+		String positionKey = key.toString().split(":")[1];
+
+		int pos;
+
+		boolean insertion = false;
+
+		if (positionKey.contains(".")) {
+			pos = Integer.valueOf(positionKey.split("\\.")[0]);
+			insertion = true;
+		} else {
+			pos = Integer.valueOf(positionKey);
+		}
+
 		basePos.setPos(pos);
 
 		if (pos > 0 && pos <= reference.length()) {
 
-			char ref = reference.charAt(pos - 1);
+			char ref = 'N';
 
 			VariantLine line = new VariantLine();
-			
+
+			if (!insertion) {
+
+				ref = reference.charAt(pos - 1);
+
+			} else {
+				line.setInsPosition(positionKey);
+			}
+
 			line.setRef(ref);
 
-			//level needed for LLR
+			// level needed for LLR
 			line.analysePosition(basePos, level);
 
 			context.write(null, new Text(line.toRawString()));
 
-			//level needed for actual calling
+			// level needed for actual calling
 			line.callVariants(level);
 
 			if (line.isFinalVariant()) {

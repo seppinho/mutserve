@@ -122,7 +122,7 @@ public class PileupToolLocal extends Tool {
 				return name.toLowerCase().endsWith(".bam");
 			}
 		});
-		
+
 		for (File file : files) {
 
 			BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, Boolean.valueOf(baq),
@@ -179,7 +179,8 @@ public class PileupToolLocal extends Tool {
 	}
 
 	// reducer
-	private void determineVariants(BamAnalyser analyser, LineWriter writerRaw, LineWriter writerVar, double level) throws IOException {
+	private void determineVariants(BamAnalyser analyser, LineWriter writerRaw, LineWriter writerVar, double level)
+			throws IOException {
 
 		HashMap<String, BasePosition> counts = analyser.getCounts();
 
@@ -187,30 +188,51 @@ public class PileupToolLocal extends Tool {
 
 		for (String key : counts.keySet()) {
 
-			String id = key.split(":")[0];
+			String idKey = key.split(":")[0];
 
-			int pos = Integer.valueOf(key.split(":")[1]);
+			String positionKey = key.split(":")[1];
+			
+			int pos;
+			
+			boolean insertion = false;
+
+			if (positionKey.contains(".")) {
+				pos = Integer.valueOf(positionKey.split("\\.")[0]);
+				insertion = true;
+			} else {
+				pos = Integer.valueOf(positionKey);
+			}
 
 			if (pos > 0 && pos <= reference.length()) {
 
+				char ref = 'N';
+				
 				BasePosition basePos = counts.get(key);
 
-				basePos.setId(id);
+				basePos.setId(idKey);
 
 				basePos.setPos(pos);
 
-				char ref = reference.charAt(pos - 1);
-
 				VariantLine line = new VariantLine();
+				
+				if(!insertion){
+					
+					ref = reference.charAt(pos - 1);
+					
+					line.setInsPosition(positionKey);
+				
+				} 
 
 				line.setRef(ref);
-
+				
 				line.analysePosition(basePos, level);
 
 				line.callVariants(level);
 
 				if (line.isFinalVariant()) {
+					
 					writerVar.write(line.writeVariant());
+				
 				}
 
 				// raw data
@@ -228,10 +250,11 @@ public class PileupToolLocal extends Tool {
 		String outputVar = "test-data/tmp/out_var.txt";
 		String outputRaw = "test-data/tmp/out_raw.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
+		//input = "/media/seb/DATA-HDD4/Server-Backup";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
 				"--outputVar", outputVar, "--outputRaw", outputRaw, "--level", "0.01", "--baq", "true", "--indel",
-				"false", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
+				"true", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
 
 		pileup.start();
 

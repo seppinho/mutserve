@@ -62,7 +62,7 @@ public class MutationServerTest {
 		// create workflow context
 		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
-		context.setOutput("bwaOut", "cloudgene-bwaOutSe");
+		context.setOutput("bwaOut", "cloudgene-bwaOut");
 
 		// create step instance
 		AlignStep align = new AlignnMock("files");
@@ -71,7 +71,7 @@ public class MutationServerTest {
 
 		assertTrue(result);
 
-		HdfsUtil.merge(new File("test-data/tmp/bwaOut/result.txt").getPath(), "cloudgene-bwaOutSe/0", false);
+		HdfsUtil.merge(new File("test-data/tmp/bwaOut/result.txt").getPath(), "cloudgene-bwaOut/0", false);
 
 		try (BufferedReader br = new BufferedReader(new FileReader(new File("test-data/tmp/bwaOut/result.txt")))) {
 			String line;
@@ -110,7 +110,7 @@ public class MutationServerTest {
 		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		context.setInput("chunkLength", "0");
-		context.setOutput("bwaOut", "cloudgene-bwaOutPe");
+		context.setOutput("bwaOut", "cloudgene-bwaOut");
 
 		// create step instance
 		AlignStep align = new AlignnMock("files");
@@ -120,7 +120,7 @@ public class MutationServerTest {
 		assertTrue(result);
 
 		String tmpFile = "test-data/tmp/bwaOut/result.txt";
-		HdfsUtil.merge(new File(tmpFile).getPath(), "cloudgene-bwaOutPe/0", false);
+		HdfsUtil.merge(new File(tmpFile).getPath(), "cloudgene-bwaOut/0", false);
 
 		try (BufferedReader br = new BufferedReader(new FileReader(new File(tmpFile)))) {
 
@@ -169,8 +169,8 @@ public class MutationServerTest {
 
 		// create step instance
 		AlignStep align = new AlignnMock("files");
-		context.setOutput("bwaOut", "cloudgene-bwaOutSortSe");
-		context.setOutput("outputBam", "outputBam1");
+		context.setOutput("bwaOut", "cloudgene-bwaOut");
+		context.setOutput("outputBam", "outputBam");
 
 		boolean result = align.run(context);
 
@@ -180,9 +180,9 @@ public class MutationServerTest {
 		result = sort.run(context);
 		assertTrue(result);
 
-		assertTrue(HdfsUtil.exists("outputBam1"));
+		assertTrue(HdfsUtil.exists("outputBam"));
 
-		List<String> files = HdfsUtil.getFiles("outputBam1");
+		List<String> files = HdfsUtil.getFiles("outputBam");
 		String out = "test-data/tmp/out.bam";
 
 		for (String file : files) {
@@ -230,8 +230,8 @@ public class MutationServerTest {
 		// create step instance
 		AlignStep align = new AlignnMock("files");
 		context.setInput("chunkLength", "0");
-		context.setOutput("bwaOut", "cloudgene-bwaOutSortPe");
-		context.setOutput("outputBam", "outputBam2");
+		context.setOutput("bwaOut", "cloudgene-bwaOut");
+		context.setOutput("outputBam", "outputBam");
 
 		boolean result = align.run(context);
 
@@ -241,9 +241,9 @@ public class MutationServerTest {
 		result = sort.run(context);
 		assertTrue(result);
 
-		assertTrue(HdfsUtil.exists("outputBam2"));
+		assertTrue(HdfsUtil.exists("outputBam"));
 
-		List<String> files = HdfsUtil.getFiles("outputBam2");
+		List<String> files = HdfsUtil.getFiles("outputBam");
 		String out = "test-data/tmp/out.bam";
 
 		for (String file : files) {
@@ -282,8 +282,8 @@ public class MutationServerTest {
 
 		// create step instance
 		AlignStep align = new AlignnMock("files");
-		context.setOutput("bwaOut", "cloudgene-bwaOutSortSe3");
-		context.setOutput("outputBam", "outputBam3");
+		context.setOutput("bwaOut", "cloudgene-bwaOut");
+		context.setOutput("outputBam", "outputBam");
 
 		boolean result = align.run(context);
 
@@ -294,9 +294,9 @@ public class MutationServerTest {
 
 		
 		PileupStep pileUp = new PileupMock("files");
-		context.setOutput("rawHdfs", "rawHdfs4");
+		context.setOutput("rawHdfs", "rawHdfs");
 		context.setOutput("rawLocal", "test-data/tmp/rawLocal1000G");
-		context.setOutput("variantsHdfs", "variantsHdfs4");
+		context.setOutput("variantsHdfs", "variantsHdfs");
 		context.setOutput("variantsLocal", "test-data/tmp/variantsLocal1000G");
 		context.setOutput("baq", "true");
 		context.setOutput("callDel", "true");
@@ -317,7 +317,7 @@ public class MutationServerTest {
 		String hdfsFolder = "input";
 		String type = "bam";
 
-		Set<Integer> expected = new HashSet<Integer>(Arrays.asList(3107, 1456, 2746, 3200, 12410, 14071, 14569, 15463,
+		Set<Integer> expected = new HashSet<Integer>(Arrays.asList(1456, 2746, 3200, 12410, 14071, 14569, 15463,
 				16093, 16360, 10394, 1438, 152, 15326, 15340, 16519, 263, 4769, 750, 8592, 8860));
 
 		importInputdata(inputFolder, hdfsFolder);
@@ -326,7 +326,61 @@ public class MutationServerTest {
 		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		PileupStep pileUp = new PileupMock("files");
-		context.setOutput("rawHdfs", "rawHdfs1");
+		context.setOutput("rawHdfs", "rawHdfs");
+		context.setOutput("rawLocal", "test-data/tmp/rawLocal1000G");
+		context.setOutput("variantsHdfs", "variantsHdfs");
+		context.setOutput("variantsLocal", "test-data/tmp/variantsLocal1000G");
+		context.setOutput("baq", "true");
+		context.setOutput("callDel", "false");
+		context.setOutput("level", "0.01");
+
+		boolean result = pileUp.run(context);
+		assertTrue(result);
+
+		LineReader reader = new LineReader("test-data/tmp/variantsLocal1000G");
+		HashSet<Integer> results = new HashSet<Integer>();
+
+		// header
+		reader.next();
+		while (reader.next()) {
+			String[] splits = reader.get().split("\t");
+			int pos = Integer.valueOf(splits[1]);
+			results.add(pos);
+			System.out.println(pos);
+		}
+
+		assertEquals(true, results.equals(expected));
+
+		reader = new LineReader("test-data/tmp/rawLocal1000G");
+
+		int i = 0;
+		while (reader.next()) {
+			if (i < 10) {
+				System.out.println(reader.get());
+			}
+			i++;
+		}
+
+	}
+	
+	@Test
+	public void Pileup1000GBamAndIndelTest() throws IOException {
+
+		String inputFolder = "test-data/mtdna/bam/input";
+		String archive = "test-data/mtdna/bam/reference/rcrs.tar.gz";
+		String hdfsFolder = "input";
+		String type = "bam";
+
+		Set<Integer> expected = new HashSet<Integer>(Arrays.asList(3107, 1456, 2746, 3200, 12410, 14071, 14569, 15463,
+				16093, 16360, 10394, 1438, 152, 15326, 15340, 16519, 263, 4769, 750, 8592, 8860, 303,311));
+
+		importInputdata(inputFolder, hdfsFolder);
+
+		// create workflow context
+		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
+
+		PileupStep pileUp = new PileupMock("files");
+		context.setOutput("rawHdfs", "rawHdfs");
 		context.setOutput("rawLocal", "test-data/tmp/rawLocal1000G");
 		context.setOutput("variantsHdfs", "variantsHdfs");
 		context.setOutput("variantsLocal", "test-data/tmp/variantsLocal1000G");
@@ -382,10 +436,10 @@ public class MutationServerTest {
 		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		PileupStep pileUp = new PileupMock("files");
-		context.setOutput("rawHdfs", "rawHdfs3");
-		context.setOutput("rawLocal", "test-data/tmp/rawLocalMixture3");
-		context.setOutput("variantsHdfs", "variantsHdfs3");
-		context.setOutput("variantsLocal", "test-data/tmp/variantsLocalMixture3");
+		context.setOutput("rawHdfs", "rawHdfs");
+		context.setOutput("rawLocal", "test-data/tmp/rawLocalMixture");
+		context.setOutput("variantsHdfs", "variantsHdfs");
+		context.setOutput("variantsLocal", "test-data/tmp/variantsLocalMixture");
 		context.setOutput("baq", "true");
 		context.setOutput("callDel", "false");
 		context.setOutput("level", level);
@@ -396,7 +450,7 @@ public class MutationServerTest {
 		RawFileAnalyser analyser = new RawFileAnalyser();
 		analyser.setCallDel(false);
 
-		ArrayList<QCMetric> list = analyser.calculateLowLevelForTest("test-data/tmp/rawLocalMixture3", refPath, sanger,
+		ArrayList<QCMetric> list = analyser.calculateLowLevelForTest("test-data/tmp/rawLocalMixture", refPath, sanger,
 				Double.valueOf(level));
 
 		assertTrue(list.size() == 1);
@@ -479,6 +533,13 @@ public class MutationServerTest {
 		}
 		file.mkdirs();
 
+		HdfsUtil.delete("rawHdfs");
+		HdfsUtil.delete("variantsHdfs");
+		HdfsUtil.delete("cloudgene-bwaOut");
+		HdfsUtil.delete("outputBam");
+		HdfsUtil.delete("outputBam-temp");
+		
+		
 		WorkflowTestContext context = new WorkflowTestContext();
 
 		context.setInput("input", input);
@@ -498,6 +559,9 @@ public class MutationServerTest {
 	}
 
 	private void importInputdata(String folder, String input) {
+		
+		HdfsUtil.delete(input);
+		
 		System.out.println("Import Data:");
 		String[] files = FileUtil.getFiles(folder, "*.*");
 		for (String file : files) {

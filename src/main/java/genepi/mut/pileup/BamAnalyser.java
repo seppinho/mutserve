@@ -19,7 +19,7 @@ public class BamAnalyser {
 
 	final static String headerRaw = "SAMPLE\tPOS\tREF\tTOP-FWD\tMINOR-FWD\tTOP-REV\tMINOR-REV\tCOV-FWD\tCOV-REV\tCOV-TOTAL\tTYPE\tLEVEL\t%A\t%C\t%G\t%T\t%D\t%N\t%a\t%c\t%g\t%t\t%d\t%n\tTOP-FWD-PERCENT\tTOP-REV-PERCENT\tMINOR-FWD-PERCENT\tMINOR-REV-PERCENT\tLLRFWD\tLLRREV\tLLRAFWD\tLLRCFWD\tLLRGFWD\tLLRTFWD\tLLRAREV\tLLRCREV\tLLRGREV\tLLRTREV\tLLRDFWD\tLLRDREV";
 
-	final static String headerVariants = "SampleID\tPos\tRef\tVariant\tMajor/Minor\tVariant-Level\tCoverage-FWD\tCoverage-Rev\tCoverage-Total";
+	final static String headerVariants = "SampleID\tPos\tRef\tVariant\tMajor/Minor\tVariant-Level\tCoverage-FWD\tCoverage-Rev\tCoverage-Total\tINS Type";
 
 	HashMap<String, BasePosition> counts;
 
@@ -245,12 +245,13 @@ public class BamAnalyser {
 		int currentPos = 0;
 		
 		for (CigarElement cigarElement : samRecord.getCigar().getCigarElements()) {
-
+			
 			Integer cigarElementLength = cigarElement.getLength();
 			
 			if (cigarElement.getOperator() == CigarOperator.D) {
 
 				Integer cigarElementStart = currentReferencePos;
+				
 				Integer cigarElementEnd = currentReferencePos + cigarElementLength;
 
 				while (cigarElementStart < cigarElementEnd) {
@@ -285,23 +286,28 @@ public class BamAnalyser {
 			}
 			
 			//currently not used. 
-			if (false && cigarElement.getOperator() == CigarOperator.I) {
+			if (cigarElement.getOperator() == CigarOperator.I) {
 				
 				Integer cigarElementStart = currentReferencePos;
 
-				int i = 0;
+				int i = 1;
 				
-				while (i < 1) {
+				int length = cigarElement.getLength();
+				
+				while (i <= length) {
 					
-					char insBase = samRecord.getReadString().charAt(currentPos + i);
+					//-1 since array starts at 0
+					int arrayPos = currentPos + i - 1;
 					
-					byte quality = samRecord.getBaseQualities()[currentPos + i];
+					char insBase = samRecord.getReadString().charAt(arrayPos);
+					
+					byte quality = samRecord.getBaseQualities()[arrayPos];
+					
+					String key = filename + ":" + cigarElementStart + "." + i + "/" + length;
+					
+					BasePosition basePos = counts.get(key);
 					
 					i++;
-					
-					String key = filename + ":" + cigarElementStart + "." + i;
-
-					BasePosition basePos = counts.get(key);
 
 					if (basePos == null) {
 						basePos = new BasePosition();
@@ -368,6 +374,7 @@ public class BamAnalyser {
 
 			if (cigarElement.getOperator().consumesReferenceBases() || cigarElement.getOperator() == CigarOperator.SOFT_CLIP) {
 				currentReferencePos = currentReferencePos + cigarElement.getLength();
+				currentPos = currentPos + cigarElement.getLength();
 			}
 		}
 		
