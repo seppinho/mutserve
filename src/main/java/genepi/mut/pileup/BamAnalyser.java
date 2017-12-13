@@ -286,7 +286,7 @@ public class BamAnalyser {
 			}
 			
 			//currently not used. 
-			if (cigarElement.getOperator() == CigarOperator.I) {
+			if (false && cigarElement.getOperator() == CigarOperator.I) {
 				
 				Integer cigarElementStart = currentReferencePos;
 
@@ -366,13 +366,9 @@ public class BamAnalyser {
 						}
 					}
 				}
-
-				//update positions for insertions
-				currentPos = currentPos + cigarElement.getLength();
-
 			}
 
-			if (cigarElement.getOperator().consumesReferenceBases() || cigarElement.getOperator() == CigarOperator.SOFT_CLIP) {
+			if (cigarElement.getOperator().consumesReferenceBases() || cigarElement.getOperator() == CigarOperator.SOFT_CLIP || cigarElement.getOperator() == CigarOperator.I) {
 				currentReferencePos = currentReferencePos + cigarElement.getLength();
 				currentPos = currentPos + cigarElement.getLength();
 			}
