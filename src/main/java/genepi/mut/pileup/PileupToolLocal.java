@@ -5,6 +5,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -25,6 +26,7 @@ public class PileupToolLocal extends Tool {
 
 	public PileupToolLocal(String[] args) {
 		super(args);
+		System.out.println("Command " + Arrays.toString(args));
 	}
 
 	@Override
@@ -84,6 +86,18 @@ public class PileupToolLocal extends Tool {
 			System.out.println(folderIn.getAbsolutePath());
 			return 0;
 		}
+		
+		File[] files = folderIn.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.toLowerCase().endsWith(".bam");
+			}
+		});
+
+		if (files.length == 0) {
+
+			System.out.println("no BAM files found. Please check input folder " + folderIn.getAbsolutePath());
+			System.exit(0);
+		}
 
 		try {
 
@@ -116,12 +130,6 @@ public class PileupToolLocal extends Tool {
 		}
 
 		long start = System.currentTimeMillis();
-
-		File[] files = folderIn.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return name.toLowerCase().endsWith(".bam");
-			}
-		});
 
 		for (File file : files) {
 
@@ -191,9 +199,9 @@ public class PileupToolLocal extends Tool {
 			String idKey = key.split(":")[0];
 
 			String positionKey = key.split(":")[1];
-			
+
 			int pos;
-			
+
 			boolean insertion = false;
 
 			if (positionKey.contains(".")) {
@@ -206,7 +214,7 @@ public class PileupToolLocal extends Tool {
 			if (pos > 0 && pos <= reference.length()) {
 
 				char ref = 'N';
-				
+
 				BasePosition basePos = counts.get(key);
 
 				basePos.setId(idKey);
@@ -214,25 +222,25 @@ public class PileupToolLocal extends Tool {
 				basePos.setPos(pos);
 
 				VariantLine line = new VariantLine();
-				
-				if(!insertion){
-					
+
+				if (!insertion) {
+
 					ref = reference.charAt(pos - 1);
-					
+
+				} else {
 					line.setInsPosition(positionKey);
-				
-				} 
+				}
 
 				line.setRef(ref);
-				
+
 				line.analysePosition(basePos, level);
 
 				line.callVariants(level);
 
 				if (line.isFinalVariant()) {
-					
+
 					writerVar.write(line.writeVariant());
-				
+
 				}
 
 				// raw data
@@ -250,10 +258,12 @@ public class PileupToolLocal extends Tool {
 		String outputVar = "test-data/tmp/out_var.txt";
 		String outputRaw = "test-data/tmp/out_raw.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
-		//input = "/media/seb/DATA-HDD4/Server-Backup";
+
+		input = "/media/seb/DATA-HDD4/data-genepi/2017/Projects/cnv-server/evaluation/lpa/type-b/bam";
+		fasta = "/home/seb/Desktop/realign/kiv2_6.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
-				"--outputVar", outputVar, "--outputRaw", outputRaw, "--level", "0.01", "--baq", "true", "--indel",
+				"--outputVar", outputVar, "--outputRaw", outputRaw, "--level", "0.01", "--baq", "false", "--indel",
 				"true", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
 
 		pileup.start();
