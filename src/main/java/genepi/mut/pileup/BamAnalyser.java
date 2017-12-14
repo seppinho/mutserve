@@ -281,11 +281,11 @@ public class BamAnalyser {
 
 				}
 
-				// update position for insertions (not included in consumesReferenceBases)
+				// update read position (not included in consumesReferenceBases)
 				if (cigarElement.getOperator() == CigarOperator.S) {
-
+					
 					currentPosForIns = currentPosForIns + cigarElement.getLength();
-
+				
 				}
 
 				if (cigarElement.getOperator() == CigarOperator.I) {
@@ -369,14 +369,17 @@ public class BamAnalyser {
 							}
 						}
 					}
-					// since not included in consumesReferenceBases
+					
+					// update read position (not included in consumesReferenceBases)
 					currentPosForIns = currentPosForIns + cigarElement.getLength();
+					
 				}
 
 				// only M and D operators consume bases
 				if (cigarElement.getOperator().consumesReferenceBases()) {
 					currentReferencePos = currentReferencePos + cigarElement.getLength();
 
+					// don't increase since not included in base string!
 					if (cigarElement.getOperator() != CigarOperator.D) {
 						currentPosForIns = currentPosForIns + cigarElement.getLength();
 					}
