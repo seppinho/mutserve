@@ -288,7 +288,7 @@ public class BamAnalyser {
 				
 				}
 
-				if (cigarElement.getOperator() == CigarOperator.I) {
+				if (false && cigarElement.getOperator() == CigarOperator.I) {
 
 					Integer cigarElementStart = currentReferencePos;
 
@@ -379,7 +379,7 @@ public class BamAnalyser {
 				if (cigarElement.getOperator().consumesReferenceBases()) {
 					currentReferencePos = currentReferencePos + cigarElement.getLength();
 
-					// don't increase since not included in base string!
+					// don't increase D, since not included in base string!
 					if (cigarElement.getOperator() != CigarOperator.D) {
 						currentPosForIns = currentPosForIns + cigarElement.getLength();
 					}

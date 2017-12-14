@@ -259,7 +259,7 @@ public class PileupToolLocal extends Tool {
 		String outputRaw = "test-data/tmp/out_raw.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
-		input = "/media/seb/DATA-HDD4/data-genepi/2017/Projects/cnv-server/evaluation/lpa/type-b/bam";
+		input = "/media/seb/DATA-HDD4/data-genepi/2017/Projects/cnv-server/evaluation/lpa/type-b/bam-realigned";
 		fasta = "/home/seb/Desktop/realign/kiv2_6.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
