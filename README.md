@@ -12,7 +12,7 @@ We also provide a local version of mtDNA-Server without the need to transfer dat
 ### Download Tool
 ```
 mkdir mutation-server
-wget https://github.com/seppinho/mutation-server/releases/download/1.0/cnv-mutation-server-1.0.jar -O mutation-server/cnv-mutation-server-1.0.jar
+wget https://github.com/seppinho/mutation-server/releases/download/1.1/cnv-mutation-server-1.0.jar -O mutation-server/cnv-mutation-server-1.0.jar
 ```
 ### Download Test Data
 
