@@ -1156,7 +1156,7 @@ public class VariantLine implements Comparable<VariantLine> {
 
 			build.append("-" + "\t");
 
-			build.append("1.0" + "\t");
+			build.append(df.format(getVariantLevel()) + "\t");
 
 		} else {
 
@@ -1204,7 +1204,13 @@ public class VariantLine implements Comparable<VariantLine> {
 
 		// only execute if no low-level variant has been detected
 		if (this.getVariantType() == 0) {
-			this.determineVariants();
+
+			if (this.getVariantLevel() > 1 - level) {
+
+				this.determineVariants();
+				
+			}
+
 		}
 
 	}
@@ -1219,6 +1225,8 @@ public class VariantLine implements Comparable<VariantLine> {
 			 * 10× coverage of qualified bases on both positive and negative
 			 * strands;
 			 */
+
+			this.setVariantLevel(calcHetLevel());
 
 			if (checkCoverage()) {
 
@@ -1248,8 +1256,6 @@ public class VariantLine implements Comparable<VariantLine> {
 									} else {
 										this.setVariantType(LOW_LEVEL_VARIANT);
 									}
-
-									this.setVariantLevel(calcHetLevel());
 
 									calcConfidence();
 
