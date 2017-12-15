@@ -1152,19 +1152,10 @@ public class VariantLine implements Comparable<VariantLine> {
 
 		build.append(getVariantBase(this) + "\t");
 
-		if (this.getVariantType() == 1) {
+		build.append(this.getTopBaseFWD() + "/" + this.getMinorBaseFWD() + "\t");
 
-			build.append("-" + "\t");
+		build.append(df.format(getVariantLevel()) + "\t");
 
-			build.append(df.format(getVariantLevel()) + "\t");
-
-		} else {
-
-			build.append(this.getTopBaseFWD() + "/" + this.getMinorBaseFWD() + "\t");
-
-			build.append(df.format(getVariantLevel()) + "\t");
-
-		}
 		build.append(this.getCovFWD() + "\t");
 
 		build.append(this.getCovREV() + "\t");
@@ -1172,7 +1163,9 @@ public class VariantLine implements Comparable<VariantLine> {
 		build.append(this.getCovFWD() + this.getCovREV());
 
 		if (getInsPosition() != null) {
+
 			build.append("\t" + this.getInsPosition());
+
 		}
 
 		build.append("\r");
@@ -1208,7 +1201,7 @@ public class VariantLine implements Comparable<VariantLine> {
 			if (this.getVariantLevel() > 1 - level) {
 
 				this.determineVariants();
-				
+
 			}
 
 		}
@@ -1226,6 +1219,7 @@ public class VariantLine implements Comparable<VariantLine> {
 			 * strands;
 			 */
 
+			//always calculate level to check for non-low-level variants later
 			this.setVariantLevel(calcHetLevel());
 
 			if (checkCoverage()) {
