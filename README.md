@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/seppinho/mutation-server.svg?branch=master)](https://travis-ci.org/seppinho/mutation-server)
 [![Twitter Follow](https://img.shields.io/twitter/follow/mtdnaserver.svg?style=social&label=Follow)](https://twitter.com/mtdnaserver)
 
-# CNV Mutation Server (aka mtDNA-Server)
+# Mutation Server (aka mtDNA-Server)
 
 CNV Mutation Server is an online [cloud service](https://mtdna-server.uibk.ac.at) to detect variants and heteroplasmies in mitochondrial NGS DNA. For scalability, the tool is parallelized with Hadoop MapReduce. 
 
