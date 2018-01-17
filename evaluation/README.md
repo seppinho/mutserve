@@ -5,7 +5,7 @@ Started from [this paper](https://www.nature.com/articles/srep43169?WT.feed_name
 
 [Link](https://github.com/ekg/freebayes)
 
-freebayes -F 0.01 -f <fasta> <file.bam> > <out.vcf
+freebayes -F 0.01 -f <fasta> <file.bam> > <out.vcf>
 
 ### VarScan
 
