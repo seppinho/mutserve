@@ -12,7 +12,7 @@ import java.util.TreeSet;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.mut.objects.VariantLine;
 
-public class RawFileAnalyser {
+public class RawFileAnalysermtDNA {
 
 	private static Set<Integer> privMutationsL02 = new HashSet<Integer>(Arrays.asList(15372, 16183));
 
