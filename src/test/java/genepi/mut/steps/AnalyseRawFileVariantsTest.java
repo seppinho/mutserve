@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import genepi.mut.util.QCMetric;
-import genepi.mut.util.RawFileAnalyser;
+import genepi.mut.util.RawFileAnalysermtDNA;
 import genepi.mut.util.RawFileAnalyserDNA;
 
 public class AnalyseRawFileVariantsTest {
@@ -20,7 +20,7 @@ public class AnalyseRawFileVariantsTest {
 		String refPath = "test-data/mtdna/raw-results/rCRS.fasta";
 		String sanger = "test-data/mtdna/raw-results/sanger.txt";
 
-		RawFileAnalyser rawAnalyser = new RawFileAnalyser();
+		RawFileAnalysermtDNA rawAnalyser = new RawFileAnalysermtDNA();
 		rawAnalyser.setCallDel(false);
 		File input = new File("test-data/mtdna/raw-results/raw-s4-nodel.txt");
 

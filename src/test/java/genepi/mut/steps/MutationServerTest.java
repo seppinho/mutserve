@@ -24,7 +24,7 @@ import genepi.mut.align.AlignStep;
 import genepi.mut.pileup.PileupStep;
 import genepi.mut.sort.SortStep;
 import genepi.mut.util.QCMetric;
-import genepi.mut.util.RawFileAnalyser;
+import genepi.mut.util.RawFileAnalysermtDNA;
 import genepi.mut.util.TestCluster;
 import genepi.mut.util.WorkflowTestContext;
 import htsjdk.samtools.DefaultSAMRecordFactory;
@@ -448,7 +448,7 @@ public class MutationServerTest {
 		boolean result = pileUp.run(context);
 		assertTrue(result);
 
-		RawFileAnalyser analyser = new RawFileAnalyser();
+		RawFileAnalysermtDNA analyser = new RawFileAnalysermtDNA();
 		analyser.setCallDel(false);
 
 		ArrayList<QCMetric> list = analyser.calculateLowLevelForTest("test-data/tmp/rawLocalMixture", refPath, sanger,
