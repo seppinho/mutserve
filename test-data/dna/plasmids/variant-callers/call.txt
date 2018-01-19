@@ -1,0 +1,1 @@
+java -jar /home/seb/Downloads/GenomeAnalysisTK-3.8-0-ge9d806836/GenomeAnalysisTK.jar -T HaplotypeCaller -R kiv2_6/kiv2_6.fasta -I plasmids/LPA-Plasmid-13_S18_5104_RG.bam --genotyping_mode DISCOVERY -stand_call_conf 30.0  --dbsnp /home/seb/Downloads/00-All.vcf.gz -o plasmid13_gatk.vcf &
