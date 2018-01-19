@@ -2,14 +2,12 @@ package genepi.mut.tools;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
 import genepi.base.Tool;
 import genepi.io.table.reader.CsvTableReader;
-import genepi.mut.util.QCMetric;
 
 public class CalcPrecision extends Tool {
 
@@ -165,7 +163,7 @@ public class CalcPrecision extends Tool {
 	public static void main(String[] args) {
 
 		String goldPlasmid12 = "test-data/dna/plasmids/plasmid12/gold/plasmid12_major.txt";
-		
+
 		String goldPlasmid13 = "test-data/dna/plasmids/plasmid13/gold/plasmid13_minor.txt";
 
 		System.out.println("PLASMID 12");
@@ -174,7 +172,7 @@ public class CalcPrecision extends Tool {
 		System.out.println("MUTATION SERVER");
 
 		CalcPrecision mutserver = new CalcPrecision(new String[] { "--gold", goldPlasmid12, "--in",
-				"test-data/dna/plasmids/results/plasmid12-mutserver.txt"});
+				"test-data/dna/plasmids/results/plasmid12-mutserver.txt" });
 
 		mutserver.start();
 
@@ -182,15 +180,15 @@ public class CalcPrecision extends Tool {
 		System.out.println("FREEBAYES");
 
 		CalcPrecision freebayes = new CalcPrecision(new String[] { "--gold", goldPlasmid12, "--in",
-				"test-data/dna/plasmids/results/plasmid12-freebayes.txt"});
+				"test-data/dna/plasmids/results/plasmid12-freebayes.txt" });
 
 		freebayes.start();
 
 		System.out.println("");
 		System.out.println("GATK");
 
-		CalcPrecision gatk = new CalcPrecision(new String[] { "--gold", goldPlasmid12, "--in",
-				"test-data/dna/plasmids/results/plasmid12-gatk.txt"});
+		CalcPrecision gatk = new CalcPrecision(
+				new String[] { "--gold", goldPlasmid12, "--in", "test-data/dna/plasmids/results/plasmid12-gatk.txt" });
 
 		gatk.start();
 
@@ -198,7 +196,7 @@ public class CalcPrecision extends Tool {
 		System.out.println("LOFREQ");
 
 		CalcPrecision lofreq = new CalcPrecision(new String[] { "--gold", goldPlasmid12, "--in",
-				"test-data/dna/plasmids/results/plasmid12-lofreq.txt"});
+				"test-data/dna/plasmids/results/plasmid12-lofreq.txt" });
 
 		lofreq.start();
 
@@ -210,7 +208,7 @@ public class CalcPrecision extends Tool {
 		System.out.println("MUTATION SERVER");
 
 		mutserver = new CalcPrecision(new String[] { "--gold", goldPlasmid13, "--in",
-				"test-data/dna/plasmids/results/plasmid13-mutserver.txt"});
+				"test-data/dna/plasmids/results/plasmid13-mutserver.txt" });
 
 		mutserver.start();
 
@@ -218,15 +216,15 @@ public class CalcPrecision extends Tool {
 		System.out.println("FREEBAYES");
 
 		freebayes = new CalcPrecision(new String[] { "--gold", goldPlasmid13, "--in",
-				"test-data/dna/plasmids/results/plasmid13-freebayes.txt"});
+				"test-data/dna/plasmids/results/plasmid13-freebayes.txt" });
 
 		freebayes.start();
 
 		System.out.println("");
 		System.out.println("GATK");
 
-		gatk = new CalcPrecision(new String[] { "--gold", goldPlasmid13, "--in",
-				"test-data/dna/plasmids/results/plasmid13-gatk.txt"});
+		gatk = new CalcPrecision(
+				new String[] { "--gold", goldPlasmid13, "--in", "test-data/dna/plasmids/results/plasmid13-gatk.txt" });
 
 		gatk.start();
 
@@ -234,7 +232,7 @@ public class CalcPrecision extends Tool {
 		System.out.println("LOFREQ");
 
 		lofreq = new CalcPrecision(new String[] { "--gold", goldPlasmid13, "--in",
-				"test-data/dna/plasmids/results/plasmid13-lofreq.txt"});
+				"test-data/dna/plasmids/results/plasmid13-lofreq.txt" });
 
 		lofreq.start();
 

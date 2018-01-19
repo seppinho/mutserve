@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import genepi.mut.util.QCMetric;
 import genepi.mut.util.RawFileAnalyser;
+import genepi.mut.util.RawFileAnalyserDNA;
 
 public class AnalyseRawFileVariantsTest {
 
@@ -30,9 +31,39 @@ public class AnalyseRawFileVariantsTest {
 						assertEquals(59.259, metric.getSensitivity(), 0.1);
 						assertEquals(100, metric.getSpecificity(), 0);
 					}
+	}
+	
+	
+	@Test
+	public void Plasmid12Test() {
+
+		double hetLevel = 0.01;
+
+		String refPath = "test-data/dna/plasmids/reference/kiv2_6.fasta";
+		String sanger = "test-data/dna/plasmids/plasmid12/gold/plasmid12_major.txt";
+
+		RawFileAnalyserDNA rawAnalyser = new RawFileAnalyserDNA();
+		File input = new File("test-data/dna/plasmids/plasmid12/raw/plasmid12-raw.txt");
+
+			System.out.println("input file is " + input.getName());
+					ArrayList<QCMetric> metrics = rawAnalyser.calculateLowLevelForTest(input.getPath(), refPath, sanger, hetLevel);
+	}
+	
+	@Test
+	public void Plasmid13Test() {
+
+		double hetLevel = 0.01;
+
+		String refPath = "test-data/dna/plasmids/reference/kiv2_6.fasta";
+		String sanger = "test-data/dna/plasmids/plasmid13/gold/plasmid13_minor.txt";
+
+		RawFileAnalyserDNA rawAnalyser = new RawFileAnalyserDNA();
+		File input = new File("test-data/dna/plasmids/plasmid13/raw/plasmid13-raw.txt");
+
+			System.out.println("input file is " + input.getName());
+					ArrayList<QCMetric> metrics = rawAnalyser.calculateLowLevelForTest(input.getPath(), refPath, sanger, hetLevel);
 					
-					
+	}		
 				
 
-	}
 }
