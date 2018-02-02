@@ -3,14 +3,10 @@ package genepi.mut.pileup;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 
 import genepi.base.Tool;
-import genepi.io.FileUtil;
 import genepi.io.text.LineWriter;
 import genepi.mut.objects.BasePosition;
 import genepi.mut.objects.VariantLine;
@@ -19,8 +15,6 @@ import htsjdk.samtools.SAMRecordIterator;
 import htsjdk.samtools.SamReader;
 import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.ValidationStringency;
-import htsjdk.samtools.reference.FastaSequenceIndex;
-import htsjdk.samtools.reference.FastaSequenceIndexCreator;
 
 public class PileupToolLocal extends Tool {
 
