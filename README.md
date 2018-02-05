@@ -24,9 +24,9 @@ wget https://mtdna-server.uibk.ac.at/static/bam/HG00096.mapped.ILLUMINA.bwa.GBR.
 ### Run Tool
 ```
 cd mutation-server
-java -jar cnv-mutation-server-1.0.jar  analyse-local --input input-files  --reference input-files/rCRS.fasta --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel false
+java -jar mutation-server-1.0.1.jar  analyse-local --input input-files  --reference input-files/rCRS.fasta --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel true
 ```
-The indel feature is currently in beta. 
+The --indel feature currently only analyses deletions (beta). 
 
 ## Citation
 
