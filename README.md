@@ -7,12 +7,12 @@ CNV Mutation Server is an online [cloud service](https://mtdna-server.uibk.ac.at
 
 ## Run mtDNA-Server locally
 
-We also provide a local version of mtDNA-Server without the need to transfer data to our service (BAM input only). Note: For mapping the reads (FASTQ to BAM) of the circular mitchondrial genome, we recommend [bwa mem](https://github.com/lh3/bwa). 
+We also provide a [local version](https://github.com/seppinho/mutation-server/releases/download/1.0.1) of mtDNA-Server without the need to transfer data to our service (BAM input only). Note: For mapping the reads (FASTQ to BAM) of the circular mitchondrial genome, we recommend [bwa mem](https://github.com/lh3/bwa). 
 
 ### Download Tool
 ```
 mkdir mutation-server
-wget https://github.com/seppinho/mutation-server/releases/download/1.1/cnv-mutation-server-1.0.jar -O mutation-server/cnv-mutation-server-1.0.jar
+wget https://github.com/seppinho/mutation-server/releases/download/1.0.1/mutation-server-1.0.1.jar -O mutation-server/mutation-server-1.0.1.jar
 ```
 ### Download Test Data
 
