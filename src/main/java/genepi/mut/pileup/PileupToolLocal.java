@@ -31,7 +31,7 @@ public class PileupToolLocal extends Tool {
 		addParameter("outputVar", "output variants file", Tool.STRING);
 		addParameter("level", "detection level", Tool.DOUBLE);
 		addParameter("reference", "reference as fasta", Tool.STRING);
-		addParameter("indel", "call indels?", Tool.STRING);
+		addParameter("indel", "call deletions?", Tool.STRING);
 		addParameter("baq", "apply BAQ?", Tool.STRING);
 		addParameter("baseQ", "base quality", Tool.INTEGER);
 		addParameter("mapQ", "mapping quality", Tool.INTEGER);
@@ -257,7 +257,7 @@ public class PileupToolLocal extends Tool {
 		fasta = "/home/seb/Desktop/realign/kiv2_6.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
-				"--outputVar", outputVar, "--outputRaw", outputRaw, "--level", "0.01", "--baq", "false", "--indel",
+				"--outputVar", outputVar, "--outputRaw", outputRaw, "--level", "0.01", "--baq", "true", "--indel",
 				"true", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
 
 		pileup.start();

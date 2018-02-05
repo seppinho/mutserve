@@ -371,10 +371,10 @@ public class MutationServerTest {
 		String hdfsFolder = "input";
 		String type = "bam";
 
-		//TODO WHY IS 3107 missing?
+		//TODO WHY IS 3107 missing? -> use of BAQ show different minor base, variants not detected since 1 - level!
 		Set<Integer> expected = new HashSet<Integer>(Arrays.asList(1456, 2746, 3200, 12410, 14071, 14569, 15463,
 				16093, 16360, 10394, 1438, 152, 15326, 15340, 16519, 263, 4769, 750, 8592, 8860));
-
+		
 		importInputdata(inputFolder, hdfsFolder);
 
 		// create workflow context
