@@ -1162,11 +1162,11 @@ public class VariantLine implements Comparable<VariantLine> {
 
 		build.append(this.getCovFWD() + this.getCovREV());
 
-		if (getInsPosition() != null) {
+		/*if (getInsPosition() != null) {
 
 			build.append("\t" + this.getInsPosition());
 
-		}
+		}*/
 
 		build.append("\r");
 
