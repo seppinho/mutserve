@@ -447,7 +447,7 @@ public class VariantLine implements Comparable<VariantLine> {
 				this.setLlrGREV(llr.getLlrREV());
 			}
 		}
-		
+
 		if (getTopBaseFWD() != 'T') {
 			if ((tFWD / (double) totalFWD) > level || (tREV / (double) totalREV) > level) {
 				LlrObject llr = calcLlr(base, 'T');
@@ -455,7 +455,7 @@ public class VariantLine implements Comparable<VariantLine> {
 				this.setLlrTREV(llr.getLlrREV());
 			}
 		}
-		
+
 		if (getTopBaseFWD() != 'D') {
 			if ((dFWD / (double) totalFWD) > level || (dREV / (double) totalREV) > level) {
 				LlrObject llr = calcLlr(base, 'D');
@@ -1141,14 +1141,6 @@ public class VariantLine implements Comparable<VariantLine> {
 		this.llrTREV = llrTREV;
 	}
 
-	public String getMultiAllelic() {
-		return multiAllelic;
-	}
-
-	public void setMultiAllelic1(String multiAllelic) {
-		this.multiAllelic = multiAllelic;
-	}
-
 	public String writeVariant() throws IOException {
 
 		StringBuilder build = new StringBuilder();
@@ -1444,6 +1436,11 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	public void setInsPosition(String insPosition) {
 		this.insPosition = insPosition;
+	}
+
+	public String getMultiAllelic() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
