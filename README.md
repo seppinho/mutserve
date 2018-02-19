@@ -3,7 +3,7 @@
 
 # Mutation Server (aka mtDNA-Server)
 
-CNV Mutation Server is an online [cloud service](https://mtdna-server.uibk.ac.at) to detect variants and heteroplasmies in mitochondrial NGS DNA. For scalability, the tool is parallelized with Hadoop MapReduce. 
+Mutation Server/mtDNA-Server is an online [cloud service](https://mtdna-server.uibk.ac.at) to detect variants and heteroplasmies in mitochondrial NGS DNA. For scalability, the tool is parallelized with Hadoop MapReduce. 
 
 ## Run mtDNA-Server locally
 
