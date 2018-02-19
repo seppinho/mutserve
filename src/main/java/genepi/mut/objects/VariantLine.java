@@ -244,6 +244,7 @@ public class VariantLine implements Comparable<VariantLine> {
 
 		char topBaseFWD = '-';
 		char minorBaseFWD = '-';
+
 		// prefer lexicographic order in case of 50/50
 		if (topBasePercentsFWD == minorBasePercentsFWD && topBasePercentsFWD > 0) {
 			if (aFWDPercents == gFWDPercents && gFWDPercents == topBasePercentsFWD) {
@@ -353,6 +354,7 @@ public class VariantLine implements Comparable<VariantLine> {
 
 			else if (minorBasePercentsFWD == tFWDPercents) {
 				minorBaseFWD = 'T';
+
 			} else if (minorBasePercentsFWD == dFWDPercents) {
 				minorBaseFWD = 'D';
 			}
@@ -423,35 +425,44 @@ public class VariantLine implements Comparable<VariantLine> {
 		}
 
 		if (getTopBaseFWD() != 'A') {
-			LlrObject llr = calcLlr(base, 'A');
-			this.setLlrAFWD(llr.getLlrFWD());
-			this.setLlrAREV(llr.getLlrREV());
+			if ((aFWD / (double) totalFWD) > level || (aREV / (double) totalREV) > level) {
+				LlrObject llr = calcLlr(base, 'A');
+				this.setLlrAFWD(llr.getLlrFWD());
+				this.setLlrAREV(llr.getLlrREV());
+			}
 		}
 
 		if (getTopBaseFWD() != 'C') {
-			LlrObject llr = calcLlr(base, 'C');
-			this.setLlrCFWD(llr.getLlrFWD());
-			this.setLlrCREV(llr.getLlrREV());
+			if ((cFWD / (double) totalFWD) > level || (cREV / (double) totalREV) > level) {
+				LlrObject llr = calcLlr(base, 'C');
+				this.setLlrCFWD(llr.getLlrFWD());
+				this.setLlrCREV(llr.getLlrREV());
+			}
 		}
 
 		if (getTopBaseFWD() != 'G') {
-			LlrObject llr = calcLlr(base, 'G');
-			this.setLlrGFWD(llr.getLlrFWD());
-			this.setLlrGREV(llr.getLlrREV());
+			if ((gFWD / (double) totalFWD) > level || (gREV / (double) totalREV) > level) {
+				LlrObject llr = calcLlr(base, 'G');
+				this.setLlrGFWD(llr.getLlrFWD());
+				this.setLlrGREV(llr.getLlrREV());
+			}
 		}
-
+		
 		if (getTopBaseFWD() != 'T') {
-			LlrObject llr = calcLlr(base, 'T');
-			this.setLlrTFWD(llr.getLlrFWD());
-			this.setLlrTREV(llr.getLlrREV());
+			if ((tFWD / (double) totalFWD) > level || (tREV / (double) totalREV) > level) {
+				LlrObject llr = calcLlr(base, 'T');
+				this.setLlrTFWD(llr.getLlrFWD());
+				this.setLlrTREV(llr.getLlrREV());
+			}
 		}
-
+		
 		if (getTopBaseFWD() != 'D') {
-			LlrObject llr = calcLlr(base, 'D');
-			this.setLlrDFWD(llr.getLlrFWD());
-			this.setLlrDREV(llr.getLlrREV());
+			if ((dFWD / (double) totalFWD) > level || (dREV / (double) totalREV) > level) {
+				LlrObject llr = calcLlr(base, 'D');
+				this.setLlrDFWD(llr.getLlrFWD());
+				this.setLlrDREV(llr.getLlrREV());
+			}
 		}
-
 	}
 
 	private LlrObject calcLlr(BasePosition base, char minorBaseFWD) {
@@ -490,8 +501,8 @@ public class VariantLine implements Comparable<VariantLine> {
 				+ tPercentageFWD + "\t" + dPercentageFWD + "\t" + nPercentageFWD + "\t" + aPercentageREV + "\t"
 				+ cPercentageREV + "\t" + gPercentageREV + "\t" + tPercentageREV + "\t" + dPercentageREV + "\t"
 				+ nPercentageREV + "\t" + topBasePercentsFWD + "\t" + topBasePercentsREV + "\t" + minorBasePercentsFWD
-				+ "\t" + minorBasePercentsREV + "\t" + llrFWD + "\t" + llrREV + "\t" + llrAFWD + "\t" + llrCFWD + "\t"
-				+ llrGFWD + "\t" + llrTFWD + "\t" + llrAREV + "\t" + llrCREV + "\t" + llrGREV + "\t" + llrTREV + "\t"
+				+ "\t" + minorBasePercentsREV + "\t" + llrFWD + "\t" + llrREV + "\t" + llrAFWD + "\t" + llrAREV + "\t"
+				+ llrCFWD + "\t" + llrCREV + "\t" + llrGFWD + "\t" + llrGREV + "\t" + llrTFWD + "\t" + llrTREV + "\t"
 				+ llrDFWD + "\t" + llrDREV;
 
 	}
@@ -1134,7 +1145,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		return multiAllelic;
 	}
 
-	public void setMultiAllelic(String multiAllelic) {
+	public void setMultiAllelic1(String multiAllelic) {
 		this.multiAllelic = multiAllelic;
 	}
 
@@ -1162,11 +1173,13 @@ public class VariantLine implements Comparable<VariantLine> {
 
 		build.append(this.getCovFWD() + this.getCovREV());
 
-		/*if (getInsPosition() != null) {
-
-			build.append("\t" + this.getInsPosition());
-
-		}*/
+		/*
+		 * if (getInsPosition() != null) {
+		 * 
+		 * build.append("\t" + this.getInsPosition());
+		 * 
+		 * }
+		 */
 
 		build.append("\r");
 
@@ -1219,7 +1232,7 @@ public class VariantLine implements Comparable<VariantLine> {
 			 * strands;
 			 */
 
-			//always calculate level to check for non-low-level variants later
+			// always calculate level to check for non-low-level variants later
 			this.setVariantLevel(calcHetLevel());
 
 			if (checkCoverage()) {
