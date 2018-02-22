@@ -37,6 +37,8 @@ public class VariantLine implements Comparable<VariantLine> {
 	private char topBaseREV;
 	private char minorBaseFWD;
 	private char minorBaseREV;
+	private ArrayList<Character> multiallelicFWD;
+	private ArrayList<Character> multiallelicREV;
 	private double aPercentageFWD;
 	private double cPercentageFWD;
 	private double gPercentageFWD;
@@ -90,7 +92,6 @@ public class VariantLine implements Comparable<VariantLine> {
 	private double CIAC_LOW_REV;
 	private double CIAC_UP_REV;
 	NumberFormat df;
-	private String multiAllelic;
 
 	public VariantLine() {
 		Locale.setDefault(new Locale("en", "US"));
@@ -168,6 +169,10 @@ public class VariantLine implements Comparable<VariantLine> {
 		id = base.getId();
 		pos = base.getPos();
 
+		// set
+		this.setId(id);
+		this.setPosition(pos);
+
 		int aFWD = base.getaFor();
 		int cFWD = base.getcFor();
 		int gFWD = base.getgFor();
@@ -187,6 +192,10 @@ public class VariantLine implements Comparable<VariantLine> {
 		int totalFWD = aFWD + cFWD + gFWD + tFWD + dFWD;
 		int totalREV = aREV + cREV + gREV + tREV + dREV;
 
+		// set
+		this.setCovFWD(totalFWD);
+		this.setCovREV(totalREV);
+
 		if (totalFWD > 0) {
 			aFWDPercents = aFWD / (double) totalFWD;
 			cFWDPercents = cFWD / (double) totalFWD;
@@ -204,6 +213,20 @@ public class VariantLine implements Comparable<VariantLine> {
 			dREVPercents = dREV / (double) totalREV;
 			nREVPercents = nREV / (double) (totalREV + nREV);
 		}
+
+		this.setaPercentageFWD(aFWDPercents);
+		this.setcPercentageFWD(cFWDPercents);
+		this.setgPercentageFWD(gFWDPercents);
+		this.settPercentageFWD(tFWDPercents);
+		this.setnPercentageFWD(nFWDPercents);
+		this.setdPercentageFWD(dFWDPercents);
+
+		this.setaPercentageREV(aREVPercents);
+		this.setcPercentageREV(cREVPercents);
+		this.setgPercentageREV(gREVPercents);
+		this.settPercentageREV(tREVPercents);
+		this.setnPercentageREV(nREVPercents);
+		this.setdPercentageREV(dREVPercents);
 
 		ArrayList<Integer> allelesFWD = new ArrayList<Integer>();
 		allelesFWD.add(aFWD);
@@ -236,11 +259,18 @@ public class VariantLine implements Comparable<VariantLine> {
 		double minorBasePercentsREV = 0.0;
 
 		if (totalREV > 0) {
+			
 			topBasePercentsREV = allelesREV.get(0) / (double) totalREV;
 
 			minorBasePercentsREV = allelesREV.get(1) / (double) totalREV;
 
 		}
+
+		// set
+		this.setTopBasePercentsFWD(topBasePercentsFWD);
+		this.setMinorBasePercentsFWD(minorBasePercentsFWD);
+		this.setTopBasePercentsREV(topBasePercentsREV);
+		this.setMinorBasePercentsREV(minorBasePercentsREV);
 
 		char topBaseFWD = '-';
 		char minorBaseFWD = '-';
@@ -338,84 +368,32 @@ public class VariantLine implements Comparable<VariantLine> {
 			topBaseREV = 'D';
 		}
 
-		if (minorBasePercentsFWD > 0 && minorBasePercentsFWD < 0.5) {
-
-			if (minorBasePercentsFWD == aFWDPercents) {
-				minorBaseFWD = 'A';
-			}
-
-			else if (minorBasePercentsFWD == cFWDPercents) {
-				minorBaseFWD = 'C';
-			}
-
-			else if (minorBasePercentsFWD == gFWDPercents) {
-				minorBaseFWD = 'G';
-			}
-
-			else if (minorBasePercentsFWD == tFWDPercents) {
-				minorBaseFWD = 'T';
-
-			} else if (minorBasePercentsFWD == dFWDPercents) {
-				minorBaseFWD = 'D';
-			}
-
-		}
-
-		if (minorBasePercentsREV > 0 && minorBasePercentsREV < 0.5) {
-
-			if (minorBasePercentsREV == aREVPercents) {
-				minorBaseREV = 'A';
-			}
-
-			else if (minorBasePercentsREV == cREVPercents) {
-				minorBaseREV = 'C';
-			}
-
-			else if (minorBasePercentsREV == gREVPercents) {
-				minorBaseREV = 'G';
-			}
-
-			else if (minorBasePercentsREV == tREVPercents) {
-				minorBaseREV = 'T';
-			}
-
-			else if (minorBasePercentsREV == dREVPercents) {
-				minorBaseREV = 'D';
-			}
-
-		}
-
-		// set attributes
-		this.setId(id);
-		this.setPosition(pos);
-
-		this.setCovFWD(totalFWD);
-		this.setCovREV(totalREV);
-
 		this.setTopBaseFWD(topBaseFWD);
 		this.setTopBaseREV(topBaseREV);
 		this.setMinorBaseFWD(minorBaseFWD);
 		this.setMinorBaseREV(minorBaseREV);
 
-		this.setaPercentageFWD(aFWDPercents);
-		this.setcPercentageFWD(cFWDPercents);
-		this.setgPercentageFWD(gFWDPercents);
-		this.settPercentageFWD(tFWDPercents);
-		this.setnPercentageFWD(nFWDPercents);
-		this.setdPercentageFWD(dFWDPercents);
+		minorBaseFWD = detectMinorFWD(minorBasePercentsFWD);
+		this.setMinorBaseFWD(minorBaseFWD);
 
-		this.setaPercentageREV(aREVPercents);
-		this.setcPercentageREV(cREVPercents);
-		this.setgPercentageREV(gREVPercents);
-		this.settPercentageREV(tREVPercents);
-		this.setnPercentageREV(nREVPercents);
-		this.setdPercentageREV(dREVPercents);
+		minorBaseREV = detectMinorREV(minorBasePercentsREV);
+		this.setMinorBaseREV(minorBaseREV);
 
-		this.setTopBasePercentsFWD(topBasePercentsFWD);
-		this.setMinorBasePercentsFWD(minorBasePercentsFWD);
-
-		this.setTopBasePercentsREV(topBasePercentsREV);
-		this.setMinorBasePercentsREV(minorBasePercentsREV);
+		multiallelicFWD = new ArrayList<>();
+		multiallelicREV = new ArrayList<>();
+		
+		for (int i = 1; i <= 4; i++) {
+			double multiPercentFWD = allelesFWD.get(i) / (double) totalFWD;
+			double multiPercentREV = allelesREV.get(i) / (double) totalREV;
+			char minor1 = detectMinorFWD(multiPercentFWD);
+			char minor2 = detectMinorREV(multiPercentREV);
+			
+			if((multiPercentFWD > level || multiPercentREV > level)){
+				multiallelicFWD.add(minor1);
+				multiallelicREV.add(minor2);
+			}
+			
+		}
 
 		// TODO combine this with LLR for all bases
 		if (minorBasePercentsFWD >= level || minorBasePercentsREV >= level) {
@@ -463,6 +441,62 @@ public class VariantLine implements Comparable<VariantLine> {
 				this.setLlrDREV(llr.getLlrREV());
 			}
 		}
+	}
+
+	private char detectMinorFWD(double minorPercentage) {
+
+		if (minorPercentage > 0 && minorPercentage <= 0.5) {
+
+			if (minorPercentage == this.aPercentageFWD) {
+				return 'A';
+			}
+
+			else if (minorPercentage == this.cPercentageFWD) {
+				return 'C';
+			}
+
+			else if (minorPercentage == this.gPercentageFWD) {
+				return 'G';
+			}
+
+			else if (minorPercentage == this.tPercentageFWD) {
+				return 'T';
+			}
+
+			else if (minorPercentage == this.dPercentageFWD) {
+				return 'D';
+			}
+
+		}
+		return '-';
+	}
+
+	private char detectMinorREV(double minorPercentage) {
+
+		if (minorPercentage > 0 && minorPercentage <= 0.5) {
+
+			if (minorPercentage == this.aPercentageREV) {
+				return 'A';
+			}
+
+			else if (minorPercentage == this.cPercentageREV) {
+				return 'C';
+			}
+
+			else if (minorPercentage == this.gPercentageREV) {
+				return 'G';
+			}
+
+			else if (minorPercentage == this.tPercentageREV) {
+				return 'T';
+			}
+
+			else if (minorPercentage == this.dPercentageREV) {
+				return 'D';
+			}
+
+		}
+		return '-';
 	}
 
 	private LlrObject calcLlr(BasePosition base, char minorBaseFWD) {
@@ -1211,6 +1245,22 @@ public class VariantLine implements Comparable<VariantLine> {
 
 		}
 
+	}
+
+	public ArrayList<Character> getMultiallelicFWD() {
+		return multiallelicFWD;
+	}
+
+	public void setMultiallelicFWD(ArrayList<Character> multiallelicFWD) {
+		this.multiallelicFWD = multiallelicFWD;
+	}
+
+	public ArrayList<Character> getMultiallelicREV() {
+		return multiallelicREV;
+	}
+
+	public void setMultiallelicREV(ArrayList<Character> multiallelicREV) {
+		this.multiallelicREV = multiallelicREV;
 	}
 
 	public void determineLowLevelVariant(double level) {
