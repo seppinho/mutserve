@@ -8,7 +8,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 import genepi.io.table.reader.CsvTableReader;
-import genepi.mut.objects.VariantLine;
+import genepi.mut.objects.VariantCaller;
 
 public class RawFileAnalyserDNA {
 
@@ -67,11 +67,11 @@ public class RawFileAnalyserDNA {
 
 							int position = line.getPosition();
 							
-							line.determineLowLevelVariant(hetLevel);
+							VariantCaller.determineLowLevelVariant(line, hetLevel);
 							
-							line.callVariants(hetLevel);
+							VariantCaller.determineVariants(line, hetLevel);
 
-							if (line.isFinalVariant()) {
+							if (VariantCaller.isFinalVariant(line)) {
 
 								hetero.add(cloudgeneReader.getDouble("LEVEL"));
 

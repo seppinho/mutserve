@@ -1,4 +1,4 @@
-package genepi.mut.util;
+/*package genepi.mut.util;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -12,6 +12,7 @@ import java.util.TreeSet;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.text.LineReader;
 import genepi.mut.objects.VariantLine;
+import genepi.mut.objects.VariantLineUtil;
 
 public class MultiallelicAnalyser {
 
@@ -75,7 +76,7 @@ public class MultiallelicAnalyser {
 
 					//detecter.determineMultiAllelicSites(posObj);
 
-					if (posObj.getVariantType() == VariantLine.MULTI_ALLELIC) {
+					if (posObj.getVariantType() == VariantLineUtil.MULTI_ALLELIC) {
 
 						String variant = posObj.getMultiAllelic();
 						String[] splits = variant.split(",");
@@ -179,3 +180,4 @@ public class MultiallelicAnalyser {
 	}
 
 }
+*/

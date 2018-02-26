@@ -9,7 +9,9 @@ import java.util.HashMap;
 import genepi.base.Tool;
 import genepi.io.text.LineWriter;
 import genepi.mut.objects.BasePosition;
-import genepi.mut.objects.VariantLine;
+import genepi.mut.objects.VariantResult;
+import genepi.mut.objects.VariantCaller;
+import genepi.mut.util.VariantLine;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMRecordIterator;
 import htsjdk.samtools.SamReader;
@@ -80,7 +82,7 @@ public class PileupToolLocal extends Tool {
 			System.out.println(folderIn.getAbsolutePath());
 			return 1;
 		}
-		
+
 		File[] files = folderIn.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				return name.toLowerCase().endsWith(".bam");
@@ -181,7 +183,7 @@ public class PileupToolLocal extends Tool {
 	}
 
 	// reducer
-	private void determineVariants(BamAnalyser analyser, LineWriter writerRaw, LineWriter writerVar, double level)
+	private void determineVariants(BamAnalyser analyser, LineWriter writerRaw, LineWriter writerVariants, double level)
 			throws IOException {
 
 		HashMap<String, BasePosition> counts = analyser.getCounts();
@@ -227,14 +229,14 @@ public class PileupToolLocal extends Tool {
 
 				line.setRef(ref);
 
-				line.analysePosition(basePos, level);
+				//parse basePos to create all stats
+				line.parseLine(basePos, level);
 
-				line.callVariants(level);
+				VariantResult out = VariantCaller.determineVariants(line, level);
 
-				if (line.isFinalVariant()) {
-
-					writerVar.write(line.writeVariant());
-
+				if (VariantCaller.isFinalVariant(line)) {
+					String result = VariantCaller.writeVariant(out);
+					writerVariants.write(result);
 				}
 
 				// raw data
@@ -256,9 +258,12 @@ public class PileupToolLocal extends Tool {
 		input = "/media/seb/DATA-HDD4/data-genepi/2017/Projects/cnv-server/evaluation/lpa/type-b/bam-realigned";
 		fasta = "/home/seb/Desktop/realign/kiv2_6.fasta";
 
+		input = "test-data/mtdna/bam/input";
+		fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
+
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
 				"--outputVar", outputVar, "--outputRaw", outputRaw, "--level", "0.01", "--baq", "true", "--indel",
-				"true", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
+				"false", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
 
 		pileup.start();
 

@@ -13,8 +13,10 @@ import genepi.hadoop.HdfsUtil;
 import genepi.hadoop.io.HdfsLineWriter;
 import genepi.mut.objects.BasePosition;
 import genepi.mut.objects.BasePositionHadoop;
-import genepi.mut.objects.VariantLine;
+import genepi.mut.objects.VariantResult;
+import genepi.mut.objects.VariantCaller;
 import genepi.mut.util.ReferenceUtil;
+import genepi.mut.util.VariantLine;
 
 public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text> {
 
@@ -124,15 +126,16 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 			line.setRef(ref);
 
 			// level needed for LLR
-			line.analysePosition(basePos, level);
+			line.parseLine(basePos, level);
 
 			context.write(null, new Text(line.toRawString()));
 
 			// level needed for actual calling
-			line.callVariants(level);
+			VariantResult out = VariantCaller.determineVariants(line, level);
 
-			if (line.isFinalVariant()) {
-				writer.write(line.writeVariant());
+			if (VariantCaller.isFinalVariant(line)) {
+				String result = VariantCaller.writeVariant(out);
+				writer.write(result);
 			}
 		}
 

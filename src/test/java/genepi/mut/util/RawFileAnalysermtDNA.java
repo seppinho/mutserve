@@ -10,7 +10,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 import genepi.io.table.reader.CsvTableReader;
-import genepi.mut.objects.VariantLine;
+import genepi.mut.objects.VariantCaller;
 
 public class RawFileAnalysermtDNA {
 
@@ -81,10 +81,9 @@ public class RawFileAnalysermtDNA {
 
 							int position = line.getPosition();
 							
-							line.determineLowLevelVariant(hetLevel);
+							VariantCaller.determineLowLevelVariant(line, hetLevel);
 							
-							
-							if (line.getVariantType() == VariantLine.LOW_LEVEL_VARIANT || (callDel && line.getVariantType() == VariantLine.LOW_LEVEL_DELETION)) {
+							if (line.getVariantType() == VariantCaller.LOW_LEVEL_VARIANT || (callDel && line.getVariantType() == VariantCaller.LOW_LEVEL_DELETION)) {
 
 								System.out.println("Lowlevel Variant: " + line.getPosition());
 								
