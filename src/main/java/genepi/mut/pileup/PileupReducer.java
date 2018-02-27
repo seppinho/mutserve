@@ -129,14 +129,47 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 			line.parseLine(basePos, level);
 
 			context.write(null, new Text(line.toRawString()));
+			
+			for (char minor : line.getMinors()) {
 
-			// level needed for actual calling
-			VariantResult out = VariantCaller.determineVariants(line, level);
+				double hetLevel = VariantCaller.calcHetLevel(line, line.getMinorBasePercentsFWD(),
+						line.getMinorBasePercentsREV());
 
-			if (VariantCaller.isFinalVariant(line)) {
-				String result = VariantCaller.writeVariant(out);
-				writer.write(result);
+				VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minor, level);
+
+				varResult.setLevel(hetLevel);
+
+				if (varResult.getType() == VariantCaller.LOW_LEVEL_DELETION
+						|| varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
+
+					String res = VariantCaller.writeVariant(varResult);
+
+					writer.write(res);
+
+				}
+
 			}
+			
+			// use best minor for level detection!
+			double hetLevel = VariantCaller.calcHetLevel(line, line.getMinorBasePercentsFWD(),
+					line.getMinorBasePercentsREV());
+
+			if (hetLevel > 1 - level) {
+
+				VariantResult varResult = VariantCaller.determineVariants(line);
+
+				varResult.setLevel(hetLevel);
+				
+				if (varResult.getType() == VariantCaller.VARIANT) {
+
+					String res = VariantCaller.writeVariant(varResult);
+
+					writer.write(res);
+
+				}
+
+			}
+			
 		}
 
 	}

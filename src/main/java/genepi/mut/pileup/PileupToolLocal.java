@@ -229,14 +229,47 @@ public class PileupToolLocal extends Tool {
 
 				line.setRef(ref);
 
-				//parse basePos to create all stats
+				// create all required frequencies for one position
 				line.parseLine(basePos, level);
 
-				VariantResult out = VariantCaller.determineVariants(line, level);
+				for (char minor : line.getMinors()) {
 
-				if (VariantCaller.isFinalVariant(line)) {
-					String result = VariantCaller.writeVariant(out);
-					writerVariants.write(result);
+					double hetLevel = VariantCaller.calcHetLevel(line, line.getMinorBasePercentsFWD(),
+							line.getMinorBasePercentsREV());
+
+					VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minor, level);
+
+					varResult.setLevel(hetLevel);
+
+					if (varResult.getType() == VariantCaller.LOW_LEVEL_DELETION
+							|| varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
+
+						String res = VariantCaller.writeVariant(varResult);
+
+						writerVariants.write(res);
+
+					}
+
+				}
+
+				// use best minor for level detection!
+				double hetLevel = VariantCaller.calcHetLevel(line, line.getMinorBasePercentsFWD(),
+						line.getMinorBasePercentsREV());
+
+				if (hetLevel > 1 - level) {
+
+					VariantResult varResult = VariantCaller.determineVariants(line);
+
+					varResult.setLevel(hetLevel);
+					
+					if (varResult.getType() == VariantCaller.VARIANT) {
+
+						String res = VariantCaller.writeVariant(varResult);
+
+						writerVariants.write(res);
+
+					}
+
 				}
 
 				// raw data
@@ -246,6 +279,8 @@ public class PileupToolLocal extends Tool {
 			}
 
 		}
+
+		// }
 	}
 
 	public static void main(String[] args) {
@@ -258,7 +293,7 @@ public class PileupToolLocal extends Tool {
 		input = "/media/seb/DATA-HDD4/data-genepi/2017/Projects/cnv-server/evaluation/lpa/type-b/bam-realigned";
 		fasta = "/home/seb/Desktop/realign/kiv2_6.fasta";
 
-		input = "test-data/mtdna/bam/input";
+		input = "test-data/mtdna/mixtures/input/";
 		fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,

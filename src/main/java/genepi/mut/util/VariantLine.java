@@ -26,7 +26,7 @@ public class VariantLine implements Comparable<VariantLine> {
 	private char topBaseREV;
 	private char minorBaseFWD;
 	private char minorBaseREV;
-	private ArrayList<Character> multiallelic;
+	private ArrayList<Character> minors;
 	private double aPercentageFWD;
 	private double cPercentageFWD;
 	private double gPercentageFWD;
@@ -118,11 +118,13 @@ public class VariantLine implements Comparable<VariantLine> {
 		this.setcPercentageFWD(cloudgeneReader.getDouble("%C"));
 		this.setgPercentageFWD(cloudgeneReader.getDouble("%G"));
 		this.settPercentageFWD(cloudgeneReader.getDouble("%T"));
+		this.setdPercentageFWD(cloudgeneReader.getDouble("%D"));
 
 		this.setaPercentageREV(cloudgeneReader.getDouble("%a"));
 		this.setcPercentageREV(cloudgeneReader.getDouble("%c"));
 		this.setgPercentageREV(cloudgeneReader.getDouble("%g"));
 		this.settPercentageREV(cloudgeneReader.getDouble("%t"));
+		this.setdPercentageREV(cloudgeneReader.getDouble("%d"));
 
 		this.setTopBasePercentsFWD(cloudgeneReader.getDouble("TOP-FWD-PERCENT"));
 		this.setMinorBasePercentsFWD(cloudgeneReader.getDouble("MINOR-FWD-PERCENT"));
@@ -134,7 +136,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		this.setTopBaseREV(cloudgeneReader.getString("TOP-REV").charAt(0));
 		this.setMinorBaseFWD(cloudgeneReader.getString("MINOR-FWD").charAt(0));
 		this.setMinorBaseREV(cloudgeneReader.getString("MINOR-REV").charAt(0));
-
+		
 	}
 
 	public void parseLine(BasePosition base, double level) throws IOException {
@@ -151,7 +153,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		double tREVPercents = 0;
 		double nREVPercents = 0;
 		double dREVPercents = 0;
-		
+
 		String id = base.getId();
 		int pos = base.getPos();
 		// set
@@ -364,15 +366,19 @@ public class VariantLine implements Comparable<VariantLine> {
 		minorBaseREV = detectMinorREV(minorBasePercentsREV);
 		this.setMinorBaseREV(minorBaseREV);
 
-		multiallelic = new ArrayList<>();
+		minors = new ArrayList<>();
 
 		for (int i = 1; i <= 4; i++) {
-			double multiPercentFWD = allelesFWD.get(i) / (double) totalFWD;
-			double multiPercentREV = allelesREV.get(i) / (double) totalREV;
-			char minor1 = detectMinorFWD(multiPercentFWD);
+			double minorPercentFWD = allelesFWD.get(i) / (double) totalFWD;
+			double minorPercentREV = allelesREV.get(i) / (double) totalREV;
+			char minor = detectMinorFWD(minorPercentFWD);
 
-			if ((multiPercentFWD > level || multiPercentREV > level)) {
-				multiallelic.add(minor1);
+			if(checkBases()){
+				
+			if ((minorPercentFWD > level || minorPercentREV > level)) {
+				minors.add(minor);
+			}
+			
 			}
 
 		}
@@ -436,6 +442,11 @@ public class VariantLine implements Comparable<VariantLine> {
 				+ llrCFWD + "\t" + llrCREV + "\t" + llrGFWD + "\t" + llrGREV + "\t" + llrTFWD + "\t" + llrTREV + "\t"
 				+ llrDFWD + "\t" + llrDREV;
 
+	}
+
+	private boolean checkBases() {
+		return (this.getMinorBaseFWD() == this.getMinorBaseREV() && this.getTopBaseFWD() == this.getTopBaseREV())
+				|| ((this.getMinorBaseFWD() == this.getTopBaseREV() && this.getTopBaseFWD() == this.getMinorBaseREV()));
 	}
 
 	private char detectMinorFWD(double minorPercentage) {
@@ -736,7 +747,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		}
 		return tmp;
 	}
-	
+
 	public String getId() {
 		return id;
 	}
@@ -1189,12 +1200,12 @@ public class VariantLine implements Comparable<VariantLine> {
 		this.insPosition = insPosition;
 	}
 
-	public ArrayList<Character> getMultiallelic() {
-		return multiallelic;
+	public ArrayList<Character> getMinors() {
+		return minors;
 	}
 
-	public void setMultiallelic(ArrayList<Character> multiallelic) {
-		this.multiallelic = multiallelic;
+	public void setMinors(ArrayList<Character> minors) {
+		this.minors = minors;
 	}
 
 }

@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.mut.objects.VariantCaller;
+import genepi.mut.objects.VariantResult;
 
 public class RawFileAnalysermtDNA {
 
@@ -21,14 +22,12 @@ public class RawFileAnalysermtDNA {
 	private static Set<Integer> hotspots = new HashSet<Integer>(
 			Arrays.asList(302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 315, 316, 3105, 3106, 3107));
 
-	
 	private boolean callDel;
-	
-	
-	public ArrayList<QCMetric> calculateLowLevelForTest(String in, String refpath, String sangerpos, double hetLevel) {
+
+	public ArrayList<QCMetric> calculateLowLevelForTest(String in, String refpath, String sangerpos, double level) {
 
 		ArrayList<QCMetric> metrics = new ArrayList<QCMetric>();
-		
+
 		NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
 		DecimalFormat df = (DecimalFormat) nf;
 		df.setMinimumFractionDigits(2);
@@ -70,7 +69,7 @@ public class RawFileAnalysermtDNA {
 			while (cloudgeneReader.next()) {
 
 				VariantLine line = new VariantLine();
-				
+
 				line.parseLineFromFile(cloudgeneReader);
 
 				if (id.equals(line.getId())) {
@@ -80,43 +79,52 @@ public class RawFileAnalysermtDNA {
 						if (!isSampleMutation(line.getPosition())) {
 
 							int position = line.getPosition();
-							
-							VariantCaller.determineLowLevelVariant(line, hetLevel);
-							
-							if (line.getVariantType() == VariantCaller.LOW_LEVEL_VARIANT || (callDel && line.getVariantType() == VariantCaller.LOW_LEVEL_DELETION)) {
 
-								System.out.println("Lowlevel Variant: " + line.getPosition());
-								
-								hetero.add(cloudgeneReader.getDouble("LEVEL"));
+							if (checkBases(line)) {
 
-								if (sangerPos.contains(position)) {
+								double hetLevel = VariantCaller.calcHetLevel(line, line.getMinorBasePercentsFWD(),
+										line.getMinorBasePercentsREV());
 
-									sangerPos.remove(position);
-									truePositiveCount++;
-									both.add(position + " (" + Math.abs(line.getLlrFWD()) + ")");
+								VariantResult varResult = VariantCaller.determineLowLevelVariant(line, 'c', level);
 
-								} else {
+								varResult.setLevel(hetLevel);
 
-									falsePositives.add(position + " (" + Math.abs(line.getLlrFWD()) + ")");
-									falsePositiveCount++;
+								if (varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT
+										|| (callDel && varResult.getType() == VariantCaller.LOW_LEVEL_DELETION)) {
 
-								}
+									System.out.println("Lowlevel Variant: " + line.getPosition());
 
-							}
+									hetero.add(cloudgeneReader.getDouble("LEVEL"));
 
-							else {
+									if (sangerPos.contains(position)) {
 
-								if (!allPos.contains(position)) {
+										sangerPos.remove(position);
+										truePositiveCount++;
+										both.add(position + " (" + Math.abs(line.getLlrFWD()) + ")");
 
-									trueNegativeCount++;
+									} else {
+
+										falsePositives.add(position + " (" + Math.abs(line.getLlrFWD()) + ")");
+										falsePositiveCount++;
+
+									}
 
 								}
 
 								else {
-									falseNegativeCount++;
-								}
-							}
 
+									if (!allPos.contains(position)) {
+
+										trueNegativeCount++;
+
+									}
+
+									else {
+										falseNegativeCount++;
+									}
+								}
+
+							}
 						}
 					}
 				}
@@ -126,7 +134,7 @@ public class RawFileAnalysermtDNA {
 
 			foundBySanger = sangerPos.size();
 
-			/*System.out.println("  ID: " + id);
+			System.out.println("  ID: " + id);
 
 			System.out.println("  Correct hits : " + truePositiveCount + "/" + gold);
 
@@ -138,35 +146,37 @@ public class RawFileAnalysermtDNA {
 
 			System.out.println("  Found additionally with Cloudgene: " + falsePositiveCount);
 
-			System.out.println("    " + falsePositives);*/
+			System.out.println("    " + falsePositives);
 
 			double sens2 = truePositiveCount / (double) (truePositiveCount + falseNegativeCount) * 100;
 			double spec2 = trueNegativeCount / (double) (falsePositiveCount + trueNegativeCount) * 100;
 			double prec2 = truePositiveCount / (double) (truePositiveCount + falsePositiveCount) * 100;
-			
-			
+
 			String sens = df.format(sens2);
 			String spec = df.format(spec2);
 			String prec = df.format(prec2);
 
-			/*System.out.println("  Sensitivity (Recall) -> " + sens + " values " + truePositiveCount + "/"
-					+ (truePositiveCount + falseNegativeCount));
-			System.out.println("  Specificity -> " + " values " + trueNegativeCount + "/"
-					+ (falsePositiveCount + trueNegativeCount));
-			System.out.println("  Precision -> " + " values " + truePositiveCount + "/"
-					+ (truePositiveCount + falsePositiveCount));*/
+			/*
+			 * System.out.println("  Sensitivity (Recall) -> " + sens +
+			 * " values " + truePositiveCount + "/" + (truePositiveCount +
+			 * falseNegativeCount)); System.out.println("  Specificity -> " +
+			 * " values " + trueNegativeCount + "/" + (falsePositiveCount +
+			 * trueNegativeCount)); System.out.println("  Precision -> " +
+			 * " values " + truePositiveCount + "/" + (truePositiveCount +
+			 * falsePositiveCount));
+			 */
 
 			System.out.println("");
-			System.out.println("Precision\t" +prec);
-			System.out.println("Sensitivity\t" +  sens);
+			System.out.println("Precision\t" + prec);
+			System.out.println("Sensitivity\t" + sens);
 			System.out.println("Specificity\t" + spec);
-			
+
 			QCMetric metric = new QCMetric();
 			metric.setId(id);
 			metric.setSensitivity(sens2);
 			metric.setSpecificity(spec2);
 			metric.setPrecision(prec2);
-			
+
 			metrics.add(metric);
 		}
 		return metrics;
@@ -186,6 +196,11 @@ public class RawFileAnalysermtDNA {
 
 	public void setCallDel(boolean callDel) {
 		this.callDel = callDel;
+	}
+
+	private boolean checkBases(VariantLine line) {
+		return (line.getMinorBaseFWD() == line.getMinorBaseREV() && line.getTopBaseFWD() == line.getTopBaseREV())
+				|| ((line.getMinorBaseFWD() == line.getTopBaseREV() && line.getTopBaseFWD() == line.getMinorBaseREV()));
 	}
 
 }

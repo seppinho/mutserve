@@ -18,30 +18,6 @@ public class VariantCaller {
 
 	public static int DELETION = 4;
 
-	public static int INSERTION = 5;
-
-	public static int MULTI_ALLELIC = 6;
-
-	public static VariantResult determineVariants(VariantLine line, double level) {
-
-		VariantResult result;
-		
-		result = determineLowLevelVariant(line, level);
-
-		// only execute if no low-level variant has been detected
-		if (line.getVariantType() == 0) {
-
-			if (line.getVariantLevel() > 1 - level) {
-
-				result = determineVariants(line);
-
-			}
-
-		}
-		
-		return result;
-
-	}
 
 	public static boolean isFinalVariant(VariantLine line) {
 
@@ -58,30 +34,33 @@ public class VariantCaller {
 	}
 
 	public static VariantResult determineVariants(VariantLine line) {
-
+		
+		int type = 0;
+		
 		if (line.getTopBaseFWD() == line.getTopBaseREV()) {
 
 			if (line.getTopBaseFWD() != line.getRef() && (line.getCovFWD() * line.getCovREV() / 2) > 10 * 2) {
 
 				if (line.getTopBaseFWD() == 'd') {
-					line.setDeletion(true);
-					line.setVariantType(DELETION);
+					//line.setDeletion(true);
+					type = DELETION;
 				} else {
-					line.setVariant(true);
-					line.setVariantType(VARIANT);
+					//line.setVariant(true);
+					type = VARIANT;
 				}
 			}
 			
-			return addVariant(line);
 		}
 		
-		return null;
+		return addVariantResult(line, type);
 	}
 
-	public static VariantResult determineLowLevelVariant(VariantLine line, double level) {
+	public static VariantResult determineLowLevelVariant(VariantLine line, char minor, double level) {
 		
 		double minorBasePercentsFWD = line.getMinorPercentsFWD();
 		double minorBasePercentsREV = line.getMinorBasePercentsREV();
+		int type = 0;
+		
 		try {
 
 			/**
@@ -89,18 +68,15 @@ public class VariantCaller {
 			 * strands;
 			 */
 
-			// always calculate level to check for non-low-level variants later
-			line.setVariantLevel(calcHetLevel(line));
-
 			if (checkCoverage(line)) {
 
-				if (checkBases(line)) {
+				//if (checkBases(line)) {
 
 					/**
 					 * all alleles have support from at least two reads on each
 					 * strand
 					 **/
-					if (checkAlleleCoverage(line)) {
+					if (checkAlleleCoverage(line, minorBasePercentsFWD, minorBasePercentsREV)) {
 						/**
 						 * the raw frequency for the minor allele is no less
 						 * than 1% on one of the strands
@@ -112,21 +88,21 @@ public class VariantCaller {
 							 **/
 							if (line.getLlrFWD() >= 5 || line.getLlrREV() >= 5) {
 
-								if (calcStrandBias(line) <= 1) {
-
+								if (calcStrandBias(line, minorBasePercentsFWD, minorBasePercentsREV) <= 1) {
+									
 									// D can either be on TOP or MINOR base
 									if (line.getMinorBaseFWD() == 'D' || line.getTopBaseFWD() == 'D') {
-										line.setVariantType(LOW_LEVEL_DELETION);
+										type = LOW_LEVEL_DELETION;
 									} else {
-										line.setVariantType(LOW_LEVEL_VARIANT);
+										type = LOW_LEVEL_VARIANT;
 									}
 
-									return addVariant(line);
+									return addVariantResult(line, type);
 									//calcConfidence(line);
 
 								}
 							}
-						}
+					//	}
 					}
 				}
 			} else {
@@ -136,11 +112,11 @@ public class VariantCaller {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return addVariantResult(line, type);
 
 	}
 
-	private static VariantResult addVariant(VariantLine line){
+	private static VariantResult addVariantResult(VariantLine line, int type){
 		VariantResult output = new VariantResult();
 		
 		output.setId(line.getId());
@@ -148,22 +124,21 @@ public class VariantCaller {
 		output.setTop(line.getTopBaseFWD());
 		output.setMinor(line.getMinorBaseFWD());
 		output.setRef(line.getRef());
-		output.setLevel(line.getVariantLevel());
 		output.setCovFWD(line.getCovFWD());
 		output.setCovREV(line.getCovREV());
-		output.setType(line.getVariantType());
+		output.setType(type);
 		
 		return output;
 	}
 	
-	private static double calcHetLevel(VariantLine line) {
+	public static double calcHetLevel(VariantLine line, double minorPercentFWD, double minorPercentREV) {
 
 		double fwd;
 		double rev;
 
 		if (line.getTopBaseFWD() == line.getRef()) {
-			fwd = line.getMinorPercentsFWD() * line.getCovFWD();
-			rev = line.getMinorBasePercentsREV() * line.getCovREV();
+			fwd = minorPercentFWD * line.getCovFWD();
+			rev = minorPercentREV * line.getCovREV();
 		} else {
 			fwd = line.getTopBasePercentsFWD() * line.getCovFWD();
 			rev = line.getTopBasePercentsREV() * line.getCovREV();
@@ -172,18 +147,13 @@ public class VariantCaller {
 		return (fwd + rev) / (line.getCovFWD() + line.getCovREV());
 	}
 
-	private static boolean checkBases(VariantLine line) {
-		return (line.getMinorBaseFWD() == line.getMinorBaseREV() && line.getTopBaseFWD() == line.getTopBaseREV())
-				|| ((line.getMinorBaseFWD() == line.getTopBaseREV() && line.getTopBaseFWD() == line.getMinorBaseREV()));
-	}
-
-	private static boolean checkAlleleCoverage(VariantLine line) {
+	private static boolean checkAlleleCoverage(VariantLine line, double minorPercentFWD, double minorPercentREV) {
 		if (line.getTopBasePercentsREV() * line.getCovREV() < 3
 				|| (line.getTopBasePercentsFWD() * line.getCovFWD()) < 3) {
 			return false;
 		}
 
-		if ((line.getMinorBasePercentsREV() * line.getCovREV() < 3)
+		if ((minorPercentREV * line.getCovREV() < 3)
 				|| (line.getTopBasePercentsFWD() * line.getCovFWD()) < 3) {
 			return false;
 		}
@@ -199,15 +169,15 @@ public class VariantCaller {
 		return true;
 	}
 
-	private static double calcStrandBias(VariantLine line) {
+	private static double calcStrandBias(VariantLine line, double minorPercentFWD, double minorPercentREV) {
 
 		// b,d minor
 		// a,c major
 
 		double a = line.getTopBasePercentsFWD() * line.getCovFWD();
 		double c = line.getTopBasePercentsREV() * line.getCovREV();
-		double b = line.getMinorBasePercentsFWD() * line.getCovFWD();
-		double d = line.getMinorBasePercentsREV() * line.getCovREV();
+		double b = minorPercentFWD * line.getCovFWD();
+		double d = minorPercentREV * line.getCovREV();
 
 		double bias = Math.abs((b / (a + b)) - (d / (c + d))) / ((b + d) / (a + b + c + d));
 

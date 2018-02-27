@@ -463,7 +463,8 @@ public class MutationServerTest {
 			System.out.println(metric.getSpecificity());
 
 			assertEquals(100, metric.getPrecision(), 0);
-			assertEquals(59.259, metric.getSensitivity(), 0.1);
+			//PAPER: assertEquals(59.259, metric.getSensitivity(), 0.1);
+			assertEquals(66.667, metric.getSensitivity(), 0.1);
 			assertEquals(100, metric.getSpecificity(), 0);
 		}
 		assertEquals(true, result);
