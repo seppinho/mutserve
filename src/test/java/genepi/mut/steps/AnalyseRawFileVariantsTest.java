@@ -28,7 +28,8 @@ public class AnalyseRawFileVariantsTest {
 					ArrayList<QCMetric> metrics = rawAnalyser.calculateLowLevelForTest(input.getPath(), refPath, sanger, hetLevel);
 					for(QCMetric  metric : metrics){
 						assertEquals(100, metric.getPrecision(), 0);
-						assertEquals(59.259, metric.getSensitivity(), 0.1);
+						// paper value, changed since I added checkbases check: assertEquals(59.259, metric.getSensitivity(), 0.1);
+						assertEquals(64, metric.getSensitivity(), 0.1);
 						assertEquals(100, metric.getSpecificity(), 0);
 					}
 	}
