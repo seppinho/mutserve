@@ -1,12 +1,12 @@
-package genepi.mut.objects;
+package genepi.mut.util;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import genepi.mut.util.StatUtil;
-import genepi.mut.util.VariantLine;
+import genepi.mut.objects.VariantLine;
+import genepi.mut.objects.VariantResult;
 
 public class VariantCaller {
 

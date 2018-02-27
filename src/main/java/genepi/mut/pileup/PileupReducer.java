@@ -13,10 +13,10 @@ import genepi.hadoop.HdfsUtil;
 import genepi.hadoop.io.HdfsLineWriter;
 import genepi.mut.objects.BasePosition;
 import genepi.mut.objects.BasePositionHadoop;
+import genepi.mut.objects.VariantLine;
 import genepi.mut.objects.VariantResult;
-import genepi.mut.objects.VariantCaller;
 import genepi.mut.util.ReferenceUtil;
-import genepi.mut.util.VariantLine;
+import genepi.mut.util.VariantCaller;
 
 public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text> {
 

@@ -10,7 +10,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 import genepi.io.table.reader.CsvTableReader;
-import genepi.mut.objects.VariantCaller;
+import genepi.mut.objects.VariantLine;
 import genepi.mut.objects.VariantResult;
 
 public class RawFileAnalysermtDNA {

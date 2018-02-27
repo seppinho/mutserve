@@ -1,4 +1,4 @@
-package genepi.mut.util;
+package genepi.mut.objects;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -8,8 +8,6 @@ import java.util.Collections;
 import java.util.Locale;
 
 import genepi.io.table.reader.CsvTableReader;
-import genepi.mut.objects.BasePosition;
-import genepi.mut.objects.LlrObject;
 
 public class VariantLine implements Comparable<VariantLine> {
 
