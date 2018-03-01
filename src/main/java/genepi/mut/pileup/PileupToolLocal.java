@@ -230,22 +230,22 @@ public class PileupToolLocal extends Tool {
 				line.setRef(ref);
 
 				// create all required frequencies for one position
+				// applies checkBases()
 				line.parseLine(basePos, level);
 
-				// parsing method already applies checkBases()
 				for (char base : line.getMinors()) {
 
-					double minorFWD = VariantCaller.getMinorPercentageFwd(line, base);
+					double minorPercentageFwd = VariantCaller.getMinorPercentageFwd(line, base);
 
-					double minorREV = VariantCaller.getMinorPercentageRev(line, base);
+					double minorPercentageRev = VariantCaller.getMinorPercentageRev(line, base);
 					
 					double llrFwd = VariantCaller.determineLlrFwd(line, base)
 							;
 					double llrRev =VariantCaller.determineLlrRev(line, base);
 
-					VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorFWD, minorREV, llrFwd, llrRev, level);
+					VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorPercentageFwd, minorPercentageRev, llrFwd, llrRev, level);
 					
-					double hetLevel = VariantCaller.calcHetLevel(line, minorFWD, minorREV);
+					double hetLevel = VariantCaller.calcHetLevel(line, minorPercentageFwd, minorPercentageRev);
 
 					varResult.setLevel(hetLevel);
 
