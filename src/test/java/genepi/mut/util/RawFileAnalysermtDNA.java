@@ -85,7 +85,7 @@ public class RawFileAnalysermtDNA {
 								double hetLevel = VariantCaller.calcHetLevel(line, line.getMinorBasePercentsFWD(),
 										line.getMinorBasePercentsREV());
 
-								VariantResult varResult = VariantCaller.determineLowLevelVariant(line, 'c', level);
+								VariantResult varResult = VariantCaller.determineLowLevelVariant(line, line.getMinorBasePercentsFWD(), line.getMinorBasePercentsREV(), level);
 
 								varResult.setLevel(hetLevel);
 

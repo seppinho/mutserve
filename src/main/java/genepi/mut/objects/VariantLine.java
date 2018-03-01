@@ -134,7 +134,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		this.setTopBaseREV(cloudgeneReader.getString("TOP-REV").charAt(0));
 		this.setMinorBaseFWD(cloudgeneReader.getString("MINOR-FWD").charAt(0));
 		this.setMinorBaseREV(cloudgeneReader.getString("MINOR-REV").charAt(0));
-		
+
 	}
 
 	public void parseLine(BasePosition base, double level) throws IOException {
@@ -369,14 +369,11 @@ public class VariantLine implements Comparable<VariantLine> {
 		for (int i = 1; i <= 4; i++) {
 			double minorPercentFWD = allelesFWD.get(i) / (double) totalFWD;
 			double minorPercentREV = allelesREV.get(i) / (double) totalREV;
-			char minor = detectMinorFWD(minorPercentFWD);
+			char minorFWD = detectMinorFWD(minorPercentFWD);
+			char minorREV = detectMinorREV(minorPercentREV);
 
-			if(checkBases()){
-				
-			if ((minorPercentFWD > level || minorPercentREV > level)) {
-				minors.add(minor);
-			}
-			
+			if (checkBases(topBaseFWD, topBaseREV, minorFWD, minorREV)) {
+				minors.add(minorFWD);
 			}
 
 		}
@@ -442,9 +439,8 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	}
 
-	private boolean checkBases() {
-		return (this.getMinorBaseFWD() == this.getMinorBaseREV() && this.getTopBaseFWD() == this.getTopBaseREV())
-				|| ((this.getMinorBaseFWD() == this.getTopBaseREV() && this.getTopBaseFWD() == this.getMinorBaseREV()));
+	private boolean checkBases(char topFWD, char topREV, char minorFWD, char minorREV) {
+		return (minorFWD == minorREV && topFWD == topREV) || ((minorFWD == topREV && topFWD == minorREV));
 	}
 
 	private char detectMinorFWD(double minorPercentage) {

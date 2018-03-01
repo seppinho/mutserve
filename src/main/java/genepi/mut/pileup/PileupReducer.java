@@ -130,12 +130,16 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 
 			context.write(null, new Text(line.toRawString()));
 			
-			for (char minor : line.getMinors()) {
+			// parsing method already applies checkBases()
+			for (char base : line.getMinors()) {
 
-				double hetLevel = VariantCaller.calcHetLevel(line, line.getMinorBasePercentsFWD(),
-						line.getMinorBasePercentsREV());
+				double minorFWD = VariantCaller.getMinorPercentageFwd(line, base);
 
-				VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minor, level);
+				double minorREV = VariantCaller.getMinorPercentageRev(line, base);
+
+				double hetLevel = VariantCaller.calcHetLevel(line, minorFWD, minorREV);
+
+				VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorFWD, minorREV, level);
 
 				varResult.setLevel(hetLevel);
 

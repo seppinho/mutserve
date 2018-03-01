@@ -67,7 +67,7 @@ public class RawFileAnalyserDNA {
 
 							int position = line.getPosition();
 							
-							VariantCaller.determineLowLevelVariant(line, 'a', hetLevel);
+							VariantCaller.determineLowLevelVariant(line, line.getMinorBasePercentsFWD(), line.getMinorBasePercentsREV(), hetLevel);
 							
 							VariantCaller.determineVariants(line);
 

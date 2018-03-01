@@ -55,12 +55,10 @@ public class VariantCaller {
 		return addVariantResult(line, type);
 	}
 
-	public static VariantResult determineLowLevelVariant(VariantLine line, char minor, double level) {
+	public static VariantResult determineLowLevelVariant(VariantLine line, double minorBasePercentsFWD, double minorBasePercentsREV, double level) {
 		
-		double minorBasePercentsFWD = line.getMinorPercentsFWD();
-		double minorBasePercentsREV = line.getMinorBasePercentsREV();
 		int type = 0;
-		
+        
 		try {
 
 			/**
@@ -70,6 +68,7 @@ public class VariantCaller {
 
 			if (checkCoverage(line)) {
 
+				//included in parse method
 				//if (checkBases(line)) {
 
 					/**
@@ -115,7 +114,8 @@ public class VariantCaller {
 		return addVariantResult(line, type);
 
 	}
-
+	
+	
 	private static VariantResult addVariantResult(VariantLine line, int type){
 		VariantResult output = new VariantResult();
 		
@@ -167,6 +167,50 @@ public class VariantCaller {
 		}
 
 		return true;
+	}
+	
+	public static double getMinorPercentageFwd(VariantLine line, char minor) {
+	
+		double minorFWD = 0;
+		
+		if (minor == 'A') {
+			minorFWD = line.getaPercentageFWD();
+		}
+		if (minor == 'C') {
+			minorFWD = line.getcPercentageFWD();
+		}
+		if (minor == 'G') {
+			minorFWD = line.getgPercentageFWD();
+		}
+		if (minor == 'T') {
+			minorFWD = line.gettPercentageFWD();
+		}
+		if (minor == 'D') {
+			minorFWD = line.getdPercentageFWD();
+		}
+		return minorFWD;
+	}
+	
+	public static double getMinorPercentageRev(VariantLine line, char minor) {
+		
+		double minorREV = 0;
+		
+		if (minor == 'A') {
+			minorREV = line.getaPercentageREV();
+		}
+		if (minor == 'C') {
+			minorREV = line.getcPercentageREV();
+		}
+		if (minor == 'G') {
+			minorREV = line.getgPercentageREV();
+		}
+		if (minor == 'T') {
+			minorREV = line.gettPercentageREV();
+		}
+		if (minor == 'D') {
+			minorREV = line.getdPercentageREV();
+		}
+		return minorREV;
 	}
 
 	private static double calcStrandBias(VariantLine line, double minorPercentFWD, double minorPercentREV) {
