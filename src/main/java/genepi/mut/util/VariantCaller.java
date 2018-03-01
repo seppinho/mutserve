@@ -18,7 +18,6 @@ public class VariantCaller {
 
 	public static int DELETION = 4;
 
-
 	public static boolean isFinalVariant(VariantLine line) {
 
 		if (line.getVariantType() == VariantCaller.VARIANT
@@ -34,31 +33,32 @@ public class VariantCaller {
 	}
 
 	public static VariantResult determineVariants(VariantLine line) {
-		
+
 		int type = 0;
-		
+
 		if (line.getTopBaseFWD() == line.getTopBaseREV()) {
 
 			if (line.getTopBaseFWD() != line.getRef() && (line.getCovFWD() * line.getCovREV() / 2) > 10 * 2) {
 
 				if (line.getTopBaseFWD() == 'd') {
-					//line.setDeletion(true);
+					// line.setDeletion(true);
 					type = DELETION;
 				} else {
-					//line.setVariant(true);
+					// line.setVariant(true);
 					type = VARIANT;
 				}
 			}
-			
+
 		}
-		
+
 		return addVariantResult(line, type);
 	}
 
-	public static VariantResult determineLowLevelVariant(VariantLine line, double minorBasePercentsFWD, double minorBasePercentsREV, double level) {
-		
+	public static VariantResult determineLowLevelVariant(VariantLine line, double minorBasePercentsFWD,
+			double minorBasePercentsREV, double llrFwd, double llrRev, double level) {
+
 		int type = 0;
-        
+
 		try {
 
 			/**
@@ -68,40 +68,40 @@ public class VariantCaller {
 
 			if (checkCoverage(line)) {
 
-				//included in parse method
-				//if (checkBases(line)) {
+				// included in parse method
+				// if (checkBases(line)) {
 
+				/**
+				 * all alleles have support from at least two reads on each
+				 * strand
+				 **/
+				if (checkAlleleCoverage(line, minorBasePercentsFWD, minorBasePercentsREV)) {
 					/**
-					 * all alleles have support from at least two reads on each
-					 * strand
+					 * the raw frequency for the minor allele is no less than 1%
+					 * on one of the strands
 					 **/
-					if (checkAlleleCoverage(line, minorBasePercentsFWD, minorBasePercentsREV)) {
+					if (minorBasePercentsFWD >= level || minorBasePercentsREV >= level) {
 						/**
-						 * the raw frequency for the minor allele is no less
-						 * than 1% on one of the strands
+						 * high-confidence heteroplasmy was defined as candidate
+						 * heteroplasmy with LLR no less than 5
 						 **/
-						if (minorBasePercentsFWD >= level || minorBasePercentsREV >= level) {
-							/**
-							 * high-confidence heteroplasmy was defined as
-							 * candidate heteroplasmy with LLR no less than 5
-							 **/
-							if (line.getLlrFWD() >= 5 || line.getLlrREV() >= 5) {
+						if (llrFwd >= 5 || llrRev >= 5) {
 
-								if (calcStrandBias(line, minorBasePercentsFWD, minorBasePercentsREV) <= 1) {
-									
-									// D can either be on TOP or MINOR base
-									if (line.getMinorBaseFWD() == 'D' || line.getTopBaseFWD() == 'D') {
-										type = LOW_LEVEL_DELETION;
-									} else {
-										type = LOW_LEVEL_VARIANT;
-									}
+							if (calcStrandBias(line, minorBasePercentsFWD, minorBasePercentsREV) <= 1) {
 
-									return addVariantResult(line, type);
-									//calcConfidence(line);
-
+								// D can either be on TOP or MINOR base
+								if (line.getMinorBaseFWD() == 'D' || line.getTopBaseFWD() == 'D') {
+									type = LOW_LEVEL_DELETION;
+								} else {
+									type = LOW_LEVEL_VARIANT;
 								}
+
+								return addVariantResult(line, type);
+								// calcConfidence(line);
+
 							}
-					//	}
+						}
+						// }
 					}
 				}
 			} else {
@@ -114,11 +114,10 @@ public class VariantCaller {
 		return addVariantResult(line, type);
 
 	}
-	
-	
-	private static VariantResult addVariantResult(VariantLine line, int type){
+
+	private static VariantResult addVariantResult(VariantLine line, int type) {
 		VariantResult output = new VariantResult();
-		
+
 		output.setId(line.getId());
 		output.setPosition(line.getPosition());
 		output.setTop(line.getTopBaseFWD());
@@ -127,10 +126,10 @@ public class VariantCaller {
 		output.setCovFWD(line.getCovFWD());
 		output.setCovREV(line.getCovREV());
 		output.setType(type);
-		
+
 		return output;
 	}
-	
+
 	public static double calcHetLevel(VariantLine line, double minorPercentFWD, double minorPercentREV) {
 
 		double fwd;
@@ -153,8 +152,7 @@ public class VariantCaller {
 			return false;
 		}
 
-		if ((minorPercentREV * line.getCovREV() < 3)
-				|| (line.getTopBasePercentsFWD() * line.getCovFWD()) < 3) {
+		if ((minorPercentREV * line.getCovREV() < 3) || (line.getTopBasePercentsFWD() * line.getCovFWD()) < 3) {
 			return false;
 		}
 
@@ -168,11 +166,11 @@ public class VariantCaller {
 
 		return true;
 	}
-	
+
 	public static double getMinorPercentageFwd(VariantLine line, char minor) {
-	
+
 		double minorFWD = 0;
-		
+
 		if (minor == 'A') {
 			minorFWD = line.getaPercentageFWD();
 		}
@@ -190,11 +188,11 @@ public class VariantCaller {
 		}
 		return minorFWD;
 	}
-	
+
 	public static double getMinorPercentageRev(VariantLine line, char minor) {
-		
+
 		double minorREV = 0;
-		
+
 		if (minor == 'A') {
 			minorREV = line.getaPercentageREV();
 		}
@@ -211,6 +209,50 @@ public class VariantCaller {
 			minorREV = line.getdPercentageREV();
 		}
 		return minorREV;
+	}
+
+	public static double determineLlrFwd(VariantLine line, char minor) {
+
+		double llrFwd = 0;
+
+		if (minor == 'A') {
+			llrFwd = line.getLlrAFWD();
+		}
+		if (minor == 'C') {
+			llrFwd = line.getLlrCFWD();
+		}
+		if (minor == 'G') {
+			llrFwd = line.getLlrGFWD();
+		}
+		if (minor == 'T') {
+			llrFwd = line.getLlrTFWD();
+		}
+		if (minor == 'D') {
+			llrFwd = line.getLlrDFWD();
+		}
+		return llrFwd;
+	}
+
+	public static double determineLlrRev(VariantLine line, char minor) {
+
+		double llrRev = 0;
+
+		if (minor == 'A') {
+			llrRev = line.getLlrAREV();
+		}
+		if (minor == 'C') {
+			llrRev = line.getLlrCREV();
+		}
+		if (minor == 'G') {
+			llrRev = line.getLlrGREV();
+		}
+		if (minor == 'T') {
+			llrRev = line.getLlrTREV();
+		}
+		if (minor == 'D') {
+			llrRev = line.getLlrDREV();
+		}
+		return llrRev;
 	}
 
 	private static double calcStrandBias(VariantLine line, double minorPercentFWD, double minorPercentREV) {
@@ -276,8 +318,7 @@ public class VariantCaller {
 		line.setCIW_UP_REV(upREV);
 
 	}
-	
-	
+
 	public static String writeVariant(VariantResult result) throws IOException {
 
 		NumberFormat df;
@@ -327,7 +368,7 @@ public class VariantCaller {
 		return build.toString();
 
 	};
-	
+
 	private static char getVariantBase(VariantResult line) {
 
 		if (line.getTop() == line.getRef()) {

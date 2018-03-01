@@ -12,11 +12,10 @@ import genepi.mut.objects.VariantLine;
 
 public class RawFileAnalyserDNA {
 
-	
 	public ArrayList<QCMetric> calculateLowLevelForTest(String in, String refpath, String sangerpos, double hetLevel) {
 
 		ArrayList<QCMetric> metrics = new ArrayList<QCMetric>();
-		
+
 		NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
 		DecimalFormat df = (DecimalFormat) nf;
 		df.setMinimumFractionDigits(2);
@@ -38,13 +37,13 @@ public class RawFileAnalyserDNA {
 		for (String id : ids) {
 
 			CsvTableReader goldReader = new CsvTableReader(sangerpos, '\t');
-			
+
 			while (goldReader.next()) {
 				sangerPos.add(goldReader.getInteger("POS"));
 				allPos.add(goldReader.getInteger("POS"));
 			}
 			CsvTableReader cloudgeneReader = new CsvTableReader(in, '\t');
-			
+
 			int gold = sangerPos.size();
 
 			falsePositives.clear();
@@ -60,51 +59,52 @@ public class RawFileAnalyserDNA {
 			while (cloudgeneReader.next()) {
 
 				VariantLine line = new VariantLine();
-				
+
 				line.parseLineFromFile(cloudgeneReader);
 
 				if (id.equals(line.getId())) {
 
-							int position = line.getPosition();
-							
-							VariantCaller.determineLowLevelVariant(line, line.getMinorBasePercentsFWD(), line.getMinorBasePercentsREV(), hetLevel);
-							
-							VariantCaller.determineVariants(line);
+					int position = line.getPosition();
 
-							if (VariantCaller.isFinalVariant(line)) {
+					VariantCaller.determineLowLevelVariant(line, line.getMinorBasePercentsFWD(),
+							line.getMinorBasePercentsREV(), line.getLlrFWD(), line.getLlrREV(), hetLevel);
 
-								hetero.add(cloudgeneReader.getDouble("LEVEL"));
+					VariantCaller.determineVariants(line);
 
-								if (sangerPos.contains(position)) {
+					if (VariantCaller.isFinalVariant(line)) {
 
-									sangerPos.remove(position);
-									truePositiveCount++;
-									both.add(position);
+						hetero.add(cloudgeneReader.getDouble("LEVEL"));
 
-								} else {
+						if (sangerPos.contains(position)) {
 
-									falsePositives.add(position);
-									falsePositiveCount++;
+							sangerPos.remove(position);
+							truePositiveCount++;
+							both.add(position);
 
-								}
+						} else {
 
-							}
-
-							else {
-
-								if (!allPos.contains(position)) {
-
-									trueNegativeCount++;
-
-								}
-
-								else {
-									falseNegativeCount++;
-								}
-							}
+							falsePositives.add(position);
+							falsePositiveCount++;
 
 						}
+
 					}
+
+					else {
+
+						if (!allPos.contains(position)) {
+
+							trueNegativeCount++;
+
+						}
+
+						else {
+							falseNegativeCount++;
+						}
+					}
+
+				}
+			}
 
 			cloudgeneReader.close();
 
@@ -127,34 +127,35 @@ public class RawFileAnalyserDNA {
 			double sens2 = truePositiveCount / (double) (truePositiveCount + falseNegativeCount) * 100;
 			double spec2 = trueNegativeCount / (double) (falsePositiveCount + trueNegativeCount) * 100;
 			double prec2 = truePositiveCount / (double) (truePositiveCount + falsePositiveCount) * 100;
-			
-			
+
 			String sens = df.format(sens2);
 			String spec = df.format(spec2);
 			String prec = df.format(prec2);
 
-			/*System.out.println("  Sensitivity (Recall) -> " + sens + " values " + truePositiveCount + "/"
-					+ (truePositiveCount + falseNegativeCount));
-			System.out.println("  Specificity -> " + " values " + trueNegativeCount + "/"
-					+ (falsePositiveCount + trueNegativeCount));
-			System.out.println("  Precision -> " + " values " + truePositiveCount + "/"
-					+ (truePositiveCount + falsePositiveCount));*/
+			/*
+			 * System.out.println("  Sensitivity (Recall) -> " + sens +
+			 * " values " + truePositiveCount + "/" + (truePositiveCount +
+			 * falseNegativeCount)); System.out.println("  Specificity -> " +
+			 * " values " + trueNegativeCount + "/" + (falsePositiveCount +
+			 * trueNegativeCount)); System.out.println("  Precision -> " +
+			 * " values " + truePositiveCount + "/" + (truePositiveCount +
+			 * falsePositiveCount));
+			 */
 
 			System.out.println("");
-			System.out.println("Precision\t" +prec);
-			System.out.println("Sensitivity\t" +  sens);
+			System.out.println("Precision\t" + prec);
+			System.out.println("Sensitivity\t" + sens);
 			System.out.println("Specificity\t" + spec);
-			
+
 			QCMetric metric = new QCMetric();
 			metric.setId(id);
 			metric.setSensitivity(sens2);
 			metric.setSpecificity(spec2);
 			metric.setPrecision(prec2);
-			
+
 			metrics.add(metric);
 		}
 		return metrics;
 	}
-
 
 }

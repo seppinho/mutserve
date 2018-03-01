@@ -435,7 +435,7 @@ public class VariantLine implements Comparable<VariantLine> {
 				+ nPercentageREV + "\t" + topBasePercentsFWD + "\t" + topBasePercentsREV + "\t" + minorBasePercentsFWD
 				+ "\t" + minorBasePercentsREV + "\t" + llrFWD + "\t" + llrREV + "\t" + llrAFWD + "\t" + llrAREV + "\t"
 				+ llrCFWD + "\t" + llrCREV + "\t" + llrGFWD + "\t" + llrGREV + "\t" + llrTFWD + "\t" + llrTREV + "\t"
-				+ llrDFWD + "\t" + llrDREV;
+				+ llrDFWD + "\t" + llrDREV + "\t" + minors;
 
 	}
 

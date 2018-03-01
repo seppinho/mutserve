@@ -238,10 +238,14 @@ public class PileupToolLocal extends Tool {
 					double minorFWD = VariantCaller.getMinorPercentageFwd(line, base);
 
 					double minorREV = VariantCaller.getMinorPercentageRev(line, base);
+					
+					double llrFwd = VariantCaller.determineLlrFwd(line, base)
+							;
+					double llrRev =VariantCaller.determineLlrRev(line, base);
 
+					VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorFWD, minorREV, llrFwd, llrRev, level);
+					
 					double hetLevel = VariantCaller.calcHetLevel(line, minorFWD, minorREV);
-
-					VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorFWD, minorREV, level);
 
 					varResult.setLevel(hetLevel);
 
