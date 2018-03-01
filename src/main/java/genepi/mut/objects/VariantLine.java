@@ -366,6 +366,7 @@ public class VariantLine implements Comparable<VariantLine> {
 
 		minors = new ArrayList<>();
 
+		// start with 1 and ignoring topbase!
 		for (int i = 1; i <= 4; i++) {
 			double minorPercentFWD = allelesFWD.get(i) / (double) totalFWD;
 			double minorPercentREV = allelesREV.get(i) / (double) totalREV;
@@ -386,7 +387,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		}
 
 		if (getTopBaseFWD() != 'A') {
-			if ((aFWD / (double) totalFWD) > level || (aREV / (double) totalREV) > level) {
+			if ((aFWD / (double) totalFWD) >= level || (aREV / (double) totalREV) >= level) {
 				LlrObject llr = calcLlr(base, 'A');
 				this.setLlrAFWD(llr.getLlrFWD());
 				this.setLlrAREV(llr.getLlrREV());
@@ -394,7 +395,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		}
 
 		if (getTopBaseFWD() != 'C') {
-			if ((cFWD / (double) totalFWD) > level || (cREV / (double) totalREV) > level) {
+			if ((cFWD / (double) totalFWD) >= level || (cREV / (double) totalREV) >= level) {
 				LlrObject llr = calcLlr(base, 'C');
 				this.setLlrCFWD(llr.getLlrFWD());
 				this.setLlrCREV(llr.getLlrREV());
@@ -402,7 +403,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		}
 
 		if (getTopBaseFWD() != 'G') {
-			if ((gFWD / (double) totalFWD) > level || (gREV / (double) totalREV) > level) {
+			if ((gFWD / (double) totalFWD) >= level || (gREV / (double) totalREV) >= level) {
 				LlrObject llr = calcLlr(base, 'G');
 				this.setLlrGFWD(llr.getLlrFWD());
 				this.setLlrGREV(llr.getLlrREV());
@@ -410,7 +411,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		}
 
 		if (getTopBaseFWD() != 'T') {
-			if ((tFWD / (double) totalFWD) > level || (tREV / (double) totalREV) > level) {
+			if ((tFWD / (double) totalFWD) >= level || (tREV / (double) totalREV) >= level) {
 				LlrObject llr = calcLlr(base, 'T');
 				this.setLlrTFWD(llr.getLlrFWD());
 				this.setLlrTREV(llr.getLlrREV());
@@ -418,7 +419,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		}
 
 		if (getTopBaseFWD() != 'D') {
-			if ((dFWD / (double) totalFWD) > level || (dREV / (double) totalREV) > level) {
+			if ((dFWD / (double) totalFWD) >= level || (dREV / (double) totalREV) >= level) {
 				LlrObject llr = calcLlr(base, 'D');
 				this.setLlrDFWD(llr.getLlrFWD());
 				this.setLlrDREV(llr.getLlrREV());
