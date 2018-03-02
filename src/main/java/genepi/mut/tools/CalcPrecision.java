@@ -165,6 +165,10 @@ public class CalcPrecision extends Tool {
 		String goldPlasmid12 = "test-data/dna/plasmids/plasmid12/gold/plasmid12_major.txt";
 
 		String goldPlasmid13 = "test-data/dna/plasmids/plasmid13/gold/plasmid13_minor.txt";
+		
+		String goldPlasmid12Del = "test-data/dna/plasmids/plasmid12/gold/plasmid12_major_del.txt";
+		
+		String goldPlasmid13Del = "test-data/dna/plasmids/plasmid13/gold/plasmid13_minor_del.txt";
 
 		System.out.println("PLASMID 12");
 
@@ -235,6 +239,29 @@ public class CalcPrecision extends Tool {
 				"test-data/dna/plasmids/results/plasmid13-lofreq.txt" });
 
 		lofreq.start();
+		
+		System.out.println("");
+		System.out.println("");
+		System.out.println("PLASMID 12 INDEL");
+
+		System.out.println("");
+		System.out.println("MUTATION SERVER");
+
+		mutserver = new CalcPrecision(new String[] { "--gold", goldPlasmid12Del, "--in",
+				"test-data/dna/plasmids/results/plasmid12-mutserver-del.txt" });
+
+		mutserver.start();
+		
+		System.out.println("");
+		System.out.println("PLASMID 13 INDEL");
+
+		System.out.println("");
+		System.out.println("MUTATION SERVER");
+
+		mutserver = new CalcPrecision(new String[] { "--gold", goldPlasmid13Del, "--in",
+				"test-data/dna/plasmids/results/plasmid13-mutserver-del.txt" });
+
+		mutserver.start();
 
 	}
 
