@@ -301,12 +301,12 @@ public class PileupToolLocal extends Tool {
 		input = "/media/seb/DATA-HDD4/data-genepi/2017/Projects/cnv-server/evaluation/lpa/type-b/bam-realigned";
 		fasta = "/home/seb/Desktop/realign/kiv2_6.fasta";
 		
-		input = "test-data/dna/plasmids/plasmid12/input/";
+		input = "test-data/dna/plasmids/plasmid13/input/";
 		fasta = "test-data/dna/plasmids/reference/kiv2_6.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
 				"--outputVar", outputVar, "--outputRaw", outputRaw, "--level", "0.01", "--baq", "false", "--indel",
-				"true", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
+				"false", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
 
 		pileup.start();
 
