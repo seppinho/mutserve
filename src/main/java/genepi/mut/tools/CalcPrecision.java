@@ -126,19 +126,19 @@ public class CalcPrecision extends Tool {
 
 			foundBySanger = sangerPos.size();
 
-			System.out.println("  ID: " + id);
+			//System.out.println("  ID: " + id);
 
-			System.out.println("  Correct hits : " + truePositiveCount + "/" + gold);
+			//System.out.println("  Correct hits : " + truePositiveCount + "/" + gold);
 
-			System.out.println("    " + both);
+			//System.out.println("    " + both);
 
-			System.out.println("  Not correctly found: " + foundBySanger);
+			//System.out.println("  Not correctly found: " + foundBySanger);
 
-			System.out.println("    " + sangerPos);
+			//System.out.println("    " + sangerPos);
 
-			System.out.println("  Found additionally: " + falsePositiveCount);
+			//System.out.println("  Found additionally: " + falsePositiveCount);
 
-			System.out.println("    " + falsePositives);
+			//System.out.println("    " + falsePositives);
 
 			double sens2 = truePositiveCount / (double) (truePositiveCount + falseNegativeCount) * 100;
 			double spec2 = trueNegativeCount / (double) (falsePositiveCount + trueNegativeCount) * 100;
@@ -151,10 +151,11 @@ public class CalcPrecision extends Tool {
 			String spec = df.format(spec2);
 			String prec = df.format(prec2);
 
-			System.out.println("");
-			System.out.println("Precision\t" + prec);
-			System.out.println("Sensitivity\t" + sens);
-			System.out.println("Specificity\t" + spec);
+			//System.out.println("Precision\t" + prec);
+			//System.out.println("Sensitivity\t" + sens);
+			//System.out.println("Specificity\t" + spec);
+			
+			System.out.println(id+"\t"+prec+"\t"+sens+"\t"+spec);
 
 		}
 		return 0;
@@ -171,12 +172,10 @@ public class CalcPrecision extends Tool {
 		String goldPlasmid13Del = "test-data/dna/plasmids/plasmid13/gold/plasmid13_minor_del.txt";
 
 		System.out.println("PLASMID 12");
-
-		System.out.println("");
-		System.out.println("MUTATION SERVER");
+		System.out.println(" ");
 
 		CalcPrecision mutserver = new CalcPrecision(new String[] { "--gold", goldPlasmid12, "--in",
-				"test-data/dna/plasmids/results/plasmid12-mutserver.txt" });
+				"test-data/dna/plasmids/plasmid12/results/plasmid12-mutserver.txt" });
 
 		mutserver.start();
 
@@ -184,7 +183,7 @@ public class CalcPrecision extends Tool {
 		System.out.println("FREEBAYES");
 
 		CalcPrecision freebayes = new CalcPrecision(new String[] { "--gold", goldPlasmid12, "--in",
-				"test-data/dna/plasmids/results/plasmid12-freebayes.txt" });
+				"test-data/dna/plasmids/plasmid12/results/plasmid12-freebayes.txt" });
 
 		freebayes.start();
 
@@ -192,7 +191,7 @@ public class CalcPrecision extends Tool {
 		System.out.println("GATK");
 
 		CalcPrecision gatk = new CalcPrecision(
-				new String[] { "--gold", goldPlasmid12, "--in", "test-data/dna/plasmids/results/plasmid12-gatk.txt" });
+				new String[] { "--gold", goldPlasmid12, "--in", "test-data/dna/plasmids/plasmid12/results/plasmid12-gatk.txt" });
 
 		gatk.start();
 
@@ -200,7 +199,7 @@ public class CalcPrecision extends Tool {
 		System.out.println("LOFREQ");
 
 		CalcPrecision lofreq = new CalcPrecision(new String[] { "--gold", goldPlasmid12, "--in",
-				"test-data/dna/plasmids/results/plasmid12-lofreq.txt" });
+				"test-data/dna/plasmids/plasmid12/results/plasmid12-lofreq.txt" });
 
 		lofreq.start();
 
@@ -212,7 +211,7 @@ public class CalcPrecision extends Tool {
 		System.out.println("MUTATION SERVER");
 
 		mutserver = new CalcPrecision(new String[] { "--gold", goldPlasmid13, "--in",
-				"test-data/dna/plasmids/results/plasmid13-mutserver.txt" });
+				"test-data/dna/plasmids/plasmid13/results/plasmid13-mutserver.txt" });
 
 		mutserver.start();
 
@@ -220,7 +219,7 @@ public class CalcPrecision extends Tool {
 		System.out.println("FREEBAYES");
 
 		freebayes = new CalcPrecision(new String[] { "--gold", goldPlasmid13, "--in",
-				"test-data/dna/plasmids/results/plasmid13-freebayes.txt" });
+				"test-data/dna/plasmids/plasmid13/results/plasmid13-freebayes.txt" });
 
 		freebayes.start();
 
@@ -228,7 +227,7 @@ public class CalcPrecision extends Tool {
 		System.out.println("GATK");
 
 		gatk = new CalcPrecision(
-				new String[] { "--gold", goldPlasmid13, "--in", "test-data/dna/plasmids/results/plasmid13-gatk.txt" });
+				new String[] { "--gold", goldPlasmid13, "--in", "test-data/dna/plasmids/plasmid13/results/plasmid13-gatk.txt" });
 
 		gatk.start();
 
@@ -236,11 +235,10 @@ public class CalcPrecision extends Tool {
 		System.out.println("LOFREQ");
 
 		lofreq = new CalcPrecision(new String[] { "--gold", goldPlasmid13, "--in",
-				"test-data/dna/plasmids/results/plasmid13-lofreq.txt" });
+				"test-data/dna/plasmids/plasmid13/results/plasmid13-lofreq.txt" });
 
 		lofreq.start();
 		
-		System.out.println("");
 		System.out.println("");
 		System.out.println("PLASMID 12 INDEL");
 
@@ -248,7 +246,7 @@ public class CalcPrecision extends Tool {
 		System.out.println("MUTATION SERVER");
 
 		mutserver = new CalcPrecision(new String[] { "--gold", goldPlasmid12Del, "--in",
-				"test-data/dna/plasmids/results/plasmid12-mutserver-del.txt" });
+				"test-data/dna/plasmids/plasmid12/results/plasmid12-mutserver-del.txt" });
 
 		mutserver.start();
 		
@@ -259,9 +257,25 @@ public class CalcPrecision extends Tool {
 		System.out.println("MUTATION SERVER");
 
 		mutserver = new CalcPrecision(new String[] { "--gold", goldPlasmid13Del, "--in",
-				"test-data/dna/plasmids/results/plasmid13-mutserver-del.txt" });
+				"test-data/dna/plasmids/plasmid13/results/plasmid13-mutserver-del.txt" });
 
 		mutserver.start();
+		
+		System.out.println("");
+		System.out.println("*****************************************************");
+
+
+		mutserver = new CalcPrecision(new String[] { "--gold", "test-data/dna/plasmids/mixtures/gold/gold.txt", "--in",
+				"test-data/dna/plasmids/mixtures/results/variants_plasmid_5104_NOBAQ.txt" });
+		
+		 mutserver.start();
+		 System.out.println("*****************************************************");
+		
+		mutserver = new CalcPrecision(new String[] { "--gold", "test-data/dna/plasmids/mixtures/gold/gold.txt", "--in",
+		"test-data/dna/plasmids/mixtures/results/variants_plasmid_5104_BAQ.txt" });
+		
+	   mutserver.start();
+	 
 
 	}
 
