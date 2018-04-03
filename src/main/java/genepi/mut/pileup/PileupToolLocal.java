@@ -42,7 +42,7 @@ public class PileupToolLocal extends Tool {
 
 	@Override
 	public void init() {
-		System.out.println("Execute CNV-Server locally \n");
+		System.out.println("Execute mtDNA-Server locally \n");
 	}
 
 	@Override

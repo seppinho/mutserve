@@ -128,6 +128,8 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 			// level needed for LLR
 			line.parseLine(basePos, level);
 			
+			context.write(null, new Text(line.toRawString()));
+			
 			boolean isHeteroplasmy = false;
 
 			// parsing method already applies checkBases() for minors
