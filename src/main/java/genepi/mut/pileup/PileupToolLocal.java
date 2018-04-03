@@ -232,6 +232,8 @@ public class PileupToolLocal extends Tool {
 				// create all required frequencies for one position
 				// applies checkBases()
 				line.parseLine(basePos, level);
+				
+				boolean isHeteroplasmy = false;
 
 				for (char base : line.getMinors()) {
 
@@ -245,13 +247,15 @@ public class PileupToolLocal extends Tool {
 
 					VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorPercentageFwd, minorPercentageRev, llrFwd, llrRev, level);
 					
-					double hetLevel = VariantCaller.calcHetLevel(line, minorPercentageFwd, minorPercentageRev);
-
-					varResult.setLevel(hetLevel);
-
 					if (varResult.getType() == VariantCaller.LOW_LEVEL_DELETION
 							|| varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
 
+						isHeteroplasmy = true;
+						
+						double hetLevel = VariantCaller.calcLevel(line, minorPercentageFwd, minorPercentageRev);
+
+						varResult.setLevel(hetLevel);
+						
 						String res = VariantCaller.writeVariant(varResult);
 
 						writerVariants.write(res);
@@ -260,17 +264,16 @@ public class PileupToolLocal extends Tool {
 
 				}
 
-				// use best minor for level detection!
-				double hetLevel = VariantCaller.calcHetLevel(line, line.getMinorBasePercentsFWD(),
-						line.getMinorBasePercentsREV());
-
-				if (hetLevel > 1 - level) {
-
+				if(!isHeteroplasmy) {
+					
 					VariantResult varResult = VariantCaller.determineVariants(line);
-
-					varResult.setLevel(hetLevel);
-
+					
 					if (varResult.getType() == VariantCaller.VARIANT) {
+						
+						double hetLevel = VariantCaller.calcLevel(line, line.getMinorBasePercentsFWD(),
+								line.getMinorBasePercentsREV());
+						
+						varResult.setLevel(hetLevel);
 
 						String res = VariantCaller.writeVariant(varResult);
 

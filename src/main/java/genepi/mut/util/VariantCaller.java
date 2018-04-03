@@ -38,13 +38,11 @@ public class VariantCaller {
 
 		if (line.getTopBaseFWD() == line.getTopBaseREV()) {
 
-			if (line.getTopBaseFWD() != line.getRef() && (line.getCovFWD() * line.getCovREV() / 2) > 10 * 2) {
+			if (line.getTopBaseFWD() != line.getRef() && ((line.getCovFWD() + line.getCovREV() / 2) >= 30)) {
 
 				if (line.getTopBaseFWD() == 'd') {
-					// line.setDeletion(true);
 					type = DELETION;
 				} else {
-					// line.setVariant(true);
 					type = VARIANT;
 				}
 			}
@@ -76,11 +74,13 @@ public class VariantCaller {
 				 * strand
 				 **/
 				if (checkAlleleCoverage(line, minorBasePercentsFWD, minorBasePercentsREV)) {
+
 					/**
 					 * the raw frequency for the minor allele is no less than 1%
 					 * on one of the strands
 					 **/
 					if (minorBasePercentsFWD >= level || minorBasePercentsREV >= level) {
+
 						/**
 						 * high-confidence heteroplasmy was defined as candidate
 						 * heteroplasmy with LLR no less than 5
@@ -130,7 +130,7 @@ public class VariantCaller {
 		return output;
 	}
 
-	public static double calcHetLevel(VariantLine line, double minorPercentFWD, double minorPercentREV) {
+	public static double calcLevel(VariantLine line, double minorPercentFWD, double minorPercentREV) {
 
 		double fwd;
 		double rev;

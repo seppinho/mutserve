@@ -127,10 +127,10 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 
 			// level needed for LLR
 			line.parseLine(basePos, level);
-
-			context.write(null, new Text(line.toRawString()));
 			
-			// parsing method already applies checkBases()
+			boolean isHeteroplasmy = false;
+
+			// parsing method already applies checkBases() for minors
 			for (char base : line.getMinors()) {
 
 				double minorFWD = VariantCaller.getMinorPercentageFwd(line, base);
@@ -141,14 +141,35 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 				
 				double llrRev =VariantCaller.determineLlrRev(line, base);
 
-				double hetLevel = VariantCaller.calcHetLevel(line, minorFWD, minorREV);
-
 				VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorFWD, minorREV, llrFwd, llrRev, level);
-
-				varResult.setLevel(hetLevel);
 
 				if (varResult.getType() == VariantCaller.LOW_LEVEL_DELETION
 						|| varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
+
+					isHeteroplasmy = true;
+					
+					double hetLevel = VariantCaller.calcLevel(line, minorFWD, minorREV);
+					
+					varResult.setLevel(hetLevel);
+					
+					String res = VariantCaller.writeVariant(varResult);
+
+					writer.write(res);
+
+				}
+
+			}
+			
+			if(!isHeteroplasmy) {
+
+				VariantResult varResult = VariantCaller.determineVariants(line);
+
+				if (varResult.getType() == VariantCaller.VARIANT) {
+					
+					double hetLevel = VariantCaller.calcLevel(line, line.getMinorBasePercentsFWD(),
+							line.getMinorBasePercentsREV());
+					
+					varResult.setLevel(hetLevel);
 
 					String res = VariantCaller.writeVariant(varResult);
 
@@ -158,25 +179,7 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 
 			}
 			
-			// use best minor for level detection!
-			double hetLevel = VariantCaller.calcHetLevel(line, line.getMinorBasePercentsFWD(),
-					line.getMinorBasePercentsREV());
-
-			if (hetLevel > 1 - level) {
-
-				VariantResult varResult = VariantCaller.determineVariants(line);
-
-				varResult.setLevel(hetLevel);
-				
-				if (varResult.getType() == VariantCaller.VARIANT) {
-
-					String res = VariantCaller.writeVariant(varResult);
-
-					writer.write(res);
-
-				}
-
-			}
+			context.write(null, new Text(line.toRawString()));
 			
 		}
 

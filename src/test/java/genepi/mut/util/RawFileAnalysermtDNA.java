@@ -82,7 +82,7 @@ public class RawFileAnalysermtDNA {
 
 							if (checkBases(line)) {
 
-								double hetLevel = VariantCaller.calcHetLevel(line, line.getMinorBasePercentsFWD(),
+								double hetLevel = VariantCaller.calcLevel(line, line.getMinorBasePercentsFWD(),
 										line.getMinorBasePercentsREV());
 
 								VariantResult varResult = VariantCaller.determineLowLevelVariant(line,
@@ -182,6 +182,71 @@ public class RawFileAnalysermtDNA {
 			metrics.add(metric);
 		}
 		return metrics;
+	}
+
+	public void analyseRaw(String in, String refpath, String sangerpos, double level) {
+
+		NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+		DecimalFormat df = (DecimalFormat) nf;
+		df.setMinimumFractionDigits(2);
+		df.setMaximumFractionDigits(3);
+
+		CsvTableReader cloudgeneReader = new CsvTableReader(in, '\t');
+
+		while (cloudgeneReader.next()) {
+
+			VariantLine line = new VariantLine();
+
+			line.parseLineFromFile(cloudgeneReader);
+
+			if (!isHotspot(line.getPosition())) {
+
+				int position = line.getPosition();
+
+				if (checkBases(line)) {
+
+					double hetLevel = VariantCaller.calcLevel(line, line.getMinorBasePercentsFWD(),
+							line.getMinorBasePercentsREV());
+
+					VariantResult varResult = VariantCaller.determineLowLevelVariant(line,
+							line.getMinorBasePercentsFWD(), line.getMinorBasePercentsREV(), line.getLlrFWD(),
+							line.getLlrREV(), level);
+
+					varResult.setLevel(hetLevel);
+
+					if (varResult.getType() == VariantCaller.LOW_LEVEL_DELETION
+							|| varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
+
+						System.out.println("Low Level Variant: " + line.getPosition());
+
+					}
+
+				}
+
+				double hetLevel = VariantCaller.calcLevel(line, line.getMinorBasePercentsFWD(),
+						line.getMinorBasePercentsREV());
+
+				System.out.println("pos " + position);
+
+				System.out.println(hetLevel);
+
+				System.out.println(1 - level);
+
+				VariantResult varResult = VariantCaller.determineVariants(line);
+
+				varResult.setLevel(hetLevel);
+
+				if (varResult.getType() == VariantCaller.VARIANT) {
+
+					System.out.println("Variant: " + line.getPosition());
+
+				}
+
+			}
+		}
+
+		cloudgeneReader.close();
+
 	}
 
 	public static boolean isSampleMutation(int pos) {
