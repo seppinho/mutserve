@@ -66,9 +66,6 @@ public class VariantCaller {
 
 			if (checkCoverage(line)) {
 
-				// included in parse method
-				// if (checkBases(line)) {
-
 				/**
 				 * all alleles have support from at least two reads on each
 				 * strand
@@ -101,7 +98,6 @@ public class VariantCaller {
 
 							}
 						}
-						// }
 					}
 				}
 			} else {

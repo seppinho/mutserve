@@ -232,7 +232,7 @@ public class PileupToolLocal extends Tool {
 				// create all required frequencies for one position
 				// applies checkBases()
 				line.parseLine(basePos, level);
-				
+
 				boolean isHeteroplasmy = false;
 
 				for (char base : line.getMinors()) {
@@ -240,22 +240,22 @@ public class PileupToolLocal extends Tool {
 					double minorPercentageFwd = VariantCaller.getMinorPercentageFwd(line, base);
 
 					double minorPercentageRev = VariantCaller.getMinorPercentageRev(line, base);
-					
-					double llrFwd = VariantCaller.determineLlrFwd(line, base)
-							;
-					double llrRev =VariantCaller.determineLlrRev(line, base);
 
-					VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorPercentageFwd, minorPercentageRev, llrFwd, llrRev, level);
-					
+					double llrFwd = VariantCaller.determineLlrFwd(line, base);
+					double llrRev = VariantCaller.determineLlrRev(line, base);
+
+					VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorPercentageFwd,
+							minorPercentageRev, llrFwd, llrRev, level);
+
 					if (varResult.getType() == VariantCaller.LOW_LEVEL_DELETION
 							|| varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
 
 						isHeteroplasmy = true;
-						
+
 						double hetLevel = VariantCaller.calcLevel(line, minorPercentageFwd, minorPercentageRev);
 
 						varResult.setLevel(hetLevel);
-						
+
 						String res = VariantCaller.writeVariant(varResult);
 
 						writerVariants.write(res);
@@ -264,15 +264,15 @@ public class PileupToolLocal extends Tool {
 
 				}
 
-				if(!isHeteroplasmy) {
-					
+				if (!isHeteroplasmy) {
+
 					VariantResult varResult = VariantCaller.determineVariants(line);
-					
+
 					if (varResult.getType() == VariantCaller.VARIANT) {
-						
+
 						double hetLevel = VariantCaller.calcLevel(line, line.getMinorBasePercentsFWD(),
 								line.getMinorBasePercentsREV());
-						
+
 						varResult.setLevel(hetLevel);
 
 						String res = VariantCaller.writeVariant(varResult);
@@ -300,12 +300,6 @@ public class PileupToolLocal extends Tool {
 		String outputVar = "test-data/tmp/out_var.txt";
 		String outputRaw = "test-data/tmp/out_raw.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
-
-		input = "/media/seb/DATA-HDD4/data-genepi/2017/Projects/cnv-server/evaluation/lpa/type-b/bam-realigned";
-		fasta = "/home/seb/Desktop/realign/kiv2_6.fasta";
-		
-		input = "test-data/dna/plasmids/plasmid13/input/";
-		fasta = "test-data/dna/plasmids/reference/kiv2_6.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
 				"--outputVar", outputVar, "--outputRaw", outputRaw, "--level", "0.01", "--baq", "false", "--indel",
