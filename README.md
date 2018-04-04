@@ -12,7 +12,7 @@ We also provide a [local version](https://github.com/seppinho/mutation-server/re
 ### Download Tool
 ```
 mkdir mutation-server
-wget https://github.com/seppinho/mutation-server/releases/download/1.0.1/mutation-server-1.0.1.jar -O mutation-server/mutation-server-1.0.1.jar
+wget https://github.com/seppinho/mutation-server/releases/download/1.1.1/mutation-server-1.1.1.jar -O mutation-server/mutation-server-1.1.1.jar
 ```
 ### Download Test Data
 
@@ -24,9 +24,9 @@ wget https://mtdna-server.uibk.ac.at/static/bam/HG00096.mapped.ILLUMINA.bwa.GBR.
 ### Run Tool
 ```
 cd mutation-server
-java -jar mutation-server-1.0.1.jar  analyse-local --input input-files  --reference input-files/rCRS.fasta --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel true
+java -jar mutation-server-1.1.1.jar  analyse-local --input input-files  --reference input-files/rCRS.fasta --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel true
 ```
-The --indel feature currently only analyses deletions (beta). 
+The --indel feature currently only analyses deletions. 
 
 ## Citation
 
