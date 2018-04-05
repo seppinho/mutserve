@@ -3,11 +3,11 @@
 
 # Mutation-Server
 
-Mutation-Server is a library to detect heteroplasmic and homoplasmic sites in NGS mtDNA data. 
+Mutation-Server is a library to detect heteroplasmic and homoplasmic sites in mtDNA data. 
 It is especially used within mtDNA-Server, an online [cloud service](https://mtdna-server.uibk.ac.at). For scalability, the tool is parallelized with Hadoop MapReduce. 
 
 ## Getting Started
-This tutorial show how to use Mutation Server as a standalone tool. Please checkout [this repository](https://github.com/seppinho/mtdna-server-workflow) to execute the mtDNA-Server workflow locally. 
+This tutorial show how to use Mutation Server as a standalone tool. Please checkout [this repository](https://github.com/seppinho/mtdna-server-workflow) to execute the complete mtDNA-Server workflow. 
 
 # Using Mutation-Server
 
@@ -29,7 +29,7 @@ wget https://mtdna-server.uibk.ac.at/static/bam/HG00096.mapped.ILLUMINA.bwa.GBR.
 cd mutation-server
 java -jar mutation-server-1.1.1.jar  analyse-local --input input-files  --reference input-files/rCRS.fasta --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel true
 ```
-The --indel feature only checks for deletions. 
+The `--indel` feature only checks for deletions. 
 
 ## Citation
 
