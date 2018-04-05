@@ -3,7 +3,8 @@
 
 # Mutation-Server
 
-Mutation-Server is a library used within mtDNA-Server, an online [cloud service](https://mtdna-server.uibk.ac.at) to detect variants and heteroplasmies in mitochondrial NGS DNA. For scalability, the tool is parallelized with Hadoop MapReduce. 
+Mutation-Server is a library to detect heteroplasmic and homoplasmic sites in NGS mtDNA data. 
+It is especially used within mtDNA-Server, an online [cloud service](https://mtdna-server.uibk.ac.at). For scalability, the tool is parallelized with Hadoop MapReduce. 
 
 ## Run mtDNA-Server locally
 
