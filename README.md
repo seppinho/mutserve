@@ -1,13 +1,13 @@
 [![Build Status](https://travis-ci.org/seppinho/mutation-server.svg?branch=master)](https://travis-ci.org/seppinho/mutation-server)
 [![Twitter Follow](https://img.shields.io/twitter/follow/mtdnaserver.svg?style=social&label=Follow)](https://twitter.com/mtdnaserver)
 
-# Mutation-Server Core
+# Mutation-Server
 
-Mutation-Server Core is used within mtDNA-Server, an online [cloud service](https://mtdna-server.uibk.ac.at) to detect variants and heteroplasmies in mitochondrial NGS DNA. For scalability, the tool is parallelized with Hadoop MapReduce. 
+Mutation-Server is used within mtDNA-Server, an online [cloud service](https://mtdna-server.uibk.ac.at) to detect variants and heteroplasmies in mitochondrial NGS DNA. For scalability, the tool is parallelized with Hadoop MapReduce. 
 
 ## Run mtDNA-Server locally
 
-We also provide a [local workflow](https://github.com/seppinho/mtdna-server-workflow) of mtDNA-Server without the need to transfer data to our service (BAM input only). Note: For mapping the reads (FASTQ to BAM) of the circular mitchondrial genome, we recommend [bwa mem](https://github.com/lh3/bwa). 
+We also provide a [local workflow](https://github.com/seppinho/mtdna-server-workflow) of mtDNA-Server without the need to transfer data to our service (BAM input only). 
 
 ## Citation
 
