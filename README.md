@@ -8,7 +8,7 @@ It is especially used within mtDNA-Server, an online [cloud service](https://mtd
 ## Getting Started
 This tutorial shows how to use Mutation Server as a standalone tool. Please checkout [this repository](https://github.com/seppinho/mtdna-server-workflow) to execute the complete mtDNA-Server workflow. 
 
-# Using Mutation-Server
+### Using Mutation-Server
 
 ```
 mkdir mutation-server
