@@ -167,7 +167,7 @@ public class PileupToolLocal extends Tool {
 
 		// TODO double check if primary and secondary alignment is used for
 		// CNV-Server
-		final SamReader reader = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.LENIENT)
+		final SamReader reader = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT)
 				.open(file);
 
 		SAMRecordIterator fileIterator = reader.iterator();
