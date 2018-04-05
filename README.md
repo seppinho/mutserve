@@ -6,9 +6,24 @@
 Mutation-Server is a library to detect heteroplasmic and homoplasmic sites in NGS mtDNA data. 
 It is especially used within mtDNA-Server, an online [cloud service](https://mtdna-server.uibk.ac.at). For scalability, the tool is parallelized with Hadoop MapReduce. 
 
-## Run mtDNA-Server locally
+### Download Tool
+```
+mkdir mutation-server
+wget https://github.com/seppinho/mtdna-server-workflow/releases/download/1.1.1/mutation-server-1.1.1.jar -O mutation-server/mutation-server-1.1.1.jar
+```
+### Download Test Data
 
-We provide a [local workflow](https://github.com/seppinho/mtdna-server-workflow) of mtDNA-Server without the need to transfer data to our service (BAM input only). 
+```
+mkdir mutation-server/input-files
+wget https://mtdna-server.uibk.ac.at/static/bam/rCRS.fasta -O mutation-server/input-files/rCRS.fasta
+wget https://mtdna-server.uibk.ac.at/static/bam/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam  -O mutation-server/input-files/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam
+```
+### Run Tool
+```
+cd mutation-server
+java -jar mutation-server-1.1.1.jar  analyse-local --input input-files  --reference input-files/rCRS.fasta --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel true
+```
+The --indel feature only checks for deletions. 
 
 ## Citation
 
