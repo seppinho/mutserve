@@ -36,7 +36,7 @@ public class VariantCaller {
 
 		int type = 0;
 
-		if (line.getTopBaseFWD() == line.getTopBaseREV()) {
+		if (line.getTopBaseFWD() == line.getTopBaseREV() && line.getTopBaseFWD()!='-') {
 
 			if (line.getTopBaseFWD() != line.getRef() && ((line.getCovFWD() + line.getCovREV() / 2) >= 30)) {
 
