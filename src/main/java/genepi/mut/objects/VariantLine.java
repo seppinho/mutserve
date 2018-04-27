@@ -260,30 +260,8 @@ public class VariantLine implements Comparable<VariantLine> {
 		char topBaseFWD = '-';
 		char minorBaseFWD = '-';
 
-		// prefer lexicographic order in case of 50/50
-		if (topBasePercentsFWD == minorBasePercentsFWD && topBasePercentsFWD > 0) {
-			if (aFWDPercents == gFWDPercents && gFWDPercents == topBasePercentsFWD) {
-				topBaseFWD = 'A';
-				minorBaseFWD = 'G';
-			} else if (aFWDPercents == cFWDPercents && cFWDPercents == topBasePercentsFWD) {
-				topBaseFWD = 'A';
-				minorBaseFWD = 'C';
-			} else if (aFWDPercents == tFWDPercents && tFWDPercents == topBasePercentsFWD) {
-				topBaseFWD = 'A';
-				minorBaseFWD = 'T';
-			} else if (cFWDPercents == tFWDPercents && tFWDPercents == topBasePercentsFWD) {
-				topBaseFWD = 'C';
-				minorBaseFWD = 'T';
-			} else if (cFWDPercents == gFWDPercents && gFWDPercents == topBasePercentsFWD) {
-				topBaseFWD = 'C';
-				minorBaseFWD = 'G';
-			} else if (gFWDPercents == tFWDPercents && tFWDPercents == topBasePercentsFWD) {
-				topBaseFWD = 'G';
-				minorBaseFWD = 'T';
-			}
-		}
 
-		else if (aFWD >= cFWD && aFWD >= gFWD && aFWD >= tFWD && aFWD >= dFWD && aFWD > 0) {
+		if (aFWD >= cFWD && aFWD >= gFWD && aFWD >= tFWD && aFWD >= dFWD && aFWD > 0) {
 			topBaseFWD = 'A';
 		}
 
@@ -306,34 +284,8 @@ public class VariantLine implements Comparable<VariantLine> {
 		char topBaseREV = '-';
 		char minorBaseREV = '-';
 
-		if (topBasePercentsREV == minorBasePercentsREV) {
-			if (aREVPercents == gREVPercents && gREVPercents == topBasePercentsREV) {
-				topBaseREV = 'A';
-				minorBaseREV = 'G';
-			}
-			if (aREVPercents == cREVPercents && cREVPercents == topBasePercentsREV) {
-				topBaseREV = 'A';
-				minorBaseREV = 'C';
-			}
-			if (aREVPercents == tREVPercents && tREVPercents == topBasePercentsREV) {
-				topBaseREV = 'A';
-				minorBaseREV = 'T';
-			}
-			if (cREVPercents == tREVPercents && tREVPercents == topBasePercentsREV) {
-				topBaseREV = 'C';
-				minorBaseREV = 'T';
-			}
-			if (cREVPercents == gREVPercents && gREVPercents == topBasePercentsREV) {
-				topBaseREV = 'C';
-				minorBaseREV = 'G';
-			}
-			if (gREVPercents == tREVPercents && tREVPercents == topBasePercentsREV) {
-				topBaseREV = 'G';
-				minorBaseREV = 'T';
-			}
-		}
 
-		else if (aREV >= cREV && aREV >= gREV && aREV >= tREV && aREV >= dREV && aREV > 0) {
+		if (aREV >= cREV && aREV >= gREV && aREV >= tREV && aREV >= dREV && aREV > 0) {
 			topBaseREV = 'A';
 		}
 
