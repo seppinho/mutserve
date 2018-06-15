@@ -153,7 +153,7 @@ public class MutationServerTest {
 
 		}
 	}
-
+	
 	@Test
 	public void SortTestSE() throws IOException {
 
@@ -372,7 +372,7 @@ public class MutationServerTest {
 		String type = "bam";
 
 		Set<Integer> expected = new HashSet<Integer>(Arrays.asList(1456, 2746, 3200, 12410, 14071, 14569, 15463,
-				16093, 16360, 10394, 1438, 152, 15326, 15340, 16519, 263, 4769, 750, 8592, 8860, 3107));
+				16093, 16360, 10394, 1438, 152, 15326, 15340, 16519, 263, 4769, 750, 8592, 8860, 3107, 303, 311));
 		
 		importInputdata(inputFolder, hdfsFolder);
 

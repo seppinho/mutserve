@@ -288,7 +288,7 @@ public class BamAnalyser {
 				
 				}
 
-				if (false && cigarElement.getOperator() == CigarOperator.I) {
+				if (cigarElement.getOperator() == CigarOperator.I) {
 
 					Integer cigarElementStart = currentReferencePos;
 
@@ -305,7 +305,7 @@ public class BamAnalyser {
 
 						byte quality = samRecord.getBaseQualities()[arrayPos];
 
-						String key = filename + ":" + cigarElementStart + "." + i + "/" + length;
+						String key = filename + ":" + cigarElementStart + "." + i;// + "/" + length;
 
 						BasePosition basePos = counts.get(key);
 

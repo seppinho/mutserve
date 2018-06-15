@@ -120,6 +120,9 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 				ref = reference.charAt(pos - 1);
 
 			} else {
+
+				ref = 'I';
+
 				line.setInsPosition(positionKey);
 			}
 
@@ -127,36 +130,37 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 
 			// level needed for LLR
 			line.parseLine(basePos, level);
-			
+
 			boolean isHeteroplasmy = false;
 
 			// parsing method already applies checkBases() for minors
 			for (char base : line.getMinors()) {
-				
-				//write new minor base to file!
+
+				// write new minor base to file!
 				line.setMinorBaseFWD(base);
-				
+
 				line.setMinorBaseREV(base);
 
 				double minorFWD = VariantCaller.getMinorPercentageFwd(line, base);
 
 				double minorREV = VariantCaller.getMinorPercentageRev(line, base);
-				
-				double llrFwd = VariantCaller.determineLlrFwd(line, base);
-				
-				double llrRev =VariantCaller.determineLlrRev(line, base);
 
-				VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorFWD, minorREV, llrFwd, llrRev, level);
+				double llrFwd = VariantCaller.determineLlrFwd(line, base);
+
+				double llrRev = VariantCaller.determineLlrRev(line, base);
+
+				VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorFWD, minorREV, llrFwd,
+						llrRev, level);
 
 				if (varResult.getType() == VariantCaller.LOW_LEVEL_DELETION
 						|| varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
 
 					isHeteroplasmy = true;
-					
+
 					double hetLevel = VariantCaller.calcLevel(line, minorFWD, minorREV);
-					
+
 					varResult.setLevel(hetLevel);
-					
+
 					String res = VariantCaller.writeVariant(varResult);
 
 					writer.write(res);
@@ -164,16 +168,16 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 				}
 
 			}
-			
-			if(!isHeteroplasmy) {
+
+			if (!isHeteroplasmy) {
 
 				VariantResult varResult = VariantCaller.determineVariants(line);
 
 				if (varResult.getType() == VariantCaller.VARIANT) {
-					
+
 					double hetLevel = VariantCaller.calcLevel(line, line.getMinorBasePercentsFWD(),
 							line.getMinorBasePercentsREV());
-					
+
 					varResult.setLevel(hetLevel);
 
 					String res = VariantCaller.writeVariant(varResult);
@@ -183,9 +187,9 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 				}
 
 			}
-			
+
 			context.write(null, new Text(line.toRawString()));
-			
+
 		}
 
 	}
