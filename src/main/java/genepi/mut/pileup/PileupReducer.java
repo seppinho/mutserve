@@ -132,6 +132,11 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 
 			// parsing method already applies checkBases() for minors
 			for (char base : line.getMinors()) {
+				
+				//write new minor base to file!
+				line.setMinorBaseFWD(base);
+				
+				line.setMinorBaseREV(base);
 
 				double minorFWD = VariantCaller.getMinorPercentageFwd(line, base);
 

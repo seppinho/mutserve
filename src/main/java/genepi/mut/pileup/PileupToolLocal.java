@@ -236,7 +236,12 @@ public class PileupToolLocal extends Tool {
 				boolean isHeteroplasmy = false;
 
 				for (char base : line.getMinors()) {
-
+					
+					//write new minor base to file!
+					line.setMinorBaseFWD(base);
+					
+					line.setMinorBaseREV(base);
+					
 					double minorPercentageFwd = VariantCaller.getMinorPercentageFwd(line, base);
 
 					double minorPercentageRev = VariantCaller.getMinorPercentageRev(line, base);
@@ -300,10 +305,12 @@ public class PileupToolLocal extends Tool {
 		String outputVar = "test-data/tmp/out_var.txt";
 		String outputRaw = "test-data/tmp/out_raw.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
+		input = "test-data/muc1/bam/";
+		fasta = "test-data/muc1/reference/muc1-90.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
 				"--outputVar", outputVar, "--outputRaw", outputRaw, "--level", "0.01", "--baq", "false", "--indel",
-				"false", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
+				"true", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
 
 		pileup.start();
 
