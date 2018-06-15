@@ -35,7 +35,7 @@ public class VariantCaller {
 	public static VariantResult determineVariants(VariantLine line) {
 
 		int type = 0;
-
+		
 		if (line.getTopBaseFWD() == line.getTopBaseREV() && line.getTopBaseFWD()!='-') {
 
 			if (line.getTopBaseFWD() != line.getRef() && ((line.getCovFWD() + line.getCovREV() / 2) >= 30)) {
@@ -131,7 +131,7 @@ public class VariantCaller {
 		double fwd;
 		double rev;
 
-		if (line.getTopBaseFWD() == line.getRef()) {
+		if (line.getTopBaseFWD() == line.getRef() || line.getTopBaseFWD() == 'D') {
 			fwd = minorPercentFWD * line.getCovFWD();
 			rev = minorPercentREV * line.getCovREV();
 		} else {
