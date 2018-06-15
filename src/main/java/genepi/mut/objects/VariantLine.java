@@ -260,7 +260,6 @@ public class VariantLine implements Comparable<VariantLine> {
 		char topBaseFWD = '-';
 		char minorBaseFWD = '-';
 
-
 		if (aFWD >= cFWD && aFWD >= gFWD && aFWD >= tFWD && aFWD >= dFWD && aFWD > 0) {
 			topBaseFWD = 'A';
 		}
@@ -283,7 +282,6 @@ public class VariantLine implements Comparable<VariantLine> {
 
 		char topBaseREV = '-';
 		char minorBaseREV = '-';
-
 
 		if (aREV >= cREV && aREV >= gREV && aREV >= tREV && aREV >= dREV && aREV > 0) {
 			topBaseREV = 'A';
@@ -326,7 +324,12 @@ public class VariantLine implements Comparable<VariantLine> {
 			char minorREV = detectMinorREV(minorPercentREV);
 
 			if (checkBases(topBaseFWD, topBaseREV, minorFWD, minorREV)) {
-				minors.add(minorFWD);
+
+				if (minorFWD != '-') {
+					
+					minors.add(minorFWD);
+
+				}
 			}
 
 		}
