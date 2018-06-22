@@ -12,10 +12,9 @@ Execute the following steps to run Mutation-Server as a standalone tool:
 
 ```
 mkdir mutation-server
-wget https://github.com/seppinho/mutation-server/releases/download/v1.1.4/mutation-server-1.1.4.jar -O mutation-server/mutation-server-1.1.4.jar
+wget https://github.com/seppinho/mutation-server/releases/download/v1.1.4/mutation-server-1.1.4.jar
 
-java -jar mutation-server-1.1.4.jar  analyse-local --input input-files 
---reference input-files/rCRS.fasta --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel true
+java -jar mutation-server-1.1.4.jar  analyse-local --input <input-folder> \ --reference <ref.fasta> --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel true
 ```
 
 ## Citation
