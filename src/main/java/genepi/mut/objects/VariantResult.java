@@ -3,7 +3,7 @@ package genepi.mut.objects;
 public class VariantResult {
 
 	private String id;
-	private int position;
+	private String position;
 	private char ref;
 	private char alt;
 	private char top;
@@ -29,11 +29,11 @@ public class VariantResult {
 		this.id = id;
 	}
 
-	public int getPosition() {
+	public String getPosition() {
 		return position;
 	}
 
-	public void setPosition(int position) {
+	public void setPosition(String position) {
 		this.position = position;
 	}
 

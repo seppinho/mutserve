@@ -25,7 +25,8 @@ public class VariantCaller {
 			return true;
 		}
 
-		if (line.getVariantType() == VariantCaller.LOW_LEVEL_DELETION) {
+		if (line.getVariantType() == VariantCaller.DELETION
+				|| line.getVariantType() == VariantCaller.LOW_LEVEL_DELETION) {
 			return true;
 		}
 
@@ -35,21 +36,25 @@ public class VariantCaller {
 	public static VariantResult determineVariants(VariantLine line) {
 
 		int type = 0;
-		
-		if (line.getTopBaseFWD() == line.getTopBaseREV() && line.getTopBaseFWD()!='-') {
 
-			if (line.getTopBaseFWD() != line.getRef() && ((line.getCovFWD() + line.getCovREV() / 2) >= 30)) {
+		if (line.getTopBaseFWD() == line.getTopBaseREV() && line.getTopBaseFWD() != '-') {
 
-				if (line.getTopBaseFWD() == 'd') {
+			if (line.getTopBaseFWD() != line.getRef() && ((line.getCovFWD() + line.getCovREV() / 2) >= 50)) {
+
+				if (line.getTopBaseFWD() == 'D') {
 					type = DELETION;
 				} else {
 					type = VARIANT;
 				}
+
+				return addVariantResult(line, type);
+				
 			}
 
 		}
 
-		return addVariantResult(line, type);
+		return null;
+
 	}
 
 	public static VariantResult determineLowLevelVariant(VariantLine line, double minorBasePercentsFWD,
@@ -60,27 +65,25 @@ public class VariantCaller {
 		try {
 
 			/**
-			 * 10× coverage of qualified bases on both positive and negative
-			 * strands;
+			 * 10× coverage of qualified bases on both positive and negative strands;
 			 */
 
 			if (checkCoverage(line)) {
 
 				/**
-				 * all alleles have support from at least two reads on each
-				 * strand
+				 * all alleles have support from at least two reads on each strand
 				 **/
 				if (checkAlleleCoverage(line, minorBasePercentsFWD, minorBasePercentsREV)) {
 
 					/**
-					 * the raw frequency for the minor allele is no less than 1%
-					 * on one of the strands
+					 * the raw frequency for the minor allele is no less than 1% on one of the
+					 * strands
 					 **/
 					if (minorBasePercentsFWD >= level || minorBasePercentsREV >= level) {
 
 						/**
-						 * high-confidence heteroplasmy was defined as candidate
-						 * heteroplasmy with LLR no less than 5
+						 * high-confidence heteroplasmy was defined as candidate heteroplasmy with LLR
+						 * no less than 5
 						 **/
 						if (llrFwd >= 5 || llrRev >= 5) {
 
@@ -113,9 +116,14 @@ public class VariantCaller {
 
 	private static VariantResult addVariantResult(VariantLine line, int type) {
 		VariantResult output = new VariantResult();
-
 		output.setId(line.getId());
-		output.setPosition(line.getPosition());
+		
+		if (line.getInsPosition() != null) {
+			output.setPosition(line.getInsPosition());
+		} else {
+			output.setPosition(line.getPosition() + "");
+		}
+		
 		output.setTop(line.getTopBaseFWD());
 		output.setMinor(line.getMinorBaseFWD());
 		output.setRef(line.getRef());
@@ -350,14 +358,6 @@ public class VariantCaller {
 		build.append(result.getCovREV() + "\t");
 
 		build.append(result.getCovFWD() + result.getCovREV());
-
-		/*
-		 * if (getInsPosition() != null) {
-		 * 
-		 * build.append("\t" + this.getInsPosition());
-		 * 
-		 * }
-		 */
 
 		build.append("\r");
 

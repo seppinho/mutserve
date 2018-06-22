@@ -167,8 +167,6 @@ public class BamAnalyser {
 
 				if (samRecord.getBaseQualities()[i] >= baseQual) {
 
-					// context.getCounter("mtdna", "GOOD-QUAL").increment(1);
-
 					String key = filename + ":" + currentPos;
 
 					BasePosition basePos = counts.get(key);
@@ -232,9 +230,7 @@ public class BamAnalyser {
 						}
 					}
 
-				} else {
-					// context.getCounter("mtdna", "BAD-QUAL").increment(1);
-				}
+				}  // end base quality
 			}
 		}
 
@@ -305,7 +301,7 @@ public class BamAnalyser {
 
 						byte quality = samRecord.getBaseQualities()[arrayPos];
 
-						String key = filename + ":" + cigarElementStart + "." + i;// + "/" + length;
+						String key = filename + ":" + cigarElementStart + "." + i;
 
 						BasePosition basePos = counts.get(key);
 
@@ -317,8 +313,7 @@ public class BamAnalyser {
 						}
 
 						if ((samRecord.getFlags() & 0x10) == 0x10) {
-							// context.getCounter("mtdna",
-							// "REV-READ").increment(1);
+
 							switch (insBase) {
 							case 'A':
 								basePos.addaRev(1);

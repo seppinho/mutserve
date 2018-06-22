@@ -371,8 +371,8 @@ public class MutationServerTest {
 		String hdfsFolder = "input";
 		String type = "bam";
 
-		Set<Integer> expected = new HashSet<Integer>(Arrays.asList(1456, 2746, 3200, 12410, 14071, 14569, 15463,
-				16093, 16360, 10394, 1438, 152, 15326, 15340, 16519, 263, 4769, 750, 8592, 8860, 3107, 303, 311));
+		Set<String> expected = new HashSet<String>(Arrays.asList("1456", "2746", "3200", "12410", "14071", "14569", "15463",
+				"16093", "16360", "10394", "1438", "152", "15326", "15340", "16519", "263", "4769", "750", "8592", "8860", "3107", "303.1", "311.1"));
 		
 		importInputdata(inputFolder, hdfsFolder);
 
@@ -392,15 +392,14 @@ public class MutationServerTest {
 		assertTrue(result);
 
 		LineReader reader = new LineReader("test-data/tmp/variantsLocal1000G");
-		HashSet<Integer> results = new HashSet<Integer>();
+		HashSet<String> results = new HashSet<String>();
 
 		// header
 		reader.next();
 		while (reader.next()) {
 			String[] splits = reader.get().split("\t");
-			int pos = Integer.valueOf(splits[1]);
-			results.add(pos);
-			System.out.println(pos);
+			results.add(splits[1]);
+			System.out.println(splits[1]);
 		}
 
 		assertEquals(true, results.equals(expected));

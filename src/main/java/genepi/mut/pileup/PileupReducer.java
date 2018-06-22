@@ -121,7 +121,7 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 
 			} else {
 
-				ref = 'I';
+				ref = '-';
 
 				line.setInsPosition(positionKey);
 			}
@@ -173,7 +173,7 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 
 				VariantResult varResult = VariantCaller.determineVariants(line);
 
-				if (varResult.getType() == VariantCaller.VARIANT) {
+				if (varResult != null) {
 
 					double hetLevel = VariantCaller.calcLevel(line, line.getMinorBasePercentsFWD(),
 							line.getMinorBasePercentsREV());

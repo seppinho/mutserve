@@ -42,7 +42,9 @@ public class PileupToolLocal extends Tool {
 
 	@Override
 	public void init() {
-		System.out.println("Execute mtDNA-Server locally \n");
+		System.out.println("Welcome to Mutation Server");
+		System.out.println("Divison of Genetic Epidemiology");
+		System.out.println("Medical University of Innsbruck");
 	}
 
 	@Override
@@ -92,6 +94,7 @@ public class PileupToolLocal extends Tool {
 		if (files.length == 0) {
 
 			System.out.println("no BAM files found. Please check input folder " + folderIn.getAbsolutePath());
+			
 			return 1;
 		}
 
@@ -149,8 +152,11 @@ public class PileupToolLocal extends Tool {
 		}
 
 		try {
+			
 			writerVar.close();
+			
 			writerRaw.close();
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -225,7 +231,7 @@ public class PileupToolLocal extends Tool {
 
 				} else {
 
-					ref = 'I';
+					ref = '-';
 
 					line.setInsPosition(positionKey);
 				}
@@ -240,7 +246,7 @@ public class PileupToolLocal extends Tool {
 
 				for (char base : line.getMinors()) {
 
-					// write new minor base to file!
+					// drz correct minor base!
 					line.setMinorBaseFWD(base);
 
 					line.setMinorBaseREV(base);
@@ -277,7 +283,7 @@ public class PileupToolLocal extends Tool {
 
 					VariantResult varResult = VariantCaller.determineVariants(line);
 
-					if (varResult.getType() == VariantCaller.VARIANT) {
+					if (varResult != null) {
 
 						double hetLevel = VariantCaller.calcLevel(line, line.getMinorBasePercentsFWD(),
 								line.getMinorBasePercentsREV());
@@ -313,7 +319,7 @@ public class PileupToolLocal extends Tool {
 		fasta = "test-data/mtdna/mixtures/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
-				"--outputVar", outputVar, "--outputRaw", outputRaw, "--level", "0.01", "--baq", "false", "--indel",
+				"--outputVar", outputVar, "--outputRaw", outputRaw, "--level", "0.01", "--baq", "true", "--indel",
 				"true", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
 
 		pileup.start();
