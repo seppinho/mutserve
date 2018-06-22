@@ -136,11 +136,6 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 			// parsing method already applies checkBases() for minors
 			for (char base : line.getMinors()) {
 
-				// write new minor base to file!
-				line.setMinorBaseFWD(base);
-
-				line.setMinorBaseREV(base);
-
 				double minorFWD = VariantCaller.getMinorPercentageFwd(line, base);
 
 				double minorREV = VariantCaller.getMinorPercentageRev(line, base);
@@ -150,12 +145,17 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 				double llrRev = VariantCaller.determineLlrRev(line, base);
 
 				VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorFWD, minorREV, llrFwd,
-						llrRev, level);
+						llrRev, level, base);
 
 				if (varResult.getType() == VariantCaller.LOW_LEVEL_DELETION
 						|| varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
 
 					isHeteroplasmy = true;
+					
+					// write new minor base to file!
+					line.setMinorBaseFWD(base);
+
+					line.setMinorBaseREV(base);
 
 					double hetLevel = VariantCaller.calcLevel(line, minorFWD, minorREV);
 

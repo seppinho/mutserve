@@ -257,17 +257,17 @@ public class PileupToolLocal extends Tool {
 					double llrRev = VariantCaller.determineLlrRev(line, base);
 
 					VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorPercentageFwd,
-							minorPercentageRev, llrFwd, llrRev, level);
+							minorPercentageRev, llrFwd, llrRev, level, base);
 					
 					if (varResult.getType() == VariantCaller.LOW_LEVEL_DELETION
 							|| varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
+						
+						isHeteroplasmy = true;
 						
 						// set correct minor base for output result!
 						line.setMinorBaseFWD(base);
 
 						line.setMinorBaseREV(base);
-
-						isHeteroplasmy = true;
 
 						double hetLevel = VariantCaller.calcLevel(line, minorPercentageFwd, minorPercentageRev);
 
@@ -316,8 +316,6 @@ public class PileupToolLocal extends Tool {
 		String outputVar = "test-data/tmp/out_var.txt";
 		String outputRaw = "test-data/tmp/out_raw.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
-		input = "test-data/muc1/bam/";
-		fasta = "test-data/mtdna/mixtures/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
 				"--outputVar", outputVar, "--outputRaw", outputRaw, "--level", "0.01", "--baq", "true", "--indel",

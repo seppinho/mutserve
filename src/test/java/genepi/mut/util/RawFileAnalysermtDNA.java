@@ -87,7 +87,7 @@ public class RawFileAnalysermtDNA {
 
 								VariantResult varResult = VariantCaller.determineLowLevelVariant(line,
 										line.getMinorBasePercentsFWD(), line.getMinorBasePercentsREV(),
-										line.getLlrFWD(), line.getLlrREV(), level);
+										line.getLlrFWD(), line.getLlrREV(), level, line.getMinorBaseFWD());
 
 								varResult.setLevel(hetLevel);
 
@@ -150,13 +150,9 @@ public class RawFileAnalysermtDNA {
 
 			System.out.println("    " + falsePositives);
 
-			double sens2 = truePositiveCount / (double) (truePositiveCount + falseNegativeCount) * 100;
-			double spec2 = trueNegativeCount / (double) (falsePositiveCount + trueNegativeCount) * 100;
-			double prec2 = truePositiveCount / (double) (truePositiveCount + falsePositiveCount) * 100;
-
-			String sens = df.format(sens2);
-			String spec = df.format(spec2);
-			String prec = df.format(prec2);
+			double sens = truePositiveCount / (double) (truePositiveCount + falseNegativeCount) * 100;
+			double spec = trueNegativeCount / (double) (falsePositiveCount + trueNegativeCount) * 100;
+			double prec = truePositiveCount / (double) (truePositiveCount + falsePositiveCount) * 100;
 
 			/*
 			 * System.out.println("  Sensitivity (Recall) -> " + sens +
@@ -169,15 +165,15 @@ public class RawFileAnalysermtDNA {
 			 */
 
 			System.out.println("");
-			System.out.println("Precision\t" + prec);
-			System.out.println("Sensitivity\t" + sens);
-			System.out.println("Specificity\t" + spec);
+			System.out.println("Precision\t" + df.format(prec));
+			System.out.println("Sensitivity\t" + df.format(sens));
+			System.out.println("Specificity\t" + df.format(spec));
 
 			QCMetric metric = new QCMetric();
 			metric.setId(id);
-			metric.setSensitivity(sens2);
-			metric.setSpecificity(spec2);
-			metric.setPrecision(prec2);
+			metric.setSensitivity(sens);
+			metric.setSpecificity(spec);
+			metric.setPrecision(prec);
 
 			metrics.add(metric);
 		}
@@ -210,7 +206,7 @@ public class RawFileAnalysermtDNA {
 
 					VariantResult varResult = VariantCaller.determineLowLevelVariant(line,
 							line.getMinorBasePercentsFWD(), line.getMinorBasePercentsREV(), line.getLlrFWD(),
-							line.getLlrREV(), level);
+							line.getLlrREV(), level, line.getMinorBaseFWD());
 
 					varResult.setLevel(hetLevel);
 

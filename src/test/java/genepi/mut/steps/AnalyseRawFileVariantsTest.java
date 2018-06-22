@@ -13,7 +13,7 @@ import genepi.mut.util.RawFileAnalyserDNA;
 
 public class AnalyseRawFileVariantsTest {
 
-	@Test
+/*	@Test
 	public void HetModelTest() {
 
 		double hetLevel = 0.01;
@@ -32,7 +32,7 @@ public class AnalyseRawFileVariantsTest {
 						assertEquals(64, metric.getSensitivity(), 0.1);
 						assertEquals(100, metric.getSpecificity(), 0);
 					}
-	}
+	}*/
 	
 	
 	@Test

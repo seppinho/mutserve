@@ -58,7 +58,7 @@ public class VariantCaller {
 	}
 
 	public static VariantResult determineLowLevelVariant(VariantLine line, double minorBasePercentsFWD,
-			double minorBasePercentsREV, double llrFwd, double llrRev, double level) {
+			double minorBasePercentsREV, double llrFwd, double llrRev, double level, char minor) {
 
 		int type = 0;
 
@@ -90,7 +90,7 @@ public class VariantCaller {
 							if (calcStrandBias(line, minorBasePercentsFWD, minorBasePercentsREV) <= 1) {
 
 								// D can either be on TOP or MINOR base
-								if (line.getMinorBaseFWD() == 'D' || line.getTopBaseFWD() == 'D') {
+								if (minor == 'D') {
 									type = LOW_LEVEL_DELETION;
 								} else {
 									type = LOW_LEVEL_VARIANT;
