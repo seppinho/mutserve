@@ -4,11 +4,11 @@
 Mutation-Server Core is a Java library to detect heteroplasmic and homoplasmic sites in mtDNA data. 
 It is especially used for [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability, Mutation-Server Core is parallelized with Hadoop MapReduce but is also available as a standalone tool.
 
-## mtDNA-Server
-mtDNA-Server uses this library to detect heteroplasmic and homoplasmic sites. Please have a look [here](https://github.com/seppinho/mtdna-server-workflow) to run the complete mtDNA-Server workflow including also several other workflow steps like contamination detection or report creation.
+## mtDNA-Server Usage
+mtDNA-Server uses this library to detect heteroplasmic and homoplasmic sites. Please have a look [here](https://github.com/seppinho/mtdna-server-workflow) to run the complete workflow including also several other workflow steps like contamination detection or report creation.
 
-## Standalone Tool
-You can also run Mutation-Server  Core as a standalone tool starting with BAM files. 
+## Standalone Usage
+You can also run Mutation-Server Core as a standalone tool starting with BAM files. 
 ```
 mkdir mutation-server
 
