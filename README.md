@@ -1,11 +1,14 @@
 [![Build Status](https://travis-ci.org/seppinho/mutation-server.svg?branch=master)](https://travis-ci.org/seppinho/mutation-server)
 [![Twitter Follow](https://img.shields.io/twitter/follow/mtdnaserver.svg?style=social&label=Follow)](https://twitter.com/mtdnaserver)
 
-Mutation-Server is a Java library to detect heteroplasmic and homoplasmic sites in mtDNA data. 
-It is especially used within the cloud service [mtDNA-Server](https://mtdna-server.uibk.ac.at) based on [Cloudgene](https://github.com/genepi/cloudgene). For scalability, Mutation-Server is parallelized with Hadoop MapReduce but is also available as a standalone tool (see below). 
+Mutation-Server Core is a Java library to detect heteroplasmic and homoplasmic sites in mtDNA data. 
+It is especially used within the cloud service [mtDNA-Server](https://mtdna-server.uibk.ac.at) based on [Cloudgene](https://github.com/genepi/cloudgene). For scalability, Mutation-Server Core is parallelized with Hadoop MapReduce but is also available as a standalone tool.
 
-## Getting Started
-Execute the following steps to run Mutation-Server as a standalone tool. Please checkout [this repository](https://github.com/seppinho/mtdna-server-workflow) to execute the complete mtDNA-Server workflow. 
+## mtDNA-Server
+Please checkout [this repository](https://github.com/seppinho/mtdna-server-workflow) to execute the mtDNA-Server workflow including this library. 
+
+## Standalone Tool
+Execute the following steps to run Mutation-Server as a standalone tool. 
 
 ```
 mkdir mutation-server
