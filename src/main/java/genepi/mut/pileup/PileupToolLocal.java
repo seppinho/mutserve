@@ -20,6 +20,8 @@ import htsjdk.samtools.ValidationStringency;
 
 public class PileupToolLocal extends Tool {
 
+	String version = "v1.1.4";
+	
 	public PileupToolLocal(String[] args) {
 		super(args);
 		System.out.println("Command " + Arrays.toString(args));
@@ -42,9 +44,10 @@ public class PileupToolLocal extends Tool {
 
 	@Override
 	public void init() {
-		System.out.println("Welcome to Mutation Server");
-		System.out.println("Divison of Genetic Epidemiology");
-		System.out.println("Medical University of Innsbruck");
+		System.out.println("Mutation Server "+version + " -- Low-frequency Variant Detection");
+		System.out.println("Division of Genetic Epidemiology - Medical University of Innsbruck");
+		System.out.println("(c) Sebastian Schoenherr, Hansi Weissensteiner, Lukas Forer");
+		System.out.println("");
 	}
 
 	@Override
@@ -80,8 +83,7 @@ public class PileupToolLocal extends Tool {
 
 		if (!folderIn.isDirectory()) {
 
-			System.out.println("Please specify a valid input folder. Abort.");
-			System.out.println(folderIn.getAbsolutePath());
+			System.out.println("Please specify a valid input folder.");
 			return 1;
 		}
 
@@ -246,11 +248,6 @@ public class PileupToolLocal extends Tool {
 
 				for (char base : line.getMinors()) {
 
-					// drz correct minor base!
-					line.setMinorBaseFWD(base);
-
-					line.setMinorBaseREV(base);
-
 					double minorPercentageFwd = VariantCaller.getMinorPercentageFwd(line, base);
 
 					double minorPercentageRev = VariantCaller.getMinorPercentageRev(line, base);
@@ -261,9 +258,14 @@ public class PileupToolLocal extends Tool {
 
 					VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorPercentageFwd,
 							minorPercentageRev, llrFwd, llrRev, level);
-
+					
 					if (varResult.getType() == VariantCaller.LOW_LEVEL_DELETION
 							|| varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
+						
+						// set correct minor base for output result!
+						line.setMinorBaseFWD(base);
+
+						line.setMinorBaseREV(base);
 
 						isHeteroplasmy = true;
 
@@ -275,8 +277,7 @@ public class PileupToolLocal extends Tool {
 
 						writerVariants.write(res);
 
-					}
-
+				}
 				}
 
 				if (!isHeteroplasmy) {

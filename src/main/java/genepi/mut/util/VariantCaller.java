@@ -97,7 +97,6 @@ public class VariantCaller {
 								}
 
 								return addVariantResult(line, type);
-								// calcConfidence(line);
 
 							}
 						}
