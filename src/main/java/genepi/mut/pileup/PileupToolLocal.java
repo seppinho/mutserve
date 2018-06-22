@@ -78,9 +78,9 @@ public class PileupToolLocal extends Tool {
 
 		File folderIn = new File(input);
 
-		if (!folderIn.exists()) {
+		if (!folderIn.isDirectory()) {
 
-			System.out.println("Please check if input folder exists");
+			System.out.println("Please specify a valid input folder. Abort.");
 			System.out.println(folderIn.getAbsolutePath());
 			return 1;
 		}
@@ -94,7 +94,7 @@ public class PileupToolLocal extends Tool {
 		if (files.length == 0) {
 
 			System.out.println("no BAM files found. Please check input folder " + folderIn.getAbsolutePath());
-			
+
 			return 1;
 		}
 
@@ -152,11 +152,11 @@ public class PileupToolLocal extends Tool {
 		}
 
 		try {
-			
+
 			writerVar.close();
-			
+
 			writerRaw.close();
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
