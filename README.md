@@ -8,13 +8,13 @@ It is especially used for [mtDNA-Server](https://mtdna-server.uibk.ac.at). For s
 The recommended way to execute mtDNA-Server is described [here](https://github.com/seppinho/mtdna-server-workflow). It executes the mtDNA-Server workflow using [Cloudgene](https://github.com/genepi/cloudgene) and is based on this library. 
 
 ## Standalone Tool
-Execute the following steps to run Mutation-Server as a standalone tool: 
 
 ```
 mkdir mutation-server
+
 wget https://github.com/seppinho/mutation-server/releases/download/v1.1.4/mutation-server-1.1.4.jar
 
-java -jar mutation-server-1.1.4.jar  analyse-local --input <input-folder> \ --reference <ref.fasta> --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel true
+java -jar mutation-server-1.1.4.jar  analyse-local --input <input-folder> --reference <ref.fasta> --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel true
 ```
 
 ## Citation
