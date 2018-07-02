@@ -415,6 +415,58 @@ public class MutationServerTest {
 		}
 
 	}
+	
+	@Test
+	public void LpaServerPaperTest() throws IOException {
+
+		String inputFolder = "test-data/dna/lpa-sample/bam";
+		String archive = "test-data/dna/lpa-sample/reference/kiv2_6.tar.gz";
+		String hdfsFolder = "input";
+		String type = "bam";
+
+		importInputdata(inputFolder, hdfsFolder);
+
+		// create workflow context
+		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
+
+		PileupStep pileUp = new PileupMock("files");
+		context.setOutput("rawHdfs", "rawHdfs");
+		context.setOutput("rawLocal", "test-data/tmp/rawLocal1000G");
+		context.setOutput("variantsHdfs", "variantsHdfs");
+		context.setOutput("variantsLocal", "test-data/tmp/variantsLocal1000G");
+		context.setOutput("baq", "false");
+		context.setOutput("callDel", "true");
+		context.setOutput("level", "0.01");
+
+		boolean result = pileUp.run(context);
+		assertTrue(result);
+
+		LineReader reader = new LineReader("test-data/tmp/variantsLocal1000G");
+
+		// header
+		reader.next();
+		int i = 0;
+		int deletions = 0;
+		while (reader.next()) {
+			i++;
+			String[] splits = reader.get().split("\t");
+			if(splits[1].equals("35")) {
+				assertEquals(Double.valueOf(splits[8]),new Double(18190));
+				assertEquals(Double.valueOf(splits[5]),new Double(0.9992));
+				
+			}
+			
+			if(splits[3].contains("D")) {
+				deletions++;
+			}
+		}
+		
+		reader.close();
+
+		assertEquals(94, i);
+		assertEquals(33, deletions);
+
+	}
 
 	@Test
 	public void DetectPipelinemtDNAMixtureBAMTest() throws IOException {
