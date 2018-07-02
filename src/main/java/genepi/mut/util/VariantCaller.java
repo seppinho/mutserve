@@ -138,7 +138,7 @@ public class VariantCaller {
 		double fwd;
 		double rev;
 
-		if (line.getTopBaseFWD() == line.getRef() || line.getTopBaseFWD() == 'D') {
+		if (line.getTopBaseFWD() == line.getRef()) {
 			fwd = minorPercentFWD * line.getCovFWD();
 			rev = minorPercentREV * line.getCovREV();
 		} else {
