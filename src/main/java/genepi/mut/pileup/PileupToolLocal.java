@@ -278,6 +278,7 @@ public class PileupToolLocal extends Tool {
 				}
 				}
 
+				//variant on minor base detected, but major base D is then not written to file).
 				if (!isHeteroplasmy) {
 
 					VariantResult varResult = VariantCaller.determineVariants(line);
