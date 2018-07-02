@@ -314,8 +314,6 @@ public class PileupToolLocal extends Tool {
 		String outputVar = "test-data/tmp/out_var.txt";
 		String outputRaw = "test-data/tmp/out_raw.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
-		input = "/home/seb/Desktop/outt/bam";
-       fasta = "test-data/dna/plasmids/reference/kiv2_6.fasta";
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
 				"--outputVar", outputVar, "--outputRaw", outputRaw, "--level", "0.01", "--baq", "false", "--indel",
 				"true", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
