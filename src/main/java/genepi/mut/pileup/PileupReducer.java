@@ -152,10 +152,8 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 
 					isHeteroplasmy = true;
 					
-					// write new minor base to file!
-					line.setMinorBaseFWD(base);
-
-					line.setMinorBaseREV(base);
+					// set correct minor base for output result!
+					varResult.setMinor(base);
 
 					double hetLevel = VariantCaller.calcLevel(line, minorFWD, minorREV);
 
