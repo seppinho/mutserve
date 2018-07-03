@@ -47,8 +47,8 @@ public class CreateStatistics {
 				positions = new ArrayList<Double>();
 			}
 
-			double posCov = Double.valueOf(reader.getRow()[reader.getColumnIndex("Coverage-FWD")])
-					+ Double.valueOf(reader.getRow()[reader.getColumnIndex("Coverage-REV")]);
+			double posCov = Double.valueOf(reader.getRow()[reader.getColumnIndex("COV-FWD")])
+					+ Double.valueOf(reader.getRow()[reader.getColumnIndex("COV-REV")]);
 
 			positions.add(posCov);
 

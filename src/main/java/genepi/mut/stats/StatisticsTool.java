@@ -1,6 +1,7 @@
 package genepi.mut.stats;
 
 import genepi.base.Tool;
+import genepi.mut.annotate.AnnotateTool;
 
 public class StatisticsTool extends Tool {
 
@@ -33,5 +34,16 @@ public class StatisticsTool extends Tool {
 		
 		return 0;
 	}
+	
+	/*public static void main(String[] args) {
 
+		StatisticsTool statTool = new StatisticsTool(args);
+
+		statTool = new StatisticsTool(new String[] { "--input",
+		 "/data2/git/mutation-server/test-data/tmp/rawLocal1000G", "--output", "/data2/git/mutation-server/test-data/tmp/stats.txt"});
+
+		statTool.start();
+
+	}*/
+	
 }
