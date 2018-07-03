@@ -2,6 +2,7 @@ package genepi.mut;
 
 import genepi.base.Toolbox;
 import genepi.mut.align.AlignStep;
+import genepi.mut.annotate.AnnotateTool;
 import genepi.mut.pileup.PileupStep;
 import genepi.mut.pileup.PileupToolLocal;
 import genepi.mut.sort.SortStep;
@@ -30,6 +31,9 @@ public class Server {
 
 		// generate statistics
 		toolbox.addTool("stats", StatisticsTool.class);
+		
+		// generate base annotation
+		toolbox.addTool("annotate", AnnotateTool.class);
 
 		toolbox.start();
 
