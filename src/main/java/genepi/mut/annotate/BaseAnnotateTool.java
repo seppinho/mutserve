@@ -8,9 +8,9 @@ import genepi.base.Tool;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.table.writer.CsvTableWriter;
 
-public class AnnotateTool extends Tool {
+public class BaseAnnotateTool extends Tool {
 
-	public AnnotateTool(String[] args) {
+	public BaseAnnotateTool(String[] args) {
 		super(args);
 		// TODO Auto-generated constructor stub
 	}
@@ -20,8 +20,8 @@ public class AnnotateTool extends Tool {
 		addParameter("input", "input variant file");
 		addParameter("annotation", "input annotation file");
 		addParameter("output", "output variant file");
-		
-		
+		addParameter("key", "key in mapping file");
+		addParameter("value", "value in mapping file");
 	}
 
 	@Override
@@ -33,13 +33,17 @@ public class AnnotateTool extends Tool {
 	public int run() {
 
 		String input = (String) getValue("input");
-		
+
 		String annotation = (String) getValue("annotation");
-		
+
 		String output = (String) getValue("output");
-		
-		Map<String, String> annoMap = loadFile(annotation,"value","Pos","TypeB");
-		
+
+		String key = (String) getValue("key");
+
+		String value = (String) getValue("value");
+
+		Map<String, String> annoMap = loadFile(annotation, key, value);
+
 		CsvTableReader reader = new CsvTableReader(input, '\t');
 
 		CsvTableWriter writer = new CsvTableWriter(output, '\t');
@@ -47,7 +51,8 @@ public class AnnotateTool extends Tool {
 		String[] readerCols = reader.getColumns();
 
 		String[] writerCols = Arrays.copyOf(readerCols, readerCols.length + 1);
-		writerCols[readerCols.length] = "TypeB";
+
+		writerCols[readerCols.length] = value;
 
 		writer.setColumns(writerCols);
 
@@ -55,45 +60,39 @@ public class AnnotateTool extends Tool {
 			for (String col : readerCols) {
 				writer.setString(col, reader.getString(col));
 			}
-			writer.setString("TypeB", annoMap.get(reader.getString("Pos")+reader.getString("Variant")));
+
+			writer.setString(value, annoMap.get(reader.getString("Pos")+reader.getString("Variant")));
 			writer.next();
 		}
-		
+
 		reader.close();
 		writer.close();
-		
+
 		return 0;
 	}
-	
-	public static Map<String, String> loadFile(String filename, String value, String... key) {
+
+	public static Map<String, String> loadFile(String filename, String key, String value) {
 		HashMap<String, String> annoMap = new HashMap<String, String>();
 		CsvTableReader reader = new CsvTableReader(filename, '\t');
 		while (reader.next()) {
-			
-			StringBuilder keyBuilder = new StringBuilder();
-			for(String key1: key) {
-				keyBuilder.append(reader.getString(key1));
-				
-			}
-			annoMap.put(keyBuilder.toString(), reader.getString(value));
-		
+
+			annoMap.put(reader.getString(key), reader.getString(value));
+
 		}
 		reader.close();
 
 		return annoMap;
 	}
-	
-	/*public static void main(String[] args) {
 
-		AnnotateTool annoTool = new AnnotateTool(args);
+	public static void main(String[] args) {
 
-		annoTool = new AnnotateTool(new String[] { "--input",
-		 "test-data/tmp/variantsLocal1000G", "--annotation",
-		 "2018-03 True Type B_SS.csv", "--output", "test-data/tmp/variantsLocal1000G_annotate.txt"});
+		BaseAnnotateTool annoTool = new BaseAnnotateTool(args);
+
+		annoTool = new BaseAnnotateTool(new String[] { "--input", "test-data/tmp/variantsLocal1000G", "--annotation",
+				"base_annotation.csv", "--output", "test-data/tmp/variantsLocal1000G_annotate.txt","--key", "Position", "--value", "TypeB"});
 
 		annoTool.start();
 
-	}*/
-	
+	}
 
 }
