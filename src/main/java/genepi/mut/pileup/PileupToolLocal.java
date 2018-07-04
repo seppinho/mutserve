@@ -138,7 +138,7 @@ public class PileupToolLocal extends Tool {
 
 			Reference reference = ReferenceUtil.determineReference(file);
 
-			if (reference == Reference.hg19) {
+			if (version.equals("mtdna") && reference == Reference.hg19) {
 
 				System.out.println("File excluded! File is aligned to Yoruba (Reference length 16571) and not rCRS! "
 						+ file.getAbsolutePath());
@@ -147,7 +147,7 @@ public class PileupToolLocal extends Tool {
 
 			}
 
-			else if (reference == Reference.rcrs) {
+			else if (version.equals("mtdna") && reference == Reference.rcrs) {
 
 				BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ,
 						Boolean.valueOf(baq), version);
