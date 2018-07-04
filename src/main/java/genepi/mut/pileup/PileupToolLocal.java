@@ -11,6 +11,8 @@ import genepi.io.text.LineWriter;
 import genepi.mut.objects.BasePosition;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.objects.VariantResult;
+import genepi.mut.util.ReferenceUtil;
+import genepi.mut.util.ReferenceUtil.Reference;
 import genepi.mut.util.VariantCaller;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMRecordIterator;
@@ -21,7 +23,7 @@ import htsjdk.samtools.ValidationStringency;
 public class PileupToolLocal extends Tool {
 
 	String version = "v1.1.6";
-	
+
 	public PileupToolLocal(String[] args) {
 		super(args);
 		System.out.println("Command " + Arrays.toString(args));
@@ -44,7 +46,7 @@ public class PileupToolLocal extends Tool {
 
 	@Override
 	public void init() {
-		System.out.println("Mutation Server "+version + " -- Low-frequency Variant Detection");
+		System.out.println("Mutation Server " + version + " -- Low-frequency Variant Detection");
 		System.out.println("Division of Genetic Epidemiology - Medical University of Innsbruck");
 		System.out.println("(c) Sebastian Schoenherr, Hansi Weissensteiner, Lukas Forer");
 		System.out.println("");
@@ -134,23 +136,37 @@ public class PileupToolLocal extends Tool {
 
 		for (File file : files) {
 
-			BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, Boolean.valueOf(baq),
-					version);
+			Reference reference = ReferenceUtil.determineReference(file);
 
-			System.out.println(" Processing: " + file.getName());
+			if (reference == Reference.hg19) {
 
-			try {
+				System.out.println("File excluded! File is aligned to Yoruba (Reference length 16571) and not rCRS! "
+						+ file.getAbsolutePath());
 
-				analyseReads(file, analyser, Boolean.valueOf(indel));
+				System.exit(-1);
 
-				determineVariants(analyser, writerRaw, writerVar, level);
-
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return 1;
 			}
 
+			else if (reference == Reference.rcrs) {
+
+				BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ,
+						Boolean.valueOf(baq), version);
+
+				System.out.println(" Processing: " + file.getName());
+
+				try {
+
+					analyseReads(file, analyser, Boolean.valueOf(indel));
+
+					determineVariants(analyser, writerRaw, writerVar, level);
+
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return 1;
+				}
+
+			}
 		}
 
 		try {
@@ -234,7 +250,7 @@ public class PileupToolLocal extends Tool {
 				} else {
 
 					ref = '-';
-					
+
 					line.setInsertion(true);
 
 					line.setInsPosition(positionKey);
@@ -249,7 +265,7 @@ public class PileupToolLocal extends Tool {
 				boolean isHeteroplasmy = false;
 
 				for (char base : line.getMinors()) {
-					
+
 					double minorPercentageFwd = VariantCaller.getMinorPercentageFwd(line, base);
 
 					double minorPercentageRev = VariantCaller.getMinorPercentageRev(line, base);
@@ -260,33 +276,32 @@ public class PileupToolLocal extends Tool {
 
 					VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorPercentageFwd,
 							minorPercentageRev, llrFwd, llrRev, level, base);
-					
+
 					if (varResult.getType() == VariantCaller.LOW_LEVEL_DELETION
 							|| varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
-						
+
 						isHeteroplasmy = true;
-						
+
 						// set correct minor base for output result!
 						varResult.setMinor(base);
 
-						double hetLevel = VariantCaller.calcVariantLevel(line, minorPercentageFwd,
-								minorPercentageRev);
+						double hetLevel = VariantCaller.calcVariantLevel(line, minorPercentageFwd, minorPercentageRev);
 
 						double levelTop = VariantCaller.calcLevelTop(line);
-						
+
 						double levelMinor = VariantCaller.calcLevelMinor(line, minorPercentageFwd, minorPercentageRev);
 
 						varResult.setLevelTop(levelTop);
-						
+
 						varResult.setLevelMinor(levelMinor);
-						
+
 						varResult.setLevel(hetLevel);
 
 						String res = VariantCaller.writeVariant(varResult);
 
 						writerVariants.write(res);
 
-				}
+					}
 				}
 
 				if (!isHeteroplasmy) {
@@ -299,13 +314,14 @@ public class PileupToolLocal extends Tool {
 								line.getMinorBasePercentsREV());
 
 						double levelTop = VariantCaller.calcLevelTop(line);
-						
-						double levelMinor = VariantCaller.calcLevelMinor(line, line.getMinorBasePercentsFWD(), line.getMinorBasePercentsREV());
+
+						double levelMinor = VariantCaller.calcLevelMinor(line, line.getMinorBasePercentsFWD(),
+								line.getMinorBasePercentsREV());
 
 						varResult.setLevelTop(levelTop);
-						
+
 						varResult.setLevelMinor(levelMinor);
-						
+
 						varResult.setLevel(hetLevel);
 
 						String res = VariantCaller.writeVariant(varResult);
@@ -333,12 +349,13 @@ public class PileupToolLocal extends Tool {
 		String outputVar = "test-data/tmp/out_var.txt";
 		String outputRaw = "test-data/tmp/out_raw.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
+
+		input = "/home/seb/Downloads/mt_bam";
+		fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
+
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
 				"--outputVar", outputVar, "--outputRaw", outputRaw, "--level", "0.01", "--baq", "true", "--indel",
 				"true", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
-		
-		input = "test-data/mtdna/bam/input";
-		fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		pileup.start();
 

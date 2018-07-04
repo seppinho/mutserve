@@ -1,7 +1,5 @@
 package genepi.mut.util;
 
-import htsjdk.samtools.SAMRecord.SAMTagAndValue;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,6 +9,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import htsjdk.samtools.SAMRecord.SAMTagAndValue;
+import htsjdk.samtools.SAMSequenceDictionary;
+import htsjdk.samtools.SAMSequenceRecord;
+import htsjdk.samtools.SamReader;
+import htsjdk.samtools.SamReaderFactory;
+import htsjdk.samtools.ValidationStringency;
 
 public class ReferenceUtil {
 
@@ -90,6 +95,34 @@ public class ReferenceUtil {
 		}
 		System.out.println("path " + refPath);
 		return refPath;
+	}
+
+	public static Reference determineReference(File file) {
+
+		Reference ref = Reference.UNKNOWN;
+
+		final SamReader reader = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT)
+				.open(file);
+
+		SAMSequenceDictionary dict = reader.getFileHeader().getSequenceDictionary();
+
+		for (SAMSequenceRecord record : dict.getSequences()) {
+			if (record.getSequenceLength() == 16571) {
+				ref = Reference.hg19;
+			}
+			if (record.getSequenceLength() == 16569) {
+				ref = Reference.rcrs;
+			}
+		}
+
+		try {
+			reader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return ref;
 	}
 
 }
