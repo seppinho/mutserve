@@ -17,6 +17,8 @@ public class VariantCaller {
 	public static int LOW_LEVEL_DELETION = 3;
 
 	public static int DELETION = 4;
+	
+	public static int INSERTION = 5;
 
 	public static boolean isFinalVariant(VariantLine line) {
 
@@ -43,12 +45,15 @@ public class VariantCaller {
 
 				if (line.getTopBaseFWD() == 'D') {
 					type = DELETION;
-				} else {
+				} else if (line.isInsertion()){
+					type = INSERTION;
+				}
+					else {
 					type = VARIANT;
 				}
 
 				return addVariantResult(line, type);
-				
+
 			}
 
 		}
@@ -116,13 +121,13 @@ public class VariantCaller {
 	private static VariantResult addVariantResult(VariantLine line, int type) {
 		VariantResult output = new VariantResult();
 		output.setId(line.getId());
-		
+
 		if (line.getInsPosition() != null) {
 			output.setPosition(line.getInsPosition());
 		} else {
 			output.setPosition(line.getPosition() + "");
 		}
-		
+
 		output.setTop(line.getTopBaseFWD());
 		output.setMinor(line.getMinorBaseFWD());
 		output.setRef(line.getRef());
@@ -133,7 +138,7 @@ public class VariantCaller {
 		return output;
 	}
 
-	public static double calcLevel(VariantLine line, double minorPercentFWD, double minorPercentREV) {
+	public static double calcVariantLevel(VariantLine line, double minorPercentFWD, double minorPercentREV) {
 
 		double fwd;
 		double rev;
@@ -145,6 +150,22 @@ public class VariantCaller {
 			fwd = line.getTopBasePercentsFWD() * line.getCovFWD();
 			rev = line.getTopBasePercentsREV() * line.getCovREV();
 		}
+
+		return (fwd + rev) / (line.getCovFWD() + line.getCovREV());
+	}
+
+	public static double calcLevelMinor(VariantLine line, double minorPercentFWD, double minorPercentREV) {
+
+		double fwd = minorPercentFWD * line.getCovFWD();
+		double rev = minorPercentREV * line.getCovREV();
+
+		return (fwd + rev) / (line.getCovFWD() + line.getCovREV());
+	}
+
+	public static double calcLevelTop(VariantLine line) {
+
+		double fwd = line.getTopBasePercentsFWD() * line.getCovFWD();
+		double rev = line.getTopBasePercentsREV() * line.getCovREV();
 
 		return (fwd + rev) / (line.getCovFWD() + line.getCovREV());
 	}
@@ -332,7 +353,7 @@ public class VariantCaller {
 
 		df.setMinimumFractionDigits(2);
 
-		df.setMaximumFractionDigits(4);
+		df.setMaximumFractionDigits(3);
 
 		df.setGroupingUsed(false);
 
@@ -348,15 +369,15 @@ public class VariantCaller {
 
 		build.append(getVariantBase(result) + "\t");
 
+		build.append(df.format(result.getLevel()) + "\t");
+		
 		build.append(result.getTop() + "/" + result.getMinor() + "\t");
 
-		build.append(df.format(result.getLevel()) + "\t");
+		build.append(df.format(result.getLevelTop()) + "/" + df.format(result.getLevelMinor()) + "\t");
 
-		build.append(result.getCovFWD() + "\t");
-
-		build.append(result.getCovREV() + "\t");
-
-		build.append(result.getCovFWD() + result.getCovREV());
+		build.append((result.getCovFWD() + result.getCovREV()) +"\t");
+		
+		build.append(result.getType());
 
 		build.append("\r");
 

@@ -124,6 +124,8 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 				ref = '-';
 
 				line.setInsPosition(positionKey);
+
+				line.setInsertion(true);
 			}
 
 			line.setRef(ref);
@@ -151,11 +153,19 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 						|| varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
 
 					isHeteroplasmy = true;
-					
+
 					// set correct minor base for output result!
 					varResult.setMinor(base);
 
-					double hetLevel = VariantCaller.calcLevel(line, minorFWD, minorREV);
+					double hetLevel = VariantCaller.calcVariantLevel(line, minorFWD, minorREV);
+
+					double levelTop = VariantCaller.calcLevelTop(line);
+
+					double levelMinor = VariantCaller.calcLevelMinor(line, minorFWD, minorREV);
+
+					varResult.setLevelTop(levelTop);
+
+					varResult.setLevelMinor(levelMinor);
 
 					varResult.setLevel(hetLevel);
 
@@ -173,8 +183,17 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 
 				if (varResult != null) {
 
-					double hetLevel = VariantCaller.calcLevel(line, line.getMinorBasePercentsFWD(),
+					double hetLevel = VariantCaller.calcVariantLevel(line, line.getMinorBasePercentsFWD(),
 							line.getMinorBasePercentsREV());
+
+					double levelTop = VariantCaller.calcLevelTop(line);
+
+					double levelMinor = VariantCaller.calcLevelMinor(line, line.getMinorBasePercentsFWD(),
+							line.getMinorBasePercentsREV());
+
+					varResult.setLevelTop(levelTop);
+
+					varResult.setLevelMinor(levelMinor);
 
 					varResult.setLevel(hetLevel);
 

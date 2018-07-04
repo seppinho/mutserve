@@ -19,7 +19,7 @@ public class BamAnalyser {
 
 	final static String headerRaw = "SAMPLE\tPOS\tREF\tTOP-FWD\tMINOR-FWD\tTOP-REV\tMINOR-REV\tCOV-FWD\tCOV-REV\tCOV-TOTAL\tTYPE\tLEVEL\t%A\t%C\t%G\t%T\t%D\t%N\t%a\t%c\t%g\t%t\t%d\t%n\tTOP-FWD-PERCENT\tTOP-REV-PERCENT\tMINOR-FWD-PERCENT\tMINOR-REV-PERCENT\tLLRFWD\tLLRREV\tLLRAFWD\tLLRCFWD\tLLRGFWD\tLLRTFWD\tLLRAREV\tLLRCREV\tLLRGREV\tLLRTREV\tLLRDFWD\tLLRDREV\tMINORS";
 
-	final static String headerVariants = "SampleID\tPos\tRef\tVariant\tMajor/Minor\tVariant-Level\tCoverage-FWD\tCoverage-Rev\tCoverage-Total";
+	final static String headerVariants = "SampleID\tPos\tRef\tVariant\tVariant-Level\tMajor/Minor\tMajor-Percentage/Minor-Percentage\tCoverage-Total\tVariant-Type";
 
 	HashMap<String, BasePosition> counts;
 

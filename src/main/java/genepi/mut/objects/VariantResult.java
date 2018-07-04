@@ -9,6 +9,8 @@ public class VariantResult {
 	private char top;
 	private char minor;
 	private double level;
+	private double levelTop;
+	private double levelMinor;
 	private int covFWD;
 	private int covREV;
 	private int type;
@@ -72,9 +74,25 @@ public class VariantResult {
 	public double getLevel() {
 		return level;
 	}
-
+	
 	public void setLevel(double level) {
 		this.level = level;
+	}
+	
+	public void setLevelTop(double top) {
+		this.levelTop = top;
+	}
+	
+	public void setLevelMinor(double minor) {
+		this.levelMinor = minor;
+	}
+	
+	public double getLevelTop() {
+		return levelTop;
+	}
+
+	public double getLevelMinor() {
+		return levelMinor;
 	}
 
 	public int getCovFWD() {

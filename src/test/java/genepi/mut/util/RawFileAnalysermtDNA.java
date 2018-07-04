@@ -82,7 +82,7 @@ public class RawFileAnalysermtDNA {
 
 							if (checkBases(line)) {
 
-								double hetLevel = VariantCaller.calcLevel(line, line.getMinorBasePercentsFWD(),
+								double hetLevel = VariantCaller.calcVariantLevel(line, line.getMinorBasePercentsFWD(),
 										line.getMinorBasePercentsREV());
 
 								VariantResult varResult = VariantCaller.determineLowLevelVariant(line,
@@ -201,7 +201,7 @@ public class RawFileAnalysermtDNA {
 
 				if (checkBases(line)) {
 
-					double hetLevel = VariantCaller.calcLevel(line, line.getMinorBasePercentsFWD(),
+					double hetLevel = VariantCaller.calcVariantLevel(line, line.getMinorBasePercentsFWD(),
 							line.getMinorBasePercentsREV());
 
 					VariantResult varResult = VariantCaller.determineLowLevelVariant(line,
@@ -219,7 +219,7 @@ public class RawFileAnalysermtDNA {
 
 				}
 
-				double hetLevel = VariantCaller.calcLevel(line, line.getMinorBasePercentsFWD(),
+				double hetLevel = VariantCaller.calcVariantLevel(line, line.getMinorBasePercentsFWD(),
 						line.getMinorBasePercentsREV());
 
 				System.out.println("pos " + position);

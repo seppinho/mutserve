@@ -234,6 +234,8 @@ public class PileupToolLocal extends Tool {
 				} else {
 
 					ref = '-';
+					
+					line.setInsertion(true);
 
 					line.setInsPosition(positionKey);
 				}
@@ -267,8 +269,17 @@ public class PileupToolLocal extends Tool {
 						// set correct minor base for output result!
 						varResult.setMinor(base);
 
-						double hetLevel = VariantCaller.calcLevel(line, minorPercentageFwd, minorPercentageRev);
+						double hetLevel = VariantCaller.calcVariantLevel(line, minorPercentageFwd,
+								minorPercentageRev);
 
+						double levelTop = VariantCaller.calcLevelTop(line);
+						
+						double levelMinor = VariantCaller.calcLevelMinor(line, minorPercentageFwd, minorPercentageRev);
+
+						varResult.setLevelTop(levelTop);
+						
+						varResult.setLevelMinor(levelMinor);
+						
 						varResult.setLevel(hetLevel);
 
 						String res = VariantCaller.writeVariant(varResult);
@@ -278,16 +289,23 @@ public class PileupToolLocal extends Tool {
 				}
 				}
 
-				//variant on minor base detected, but major base D is then not written to file).
 				if (!isHeteroplasmy) {
 
 					VariantResult varResult = VariantCaller.determineVariants(line);
 
 					if (varResult != null) {
 
-						double hetLevel = VariantCaller.calcLevel(line, line.getMinorBasePercentsFWD(),
+						double hetLevel = VariantCaller.calcVariantLevel(line, line.getMinorBasePercentsFWD(),
 								line.getMinorBasePercentsREV());
 
+						double levelTop = VariantCaller.calcLevelTop(line);
+						
+						double levelMinor = VariantCaller.calcLevelMinor(line, line.getMinorBasePercentsFWD(), line.getMinorBasePercentsREV());
+
+						varResult.setLevelTop(levelTop);
+						
+						varResult.setLevelMinor(levelMinor);
+						
 						varResult.setLevel(hetLevel);
 
 						String res = VariantCaller.writeVariant(varResult);
@@ -316,8 +334,11 @@ public class PileupToolLocal extends Tool {
 		String outputRaw = "test-data/tmp/out_raw.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
-				"--outputVar", outputVar, "--outputRaw", outputRaw, "--level", "0.01", "--baq", "false", "--indel",
+				"--outputVar", outputVar, "--outputRaw", outputRaw, "--level", "0.01", "--baq", "true", "--indel",
 				"true", "--baseQ", "20", "--mapQ", "20", "--alignQ", "30" });
+		
+		input = "test-data/mtdna/bam/input";
+		fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		pileup.start();
 
