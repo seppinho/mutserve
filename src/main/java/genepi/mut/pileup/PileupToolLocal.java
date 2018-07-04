@@ -20,7 +20,7 @@ import htsjdk.samtools.ValidationStringency;
 
 public class PileupToolLocal extends Tool {
 
-	String version = "v1.1.5";
+	String version = "v1.1.6";
 	
 	public PileupToolLocal(String[] args) {
 		super(args);
@@ -198,7 +198,7 @@ public class PileupToolLocal extends Tool {
 
 		String reference = analyser.getReferenceString();
 
-		for (String key : counts.keySet()) {
+		for (String key : counts.keySet()) {cnv-mutation-server-1.0.jar
 
 			String idKey = key.split(":")[0];
 
