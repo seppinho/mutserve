@@ -140,7 +140,8 @@ public class PileupToolLocal extends Tool {
 
 			if (version.equals("mtdna") && reference == Reference.hg19) {
 
-				System.out.println(" File " + file.getName() + " excluded! File is aligned to Yoruba (Reference length 16571) and not rCRS. ");
+				System.out.println(" File " + file.getName()
+						+ " excluded! File is aligned to Yoruba (Reference length 16571) and not rCRS. ");
 
 				continue;
 
@@ -166,7 +167,8 @@ public class PileupToolLocal extends Tool {
 				}
 
 			} else {
-				System.out.println("Can not identify a valid reference length! " + file.getAbsolutePath());
+
+				System.out.println("File " + file.getName() + " excluded. Can not identify a valid reference length!");
 
 				continue;
 			}
