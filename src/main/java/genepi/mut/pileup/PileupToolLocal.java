@@ -198,7 +198,7 @@ public class PileupToolLocal extends Tool {
 
 		String reference = analyser.getReferenceString();
 
-		for (String key : counts.keySet()) {cnv-mutation-server-1.0.jar
+		for (String key : counts.keySet()) {
 
 			String idKey = key.split(":")[0];
 
