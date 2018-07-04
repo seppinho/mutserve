@@ -140,10 +140,9 @@ public class PileupToolLocal extends Tool {
 
 			if (version.equals("mtdna") && reference == Reference.hg19) {
 
-				System.out.println("File excluded! File is aligned to Yoruba (Reference length 16571) and not rCRS! "
-						+ file.getAbsolutePath());
+				System.out.println(" File " + file.getName() + " excluded! File is aligned to Yoruba (Reference length 16571) and not rCRS. ");
 
-				System.exit(-1);
+				continue;
 
 			}
 
@@ -166,6 +165,10 @@ public class PileupToolLocal extends Tool {
 					return 1;
 				}
 
+			} else {
+				System.out.println("Can not identify a valid reference length! " + file.getAbsolutePath());
+
+				continue;
 			}
 		}
 
@@ -350,7 +353,7 @@ public class PileupToolLocal extends Tool {
 		String outputRaw = "test-data/tmp/out_raw.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
-		input = "/home/seb/Downloads/mt_bam";
+		// input = "/home/seb/Downloads/mt_bam";
 		fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
