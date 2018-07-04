@@ -16,7 +16,7 @@ java -jar mutation-server-1.1.5.jar  analyse-local --input <input-folder> --refe
 ```
 
 ## Output Format
-We report variants in a TAB-delimited file including *SampleID, Position, Reference, Variant & Variant-Level*. Please note that the Variant-Level always reports the non-reference level. The output file also includes the **most** and **second most base** at a specific position (so called Major/Minor Component) to check if the Major component is also the variant. The last column includes the type of the variant (1: Homoplasmy, 2: Heteroplasmy or Low-Level Variant, 3: Low-Level Deletion, 4: Deletion, 5: Insertion). See [here](https://raw.githubusercontent.com/seppinho/mutation-server/master/test-data/results/variantsLocal1000G) for an example. 
+We report variants in a TAB-delimited file including *SampleID, Position, Reference, Variant & Variant-Level*. Please note that the *Variant-Level* always reports the non-reference variant level. The output file also includes the **most** and **second most base** at a specific position (so called Major/Minor Component). The reported variant can be the major or the minor component. The last column includes the type of the variant (1: Homoplasmy, 2: Heteroplasmy or Low-Level Variant, 3: Low-Level Deletion, 4: Deletion, 5: Insertion). See [here](https://raw.githubusercontent.com/seppinho/mutation-server/master/test-data/results/variantsLocal1000G) for an example. 
 
 ## Citation
 If you use this tool, please cite [this paper](http://nar.oxfordjournals.org/content/early/2016/04/15/nar.gkw247.full).
