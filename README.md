@@ -10,9 +10,9 @@ mtDNA-Server uses this library to detect heteroplasmic and homoplasmic sites. Pl
 ## Standalone Usage
 You can also run Mutation-Server Core as a standalone tool starting with BAM files. 
 ```
-wget https://github.com/seppinho/mutation-server/releases/download/v1.1.6/mutation-server-1.1.6.jar
+wget https://github.com/seppinho/mutation-server/releases/download/v1.1.7/mutation-server-1.1.7.jar
 
-java -jar mutation-server-1.1.6.jar  analyse-local --input <input-folder> --reference <ref.fasta> --level 0.01 --outputRaw raw.txt --outputVar var.txt --baq true --baseQ 20 --mapQ 20 --alignQ 30 --indel true
+java -jar mutation-server-1.1.7.jar  analyse-local --input <input-folder> --output <output-folder> --reference <ref.fasta> --level 0.01
 ```
 
 ## Output Format
