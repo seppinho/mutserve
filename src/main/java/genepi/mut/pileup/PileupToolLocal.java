@@ -150,8 +150,8 @@ public class PileupToolLocal extends Tool {
 		long start = System.currentTimeMillis();
 
 		System.out.println("");
-		System.out.println("Input: " + input);
-		System.out.println("Input: " + output);
+		System.out.println("Input Folder: " + input);
+		System.out.println("Output Folder: " + output);
 		System.out.println("Detection limit: " + level);
 		System.out.println("Base Quality: " + baseQ);
 		System.out.println("Map Quality: " + mapQ);
