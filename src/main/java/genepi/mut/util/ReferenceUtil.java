@@ -20,7 +20,7 @@ import htsjdk.samtools.ValidationStringency;
 public class ReferenceUtil {
 
 	public enum Reference {
-		hg19, rcrs, UNKNOWN, MISLEADING
+		hg19, rcrs, precisionId, UNKNOWN, MISLEADING, 
 	};
 
 	private static Set<Integer> hotSpots = new HashSet<Integer>(
@@ -112,6 +112,9 @@ public class ReferenceUtil {
 			}
 			if (record.getSequenceLength() == 16569) {
 				ref = Reference.rcrs;
+			}
+			if (record.getSequenceLength() == 16649) {
+				ref = Reference.precisionId;
 			}
 		}
 

@@ -17,7 +17,7 @@ public class VariantCaller {
 	public static int LOW_LEVEL_DELETION = 3;
 
 	public static int DELETION = 4;
-	
+
 	public static int INSERTION = 5;
 
 	public static boolean isFinalVariant(VariantLine line) {
@@ -45,10 +45,9 @@ public class VariantCaller {
 
 				if (line.getTopBaseFWD() == 'D') {
 					type = DELETION;
-				} else if (line.isInsertion()){
+				} else if (line.isInsertion()) {
 					type = INSERTION;
-				}
-					else {
+				} else {
 					type = VARIANT;
 				}
 
@@ -370,13 +369,19 @@ public class VariantCaller {
 		build.append(getVariantBase(result) + "\t");
 
 		build.append(df.format(result.getLevel()) + "\t");
-		
-		build.append(result.getTop() + "/" + result.getMinor() + "\t");
+
+		char minor = result.getMinor();
+
+		if (result.getType() == 1) {
+			minor = '-';
+		}
+
+		build.append(result.getTop() + "/" + minor + "\t");
 
 		build.append(df.format(result.getLevelTop()) + "/" + df.format(result.getLevelMinor()) + "\t");
 
-		build.append((result.getCovFWD() + result.getCovREV()) +"\t");
-		
+		build.append((result.getCovFWD() + result.getCovREV()) + "\t");
+
 		build.append(result.getType());
 
 		build.append("\r");
