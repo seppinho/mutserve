@@ -33,7 +33,7 @@ public class PileupToolLocal extends Tool {
 	@Override
 	public void createParameters() {
 
-		addParameter("input", "input bam folder", Tool.STRING);
+		addParameter("input", "input bam file or folder", Tool.STRING);
 		addParameter("output", "output folder", Tool.STRING);
 		addParameter("level", "detection level", Tool.DOUBLE);
 		addParameter("reference", "reference as fasta", Tool.STRING);
@@ -94,32 +94,33 @@ public class PileupToolLocal extends Tool {
 		LineWriter writerVar = null;
 
 		File folderIn = new File(input);
+		File[] files;
 
-		if (!folderIn.isDirectory()) {
+		if (folderIn.isFile()) {
+			files = new File[1];
+			files[0] = new File(folderIn.getAbsolutePath());
 
-			System.out.println("Please specify a valid input folder.");
-			return 1;
-		}
+		} else {
+			files = folderIn.listFiles(new FilenameFilter() {
+				public boolean accept(File dir, String name) {
+					return name.toLowerCase().endsWith(".bam");
+				}
+			});
 
-		File[] files = folderIn.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return name.toLowerCase().endsWith(".bam");
+			if (files.length == 0) {
+
+				System.out.println("no BAM files found. Please check input folder " + folderIn.getAbsolutePath());
+
+				return 1;
 			}
-		});
-
-		if (files.length == 0) {
-
-			System.out.println("no BAM files found. Please check input folder " + folderIn.getAbsolutePath());
-
-			return 1;
 		}
 
 		try {
-			
+
 			long time = System.currentTimeMillis();
-			String varOut = FileUtil.path(output,"variants_"+time+".txt");
-			String rawOut = FileUtil.path(output,"raw_"+time+".txt");
-			
+			String varOut = FileUtil.path(output, "variants_" + time + ".txt");
+			String rawOut = FileUtil.path(output, "raw_" + time + ".txt");
+
 			File outRaw = new File(rawOut);
 			File outVar = new File(varOut);
 
@@ -367,14 +368,14 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "test-data/mtdna/bam/input/";
+		String input = "test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam";
 		String output = "test-data/tmp/";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
-		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta,
-				"--output", output, "--level", "0.01"});
+		PileupToolLocal pileup = new PileupToolLocal(
+				new String[] { "--input", input, "--reference", fasta, "--output", output, "--level", "0.01" });
 
 		pileup.start();
 
