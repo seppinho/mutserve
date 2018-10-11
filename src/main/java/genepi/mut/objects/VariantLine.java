@@ -223,7 +223,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		Collections.sort(allelesFWD, Collections.reverseOrder());
 		double topBasePercentsFWD = 0.0;
 		double minorBasePercentsFWD = 0.0;
-
+		
 		if (totalFWD > 0) {
 
 			topBasePercentsFWD = allelesFWD.get(0) / (double) totalFWD;
@@ -231,7 +231,7 @@ public class VariantLine implements Comparable<VariantLine> {
 			minorBasePercentsFWD = allelesFWD.get(1) / (double) totalFWD;
 
 		}
-
+		
 		ArrayList<Integer> allelesREV = new ArrayList<Integer>();
 		allelesREV.add(aREV);
 		allelesREV.add(cREV);
@@ -250,13 +250,13 @@ public class VariantLine implements Comparable<VariantLine> {
 			minorBasePercentsREV = allelesREV.get(1) / (double) totalREV;
 
 		}
-
+		
 		// set
 		this.setTopBasePercentsFWD(topBasePercentsFWD);
 		this.setMinorBasePercentsFWD(minorBasePercentsFWD);
 		this.setTopBasePercentsREV(topBasePercentsREV);
 		this.setMinorBasePercentsREV(minorBasePercentsREV);
-
+		
 		char topBaseFWD = '-';
 		char minorBaseFWD = '-';
 
@@ -305,15 +305,13 @@ public class VariantLine implements Comparable<VariantLine> {
 
 		this.setTopBaseFWD(topBaseFWD);
 		this.setTopBaseREV(topBaseREV);
-		this.setMinorBaseFWD(minorBaseFWD);
-		this.setMinorBaseREV(minorBaseREV);
 
 		minorBaseFWD = detectMinorFWD(minorBasePercentsFWD);
 		this.setMinorBaseFWD(minorBaseFWD);
 
 		minorBaseREV = detectMinorREV(minorBasePercentsREV);
 		this.setMinorBaseREV(minorBaseREV);
-
+		
 		minors = new ArrayList<>();
 
 		// start with 1 and ignoring topbase!
@@ -396,7 +394,7 @@ public class VariantLine implements Comparable<VariantLine> {
 	}
 
 	private boolean checkBases(char topFWD, char topREV, char minorFWD, char minorREV) {
-		return (minorFWD == minorREV && topFWD == topREV) || ((minorFWD == topREV && topFWD == minorREV));
+		return (minorFWD == minorREV && topFWD == topREV);
 	}
 
 	private char detectMinorFWD(double minorPercentage) {
