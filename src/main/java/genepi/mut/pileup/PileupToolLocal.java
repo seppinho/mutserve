@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import genepi.base.Tool;
-import genepi.io.FileUtil;
 import genepi.io.text.LineWriter;
 import genepi.mut.objects.BasePosition;
 import genepi.mut.objects.VariantLine;
@@ -23,7 +22,7 @@ import htsjdk.samtools.ValidationStringency;
 
 public class PileupToolLocal extends Tool {
 
-	String version = "v1.1.8";
+	String version = "v1.1.7";
 
 	public PileupToolLocal(String[] args) {
 		super(args);
@@ -102,8 +101,8 @@ public class PileupToolLocal extends Tool {
 		if (folderIn.isFile()) {
 			files = new File[1];
 			files[0] = new File(folderIn.getAbsolutePath());
-			
-			if(files[0].getName().endsWith(".bam")) {
+
+			if (files[0].getName().endsWith(".bam")) {
 				System.out.println("Please upload a BAM file");
 				return 1;
 			}
@@ -126,8 +125,8 @@ public class PileupToolLocal extends Tool {
 		try {
 
 			File outVar = new File(output);
-			
-			if(outVar.isDirectory()) {
+
+			if (outVar.isDirectory()) {
 				System.out.println("Please specify a output file instead of a folder: " + outVar.getAbsolutePath());
 
 				return 1;
@@ -367,9 +366,9 @@ public class PileupToolLocal extends Tool {
 					}
 				}
 				// raw data
-				if(writerRaw != null) {
-				String raw = line.toRawString();
-				writerRaw.write(raw);
+				if (writerRaw != null) {
+					String raw = line.toRawString();
+					writerRaw.write(raw);
 				}
 			}
 		}
@@ -382,7 +381,7 @@ public class PileupToolLocal extends Tool {
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(
-				new String[] { "--input", input, "--reference", fasta, "--output", output, "--level", "0.01"});
+				new String[] { "--input", input, "--reference", fasta, "--output", output, "--level", "0.01" });
 
 		pileup.start();
 
