@@ -2,13 +2,10 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/mtdnaserver.svg?style=social&label=Follow)](https://twitter.com/mtdnaserver)
 
 Mutation-Server is a Java library to detect heteroplasmic and homoplasmic sites in mtDNA data. 
-It is especially used for [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability, Mutation-Server is parallelized with Hadoop MapReduce but also available as a standalone tool.
-
-## mtDNA-Server Usage
-mtDNA-Server uses this library to detect heteroplasmic and homoplasmic sites. Please have a look [here](https://github.com/seppinho/mtdna-server-workflow) to run the complete workflow including also several other workflow steps like contamination detection or report creation.
+It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability, Mutation-Server is parallelized using Hadoop MapReduce but also available as a standalone tool.
 
 ## Standalone Usage
-You can also run Mutation-Server as a standalone tool starting with BAM files. 
+You can run Mutation-Server as a standalone tool starting with BAM files and detecting heteroplasmic and homoplasmic sites.
 ```
 wget https://github.com/seppinho/mutation-server/releases/download/v1.1.8/mutation-server-1.1.8.jar
 
