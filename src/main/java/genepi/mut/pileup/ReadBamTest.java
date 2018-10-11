@@ -26,8 +26,6 @@ public class ReadBamTest {
 
 			if (samRecord.getReadName().equals("SRR062635.20477607")) {
 
-				System.out.println(samRecord.getSAMString());
-
 				Integer currentReferencePos = samRecord.getAlignmentStart();
 
 				int currentPos = 0;
@@ -42,7 +40,6 @@ public class ReadBamTest {
 
 						int i = 0;
 						while (i < cigarElementLength) {
-							System.out.println("D " + cigarElementStart);
 							i++;
 						}
 

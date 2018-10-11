@@ -154,7 +154,7 @@ public class VariantCaller {
 	}
 
 	public static double calcLevelMinor(VariantLine line, double minorPercentFWD, double minorPercentREV) {
-
+	
 		double fwd = minorPercentFWD * line.getCovFWD();
 		double rev = minorPercentREV * line.getCovREV();
 

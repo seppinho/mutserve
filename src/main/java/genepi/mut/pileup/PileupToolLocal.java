@@ -23,7 +23,7 @@ import htsjdk.samtools.ValidationStringency;
 
 public class PileupToolLocal extends Tool {
 
-	String version = "v1.1.7";
+	String version = "v1.1.8";
 
 	public PileupToolLocal(String[] args) {
 		super(args);
@@ -34,7 +34,7 @@ public class PileupToolLocal extends Tool {
 	public void createParameters() {
 
 		addParameter("input", "input bam file or folder", Tool.STRING);
-		addParameter("output", "output folder", Tool.STRING);
+		addParameter("output", "output file", Tool.STRING);
 		addParameter("level", "detection level", Tool.DOUBLE);
 		addParameter("reference", "reference as fasta", Tool.STRING);
 		addOptionalParameter("baseQ", "base quality", Tool.STRING);
@@ -42,11 +42,12 @@ public class PileupToolLocal extends Tool {
 		addOptionalParameter("alignQ", "alignment quality", Tool.STRING);
 		addFlag("baq", "Apply BAQ");
 		addFlag("indel", "Call indels");
+		addFlag("writeRaw", "Write raw output");
 	}
 
 	@Override
 	public void init() {
-		System.out.println("Low-frequency Variant Detection" + version);
+		System.out.println("mtDNA Low-frequency Variant Detection" + version);
 		System.out.println("Division of Genetic Epidemiology - Medical University of Innsbruck");
 		System.out.println("(c) Sebastian Schoenherr, Hansi Weissensteiner, Lukas Forer");
 		System.out.println("");
@@ -62,6 +63,8 @@ public class PileupToolLocal extends Tool {
 		boolean baq = isFlagSet("baq");
 
 		boolean indel = isFlagSet("indel");
+
+		boolean writeRawOutput = isFlagSet("writeRaw");
 
 		double level = (double) getValue("level");
 
@@ -99,6 +102,11 @@ public class PileupToolLocal extends Tool {
 		if (folderIn.isFile()) {
 			files = new File[1];
 			files[0] = new File(folderIn.getAbsolutePath());
+			
+			if(files[0].getName().endsWith(".bam")) {
+				System.out.println("Please upload a BAM file");
+				return 1;
+			}
 
 		} else {
 			files = folderIn.listFiles(new FilenameFilter() {
@@ -117,31 +125,28 @@ public class PileupToolLocal extends Tool {
 
 		try {
 
-			long time = System.currentTimeMillis();
-			String varOut = FileUtil.path(output, "variants_" + time + ".txt");
-			String rawOut = FileUtil.path(output, "raw_" + time + ".txt");
+			File outVar = new File(output);
+			
+			if(outVar.isDirectory()) {
+				System.out.println("Please specify a output file instead of a folder: " + outVar.getAbsolutePath());
 
-			File outRaw = new File(rawOut);
-			File outVar = new File(varOut);
-
-			File parentRaw = outRaw.getParentFile();
-			File parentVar = outVar.getParentFile();
-
-			if (parentRaw != null) {
-				outRaw.getParentFile().mkdirs();
+				return 1;
 			}
+
+			File parentVar = outVar.getParentFile();
 
 			if (parentVar != null) {
 				outVar.getParentFile().mkdirs();
 			}
 
-			writerRaw = new LineWriter(outRaw.getAbsolutePath());
-
 			writerVar = new LineWriter(outVar.getAbsolutePath());
-
-			writerRaw.write(BamAnalyser.headerRaw);
-
 			writerVar.write(BamAnalyser.headerVariants);
+
+			if (writeRawOutput) {
+				File outRaw = new File(output + "_raw");
+				writerRaw = new LineWriter(outRaw.getAbsolutePath());
+				writerRaw.write(BamAnalyser.headerRaw);
+			}
 
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -150,7 +155,7 @@ public class PileupToolLocal extends Tool {
 
 		long start = System.currentTimeMillis();
 
-		System.out.println("");
+		System.out.println("Parameters:");
 		System.out.println("Input Folder: " + input);
 		System.out.println("Output Folder: " + output);
 		System.out.println("Detection limit: " + level);
@@ -159,7 +164,7 @@ public class PileupToolLocal extends Tool {
 		System.out.println("Alignment Quality: " + alignQ);
 		System.out.println("BAQ: " + baq);
 		System.out.println("Indel: " + indel);
-		System.out.println("BaseQ: " + baseQ);
+		System.out.println("Write Raw File: " + writeRawOutput);
 		System.out.println("");
 
 		for (File file : files) {
@@ -168,7 +173,7 @@ public class PileupToolLocal extends Tool {
 
 			if (reference == Reference.hg19) {
 
-				System.out.println(" File " + file.getName()
+				System.out.println("File " + file.getName()
 						+ " excluded! File is aligned to Yoruba (Reference length 16571) and not rCRS. ");
 
 				continue;
@@ -179,8 +184,8 @@ public class PileupToolLocal extends Tool {
 
 				BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, baq, version);
 
-				System.out.println(" Processing: " + file.getName());
-				System.out.println(" Detected reference: " + reference.toString());
+				System.out.println("Processing: " + file.getName());
+				System.out.println("Detected reference: " + reference.toString());
 
 				try {
 
@@ -197,7 +202,6 @@ public class PileupToolLocal extends Tool {
 			} else {
 
 				System.out.println("File " + file.getName() + " excluded. Can not identify a valid reference length!");
-
 				continue;
 			}
 		}
@@ -206,7 +210,9 @@ public class PileupToolLocal extends Tool {
 
 			writerVar.close();
 
-			writerRaw.close();
+			if (writerRaw != null) {
+				writerRaw.close();
+			}
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -296,6 +302,7 @@ public class PileupToolLocal extends Tool {
 
 				for (char base : line.getMinors()) {
 
+					// this only works since minorFWD and minorREV are equal
 					double minorPercentageFwd = VariantCaller.getMinorPercentageFwd(line, base);
 
 					double minorPercentageRev = VariantCaller.getMinorPercentageRev(line, base);
@@ -360,22 +367,22 @@ public class PileupToolLocal extends Tool {
 					}
 				}
 				// raw data
+				if(writerRaw != null) {
 				String raw = line.toRawString();
 				writerRaw.write(raw);
+				}
 			}
 		}
 	}
 
 	public static void main(String[] args) {
 
-		String input = "test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam";
-		String output = "test-data/tmp/";
+		String input = "test-data/mtdna/bam/input/";
+		String output = "test-data/tmp/file.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
-		fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
-
 		PileupToolLocal pileup = new PileupToolLocal(
-				new String[] { "--input", input, "--reference", fasta, "--output", output, "--level", "0.01" });
+				new String[] { "--input", input, "--reference", fasta, "--output", output, "--level", "0.01"});
 
 		pileup.start();
 

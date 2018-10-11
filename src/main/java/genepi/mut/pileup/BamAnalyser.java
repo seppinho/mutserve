@@ -101,8 +101,6 @@ public class BamAnalyser {
 
 		} else {
 
-			System.out.println("BAQ default");
-
 			baqHMM = new BAQ(1e-4, 1e-2, 7, (byte) 0, true);
 		}
 
