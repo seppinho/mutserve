@@ -12,7 +12,7 @@ You can also run Mutation-Server Core as a standalone tool starting with BAM fil
 ```
 wget https://github.com/seppinho/mutation-server/releases/download/v1.1.7/mutation-server-1.1.7.jar
 
-java -jar mutation-server-1.1.7.jar  analyse-local --input <input-folder> --output <output-folder> --reference <ref.fasta> --level 0.01
+java -jar mutation-server-1.1.7.jar  analyse-local --input <file/folder> --output <folder> --reference <fasta> --level 0.01
 ```
 
 ## Output Format
