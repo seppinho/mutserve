@@ -95,13 +95,13 @@ public class CalcPrecision extends Tool {
 					int position = posSample;
 					
 					if (goldPos.contains(position)) {
-						System.out.println(position + "\t" + 1 + "\t" +1);
+						//System.out.println(position + "\t" + 1 + "\t" +1);
 						goldPos.remove(position);
 						truePositiveCount++;
 						both.add(position);
 
 					} else {
-						System.out.println(position + "\t" + 0 + "\t" +1 );
+						//System.out.println(position + "\t" + 0 + "\t" +1 );
 						falsePositives.add(position);
 						falsePositiveCount++;
 
@@ -117,7 +117,7 @@ public class CalcPrecision extends Tool {
 					if (!allPos.contains(j)) {
 
 						trueNegativeCount++;
-						System.out.println(j + "\t" + 0 + "\t" +0 );
+						//System.out.println(j + "\t" + 0 + "\t" +0 );
 					}
 
 					else {
@@ -131,10 +131,10 @@ public class CalcPrecision extends Tool {
 
 			variantReader.close();
 			
-			 Iterator value = goldPos.iterator(); 
+		/*	 Iterator value = goldPos.iterator(); 
 				while (value.hasNext()) {
 					System.out.println(value.next() + "\t" + 1 + "\t" + 0 );
-				}
+				}*/
 			foundInGold = goldPos.size();
 			
 			
