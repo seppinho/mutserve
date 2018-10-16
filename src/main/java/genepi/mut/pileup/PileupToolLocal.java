@@ -22,7 +22,7 @@ import htsjdk.samtools.ValidationStringency;
 
 public class PileupToolLocal extends Tool {
 
-	String version = "v1.1.7";
+	String version = "v1.1.8";
 
 	public PileupToolLocal(String[] args) {
 		super(args);
