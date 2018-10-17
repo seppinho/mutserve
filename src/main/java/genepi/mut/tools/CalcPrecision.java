@@ -37,6 +37,9 @@ public class CalcPrecision extends Tool {
 	@Override
 	public int run() {
 
+		final String pos = "Pos";
+		final String sampleId= "SampleID";
+		
 		Set<Integer> allPos = new TreeSet<Integer>();
 		Set<Integer> goldPos = new TreeSet<Integer>();
 		Set<Integer> falsePositives = new TreeSet<Integer>();
@@ -53,12 +56,12 @@ public class CalcPrecision extends Tool {
 
 		while (idReader.next()) {
 
-			ids.add(idReader.getString("ID"));
+			ids.add(idReader.getString(sampleId));
 
 		}
 		idReader.close();
 		
-		System.out.println("Sample\tfound\tfalse\tprec.\tsens.\tspec");
+		System.out.println("SampleID\tfound\tfalse\tprec.\tsens.\tspec");
 		
 		for (String id : ids) {
 
@@ -66,9 +69,9 @@ public class CalcPrecision extends Tool {
 
 			while (goldReader.next()) {
 
-				goldPos.add(goldReader.getInteger("POS"));
+				goldPos.add(goldReader.getInteger(pos));
 
-				allPos.add(goldReader.getInteger("POS"));
+				allPos.add(goldReader.getInteger(pos));
 
 			}
 
@@ -86,9 +89,9 @@ public class CalcPrecision extends Tool {
 
 			while (variantReader.next()) {
 
-				String idSample = variantReader.getString("ID");
+				String idSample = variantReader.getString(sampleId);
 
-				int posSample = variantReader.getInteger("POS");
+				int posSample = variantReader.getInteger(pos);
 
 				if (id.equals(idSample)) {
 
@@ -158,8 +161,8 @@ public class CalcPrecision extends Tool {
 
 	public static void main(String[] args) {
 		
-		String gold ="/home/hansi/git/mutation-server/test-data/mtdna/mixtures/expected/sanger.txt";
-		String in = "/home/hansi/git/mutation-server/test-data/mtdna/raw-results/pgm-variants.txt";
+		String gold ="/home/hansi/git/mutation-server/test-data/mtdna/raw-results/sanger.txt";
+		String  in = "/home/hansi/git/mutation-server/test-data/mtdna/raw-results/pgm-variants.txt";
 		String length = "16569";
 		CalcPrecision precison = new CalcPrecision(new String[] { "--gold", gold, "--in", 	in, "--length", length });
 

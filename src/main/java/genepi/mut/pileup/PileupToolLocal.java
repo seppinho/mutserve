@@ -102,8 +102,8 @@ public class PileupToolLocal extends Tool {
 			files = new File[1];
 			files[0] = new File(folderIn.getAbsolutePath());
 
-			if (files[0].getName().endsWith(".bam")) {
-				System.out.println("Please upload a BAM file");
+			if (!files[0].getName().toLowerCase().endsWith(".bam")) {
+				System.out.println("Please upload a BAM file ending with .bam");
 				return 1;
 			}
 
