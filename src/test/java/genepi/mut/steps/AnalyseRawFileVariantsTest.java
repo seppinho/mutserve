@@ -13,28 +13,27 @@ import genepi.mut.util.RawFileAnalyserDNA;
 
 public class AnalyseRawFileVariantsTest {
 
-/*	@Test
+	@Test
 	public void HetModelTest() {
 
 		double hetLevel = 0.01;
 		String refPath = "test-data/mtdna/raw-results/rCRS.fasta";
-		String sanger = "test-data/mtdna/raw-results/sanger.txt";
+		String sanger = "test-data/mtdna/mixtures/expected/sanger.txt";
 
 		RawFileAnalysermtDNA rawAnalyser = new RawFileAnalysermtDNA();
 		rawAnalyser.setCallDel(false);
-		File input = new File("test-data/mtdna/raw-results/raw-s4-nodel.txt");
+		File input = new File("test-data/mtdna/mixtures/raw-out/raw-s4-nodel.txt");
 
-			System.out.println("input file is " + input.getName());
-					ArrayList<QCMetric> metrics = rawAnalyser.calculateLowLevelForTest(input.getPath(), refPath, sanger, hetLevel);
-					for(QCMetric  metric : metrics){
-						assertEquals(100, metric.getPrecision(), 0);
-						// paper value, changed since I added checkbases check: assertEquals(59.259, metric.getSensitivity(), 0.1);
-						assertEquals(64, metric.getSensitivity(), 0.1);
-						assertEquals(100, metric.getSpecificity(), 0);
-					}
-	}*/
-	
-	
+		System.out.println("input file is " + input.getName());
+		ArrayList<QCMetric> metrics = rawAnalyser.calculateLowLevelForTest(input.getPath(), refPath, sanger, hetLevel);
+		for (QCMetric metric : metrics) {
+			assertEquals(100, metric.getPrecision(), 0);
+			// paper value, changed since I added checkbases check: assertEquals(59.259,
+			assertEquals(66.67, metric.getSensitivity(), 0.1);
+			assertEquals(100, metric.getSpecificity(), 0);
+		}
+	}
+
 	@Test
 	public void Plasmid12Test() {
 
@@ -46,10 +45,10 @@ public class AnalyseRawFileVariantsTest {
 		RawFileAnalyserDNA rawAnalyser = new RawFileAnalyserDNA();
 		File input = new File("test-data/dna/plasmids/plasmid12/raw/plasmid12-raw.txt");
 
-			System.out.println("input file is " + input.getName());
-					ArrayList<QCMetric> metrics = rawAnalyser.calculateLowLevelForTest(input.getPath(), refPath, sanger, hetLevel);
+		System.out.println("input file is " + input.getName());
+		ArrayList<QCMetric> metrics = rawAnalyser.calculateLowLevelForTest(input.getPath(), refPath, sanger, hetLevel);
 	}
-	
+
 	@Test
 	public void Plasmid13Test() {
 
@@ -61,10 +60,9 @@ public class AnalyseRawFileVariantsTest {
 		RawFileAnalyserDNA rawAnalyser = new RawFileAnalyserDNA();
 		File input = new File("test-data/dna/plasmids/plasmid13/raw/plasmid13-raw.txt");
 
-			System.out.println("input file is " + input.getName());
-					ArrayList<QCMetric> metrics = rawAnalyser.calculateLowLevelForTest(input.getPath(), refPath, sanger, hetLevel);
-					
-	}		
-				
+		System.out.println("input file is " + input.getName());
+		ArrayList<QCMetric> metrics = rawAnalyser.calculateLowLevelForTest(input.getPath(), refPath, sanger, hetLevel);
+
+	}
 
 }

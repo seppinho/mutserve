@@ -2,7 +2,6 @@ package genepi.mut.tools;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
@@ -61,7 +60,7 @@ public class CalcPrecision extends Tool {
 		}
 		idReader.close();
 		
-		System.out.println("SampleID\tfound\tfalse\tprec.\tsens.\tspec");
+		System.out.println("SampleID\tFound/Total\tFalsePositive\tPrec.\tSens.\tSpec");
 		
 		for (String id : ids) {
 
@@ -74,18 +73,16 @@ public class CalcPrecision extends Tool {
 				allPos.add(goldReader.getInteger(pos));
 
 			}
-
+			
 			CsvTableReader variantReader = new CsvTableReader(in, '\t');
 
 			falsePositives.clear();
 
 			both.clear();
-			int goldpos=goldPos.size();
 			int truePositiveCount = 0;
 			int falsePositiveCount = 0;
 			int trueNegativeCount = 0;
 			int falseNegativeCount = 0;
-			int foundInGold = 0;
 
 			while (variantReader.next()) {
 
@@ -98,16 +95,13 @@ public class CalcPrecision extends Tool {
 					int position = posSample;
 					
 					if (goldPos.contains(position)) {
-						//System.out.println(position + "\t" + 1 + "\t" +1);
 						goldPos.remove(position);
 						truePositiveCount++;
 						both.add(position);
 
 					} else {
-						//System.out.println(position + "\t" + 0 + "\t" +1 );
 						falsePositives.add(position);
 						falsePositiveCount++;
-
 					}
 
 				}
@@ -120,7 +114,6 @@ public class CalcPrecision extends Tool {
 					if (!allPos.contains(j)) {
 
 						trueNegativeCount++;
-						//System.out.println(j + "\t" + 0 + "\t" +0 );
 					}
 
 					else {
@@ -133,14 +126,6 @@ public class CalcPrecision extends Tool {
 		
 
 			variantReader.close();
-			
-		/*	 Iterator value = goldPos.iterator(); 
-				while (value.hasNext()) {
-					System.out.println(value.next() + "\t" + 1 + "\t" + 0 );
-				}*/
-			foundInGold = goldPos.size();
-			
-			
 
 			double sens2 = truePositiveCount / (double) (truePositiveCount + falseNegativeCount) * 100;
 			double spec2 = trueNegativeCount / (double) (falsePositiveCount + trueNegativeCount) * 100;
@@ -153,7 +138,7 @@ public class CalcPrecision extends Tool {
 			String spec = df.format(spec2);
 			String prec = df.format(prec2);
 
-			System.out.println(id+"\t"+(goldpos-foundInGold)+"/"+goldpos+"\t"+falsePositiveCount+"\t"+prec+"\t"+sens+"\t"+spec);
+			System.out.println(id+"\t"+truePositiveCount+"/"+ (truePositiveCount + falseNegativeCount)+"\t"+falsePositiveCount+"\t"+prec+"\t"+sens+"\t"+spec);
 
 		}
 		return 0;
@@ -161,8 +146,8 @@ public class CalcPrecision extends Tool {
 
 	public static void main(String[] args) {
 		
-		String gold ="/home/hansi/git/mutation-server/test-data/mtdna/raw-results/sanger.txt";
-		String  in = "/home/hansi/git/mutation-server/test-data/mtdna/raw-results/pgm-variants.txt";
+		String gold ="test-data/mtdna/raw-results/sanger.txt";
+		String  in = "test-data/tmp/file.txt";
 		String length = "16569";
 		CalcPrecision precison = new CalcPrecision(new String[] { "--gold", gold, "--in", 	in, "--length", length });
 

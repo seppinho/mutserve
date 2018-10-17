@@ -50,8 +50,8 @@ public class RawFileAnalysermtDNA {
 
 			CsvTableReader goldReader = new CsvTableReader(sangerpos, '\t');
 			while (goldReader.next()) {
-				sangerPos.add(goldReader.getInteger("POS"));
-				allPos.add(goldReader.getInteger("POS"));
+				sangerPos.add(goldReader.getInteger("Pos"));
+				allPos.add(goldReader.getInteger("Pos"));
 			}
 			CsvTableReader cloudgeneReader = new CsvTableReader(in, '\t');
 			int gold = sangerPos.size();

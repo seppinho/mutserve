@@ -84,7 +84,7 @@ public class VariantCaller {
 					 * strands
 					 **/
 					if (minorBasePercentsFWD >= level || minorBasePercentsREV >= level) {
-
+						
 						/**
 						 * high-confidence heteroplasmy was defined as candidate heteroplasmy with LLR
 						 * no less than 5

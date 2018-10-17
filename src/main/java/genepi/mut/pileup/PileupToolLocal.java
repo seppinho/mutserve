@@ -22,7 +22,8 @@ import htsjdk.samtools.ValidationStringency;
 
 public class PileupToolLocal extends Tool {
 
-	String version = "v1.1.8";
+	String version = "v1.1.9";
+	String mode = "mtdna";
 
 	public PileupToolLocal(String[] args) {
 		super(args);
@@ -39,14 +40,14 @@ public class PileupToolLocal extends Tool {
 		addOptionalParameter("baseQ", "base quality", Tool.STRING);
 		addOptionalParameter("mapQ", "mapping quality", Tool.STRING);
 		addOptionalParameter("alignQ", "alignment quality", Tool.STRING);
-		addFlag("baq", "Apply BAQ");
+		addFlag("noBaq", "turn off BAQ");
 		addFlag("indel", "Call indels");
 		addFlag("writeRaw", "Write raw output");
 	}
 
 	@Override
 	public void init() {
-		System.out.println("mtDNA Low-frequency Variant Detection" + version);
+		System.out.println("mtDNA Low-frequency Variant Detection " + version);
 		System.out.println("Division of Genetic Epidemiology - Medical University of Innsbruck");
 		System.out.println("(c) Sebastian Schoenherr, Hansi Weissensteiner, Lukas Forer");
 		System.out.println("");
@@ -59,7 +60,7 @@ public class PileupToolLocal extends Tool {
 
 		String output = (String) getValue("output");
 
-		boolean baq = isFlagSet("baq");
+		boolean baq = !isFlagSet("noBaq");
 
 		boolean indel = isFlagSet("indel");
 
@@ -181,7 +182,7 @@ public class PileupToolLocal extends Tool {
 
 			else if (reference == Reference.rcrs || reference == Reference.precisionId) {
 
-				BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, baq, version);
+				BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, baq, mode);
 
 				System.out.println("Processing: " + file.getName());
 				System.out.println("Detected reference: " + reference.toString());
@@ -376,7 +377,7 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "test-data/mtdna/bam/input/";
+		String input = "test-data/mtdna/mixtures/input/s4.bam";
 		String output = "test-data/tmp/file.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
