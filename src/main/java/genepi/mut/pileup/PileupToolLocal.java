@@ -99,28 +99,35 @@ public class PileupToolLocal extends Tool {
 		File folderIn = new File(input);
 		File[] files;
 
-		if (folderIn.isFile()) {
-			files = new File[1];
-			files[0] = new File(folderIn.getAbsolutePath());
+		if (folderIn.exists()) {
 
-			if (!files[0].getName().toLowerCase().endsWith(".bam")) {
-				System.out.println("Please upload a BAM file ending with .bam");
-				return 1;
-			}
+			if (folderIn.isFile()) {
+				files = new File[1];
+				files[0] = new File(folderIn.getAbsolutePath());
 
-		} else {
-			files = folderIn.listFiles(new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return name.toLowerCase().endsWith(".bam");
+				if (!files[0].getName().toLowerCase().endsWith(".bam")) {
+					System.out.println("Please upload a BAM file ending with .bam");
+					return 1;
 				}
-			});
 
-			if (files.length == 0) {
+			} else {
+				files = folderIn.listFiles(new FilenameFilter() {
+					public boolean accept(File dir, String name) {
+						return name.toLowerCase().endsWith(".bam");
+					}
+				});
 
-				System.out.println("no BAM files found. Please check input folder " + folderIn.getAbsolutePath());
+				if (files.length == 0) {
 
-				return 1;
+					System.out.println("no BAM files found. Please check input folder " + folderIn.getAbsolutePath());
+
+					return 1;
+				}
 			}
+		} else {
+			System.out.println("Please check input path!");
+
+			return 1;
 		}
 
 		try {
@@ -377,7 +384,7 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "test-data/mtdna/mixtures/input/s4.bam";
+		String input = "test-data/mtdna/mixtures/input";
 		String output = "test-data/tmp/file.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
