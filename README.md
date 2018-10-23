@@ -13,7 +13,7 @@ java -jar mutation-server-1.1.9.jar  analyse-local --input <file/folder> --outpu
 ```
 
 ## Output Format
-We report variants in a TAB-delimited file including *SampleID, Position, Reference, Variant & Variant-Level*. Please note that the *Variant-Level* always reports the non-reference variant level. The output file also includes the **most** and **second most base** at a specific position (so called Major/Minor Component). The reported variant can be the major or the minor component. The last column includes the type of the variant (1: Homoplasmy, 2: Heteroplasmy or Low-Level Variant, 3: Low-Level Deletion, 4: Deletion, 5: Insertion). See [here](https://raw.githubusercontent.com/seppinho/mutation-server/master/test-data/results/variantsLocal1000G) for an example. 
+We report variants in a TAB-delimited file including *ID, Position, Reference, Variant & VariantLevel*. Please note that the *VariantLevel* always reports the non-reference variant level. The output file also includes the **most** and **second most base** at a specific position (MajorBase + MajorLevel, MinorBase+MinorLevel). The reported variant can be the major or the minor component. The last column includes the type of the variant (1: Homoplasmy, 2: Heteroplasmy or Low-Level Variant, 3: Low-Level Deletion, 4: Deletion, 5: Insertion). See [here](https://raw.githubusercontent.com/seppinho/mutation-server/master/test-data/results/variantsLocal1000G) for an example. 
 
 ## Performance - Sensitivity and Specificity
 

@@ -84,7 +84,7 @@ public class VariantCaller {
 					 * strands
 					 **/
 					if (minorBasePercentsFWD >= level || minorBasePercentsREV >= level) {
-						
+
 						/**
 						 * high-confidence heteroplasmy was defined as candidate heteroplasmy with LLR
 						 * no less than 5
@@ -154,7 +154,7 @@ public class VariantCaller {
 	}
 
 	public static double calcLevelMinor(VariantLine line, double minorPercentFWD, double minorPercentREV) {
-	
+
 		double fwd = minorPercentFWD * line.getCovFWD();
 		double rev = minorPercentREV * line.getCovREV();
 
@@ -376,9 +376,13 @@ public class VariantCaller {
 			minor = '-';
 		}
 
-		build.append(result.getTop() + "/" + minor + "\t");
+		build.append(result.getTop() + "\t");
 
-		build.append(df.format(result.getLevelTop()) + "/" + df.format(result.getLevelMinor()) + "\t");
+		build.append(df.format(result.getLevelTop()) + "\t");
+
+		build.append(minor + "\t");
+
+		build.append(df.format(result.getLevelMinor()) + "\t");
 
 		build.append((result.getCovFWD() + result.getCovREV()) + "\t");
 
