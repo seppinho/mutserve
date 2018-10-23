@@ -5,7 +5,7 @@ Mutation-Server is a Java library to detect heteroplasmic and homoplasmic sites 
 It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability, Mutation-Server is parallelized using Hadoop MapReduce but also available as a standalone tool.
 
 ## Standalone Usage
-You can run Mutation-Server as a standalone tool starting with BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise) and no indels (beta feature, ``--indel`` otherwise) are called.
+You can run Mutation-Server as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise) and no indels (beta feature, ``--indel`` otherwise) are called.
 ```
 wget https://github.com/seppinho/mutation-server/releases/download/v1.1.9/mutation-server-1.1.9.jar
 

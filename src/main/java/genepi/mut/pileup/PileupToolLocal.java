@@ -33,7 +33,7 @@ public class PileupToolLocal extends Tool {
 	@Override
 	public void createParameters() {
 
-		addParameter("input", "input bam file or folder", Tool.STRING);
+		addParameter("input", "input cram/bam file or folder", Tool.STRING);
 		addParameter("output", "output file", Tool.STRING);
 		addParameter("level", "detection level", Tool.DOUBLE);
 		addParameter("reference", "reference as fasta", Tool.STRING);
@@ -105,15 +105,15 @@ public class PileupToolLocal extends Tool {
 				files = new File[1];
 				files[0] = new File(folderIn.getAbsolutePath());
 
-				if (!files[0].getName().toLowerCase().endsWith(".bam")) {
-					System.out.println("Please upload a BAM file ending with .bam");
+				if (!files[0].getName().toLowerCase().endsWith(".cram") && !files[0].getName().toLowerCase().endsWith(".bam")) {
+					System.out.println("Please upload a CRAM/BAM file");
 					return 1;
 				}
 
 			} else {
 				files = folderIn.listFiles(new FilenameFilter() {
 					public boolean accept(File dir, String name) {
-						return name.toLowerCase().endsWith(".bam");
+						return name.toLowerCase().endsWith(".bam") || name.toLowerCase().endsWith(".cram");
 					}
 				});
 
@@ -237,11 +237,13 @@ public class PileupToolLocal extends Tool {
 		// CNV-Server
 		final SamReader reader = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT)
 				.open(file);
-
+		
+		System.out.println("Processing: " + file.getAbsolutePath());
+		
 		SAMRecordIterator fileIterator = reader.iterator();
 
 		while (fileIterator.hasNext()) {
-
+			
 			SAMRecord record = fileIterator.next();
 
 			analyser.analyseRead(record, indelCalling);
@@ -384,7 +386,7 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "test-data/mtdna/mixtures/input";
+		String input = "/home/seb/Desktop/";
 		String output = "test-data/tmp/file.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 

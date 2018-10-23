@@ -158,7 +158,7 @@ public class BamAnalyser {
 		for (int i = 0; i < readString.length(); i++) {
 
 			int currentPos = samRecord.getReferencePositionAtReadPosition(i + 1);
-
+			
 			// if e.g softclips/insertions are included pos is 0, so skip them
 			// immediately!
 			if (currentPos > 0) {
