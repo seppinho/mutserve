@@ -451,9 +451,9 @@ public class MutationServerTest {
 			i++;
 			String[] splits = reader.get().split("\t");
 			if(splits[1].equals("35")) {
-				assertEquals(new Double(18190),Double.valueOf(splits[7]));
-				assertEquals(new Double(0.999),Double.valueOf(splits[4]));
-				
+				assertEquals(new Double(18190),Double.valueOf(splits[9]));
+				assertEquals(new Double(0.999),Double.valueOf(splits[6]));
+				 
 			}
 			
 			if(splits[3].contains("D")) {

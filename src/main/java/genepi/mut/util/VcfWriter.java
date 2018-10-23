@@ -1,31 +1,37 @@
 package genepi.mut.util;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.SAMSequenceRecord;
+import htsjdk.samtools.reference.FastaSequenceIndex;
+import htsjdk.samtools.reference.FastaSequenceIndexCreator;
+import htsjdk.samtools.reference.IndexedFastaSequenceFile;
+import htsjdk.samtools.reference.ReferenceSequence;
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.Genotype;
 import htsjdk.variant.variantcontext.GenotypeBuilder;
-import htsjdk.variant.variantcontext.GenotypesContext;
-import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.variantcontext.VariantContextBuilder;
 import htsjdk.variant.variantcontext.writer.Options;
 import htsjdk.variant.variantcontext.writer.VariantContextWriter;
 import htsjdk.variant.variantcontext.writer.VariantContextWriterBuilder;
 import htsjdk.variant.vcf.VCFConstants;
+import htsjdk.variant.vcf.VCFFilterHeaderLine;
 import htsjdk.variant.vcf.VCFFormatHeaderLine;
 import htsjdk.variant.vcf.VCFHeader;
 import htsjdk.variant.vcf.VCFHeaderLine;
 import htsjdk.variant.vcf.VCFHeaderLineType;
 import htsjdk.variant.vcf.VCFHeaderVersion;
+import htsjdk.variant.vcf.VCFInfoHeaderLine;
 
 public class VcfWriter {
 
@@ -36,7 +42,7 @@ public class VcfWriter {
 		VCFHeader header = generateHeader(chromosome, 16569);
 
 		HashMap<String, Sample> samples = reader.parse();
-		HashSet<Integer> positions = new HashSet<Integer>();
+		TreeSet<Integer> positions = new TreeSet<Integer>();
 
 		for (Sample sample : samples.values()) {
 			header.getGenotypeSamples().add(sample.getId());
@@ -47,51 +53,111 @@ public class VcfWriter {
 
 		VariantContextWriterBuilder builder = new VariantContextWriterBuilder().setOutputFile(out)
 				.unsetOption(Options.INDEX_ON_THE_FLY);
-		
 		VariantContextWriter vcfWriter = builder.build();
-		
 		vcfWriter.writeHeader(header);
+		File fasta = new File("test-data/mtdna/mixtures/reference/rCRS.fasta");
+
+		try {
+			FastaSequenceIndex fg = FastaSequenceIndexCreator.buildFromFasta(fasta.toPath());
+			fg.write(new File(fasta + ".fai").toPath());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		IndexedFastaSequenceFile seq = new IndexedFastaSequenceFile(fasta,
+				new FastaSequenceIndex(new File(fasta + ".fai")));
 
 		for (Integer pos : positions) {
-			
-			VariantContext vc = null;
+
+			VariantContextBuilder vcBuilder = new VariantContextBuilder().start(pos).stop(pos).chr("chrM");
+
+			Genotype gt = null;
+			final List<Genotype> genotypes = new ArrayList<Genotype>();
+			final HashSet<Allele> alleles = new HashSet<Allele>();
 
 			for (Sample sample : samples.values()) {
 
 				if (sample.getPositions().containsKey(pos)) {
+
 					Variant var = sample.getPositions().get(pos);
-					
-					System.out.println(var.getPos());
-					
-					Genotype gt = GenotypeBuilder.create(sample.getId(),
-							Arrays.asList(Allele.create(var.getVariant() + ""), Allele.create(var.getVariant() + "")));
 
-					final List<Allele> alleles = new ArrayList<Allele>();
 					Allele refAllele = Allele.create(var.getRef() + "", true);
-					Allele altAllele = Allele.create(var.getVariant() + "", false);
+					Allele varAllele = Allele.create(var.getVariant() + "", false);
 					alleles.add(refAllele);
-					alleles.add(altAllele);
+					alleles.add(varAllele);
 
-					vc = new VariantContextBuilder().start(var.getPos()).stop(var.getPos()).alleles(alleles)
-							.genotypes(gt).chr("chrM").make();
+					if (var.getType() == 1) {
 
+						gt = GenotypeBuilder.create(sample.getId(),
+								Arrays.asList(Allele.create(var.getVariant() + "")));
+
+						genotypes.add(gt);
+
+					} else if (var.getType() == 2) {
+
+						char allele2;
+						char ref;
+						Allele allele1 = null;
+
+						//check for multiallelic sites
+						if (var.getMajor() == var.getRef()) {
+							
+							ref = var.getMajor();
+							allele1 = Allele.create(ref + "", true);
+							allele2 = var.getMinor();
+							
+						} else {
+							
+							allele2 = var.getMajor();
+							
+							// third allele found!
+							if (var.getMinor() != var.getRef()) {
+								allele1 = Allele.create(var.getMinor() + "", false);
+								alleles.add(allele1);
+							} else {
+								ref = var.getMinor();
+								allele1 = Allele.create(ref + "", true);
+							}
+						}
+						
+						gt = GenotypeBuilder.create(sample.getId(),
+								Arrays.asList(allele1, Allele.create(allele2 + "")));
+
+						genotypes.add(gt);
+
+						vcBuilder.attribute("LFF", var.getLevel());
+
+					}
+				} else {
+					ReferenceSequence base = seq.getSubsequenceAt("rCRS", pos, pos);
+					gt = GenotypeBuilder.create(sample.getId(),
+							Arrays.asList(Allele.create(base.getBaseString() + "", true)));
+					genotypes.add(gt);
 				}
-				
 			}
-			
-			if(vc!=null)
-			vcfWriter.add(vc);
 
+			if (alleles.size() > 0) {
+				vcBuilder.alleles(alleles).genotypes(genotypes);
+				vcBuilder.filter("PASS");
+				vcfWriter.add(vcBuilder.make());
+			}
 		}
 
 		vcfWriter.close();
+		
+		try {
+			seq.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
 	public static void main(String[] args) {
 
-		String input = "test-data/tmp/file.txt";
-		String output = "/data2/git/mutation-server/test-data/results/variantsLocal1000G.vcf";
+		String input = "test-data/results/file.txt";
+		String output = "test-data/results/variantsLocal1000G.vcf";
 
 		try {
 			createVCF(input, output);
@@ -105,7 +171,6 @@ public class VcfWriter {
 	private static VCFHeader generateHeader(String chromosome, int length) {
 
 		Set<VCFHeaderLine> headerLines = new HashSet<VCFHeaderLine>();
-		Set<String> additionalColumns = new HashSet<String>();
 
 		headerLines.add(new VCFHeaderLine(VCFHeaderVersion.VCF4_2.getFormatString(),
 				VCFHeaderVersion.VCF4_2.getVersionString()));
@@ -114,26 +179,16 @@ public class VcfWriter {
 
 		SAMSequenceDictionary sequenceDict = generateSequenceDictionary(chromosome, length);
 
-		VCFHeader header = new VCFHeader(headerLines, additionalColumns);
+		VCFHeader header = new VCFHeader(headerLines);
+
 		header.setSequenceDictionary(sequenceDict);
+
+		header.addMetaDataLine(new VCFFilterHeaderLine("PASS", "Variants passed mtDNA-Server"));
+
+		header.addMetaDataLine(new VCFInfoHeaderLine("LFF", 1, VCFHeaderLineType.Float, "Low Frequency Fraction"));
 
 		return header;
 
-	}
-
-	private VariantContext createVC(VCFHeader header, String chrom, String rsid, List<Allele> alleles,
-			List<Allele> genotype, int position) {
-
-		final Map<String, Object> attributes = new HashMap<String, Object>();
-		final GenotypesContext genotypes = GenotypesContext.create(header.getGenotypeSamples().size());
-
-		for (final String name : header.getGenotypeSamples()) {
-			final Genotype gt = new GenotypeBuilder(name, genotype).phased(false).make();
-			genotypes.add(gt);
-		}
-
-		return new VariantContextBuilder("23andMe", chrom, position, position, alleles).genotypes(genotypes)
-				.attributes(attributes).id(rsid).make();
 	}
 
 	private static SAMSequenceDictionary generateSequenceDictionary(String name, int length) {
