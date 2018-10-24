@@ -30,9 +30,9 @@ public class VcfWriter {
 	public void createVCF(String in, String out, String reference, String chromosome, int length) {
 
 		MutationServerReader reader = new MutationServerReader(in);
-		
+
 		VCFHeader header = generateHeader(chromosome, length);
-		
+
 		String fasta = ReferenceUtil.readInReference(reference);
 
 		HashMap<String, Sample> samples = reader.parse();
@@ -72,13 +72,14 @@ public class VcfWriter {
 
 						final GenotypeBuilder gb = new GenotypeBuilder(sample.getId(), Arrays.asList(varAllele));
 						gb.DP(var.getCoverage());
+
 						genotypes.add(gb.make());
 
 					} else if (var.getType() == 2) {
 
 						char allele2;
 						char ref;
-						Allele allele1 = null;
+						Allele allele1;
 
 						// check for multiallelic sites
 						if (var.getMajor() == var.getRef()) {
@@ -90,7 +91,8 @@ public class VcfWriter {
 
 							allele2 = var.getMajor();
 
-							// third allele found, add to alleles
+							// new allele found, add to alleles
+							// REF: C; MAJOR: A; MINOR:T
 							if (var.getMinor() != var.getRef()) {
 								allele1 = Allele.create(var.getMinor() + "", false);
 								alleles.add(allele1);
