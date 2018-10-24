@@ -399,7 +399,7 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "/home/seb/Desktop/cram";
+		String input = "test-data/mtdna/mixtures/input";
 		String output = "test-data/tmp/";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
