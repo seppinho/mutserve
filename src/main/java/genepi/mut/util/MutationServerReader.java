@@ -1,5 +1,4 @@
 package genepi.mut.util;
-
 import java.io.File;
 import java.util.HashMap;
 
@@ -63,11 +62,9 @@ public class MutationServerReader {
 			variant.setCoverage(coverage);
 			variant.setType(type);
 
-			if (variant.getRef() != 'N') {
-				sample.updateVariantCount(type);
-				sample.updateHetLevels(minorLevel);
-				sample.updateCoverage(coverage);
-			}
+			sample.updateVariantCount(type);
+			sample.updateHetLevels(minorLevel);
+			sample.updateCoverage(coverage);
 
 			sample.addVariant(variant);
 			tmp = id;

@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import genepi.base.Tool;
+import genepi.io.FileUtil;
 import genepi.io.text.LineWriter;
 import genepi.mut.objects.BasePosition;
 import genepi.mut.objects.VariantLine;
@@ -14,6 +15,7 @@ import genepi.mut.objects.VariantResult;
 import genepi.mut.util.ReferenceUtil;
 import genepi.mut.util.ReferenceUtil.Reference;
 import genepi.mut.util.VariantCaller;
+import genepi.mut.util.VcfWriter;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMRecordIterator;
 import htsjdk.samtools.SamReader;
@@ -22,7 +24,7 @@ import htsjdk.samtools.ValidationStringency;
 
 public class PileupToolLocal extends Tool {
 
-	String version = "v1.1.9";
+	String version = "v1.1.10";
 	String mode = "mtdna";
 
 	public PileupToolLocal(String[] args) {
@@ -40,6 +42,7 @@ public class PileupToolLocal extends Tool {
 		addOptionalParameter("baseQ", "base quality", Tool.STRING);
 		addOptionalParameter("mapQ", "mapping quality", Tool.STRING);
 		addOptionalParameter("alignQ", "alignment quality", Tool.STRING);
+		addFlag("writeVcf", "write VCF file");
 		addFlag("noBaq", "turn off BAQ");
 		addFlag("indel", "Call indels");
 		addFlag("writeRaw", "Write raw output");
@@ -63,6 +66,8 @@ public class PileupToolLocal extends Tool {
 		boolean baq = !isFlagSet("noBaq");
 
 		boolean indel = isFlagSet("indel");
+
+		boolean vcf = isFlagSet("writeVcf");
 
 		boolean writeRawOutput = isFlagSet("writeRaw");
 
@@ -105,7 +110,8 @@ public class PileupToolLocal extends Tool {
 				files = new File[1];
 				files[0] = new File(folderIn.getAbsolutePath());
 
-				if (!files[0].getName().toLowerCase().endsWith(".cram") && !files[0].getName().toLowerCase().endsWith(".bam")) {
+				if (!files[0].getName().toLowerCase().endsWith(".cram")
+						&& !files[0].getName().toLowerCase().endsWith(".bam")) {
 					System.out.println("Please upload a CRAM/BAM file");
 					return 1;
 				}
@@ -131,27 +137,26 @@ public class PileupToolLocal extends Tool {
 		}
 
 		try {
-
-			File outVar = new File(output);
-
-			if (outVar.isDirectory()) {
-				System.out.println("Please specify a output file instead of a folder: " + outVar.getAbsolutePath());
+			File out = new File(output);
+			if (!out.isDirectory()) {
+				System.out.println("Please specify a output folder instead of a file: " + out.getAbsolutePath());
 
 				return 1;
 			}
 
-			File parentVar = outVar.getParentFile();
+			File parentVar = out.getParentFile();
 
 			if (parentVar != null) {
-				outVar.getParentFile().mkdirs();
+				out.getParentFile().mkdirs();
 			}
 
-			writerVar = new LineWriter(outVar.getAbsolutePath());
+			String outVar = FileUtil.path(output, "variants.txt");
+			writerVar = new LineWriter(new File(outVar).getAbsolutePath());
 			writerVar.write(BamAnalyser.headerVariants);
 
 			if (writeRawOutput) {
-				File outRaw = new File(output + "_raw");
-				writerRaw = new LineWriter(outRaw.getAbsolutePath());
+				String outRawString = FileUtil.path(output, "raw.txt");
+				writerRaw = new LineWriter(new File(outRawString).getAbsolutePath());
 				writerRaw.write(BamAnalyser.headerRaw);
 			}
 
@@ -171,6 +176,7 @@ public class PileupToolLocal extends Tool {
 		System.out.println("Alignment Quality: " + alignQ);
 		System.out.println("BAQ: " + baq);
 		System.out.println("Indel: " + indel);
+		System.out.println("Write VCF: " + vcf);
 		System.out.println("Write Raw File: " + writeRawOutput);
 		System.out.println("");
 
@@ -221,6 +227,13 @@ public class PileupToolLocal extends Tool {
 				writerRaw.close();
 			}
 
+			if (vcf) {
+				VcfWriter writer = new VcfWriter();
+				String outVar = FileUtil.path(output, "variants.txt");
+				String outVcfString = FileUtil.path(output, "variants.vcf");
+				writer.createVCF(outVar, outVcfString, refPath, "chrM", 16569);
+			}
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -237,13 +250,13 @@ public class PileupToolLocal extends Tool {
 		// CNV-Server
 		final SamReader reader = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT)
 				.open(file);
-		
+
 		System.out.println("Processing: " + file.getAbsolutePath());
-		
+
 		SAMRecordIterator fileIterator = reader.iterator();
 
 		while (fileIterator.hasNext()) {
-			
+
 			SAMRecord record = fileIterator.next();
 
 			analyser.analyseRead(record, indelCalling);
@@ -346,7 +359,6 @@ public class PileupToolLocal extends Tool {
 						String res = VariantCaller.writeVariant(varResult);
 
 						writerVariants.write(res);
-
 					}
 				}
 
@@ -380,18 +392,19 @@ public class PileupToolLocal extends Tool {
 					String raw = line.toRawString();
 					writerRaw.write(raw);
 				}
+
 			}
 		}
 	}
 
 	public static void main(String[] args) {
 
-		String input = "/home/seb/Desktop/";
-		String output = "test-data/tmp/file.txt";
+		String input = "/home/seb/Desktop/cram";
+		String output = "test-data/tmp/";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
-		PileupToolLocal pileup = new PileupToolLocal(
-				new String[] { "--input", input, "--reference", fasta, "--output", output, "--level", "0.01" });
+		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta, "--output",
+				output, "--level", "0.01", "--writeVcf" });
 
 		pileup.start();
 

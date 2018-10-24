@@ -5,15 +5,20 @@ Mutation-Server is a Java library to detect heteroplasmic and homoplasmic sites 
 It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability, Mutation-Server is parallelized using Hadoop MapReduce but also available as a standalone tool.
 
 ## Standalone Usage
-You can run Mutation-Server as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise) and no indels (beta feature, ``--indel`` otherwise) are called.
+You can run Mutation-Server as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise) and no indels (beta feature and currently not left aligned,  ``--indel`` otherwise) are called. 
 ```
-wget https://github.com/seppinho/mutation-server/releases/download/v1.1.9/mutation-server-1.1.9.jar
+wget https://github.com/seppinho/mutation-server/releases/download/v1.1.10/mutation-server-1.1.10.jar
 
-java -jar mutation-server-1.1.9.jar  analyse-local --input <file/folder> --output <file> --reference <fasta> --level 0.01
+java -jar mutation-server-1.1.10.jar  analyse-local --input <file/folder> --output <folder> --reference <fasta> --level 0.01
 ```
 
-## Output Format
-We report variants in a TAB-delimited file including *ID, Position, Reference, Variant & VariantLevel*. Please note that the *VariantLevel* always reports the non-reference variant level. The output file also includes the **most** and **second most base** at a specific position (MajorBase + MajorLevel, MinorBase+MinorLevel). The reported variant can be the major or the minor component. The last column includes the type of the variant (1: Homoplasmy, 2: Heteroplasmy or Low-Level Variant, 3: Low-Level Deletion, 4: Deletion, 5: Insertion). See [here](https://raw.githubusercontent.com/seppinho/mutation-server/master/test-data/results/variantsLocal1000G) for an example. 
+## Output Formats
+
+### Tab delimited File
+We also export a TAB-delimited file including *ID, Position, Reference, Variant & VariantLevel*. Please note that the *VariantLevel* always reports the non-reference variant level. The output file also includes the **most** and **second most base** at a specific position (MajorBase + MajorLevel, MinorBase+MinorLevel). The reported variant can be the major or the minor component. The last column includes the type of the variant (1: Homoplasmy, 2: Heteroplasmy or Low-Level Variant, 3: Low-Level Deletion, 4: Deletion, 5: Insertion). See [here](https://raw.githubusercontent.com/seppinho/mutation-server/master/test-data/results/variantsLocal1000G) for an example. 
+
+### VCF
+If you want a **VCF** file as an output, please add ``--writeVCF``. Heteroplasmies are coded as 1/0 genotypes, the heteroplasmy level is included in the FORMAT using the **HP** attribute. Please not that indels are currently not included in the VCF.  
 
 ## Performance - Sensitivity and Specificity
 
