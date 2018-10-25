@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import genepi.mut.objects.Sample;
+import genepi.mut.objects.Variant;
 import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.SAMSequenceRecord;
 import htsjdk.variant.variantcontext.Allele;
@@ -40,7 +42,7 @@ public class VcfWriter {
 
 		for (Sample sample : samples.values()) {
 			header.getGenotypeSamples().add(sample.getId());
-			for (Variant var : sample.getPositions().values()) {
+			for (Variant var : sample.getVariants()) {
 				positions.add(var.getPos());
 			}
 		}
@@ -58,54 +60,54 @@ public class VcfWriter {
 			final HashSet<Allele> alleles = new HashSet<Allele>();
 
 			for (Sample sample : samples.values()) {
+				
+				Variant variant = sample.getVariant(pos);
 
-				if (sample.getPositions().containsKey(pos)) {
+				if (variant != null) {
 
-					Variant var = sample.getPositions().get(pos);
-
-					Allele refAllele = Allele.create(var.getRef() + "", true);
-					Allele varAllele = Allele.create(var.getVariant() + "", false);
+					Allele refAllele = Allele.create(variant.getRef() + "", true);
+					Allele varAllele = Allele.create(variant.getVariant() + "", false);
 					alleles.add(refAllele);
 					alleles.add(varAllele);
 
-					if (var.getType() == 1) {
+					if (variant.getType() == 1) {
 
 						final GenotypeBuilder gb = new GenotypeBuilder(sample.getId(), Arrays.asList(varAllele));
-						gb.DP(var.getCoverage());
+						gb.DP(variant.getCoverage());
 
 						genotypes.add(gb.make());
 
-					} else if (var.getType() == 2) {
+					} else if (variant.getType() == 2) {
 
 						char allele2;
 						char ref;
 						Allele allele1;
 
 						// check for multiallelic sites
-						if (var.getMajor() == var.getRef()) {
-							ref = var.getMajor();
+						if (variant.getMajor() == variant.getRef()) {
+							ref = variant.getMajor();
 							allele1 = Allele.create(ref + "", true);
-							allele2 = var.getMinor();
+							allele2 = variant.getMinor();
 
 						} else {
 
-							allele2 = var.getMajor();
+							allele2 = variant.getMajor();
 
 							// new allele found, add to alleles
 							// REF: C; MAJOR: A; MINOR:T
-							if (var.getMinor() != var.getRef()) {
-								allele1 = Allele.create(var.getMinor() + "", false);
+							if (variant.getMinor() != variant.getRef()) {
+								allele1 = Allele.create(variant.getMinor() + "", false);
 								alleles.add(allele1);
 							} else {
-								ref = var.getMinor();
+								ref = variant.getMinor();
 								allele1 = Allele.create(ref + "", true);
 							}
 						}
 
 						final GenotypeBuilder gb = new GenotypeBuilder(sample.getId(),
 								Arrays.asList(allele1, Allele.create(allele2 + "")));
-						gb.DP(var.getCoverage());
-						gb.attribute("HP", var.getLevel());
+						gb.DP(variant.getCoverage());
+						gb.attribute("HP", variant.getLevel());
 						genotypes.add(gb.make());
 
 					}

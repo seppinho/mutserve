@@ -7,9 +7,9 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
+import genepi.mut.objects.Sample;
+import genepi.mut.objects.Variant;
 import genepi.mut.util.MutationServerReader;
-import genepi.mut.util.Sample;
-import genepi.mut.util.Variant;
 import genepi.mut.util.VcfWriter;
 import htsjdk.variant.variantcontext.Genotype;
 import htsjdk.variant.variantcontext.VariantContext;
@@ -33,7 +33,7 @@ public class VcfWriterTest {
 
 		Sample sample = samples.get(sampleString);
 
-		for (Variant variant : sample.getPositions().values()) {
+		for (Variant variant : sample.getVariants()) {
 			int pos = variant.getPos();
 			char var = variant.getVariant();
 

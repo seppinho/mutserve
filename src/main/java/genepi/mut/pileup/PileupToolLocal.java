@@ -139,7 +139,7 @@ public class PileupToolLocal extends Tool {
 		try {
 			File out = new File(output);
 			if (!out.isDirectory()) {
-				System.out.println("Please specify a output folder instead of a file: " + out.getAbsolutePath());
+				System.out.println("Please specify an existing output folder: " + out.getAbsolutePath());
 
 				return 1;
 			}
@@ -168,8 +168,8 @@ public class PileupToolLocal extends Tool {
 		long start = System.currentTimeMillis();
 
 		System.out.println("Parameters:");
-		System.out.println("Input Folder: " + input);
-		System.out.println("Output Folder: " + output);
+		System.out.println("Input Folder: " + new File(input).getAbsolutePath());
+		System.out.println("Output Folder: " + new File(output).getAbsolutePath());
 		System.out.println("Detection limit: " + level);
 		System.out.println("Base Quality: " + baseQ);
 		System.out.println("Map Quality: " + mapQ);
@@ -400,7 +400,7 @@ public class PileupToolLocal extends Tool {
 	public static void main(String[] args) {
 
 		String input = "test-data/mtdna/mixtures/input";
-		String output = "test-data/tmp/";
+		String output = "test-data/";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta, "--output",

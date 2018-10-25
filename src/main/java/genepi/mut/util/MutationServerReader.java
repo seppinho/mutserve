@@ -3,6 +3,8 @@ import java.io.File;
 import java.util.HashMap;
 
 import genepi.io.table.reader.CsvTableReader;
+import genepi.mut.objects.Sample;
+import genepi.mut.objects.Variant;
 
 public class MutationServerReader {
 

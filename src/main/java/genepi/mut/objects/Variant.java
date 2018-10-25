@@ -1,4 +1,4 @@
-package genepi.mut.util;
+package genepi.mut.objects;
 
 public class Variant {
 

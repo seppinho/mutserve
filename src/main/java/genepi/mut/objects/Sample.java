@@ -1,11 +1,12 @@
-package genepi.mut.util;
+package genepi.mut.objects;
 
-import java.util.TreeMap;
+import java.util.Collection;
+import java.util.HashMap;
 
 public class Sample {
 
 	private String id;
-	private TreeMap<Integer, Variant> variants;
+	private HashMap<Integer, Variant> variants;
 	private int amountHomoplasmies;
 	private int amountVariants;
 	private int amountHeteroplasmies;
@@ -13,23 +14,23 @@ public class Sample {
 	private float countHeteroplasmyLevel = 0;
 
 	public Sample() {
-		variants = new TreeMap<Integer, Variant>();
+		variants = new HashMap<Integer, Variant>();
 	}
 
-	public TreeMap<Integer, Variant> getPositions() {
-		return variants;
+	public Collection<Variant> getVariants() {
+		return variants.values();
 	}
 
+	public Variant getVariant(int pos) {
+		return variants.get(pos);
+	}
+	
 	public String getId() {
 		return id;
 	}
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public void setPositions(TreeMap<Integer, Variant> variants) {
-		this.variants = variants;
 	}
 
 	public void addVariant(Variant var) {
