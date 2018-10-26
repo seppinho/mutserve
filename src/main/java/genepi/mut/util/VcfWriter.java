@@ -60,7 +60,7 @@ public class VcfWriter {
 			final HashSet<Allele> alleles = new HashSet<Allele>();
 
 			for (Sample sample : samples.values()) {
-				
+
 				Variant variant = sample.getVariant(pos);
 
 				if (variant != null) {
@@ -79,33 +79,31 @@ public class VcfWriter {
 
 					} else if (variant.getType() == 2) {
 
-						char allele2;
 						char ref;
-						Allele allele1;
+						Allele genotypeAllele1;
+						Allele genotypeAllele2;
 
 						// check for multiallelic sites
 						if (variant.getMajor() == variant.getRef()) {
-							ref = variant.getMajor();
-							allele1 = Allele.create(ref + "", true);
-							allele2 = variant.getMinor();
+							genotypeAllele1 = Allele.create(variant.getMajor() + "", true);
+							genotypeAllele2 = Allele.create(variant.getMinor() + "", false);
 
 						} else {
+							genotypeAllele2 = Allele.create(variant.getMajor() + "", false);
 
-							allele2 = variant.getMajor();
-
-							// new allele found, add to alleles
 							// REF: C; MAJOR: A; MINOR:T
 							if (variant.getMinor() != variant.getRef()) {
-								allele1 = Allele.create(variant.getMinor() + "", false);
-								alleles.add(allele1);
+								genotypeAllele1 = Allele.create(variant.getMinor() + "", false);
+								// new allele found, add to alleles
+								alleles.add(genotypeAllele1);
 							} else {
 								ref = variant.getMinor();
-								allele1 = Allele.create(ref + "", true);
+								genotypeAllele1 = Allele.create(ref + "", true);
 							}
 						}
 
 						final GenotypeBuilder gb = new GenotypeBuilder(sample.getId(),
-								Arrays.asList(allele1, Allele.create(allele2 + "")));
+								Arrays.asList(genotypeAllele1, genotypeAllele2));
 						gb.DP(variant.getCoverage());
 						gb.attribute("HP", variant.getLevel());
 						genotypes.add(gb.make());
