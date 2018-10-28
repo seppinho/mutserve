@@ -9,6 +9,7 @@ public class Variant {
 	private char major;
 	private char minor;
 	private double majorLevel;
+	private String insertion; 
 	private double minorLevel;
 	private int coverage;
 	private int type;
@@ -91,6 +92,14 @@ public class Variant {
 
 	public void setType(int type) {
 		this.type = type;
+	}
+	
+	public String getInsertion() {
+		return insertion;
+	}
+
+	public void setInsertion(String insertion) {
+		this.insertion = insertion;
 	}
 
 	public String toString() {

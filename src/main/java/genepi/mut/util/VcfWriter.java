@@ -29,11 +29,11 @@ import htsjdk.variant.vcf.VCFHeaderVersion;
 
 public class VcfWriter {
 
-	public void createVCF(String in, String out, String reference, String chromosome, int length) {
+	public void createVCF(String in, String out, String reference, String chromosome, int length, String command) {
 
 		MutationServerReader reader = new MutationServerReader(in);
 
-		VCFHeader header = generateHeader(chromosome, length);
+		VCFHeader header = generateHeader(chromosome, length, command);
 
 		String fasta = ReferenceUtil.readInReference(reference);
 
@@ -79,7 +79,6 @@ public class VcfWriter {
 
 					} else if (variant.getType() == 2) {
 
-						char ref;
 						Allele genotypeAllele1;
 						Allele genotypeAllele2;
 
@@ -89,16 +88,14 @@ public class VcfWriter {
 							genotypeAllele2 = Allele.create(variant.getMinor() + "", false);
 
 						} else {
-							genotypeAllele2 = Allele.create(variant.getMajor() + "", false);
-
+							genotypeAllele1 = Allele.create(variant.getMajor() + "", false);
 							// REF: C; MAJOR: A; MINOR:T
 							if (variant.getMinor() != variant.getRef()) {
-								genotypeAllele1 = Allele.create(variant.getMinor() + "", false);
+								genotypeAllele2 = Allele.create(variant.getMinor() + "", false);
 								// new allele found, add to alleles
-								alleles.add(genotypeAllele1);
+								alleles.add(genotypeAllele2);
 							} else {
-								ref = variant.getMinor();
-								genotypeAllele1 = Allele.create(ref + "", true);
+								genotypeAllele2 = Allele.create(variant.getMinor() + "", true);
 							}
 						}
 
@@ -106,6 +103,12 @@ public class VcfWriter {
 								Arrays.asList(genotypeAllele1, genotypeAllele2));
 						gb.DP(variant.getCoverage());
 						gb.attribute("HP", variant.getLevel());
+
+						if (variant.getLevel() == variant.getMajorLevel()) {
+							gb.attribute("HP1", variant.getMinorLevel());
+						} else {
+							gb.attribute("HP1", variant.getMajorLevel());
+						}
 						genotypes.add(gb.make());
 
 					}
@@ -126,7 +129,7 @@ public class VcfWriter {
 		vcfWriter.close();
 	}
 
-	private VCFHeader generateHeader(String chromosome, int length) {
+	private VCFHeader generateHeader(String chromosome, int length, String command) {
 
 		Set<VCFHeaderLine> headerLines = new HashSet<VCFHeaderLine>();
 
@@ -141,10 +144,15 @@ public class VcfWriter {
 
 		header.setSequenceDictionary(sequenceDict);
 
-		header.addMetaDataLine(new VCFFilterHeaderLine("PASS", "Variants passed mtDNA-Server"));
+		header.addMetaDataLine(new VCFHeaderLine("Mutserve", command));
 
-		header.addMetaDataLine(
-				new VCFFormatHeaderLine("HP", 1, VCFHeaderLineType.Float, "Inferred Heteroplasmy Frequency"));
+		header.addMetaDataLine(new VCFFilterHeaderLine("PASS", "Variants passed Mutserve"));
+
+		header.addMetaDataLine(new VCFFormatHeaderLine("HP", 1, VCFHeaderLineType.Float,
+				"Inferred Heteroplasmy Frequency of top (non-reference) allele"));
+
+		header.addMetaDataLine(new VCFFormatHeaderLine("HP1", 1, VCFHeaderLineType.Float,
+				"Inferred Heteroplasmy Frequency of reference or second allele)"));
 
 		header.addMetaDataLine(new VCFFormatHeaderLine("DP", 1, VCFHeaderLineType.Integer, "Read Depth"));
 

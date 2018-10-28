@@ -22,7 +22,7 @@ public class VcfWriterTest {
 		String in = "test-data/results/variantsLocal1000G";
 		String out = "test-data/results/variantsLocal1000G.vcf";
 		VcfWriter writer = new VcfWriter();
-		writer.createVCF(in, out, "test-data/mtdna/mixtures/reference/rCRS.fasta", "chrM", 16569);
+		writer.createVCF(in, out, "test-data/mtdna/mixtures/reference/rCRS.fasta", "chrM", 16569, "testcommand");
 
 		VCFFileReader reader = new VCFFileReader(new File(out), false);
 		MutationServerReader readerServer = new MutationServerReader(in);

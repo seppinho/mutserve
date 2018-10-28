@@ -10,8 +10,9 @@ public class Sample {
 	private int amountHomoplasmies;
 	private int amountVariants;
 	private int amountHeteroplasmies;
-	private float totalCoverage = 0;
-	private float countHeteroplasmyLevel = 0;
+	boolean chip;
+	private float sumCoverage = 0;
+	private float sumHeteroplasmyLevel = 0;
 
 	public Sample() {
 		variants = new HashMap<Integer, Variant>();
@@ -24,7 +25,7 @@ public class Sample {
 	public Variant getVariant(int pos) {
 		return variants.get(pos);
 	}
-	
+
 	public String getId() {
 		return id;
 	}
@@ -34,10 +35,19 @@ public class Sample {
 	}
 
 	public void addVariant(Variant var) {
+
 		variants.put(var.getPos(), var);
+
+		this.updateCount(var.getType());
+
+		if (var.getType() == 2) {
+			this.updateHetLevels(var.getLevel());
+		}
+
+		this.sumCoverage(var.getCoverage());
 	}
 
-	public void updateVariantCount(int type) {
+	private void updateCount(int type) {
 
 		amountVariants += 1;
 
@@ -50,12 +60,12 @@ public class Sample {
 		}
 	}
 
-	public void updateCoverage(int coverage) {
-		totalCoverage += coverage;
+	private void sumCoverage(int coverage) {
+		sumCoverage += coverage;
 	}
 
-	public void updateHetLevels(double level) {
-		countHeteroplasmyLevel += level;
+	private void updateHetLevels(double level) {
+		sumHeteroplasmyLevel += level;
 	}
 
 	public int getAmountHomoplasmies() {
@@ -82,20 +92,27 @@ public class Sample {
 		this.amountHeteroplasmies = amountHeteroplasmies;
 	}
 
-	public float getTotalCoverage() {
-		return totalCoverage;
+	public float getSumCoverage() {
+		return sumCoverage;
 	}
 
-	public void setTotalCoverage(float totalCoverage) {
-		this.totalCoverage = totalCoverage;
+	public void setSumCoverage(float totalCoverage) {
+		this.sumCoverage = totalCoverage;
 	}
 
-	public float getCountHeteroplasmyLevel() {
-		return countHeteroplasmyLevel;
+	public float getSumHeteroplasmyLevel() {
+		return sumHeteroplasmyLevel;
 	}
 
-	public void setCountHeteroplasmyLevel(float countHeteroplasmyLevel) {
-		this.countHeteroplasmyLevel = countHeteroplasmyLevel;
+	public void setSumHeteroplasmyLevel(float countHeteroplasmyLevel) {
+		this.sumHeteroplasmyLevel = countHeteroplasmyLevel;
 	}
 
+	public boolean isChip() {
+		return chip;
+	}
+
+	public void setChip(boolean chip) {
+		this.chip = chip;
+	}
 }

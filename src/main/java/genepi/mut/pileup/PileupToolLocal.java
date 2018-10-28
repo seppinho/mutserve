@@ -26,10 +26,12 @@ public class PileupToolLocal extends Tool {
 
 	String version = "v1.1.10";
 	String mode = "mtdna";
+	String command; 
 
 	public PileupToolLocal(String[] args) {
 		super(args);
-		System.out.println("Command " + Arrays.toString(args));
+		command = Arrays.toString(args);
+		System.out.println("Command " + command);
 	}
 
 	@Override
@@ -231,7 +233,7 @@ public class PileupToolLocal extends Tool {
 				VcfWriter writer = new VcfWriter();
 				String outVar = FileUtil.path(output, "variants.txt");
 				String outVcfString = FileUtil.path(output, "variants.vcf");
-				writer.createVCF(outVar, outVcfString, refPath, "chrM", 16569);
+				writer.createVCF(outVar, outVcfString, refPath, "chrM", 16569, version + ";" + command);
 			}
 
 		} catch (IOException e) {
@@ -399,7 +401,7 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "test-data/mtdna/mixtures/input";
+		String input = "test-data/mtdna/bam/input";
 		String output = "test-data/";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
