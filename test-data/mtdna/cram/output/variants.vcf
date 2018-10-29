@@ -1,0 +1,77 @@
+##fileformat=VCFv4.2
+##FILTER=<ID=PASS,Description="Variants passed Mutserve">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=HP,Number=1,Type=Float,Description="Inferred Heteroplasmy Frequency of top (non-reference) allele">
+##FORMAT=<ID=HP1,Number=1,Type=Float,Description="Inferred Heteroplasmy Frequency of reference or second allele)">
+##Mutserve=v1.1.10;[--input, test-data/mtdna/cram/input, --reference, test-data/mtdna/bam/reference/rCRS.fasta, --output, test-data/, --level, 0.01, --writeVcf]
+##contig=<ID=chrM,length=16569>
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	test.cram	test1.cram
+chrM	73	.	A	G	.	PASS	.	GT:DP	1:1106	1:167
+chrM	152	.	T	C	.	PASS	.	GT:DP:HP:HP1	0	1/0:244:0.980:0.020
+chrM	182	.	C	T	.	PASS	.	GT:DP:HP:HP1	0	0/1:247:0.024:0.972
+chrM	195	.	T	C	.	PASS	.	GT:DP:HP:HP1	0	0/1:243:0.029:0.971
+chrM	228	.	G	A	.	PASS	.	GT:DP:HP:HP1	0	1/0:206:0.961:0.039
+chrM	263	.	A	G	.	PASS	.	GT:DP	1:998	1:173
+chrM	417	.	G	A	.	PASS	.	GT:DP	1:1191	0
+chrM	489	.	T	C	.	PASS	.	GT:DP	1:1105	0
+chrM	513	.	G	A	.	PASS	.	GT:DP:HP:HP1	0/1:1076:0.045:0.954	0
+chrM	750	.	A	G	.	PASS	.	GT:DP	1:1167	1:232
+chrM	1438	.	A	G	.	PASS	.	GT:DP	1:1387	1:288
+chrM	2089	.	T	C	.	PASS	.	GT:DP:HP:HP1	0/1:1596:0.063:0.936	0
+chrM	2706	.	A	G	.	PASS	.	GT:DP	0	1:233
+chrM	3107	.	N	C,T	.	PASS	.	GT:DP:HP:HP1	2/1:34:0.706:0.265	0
+chrM	3308	.	T	C	.	PASS	.	GT:DP:HP:HP1	0	0/1:320:0.016:0.984
+chrM	3483	.	G	A	.	PASS	.	GT:DP	1:859	0
+chrM	4386	.	T	C	.	PASS	.	GT:DP:HP:HP1	0/1:534:0.047:0.953	0
+chrM	4769	.	A	G	.	PASS	.	GT:DP	1:410	1:64
+chrM	5894	.	A	G	.	PASS	.	GT:DP	0	1:168
+chrM	7028	.	C	T	.	PASS	.	GT:DP	1:676	1:127
+chrM	7897	.	G	A	.	PASS	.	GT:DP	0	1:304
+chrM	8010	.	T	C	.	PASS	.	GT:DP:HP:HP1	0/1:1135:0.149:0.851	0
+chrM	8149	.	A	G	.	PASS	.	GT:DP	1:1397	0
+chrM	8188	.	A	G	.	PASS	.	GT:DP	1:1397	0
+chrM	8701	.	A	G	.	PASS	.	GT:DP:HP:HP1	1:1395	0/1:323:0.019:0.981
+chrM	8731	.	T	C	.	PASS	.	GT:DP:HP:HP1	0/1:1307:0.082:0.917	0
+chrM	8860	.	A	G	.	PASS	.	GT:DP	1:271	1:93
+chrM	9438	.	G	A	.	PASS	.	GT:DP	1:1457	0
+chrM	9540	.	T	C	.	PASS	.	GT:DP:HP:HP1	1:1465	0/1:297:0.030:0.970
+chrM	9949	.	T	C	.	PASS	.	GT:DP:HP:HP1	0/1:1594:0.041:0.959	0
+chrM	10295	.	A	G	.	PASS	.	GT:DP	1:1241	0
+chrM	10398	.	A	G	.	PASS	.	GT:DP:HP:HP1	1:1530	0/1:301:0.030:0.970
+chrM	10400	.	C	T	.	PASS	.	GT:DP	1:1531	0
+chrM	10873	.	T	C	.	PASS	.	GT:DP:HP:HP1	1:1682	0/1:293:0.027:0.973
+chrM	11075	.	T	C	.	PASS	.	GT:DP	0	1:277
+chrM	11719	.	G	A	.	PASS	.	GT:DP	1:1410	1:300
+chrM	11899	.	T	C	.	PASS	.	GT:DP	1:1399	0
+chrM	12133	.	C	T	.	PASS	.	GT:DP	0	1:293
+chrM	12279	.	A	G	.	PASS	.	GT:DP	1:1594	0
+chrM	12285	.	T	C	.	PASS	.	GT:DP	0	1:285
+chrM	12684	.	G	A	.	PASS	.	GT:DP:HP:HP1	0	0/1:303:0.020:0.980
+chrM	12705	.	C	T	.	PASS	.	GT:DP:HP:HP1	1:1476	0/1:326:0.046:0.954
+chrM	13105	.	A	G	.	PASS	.	GT:DP:HP:HP1	0	0/1:289:0.021:0.979
+chrM	13650	.	C	T	.	PASS	.	GT:DP:HP:HP1	0	0/1:273:0.037:0.963
+chrM	14058	.	C	T	.	PASS	.	GT:DP:HP:HP1	0	1/0:301:0.970:0.030
+chrM	14766	.	C	T	.	PASS	.	GT:DP	1:1707	1:304
+chrM	14783	.	T	C	.	PASS	.	GT:DP	1:1599	0
+chrM	15025	.	C	T	.	PASS	.	GT:DP	1:1437	0
+chrM	15043	.	G	A	.	PASS	.	GT:DP	1:1432	0
+chrM	15067	.	T	C	.	PASS	.	GT:DP	0	1:269
+chrM	15229	.	T	C	.	PASS	.	GT:DP	1:1401	0
+chrM	15301	.	G	A	.	PASS	.	GT:DP	1:1181	0
+chrM	15326	.	A	G	.	PASS	.	GT:DP	1:1357	1:261
+chrM	15355	.	G	A	.	PASS	.	GT:DP	0	1:291
+chrM	16126	.	T	C	.	PASS	.	GT:DP	1:1444	0
+chrM	16129	.	G	A	.	PASS	.	GT:DP:HP:HP1	0	1/0:291:0.979:0.021
+chrM	16189	.	T	C	.	PASS	.	GT:DP	1:878	0
+chrM	16209	.	T	C	.	PASS	.	GT:DP	1:1025	0
+chrM	16213	.	G	A	.	PASS	.	GT:DP:HP:HP1	0	1/0:262:0.973:0.027
+chrM	16220	.	A	G	.	PASS	.	GT:DP	1:1020	0
+chrM	16223	.	C	T	.	PASS	.	GT:DP	1:1060	0
+chrM	16270	.	C	G	.	PASS	.	GT:DP	1:1296	0
+chrM	16278	.	C	T	.	PASS	.	GT:DP:HP:HP1	0	0/1:304:0.020:0.977
+chrM	16311	.	T	C	.	PASS	.	GT:DP:HP:HP1	1:1289	0/1:304:0.016:0.980
+chrM	16320	.	C	T	.	PASS	.	GT:DP:HP:HP1	0	1/0:281:0.947:0.053
+chrM	16362	.	T	C	.	PASS	.	GT:DP:HP:HP1	0	1/0:292:0.973:0.027
+chrM	16368	.	T	C	.	PASS	.	GT:DP:HP:HP1	0	1/0:313:0.949:0.051
+chrM	16519	.	T	C	.	PASS	.	GT:DP	1:1067	1:223
