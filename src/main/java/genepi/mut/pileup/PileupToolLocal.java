@@ -26,7 +26,7 @@ public class PileupToolLocal extends Tool {
 
 	String version = "v1.1.10";
 	String mode = "mtdna";
-	String command; 
+	String command;
 
 	public PileupToolLocal(String[] args) {
 		super(args);
@@ -401,7 +401,7 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "test-data/mtdna/bam/input";
+		String input = "test-data/mtdna/cram/input";
 		String output = "test-data/";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
