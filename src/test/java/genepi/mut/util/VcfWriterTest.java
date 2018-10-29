@@ -16,7 +16,7 @@ import htsjdk.variant.vcf.VCFFileReader;
 public class VcfWriterTest {
 
 	@Test
-	public void compareOneCramSampleTxtVsVcf() {
+	public void compareOneCramSampleTxtVsVcfTest() {
 		String in = "test-data/results/variantsLocal1000G";
 		String out = "test-data/results/variantsLocal1000G.vcf";
 		VcfWriter writer = new VcfWriter();
@@ -71,7 +71,7 @@ public class VcfWriterTest {
 	}
 
 	@Test
-	public void compareTwoCramSampleTxtVsVcf() {
+	public void compareTwoCramSampleTxtVsVcfTest() {
 		String in = "test-data/mtdna/cram/output/variants.txt";
 		String vcf = "test-data/mtdna/cram/output/variants.vcf";
 		VcfWriter writer = new VcfWriter();

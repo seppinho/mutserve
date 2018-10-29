@@ -253,8 +253,6 @@ public class PileupToolLocal extends Tool {
 		final SamReader reader = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT)
 				.open(file);
 
-		System.out.println("Processing: " + file.getAbsolutePath());
-
 		SAMRecordIterator fileIterator = reader.iterator();
 
 		while (fileIterator.hasNext()) {
@@ -401,7 +399,7 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "test-data/mtdna/cram/input";
+		String input = "test-data/mtdna/mixtures/input";
 		String output = "test-data/";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
