@@ -1,4 +1,5 @@
 package genepi.mut.util;
+
 import java.io.File;
 import java.util.HashMap;
 
@@ -35,17 +36,30 @@ public class MutationServerReader {
 				sample = new Sample();
 			}
 
+			double majorLevel = 0;
+			double minorLevel = 0;
+			int coverage = -1;
 			int pos = reader.getInteger("Pos");
 			char ref = reader.getString("Ref").charAt(0);
 			char var = reader.getString("Variant").charAt(0);
 			double level = reader.getDouble("VariantLevel");
 			char major = reader.getString("MajorBase").charAt(0);
 			char minor = reader.getString("MinorBase").charAt(0);
-			double majorLevel = Double.valueOf(reader.getString("MajorLevel"));
-			double minorLevel = Double.valueOf(reader.getString("MinorLevel"));
-			int coverage = reader.getInteger("Coverage");
-			int type = reader.getInteger("Type");
 
+			if (reader.hasColumn("MajorLevel")) {
+				majorLevel = Double.valueOf(reader.getString("MajorLevel"));
+			}
+
+			if (reader.hasColumn("MinorLevel")) {
+				minorLevel = Double.valueOf(reader.getString("MinorLevel"));
+			}
+
+			if (reader.hasColumn("Coverage")) {
+				coverage = reader.getInteger("Coverage");
+			}
+
+			int type = reader.getInteger("Type");
+			
 			sample.setId(id);
 
 			if (type == 2 && minorLevel < requiredHetLevel) {
