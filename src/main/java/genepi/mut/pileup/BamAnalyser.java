@@ -236,7 +236,7 @@ public class BamAnalyser {
 
 			Integer currentReferencePos = samRecord.getAlignmentStart();
 
-			int currentPosForIns = 0;
+			//int currentPosForIns = 0;
 
 			for (CigarElement cigarElement : samRecord.getCigar().getCigarElements()) {
 
@@ -275,14 +275,14 @@ public class BamAnalyser {
 
 				}
 
-				// update read position (not included in consumesReferenceBases)
+				/*// update read position (not included in consumesReferenceBases)
 				if (cigarElement.getOperator() == CigarOperator.S) {
 					
 					currentPosForIns = currentPosForIns + cigarElement.getLength();
 				
-				}
+				}*/
 
-				if (cigarElement.getOperator() == CigarOperator.I) {
+				/*if (cigarElement.getOperator() == CigarOperator.I) {
 
 					Integer cigarElementStart = currentReferencePos;
 
@@ -366,16 +366,16 @@ public class BamAnalyser {
 					// update read position (not included in consumesReferenceBases)
 					currentPosForIns = currentPosForIns + cigarElement.getLength();
 					
-				}
+				}*/
 
 				// only M and D operators consume bases
 				if (cigarElement.getOperator().consumesReferenceBases()) {
 					currentReferencePos = currentReferencePos + cigarElement.getLength();
 
-					// don't increase D, since not included in base string!
+					/*// don't increase D, since not included in base string!
 					if (cigarElement.getOperator() != CigarOperator.D) {
 						currentPosForIns = currentPosForIns + cigarElement.getLength();
-					}
+					}*/
 				}
 			}
 

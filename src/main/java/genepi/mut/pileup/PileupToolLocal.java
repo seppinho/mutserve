@@ -85,7 +85,7 @@ public class PileupToolLocal extends Tool {
 
 		int mapQ;
 		if (getValue("mapQ") == null) {
-			mapQ = 30;
+			mapQ = 20;
 		} else {
 			mapQ = Integer.valueOf((String) getValue("mapQ"));
 		}
@@ -404,7 +404,7 @@ public class PileupToolLocal extends Tool {
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta, "--output",
-				output, "--level", "0.01", "--writeVcf" });
+				output, "--level", "0.01", "--writeVcf","--indel" });
 
 		pileup.start();
 
