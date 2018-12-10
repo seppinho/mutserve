@@ -232,7 +232,7 @@ public class PileupToolLocal extends Tool {
 			if (vcf) {
 				VcfWriter writer = new VcfWriter();
 				String outVar = FileUtil.path(output, "variants.txt");
-				String outVcfString = FileUtil.path(output, "variants.vcf");
+				String outVcfString = FileUtil.path(output, "variants.vcf.gz");
 				writer.createVCF(outVar, outVcfString, refPath, "chrM", 16569, version + ";" + command);
 			}
 
