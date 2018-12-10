@@ -102,13 +102,18 @@ public class VcfWriter {
 						final GenotypeBuilder gb = new GenotypeBuilder(sample.getId(),
 								Arrays.asList(genotypeAllele1, genotypeAllele2));
 						gb.DP(variant.getCoverage());
-						gb.attribute("HP", variant.getLevel());
 
-						if (variant.getLevel() == variant.getMajorLevel()) {
-							gb.attribute("HP1", variant.getMinorLevel());
-						} else {
-							gb.attribute("HP1", variant.getMajorLevel());
+						String alleleFreq = variant.getLevel() + "";
+
+						if (variant.getLevel() == variant.getMajorLevel() && variant.getMinor() != variant.getRef()) {
+							alleleFreq += "," + variant.getMinorLevel();
+						} else if (variant.getLevel() == variant.getMinorLevel()
+								&& variant.getMajor() != variant.getRef()) {
+							alleleFreq += "," + variant.getMajorLevel();
 						}
+
+						gb.attribute("AF", alleleFreq);
+
 						genotypes.add(gb.make());
 
 					}
@@ -146,13 +151,10 @@ public class VcfWriter {
 
 		header.addMetaDataLine(new VCFHeaderLine("Mutserve", command));
 
-		header.addMetaDataLine(new VCFFilterHeaderLine("PASS", "Variants passed Mutserve"));
+		header.addMetaDataLine(new VCFFilterHeaderLine("PASS", "Variants passed mtDNA-Server"));
 
-		header.addMetaDataLine(new VCFFormatHeaderLine("HP", 1, VCFHeaderLineType.Float,
-				"Inferred Heteroplasmy Frequency of top (non-reference) allele"));
-
-		header.addMetaDataLine(new VCFFormatHeaderLine("HP1", 1, VCFHeaderLineType.Float,
-				"Inferred Heteroplasmy Frequency of reference or second allele)"));
+		header.addMetaDataLine(new VCFFormatHeaderLine("AF", 1, VCFHeaderLineType.String,
+				"Inferred Allele Frequency of top (non-reference) allele"));
 
 		header.addMetaDataLine(new VCFFormatHeaderLine("DP", 1, VCFHeaderLineType.Integer, "Read Depth"));
 
