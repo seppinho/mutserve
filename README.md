@@ -30,7 +30,7 @@ java -jar mutation-server-1.1.11.jar  analyse-local --input <file/folder> --outp
 We also export a TAB-delimited file including *ID, Position, Reference, Variant & VariantLevel*. Please note that the *VariantLevel* always reports the non-reference variant level. The output file also includes the **most** and **second most base** at a specific position (MajorBase + MajorLevel, MinorBase+MinorLevel). The reported variant can be the major or the minor component. The last column includes the type of the variant (1: Homoplasmy, 2: Heteroplasmy or Low-Level Variant, 3: Low-Level Deletion, 4: Deletion, 5: Insertion). See [here](https://raw.githubusercontent.com/seppinho/mutation-server/master/test-data/results/variantsLocal1000G) for an example. 
 
 ### VCF
-If you want a **VCF** file as an output, please add ``--writeVCF``. Heteroplasmies are coded as 1/0 genotypes, the heteroplasmy level is included in the FORMAT using the **HP** attribute. Please not that indels are currently not included in the VCF.  
+If you want a **VCF** file as an output, please add ``--writeVCF``. Heteroplasmies are coded as 1/0 genotypes, the heteroplasmy level is included in the FORMAT using the **AF** attribute (allele frequency) of the major non-reference allele. Please not that indels are currently not included in the VCF.  
 
 ## Performance - Sensitivity and Specificity
 
