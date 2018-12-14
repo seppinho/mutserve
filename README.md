@@ -19,9 +19,9 @@ java -jar mutation-server-1.1.11.jar  analyse-local --input <file/folder> --outp
 | MappingQuality     | 20 | `--mapQ`|
 | BaseQuality     | 20 | `--baseQ`|
 | AlignmentQuality     | 30 | `--alignQ`|
-| noBAQ     | - | `--noBAQ`|
-| Write VCF     | - | `--writeVcf`|
-| Write raw     | - | `--writeRaw`|
+| noBAQ     | false | `--noBAQ`|
+| Write VCF     | false | `--writeVcf`|
+| Write raw     | false | `--writeRaw`|
 
 
 ## Output Formats
