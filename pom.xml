@@ -84,7 +84,7 @@
 									<include>au.com.bytecode:opencsv:*:*</include>
 									<include>org.apache.commons:commons-math3:*:*</include>
 									<include>commons-lang:commons-lang:*:*</include>
-									
+
 								</includes>
 							</artifactSet>
 						</configuration>
@@ -290,15 +290,12 @@
 			<version>3.6.1</version>
 		</dependency>
 
-<!-- https://mvnrepository.com/artifact/commons-lang/commons-lang -->
-<dependency>
-    <groupId>commons-lang</groupId>
-    <artifactId>commons-lang</artifactId>
-    <version>2.6</version>
-</dependency>
-
-
-
+		<!-- https://mvnrepository.com/artifact/commons-lang/commons-lang -->
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
 	</dependencies>
 
 </project>

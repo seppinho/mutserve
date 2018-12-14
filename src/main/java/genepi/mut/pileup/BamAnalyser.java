@@ -228,7 +228,7 @@ public class BamAnalyser {
 						}
 					}
 
-				}  // end base quality
+				} // end base quality
 			}
 		}
 
@@ -236,7 +236,7 @@ public class BamAnalyser {
 
 			Integer currentReferencePos = samRecord.getAlignmentStart();
 
-			//int currentPosForIns = 0;
+			int sequencePos = 0;
 
 			for (CigarElement cigarElement : samRecord.getCigar().getCigarElements()) {
 
@@ -275,16 +275,10 @@ public class BamAnalyser {
 
 				}
 
-				/*// update read position (not included in consumesReferenceBases)
-				if (cigarElement.getOperator() == CigarOperator.S) {
-					
-					currentPosForIns = currentPosForIns + cigarElement.getLength();
-				
-				}*/
+				if (cigarElement.getOperator() == CigarOperator.I) {
 
-				/*if (cigarElement.getOperator() == CigarOperator.I) {
-
-					Integer cigarElementStart = currentReferencePos;
+					// returns e.g. 310 but Insertion need to be added to last pos (so 309)
+					int currentReferencePosIns = currentReferencePos - 1;
 
 					int i = 1;
 
@@ -292,14 +286,11 @@ public class BamAnalyser {
 
 					while (i <= length) {
 
-						// -1 since array starts at 0
-						int arrayPos = currentPosForIns + i - 1;
+						char insBase = samRecord.getReadString().charAt(sequencePos + i - 1);
 
-						char insBase = samRecord.getReadString().charAt(arrayPos);
+						byte quality = samRecord.getBaseQualities()[sequencePos + i - 1];
 
-						byte quality = samRecord.getBaseQualities()[arrayPos];
-
-						String key = filename + ":" + cigarElementStart + "." + i;
+						String key = filename + ":" + currentReferencePosIns + "." + i;
 
 						BasePosition basePos = counts.get(key);
 
@@ -362,20 +353,16 @@ public class BamAnalyser {
 							}
 						}
 					}
-					
-					// update read position (not included in consumesReferenceBases)
-					currentPosForIns = currentPosForIns + cigarElement.getLength();
-					
-				}*/
+				}
 
 				// only M and D operators consume bases
 				if (cigarElement.getOperator().consumesReferenceBases()) {
 					currentReferencePos = currentReferencePos + cigarElement.getLength();
+				}
 
-					/*// don't increase D, since not included in base string!
-					if (cigarElement.getOperator() != CigarOperator.D) {
-						currentPosForIns = currentPosForIns + cigarElement.getLength();
-					}*/
+				// give back current readPos, only increase if read bases are consumed!
+				if (cigarElement.getOperator().consumesReadBases()) {
+					sequencePos = sequencePos + cigarElement.getLength();
 				}
 			}
 

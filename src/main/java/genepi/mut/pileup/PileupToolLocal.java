@@ -399,12 +399,12 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "test-data/mtdna/mixtures/input";
+		String input = "test-data/mtdna/bam/input";
 		String output = "test-data/";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta, "--output",
-				output, "--level", "0.01", "--writeVcf","--indel" });
+				output, "--level", "0.01","--indel"});
 
 		pileup.start();
 
