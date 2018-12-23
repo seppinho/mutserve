@@ -41,7 +41,7 @@ public class VariantCaller {
 
 		if (line.getTopBaseFWD() == line.getTopBaseREV() && line.getTopBaseFWD() != '-') {
 
-			if (line.getTopBaseFWD() != line.getRef() && ((line.getCovFWD() + line.getCovREV() / 2) >= 50)) {
+			if (line.getTopBaseFWD() != line.getRef() && ((line.getCovFWD() + line.getCovREV() / 2) >= 30)) {
 
 				if (line.getTopBaseFWD() == 'D') {
 					type = DELETION;
