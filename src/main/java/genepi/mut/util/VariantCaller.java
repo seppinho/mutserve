@@ -170,12 +170,12 @@ public class VariantCaller {
 	}
 
 	private static boolean checkAlleleCoverage(VariantLine line, double minorPercentFWD, double minorPercentREV) {
-		if (line.getTopBasePercentsREV() * line.getCovREV() < 3
-				|| (line.getTopBasePercentsFWD() * line.getCovFWD()) < 3) {
+		if (line.getTopBasePercentsREV() * line.getCovREV() <= 5
+				|| (line.getTopBasePercentsFWD() * line.getCovFWD()) <= 5) {
 			return false;
 		}
 
-		if ((minorPercentREV * line.getCovREV() < 3) || (line.getTopBasePercentsFWD() * line.getCovFWD()) < 3) {
+		if ((minorPercentREV * line.getCovREV() <= 5) || (line.getTopBasePercentsFWD() * line.getCovFWD()) <= 5) {
 			return false;
 		}
 
