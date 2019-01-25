@@ -24,7 +24,7 @@ import htsjdk.samtools.ValidationStringency;
 
 public class PileupToolLocal extends Tool {
 
-	String version = "v1.1.11";
+	String version = "v1.1.13";
 	String mode = "mtdna";
 	String command;
 
@@ -44,10 +44,8 @@ public class PileupToolLocal extends Tool {
 		addOptionalParameter("baseQ", "base quality", Tool.STRING);
 		addOptionalParameter("mapQ", "mapping quality", Tool.STRING);
 		addOptionalParameter("alignQ", "alignment quality", Tool.STRING);
-		addFlag("writeVcf", "write VCF file");
 		addFlag("noBaq", "turn off BAQ");
 		addFlag("indel", "Call indels");
-		addFlag("writeRaw", "Write raw output");
 	}
 
 	@Override
@@ -68,10 +66,6 @@ public class PileupToolLocal extends Tool {
 		boolean baq = !isFlagSet("noBaq");
 
 		boolean indel = isFlagSet("indel");
-
-		boolean vcf = isFlagSet("writeVcf");
-
-		boolean writeRawOutput = isFlagSet("writeRaw");
 
 		double level = (double) getValue("level");
 
@@ -124,25 +118,18 @@ public class PileupToolLocal extends Tool {
 						return name.toLowerCase().endsWith(".bam") || name.toLowerCase().endsWith(".cram");
 					}
 				});
-
-				if (files.length == 0) {
-
-					System.out.println("no BAM files found. Please check input folder " + folderIn.getAbsolutePath());
-
-					return 1;
-				}
 			}
 		} else {
 			System.out.println("Please check input path!");
-
 			return 1;
 		}
 
-		try {
-			File out = new File(output);
-			if (!out.isDirectory()) {
-				System.out.println("Please specify an existing output folder: " + out.getAbsolutePath());
+		if (files.length > 0) {
 
+			File out = new File(output);
+
+			if (out.isDirectory()) {
+				System.out.println("Error. Please specify an output file not a directory");
 				return 1;
 			}
 
@@ -152,101 +139,96 @@ public class PileupToolLocal extends Tool {
 				out.getParentFile().mkdirs();
 			}
 
-			String outVar = FileUtil.path(output, "variants.txt");
-			writerVar = new LineWriter(new File(outVar).getAbsolutePath());
-			writerVar.write(BamAnalyser.headerVariants);
+			String outVar = FileUtil.path(output + ".txt");
 
-			if (writeRawOutput) {
-				String outRawString = FileUtil.path(output, "raw.txt");
+			try {
+				writerVar = new LineWriter(new File(outVar).getAbsolutePath());
+				writerVar.write(BamAnalyser.headerVariants);
+
+				String outRawString = FileUtil.path(output + ".raw.txt");
 				writerRaw = new LineWriter(new File(outRawString).getAbsolutePath());
 				writerRaw.write(BamAnalyser.headerRaw);
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+			long start = System.currentTimeMillis();
 
-		long start = System.currentTimeMillis();
+			System.out.println("Parameters:");
+			System.out.println("Input: " + new File(input).getAbsolutePath());
+			System.out.println("Output: " + new File(output).getAbsolutePath());
+			System.out.println("Detection limit: " + level);
+			System.out.println("Base Quality: " + baseQ);
+			System.out.println("Map Quality: " + mapQ);
+			System.out.println("Alignment Quality: " + alignQ);
+			System.out.println("BAQ: " + baq);
+			System.out.println("Indel: " + indel);
+			System.out.println("");
 
-		System.out.println("Parameters:");
-		System.out.println("Input Folder: " + new File(input).getAbsolutePath());
-		System.out.println("Output Folder: " + new File(output).getAbsolutePath());
-		System.out.println("Detection limit: " + level);
-		System.out.println("Base Quality: " + baseQ);
-		System.out.println("Map Quality: " + mapQ);
-		System.out.println("Alignment Quality: " + alignQ);
-		System.out.println("BAQ: " + baq);
-		System.out.println("Indel: " + indel);
-		System.out.println("Write VCF: " + vcf);
-		System.out.println("Write Raw File: " + writeRawOutput);
-		System.out.println("");
+			for (File file : files) {
 
-		for (File file : files) {
+				Reference reference = ReferenceUtil.determineReference(file);
 
-			Reference reference = ReferenceUtil.determineReference(file);
+				if (reference == Reference.hg19) {
 
-			if (reference == Reference.hg19) {
+					System.out.println("File " + file.getName()
+							+ " excluded! File is aligned to Yoruba (Reference length 16571) and not rCRS. ");
 
-				System.out.println("File " + file.getName()
-						+ " excluded! File is aligned to Yoruba (Reference length 16571) and not rCRS. ");
+					continue;
 
-				continue;
-
-			}
-
-			else if (reference == Reference.rcrs || reference == Reference.precisionId) {
-
-				BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, baq, mode);
-
-				System.out.println("Processing: " + file.getName());
-				System.out.println("Detected reference: " + reference.toString());
-
-				try {
-
-					analyseReads(file, analyser, indel);
-
-					determineVariants(analyser, writerRaw, writerVar, level);
-
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return 1;
 				}
 
-			} else {
+				else if (reference == Reference.rcrs || reference == Reference.precisionId) {
 
-				System.out.println("File " + file.getName() + " excluded. Can not identify a valid reference length!");
-				continue;
+					BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, baq, mode);
+
+					System.out.println("Processing: " + file.getName());
+					System.out.println("Detected reference: " + reference.toString());
+
+					try {
+
+						analyseReads(file, analyser, indel);
+
+						determineVariants(analyser, writerRaw, writerVar, level);
+
+						writerVar.close();
+
+						if (writerRaw != null) {
+							writerRaw.close();
+						}
+
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						return 1;
+					}
+
+				} else {
+					System.out.println(
+							"File " + file.getName() + " excluded. Can not identify a valid reference length!");
+					continue;
+				}
 			}
-		}
 
-		try {
-
-			writerVar.close();
-
-			if (writerRaw != null) {
-				writerRaw.close();
-			}
-
-			if (vcf) {
+			if (output.endsWith("vcf.gz") || output.endsWith("vcf")) {
 				VcfWriter writer = new VcfWriter();
-				String outVar = FileUtil.path(output, "variants.txt");
-				String outVcfString = FileUtil.path(output, "variants.vcf.gz");
+				String outVcfString = FileUtil.path(output);
 				writer.createVCF(outVar, outVcfString, refPath, "chrM", 16569, version + ";" + command);
+				FileUtil.deleteFile(outVar);
 			}
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Time: " + (System.currentTimeMillis() - start) / 1000 + " sec");
+			return 0;
+
 		}
 
-		System.out.println("Time: " + (System.currentTimeMillis() - start) / 1000 + " sec");
 		return 0;
 	}
 
 	// mapper
-	private void analyseReads(File file, BamAnalyser analyser, boolean indelCalling) throws Exception, IOException {
+	private void analyseReads(File file, BamAnalyser analyser, boolean indelCalling) throws Exception {
 
 		// TODO double check if primary and secondary alignment is used for
 		// CNV-Server
@@ -399,12 +381,12 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "test-data/mtdna/bam/input";
-		String output = "test-data/";
+		String input = "/home/seb/Desktop/1396000685_S5_L001.sort.bam";
+		String filename = "test-data/test.vcf";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
-		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta, "--output",
-				output, "--level", "0.01","--indel", "--writeVcf"});
+		PileupToolLocal pileup = new PileupToolLocal(
+				new String[] { "--input", input, "--reference", fasta, "--output", filename, "--level", "0.01" });
 
 		pileup.start();
 
