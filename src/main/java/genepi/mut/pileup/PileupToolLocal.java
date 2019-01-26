@@ -193,12 +193,6 @@ public class PileupToolLocal extends Tool {
 
 						determineVariants(analyser, writerRaw, writerVar, level);
 
-						writerVar.close();
-
-						if (writerRaw != null) {
-							writerRaw.close();
-						}
-
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -210,6 +204,18 @@ public class PileupToolLocal extends Tool {
 							"File " + file.getName() + " excluded. Can not identify a valid reference length!");
 					continue;
 				}
+			}
+
+			try {
+				writerVar.close();
+
+				if (writerRaw != null) {
+					writerRaw.close();
+				}
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
 			if (output.endsWith("vcf.gz") || output.endsWith("vcf")) {
@@ -381,12 +387,12 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "/home/seb/Desktop/1396000685_S5_L001.sort.bam";
+		String input = "/data2/genepi/projects/inProgress/paternity-pnas/BAM";
 		String filename = "test-data/test.vcf";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
-		PileupToolLocal pileup = new PileupToolLocal(
-				new String[] { "--input", input, "--reference", fasta, "--output", filename, "--level", "0.01" });
+		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta, "--output",
+				filename, "--level", "0.01", "--noBaq" });
 
 		pileup.start();
 
