@@ -5,7 +5,9 @@ Mutserve is a library to detect heteroplasmic and homoplasmic sites in mtDNA dat
 It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability, mutserve is parallelized using Hadoop MapReduce but also available as a standalone tool.
 
 ## Standalone Usage
-You can run mutserve as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise) and no indels  (``--indel`` otherwise) are called. There is currently **no** normalization or realignment applied for indels. Please be aware that mutserve always reports the non-reference level as the heteroplasmy level (mtDNA-Server always reports the minor component!). 
+You can run mutserve as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise) and no indels  (``--indel`` otherwise) are called. There is currently **no** normalization or realignment applied for indels. 
+
+Please be aware that mutserve always reports the non-reference level as the heteroplasmy level, while mtDNA-Server always reports the minor component. 
 ```
 wget https://github.com/seppinho/mutation-server/releases/download/v1.1.11/mutation-server-1.1.11.jar
 
