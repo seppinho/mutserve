@@ -35,9 +35,9 @@ If you want a **VCF** file as an output, please add ``--writeVCF``. Heteroplasmi
 
 ## Performance - Sensitivity and Specificity
 
-If you have a mixture model generated, you can use mutation-server for checking precision, specificity and sensitivity. The expected mutations (homoplasmic and heteroplasmic) need to be provided as gold standard in form of a text file, with one column, containing the positions expected. The variant from *analyse-local* are used as input file and length needs to be specified (usually 16,569, but as there are different reference sequence, this can vary as well).
+If you have a mixture model generated, you can use mutserve for checking precision, specificity and sensitivity. The expected mutations (homoplasmic and heteroplasmic) need to be provided as gold standard in form of a text file, with one column, containing the positions expected. The variant from *analyse-local* are used as input file and length needs to be specified (usually 16,569, but as there are different reference sequence, this can vary as well).
 ```
-java -jar mutation-server-1.1.8.jar  performance --in <variantfile> --gold <expectedmutations> --length <size of reference>
+java -jar mutation-server-1.1.11.jar  performance --in <variantfile> --gold <expectedmutations> --length <size of reference>
 ```
 
 
@@ -45,6 +45,6 @@ java -jar mutation-server-1.1.8.jar  performance --in <variantfile> --gold <expe
 If you use this tool, please cite [this paper](http://nar.oxfordjournals.org/content/early/2016/04/15/nar.gkw247.full).
 
 ## Checkout and contribute
-* git clone https://github.com/seppinho/mutation-server
+* git clone https://github.com/seppinho/mutserve
 * Import Maven project into your favourite IDE
 * maven install
