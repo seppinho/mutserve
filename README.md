@@ -6,7 +6,7 @@ It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For s
 
 ## Standalone Usage
 You can run mutserve as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise) and no indels  (``--indel`` otherwise) are called. 
-**Note for indel**: There is currently **no** normalization or realignment applied for indels. 
+**Note for indel**: This feature is currently in beta, there is currently **no** normalization or realignment applied for indels. 
 
 Please be aware that mutserve always reports the non-reference level as the heteroplasmy level, while mtDNA-Server always reports the minor component. 
 ```
