@@ -19,7 +19,7 @@ To create a VCF file as an output simple specify `--output filename.vcf.gz`.
 
 ### Default Parameters
 
-| Parameter        | Value           | Command Line Option | 
+| Parameter        | Default Value           | Command Line Option | 
 | ------------- |:-------------:| :-------------:| 
 | InputFolder     | <folder> | `--input`|
 | Output File   | <filename> | `--output` |
