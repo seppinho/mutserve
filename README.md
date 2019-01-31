@@ -15,7 +15,7 @@ wget https://github.com/seppinho/mutserve/releases/download/v1.1.14/mutserve-1.1
 
 java -jar mutserve-1.1.14.jar  analyse-local --input <file/folder> --output <filename> --reference <fasta> --level 0.01
 ```
-To create a VCF file as an output simple specify `--output filename.vcf.gz`.
+To create a VCF file as an output simple specify `--output filename.vcf.gz`. Please use [this reference file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS.fasta) when using BAQ.
 
 ### Default Parameters
 
