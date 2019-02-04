@@ -37,7 +37,7 @@ By default (`--output filename` does not end with .vcf or .vcf.gz) we export a T
 ### VCF
 If you want a **VCF** file as an output, please specify `--output filename.vcf.gz`. Heteroplasmies are coded as 1/0 genotypes, the heteroplasmy level is included in the FORMAT using the **AF** attribute (allele frequency) of the first non-reference allele. Please note that indels are currently not included in the VCF.  This VCF file can be used as an input for https://github.com/seppinho/haplogrep-cmd.
 
-### Current Shortcomings
+## Current Shortcomings
 * We currently report homoplasmies only with a coverage of `(FWD/REV) > 30`. 
 * The **insertions/deletions calling** is currently in **beta**, there is currently **no** normalization or realignment applied for indel positions. 
 
