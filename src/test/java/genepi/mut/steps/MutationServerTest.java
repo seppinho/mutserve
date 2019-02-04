@@ -299,7 +299,7 @@ public class MutationServerTest {
 		context.setOutput("variantsHdfs", "variantsHdfs");
 		context.setOutput("variantsLocal", "test-data/tmp/variantsLocal1000G");
 		context.setOutput("baq", "true");
-		context.setOutput("callDel", "true");
+		context.setOutput("deletions", "true");
 		context.setOutput("level", "0.01");
 
 		result = pileUp.run(context);
@@ -331,7 +331,7 @@ public class MutationServerTest {
 		context.setOutput("variantsHdfs", "variantsHdfs");
 		context.setOutput("variantsLocal", "test-data/tmp/variantsLocal1000G");
 		context.setOutput("baq", "true");
-		context.setOutput("callDel", "false");
+		context.setOutput("deletions", "false");
 		context.setOutput("level", "0.01");
 
 		boolean result = pileUp.run(context);
@@ -386,7 +386,8 @@ public class MutationServerTest {
 		context.setOutput("variantsHdfs", "variantsHdfs");
 		context.setOutput("variantsLocal", "test-data/tmp/variantsLocal1000G");
 		context.setOutput("baq", "true");
-		context.setOutput("callDel", "true");
+		context.setOutput("deletions", "true");
+		context.setOutput("insertions", "true");
 		context.setOutput("level", "0.01");
 
 		boolean result = pileUp.run(context);
@@ -436,7 +437,8 @@ public class MutationServerTest {
 		context.setOutput("variantsHdfs", "variantsHdfs");
 		context.setOutput("variantsLocal", "test-data/tmp/variantsLocal1000G");
 		context.setOutput("baq", "false");
-		context.setOutput("callDel", "true");
+		context.setOutput("deletions", "true");
+		context.setOutput("insertions", "true");
 		context.setOutput("level", "0.01");
 
 		boolean result = pileUp.run(context);

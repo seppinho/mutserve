@@ -45,7 +45,8 @@ public class PileupToolLocal extends Tool {
 		addOptionalParameter("mapQ", "mapping quality", Tool.STRING);
 		addOptionalParameter("alignQ", "alignment quality", Tool.STRING);
 		addFlag("noBaq", "turn off BAQ");
-		addFlag("indel", "Call indels");
+		addFlag("deletions", "Call deletions");
+		addFlag("insertions", "Call insertions (beta)");
 	}
 
 	@Override
@@ -65,7 +66,9 @@ public class PileupToolLocal extends Tool {
 
 		boolean baq = !isFlagSet("noBaq");
 
-		boolean indel = isFlagSet("indel");
+		boolean deletions = isFlagSet("deletions");
+		
+		boolean insertions = isFlagSet("insertions");
 
 		double level = (double) getValue("level");
 
@@ -164,7 +167,8 @@ public class PileupToolLocal extends Tool {
 			System.out.println("Map Quality: " + mapQ);
 			System.out.println("Alignment Quality: " + alignQ);
 			System.out.println("BAQ: " + baq);
-			System.out.println("Indel: " + indel);
+			System.out.println("Deletions: " + deletions);
+			System.out.println("Insertions: " + insertions);
 			System.out.println("");
 
 			for (File file : files) {
@@ -189,7 +193,7 @@ public class PileupToolLocal extends Tool {
 
 					try {
 
-						analyseReads(file, analyser, indel);
+						analyseReads(file, analyser, deletions, insertions);
 
 						determineVariants(analyser, writerRaw, writerVar, level);
 
@@ -234,7 +238,7 @@ public class PileupToolLocal extends Tool {
 	}
 
 	// mapper
-	private void analyseReads(File file, BamAnalyser analyser, boolean indelCalling) throws Exception {
+	private void analyseReads(File file, BamAnalyser analyser, boolean deletions, boolean insertions) throws Exception {
 
 		// TODO double check if primary and secondary alignment is used for
 		// CNV-Server
@@ -247,7 +251,7 @@ public class PileupToolLocal extends Tool {
 
 			SAMRecord record = fileIterator.next();
 
-			analyser.analyseRead(record, indelCalling);
+			analyser.analyseRead(record, deletions, insertions);
 
 		}
 		reader.close();
@@ -387,8 +391,8 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "/data2/genepi/projects/inProgress/paternity-pnas/BAM";
-		String filename = "test-data/test.vcf";
+		String input = "/data2/genepi/projects/inProgress/paternity-pnas/bam-a-4-2-check/a-4-2-3.bam";
+		String filename = "test-data/bam-verify.vcf";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta, "--output",

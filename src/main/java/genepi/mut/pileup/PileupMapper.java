@@ -34,7 +34,9 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 
 	int alignQual;
 	
-	boolean indelCalling;
+	boolean deletions;
+	
+	boolean insertions;
 
 	protected void setup(Context context) throws IOException, InterruptedException {
 
@@ -72,7 +74,9 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 		analyser = new BamAnalyser(filename, fastaPath, baseQual, mapQual, alignQual, baq, version);
 		
 		//default is to ignore deletions
-		indelCalling = context.getConfiguration().getBoolean("callDel", false);
+		deletions = context.getConfiguration().getBoolean("deletions", false);
+		//default is to ignore deletions
+		insertions = context.getConfiguration().getBoolean("insertions", false);
 
 	}
 
@@ -106,7 +110,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 			countStats(context, value.get());
 					
 			//analyse SAM read			
-			analyser.analyseRead(value.get(), indelCalling);
+			analyser.analyseRead(value.get(), deletions, insertions);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -149,20 +153,6 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 
 		context.getCounter("mtdna", "UNFILTERED").increment(1);
 
-	}
-
-	// needed for hg19 reference
-	private int hg19Mapper(int pos) {
-
-		int updatedPos = 0;
-		if ((pos >= 315 && pos < 3107) || pos >= 16193) {
-			updatedPos = pos - 2;
-		} else if (pos >= 3107 && pos < 16193) {
-			updatedPos = pos - 1;
-		} else {
-			updatedPos = pos;
-		}
-		return updatedPos;
 	}
 
 }

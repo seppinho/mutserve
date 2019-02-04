@@ -2,18 +2,16 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/mtdnaserver.svg?style=social&label=Follow)](https://twitter.com/mtdnaserver)
 
 Mutserve is a library to detect heteroplasmic and homoplasmic sites in mtDNA data. 
-It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability, mutserve is parallelized using Hadoop MapReduce but also available as a standalone tool.
+It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability reasons, mutserve is parallelized using Hadoop MapReduce but also available as a standalone tool.
 
 ## Standalone Usage
 You can run mutserve as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise) and no indels  (``--indel`` otherwise) are called. 
 
-The **indel feature** is currently in **beta**, there is currently **no** normalization or realignment applied for indels. 
-
 **Please be aware** that mutserve always reports the non-reference level as the heteroplasmy level, while mtDNA-Server reports the minor component. 
 ```
-wget https://github.com/seppinho/mutserve/releases/download/v1.1.14/mutserve-1.1.14.jar
+wget https://github.com/seppinho/mutserve/releases/download/v1.1.15/mutserve-1.1.15.jar
 
-java -jar mutserve-1.1.14.jar  analyse-local --input <file/folder> --output <filename> --reference <fasta> --level 0.01
+java -jar mutserve-1.1.15.jar  analyse-local --input <file/folder> --output <filename> --reference <fasta> --level 0.01
 ```
 To create a VCF file as an output simple specify `--output filename.vcf.gz`. Please use [this reference file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS.fasta) when using BAQ.
 
@@ -22,12 +20,13 @@ To create a VCF file as an output simple specify `--output filename.vcf.gz`. Ple
 | Parameter        | Default Value           | Command Line Option | 
 | ------------- |:-------------:| :-------------:| 
 | InputFolder     | <folder> | `--input`|
-| Output File   | <filename> | `--output` |
+| Output File   | <filename> (supported: *.txt, *.vcf, *vcf.gz) | `--output` |
 | MappingQuality     | 20 | `--mapQ`|
 | BaseQuality     | 20 | `--baseQ`|
 | AlignmentQuality     | 30 | `--alignQ`|
 | noBAQ     | false | `--noBAQ`|
-| indel     | false | `--indel`|
+| deletions (beta)     | false | `--deletions`|
+| insertions (beta)     | false | `--insertions`|
 
 
 ## Output Formats
@@ -38,11 +37,16 @@ By default (`--output filename` does not end with .vcf or .vcf.gz) we export a T
 ### VCF
 If you want a **VCF** file as an output, please specify `--output filename.vcf.gz`. Heteroplasmies are coded as 1/0 genotypes, the heteroplasmy level is included in the FORMAT using the **AF** attribute (allele frequency) of the first non-reference allele. Please note that indels are currently not included in the VCF.  This VCF file can be used as an input for https://github.com/seppinho/haplogrep-cmd.
 
+### Current Shortcomings
+* We currently report homoplasmies only with a coverage of `(FWD/REV) > 30`. 
+* The **insertions/deletions calling** is currently in **beta**, there is currently **no** normalization or realignment applied for indel positions. 
+
+
 ## Performance - Sensitivity and Specificity
 
 If you have a mixture model generated, you can use mutserve for checking precision, specificity and sensitivity. The expected mutations (homoplasmic and heteroplasmic) need to be provided as gold standard in form of a text file, with one column, containing the positions expected. The variant from *analyse-local* are used as input file and length needs to be specified (usually 16,569, but as there are different reference sequence, this can vary as well).
 ```
-java -jar mutation-server-1.1.11.jar  performance --in <variantfile> --gold <expectedmutations> --length <size of reference>
+java -jar mutserve-1.1.15.jar  performance --in <variantfile> --gold <expectedmutations> --length <size of reference>
 ```
 
 

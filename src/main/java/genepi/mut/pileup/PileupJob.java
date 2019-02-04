@@ -147,8 +147,12 @@ public class PileupJob extends HadoopJob {
 		set("level", level);
 	}
 
-	public void setCallDel(boolean callDel) {
-		set("callDel", callDel);
+	public void setDeletions(boolean del) {
+		set("deletions", del);
+	}
+	
+	public void setInsertions(boolean ins) {
+		set("insertions", ins);
 	}
 
 	public void setArchive(String refArchive) {
