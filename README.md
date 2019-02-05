@@ -1,11 +1,11 @@
 [![Build Status](https://travis-ci.org/seppinho/mutserve.svg?branch=master)](https://travis-ci.org/seppinho/mutserve)
 [![Twitter Follow](https://img.shields.io/twitter/follow/mtdnaserver.svg?style=social&label=Follow)](https://twitter.com/mtdnaserver)
 
-Mutserve is a library to detect heteroplasmic and homoplasmic sites in mtDNA data. 
+Mutserve is a library to detect heteroplasmic and homoplasmic sites in mtDNA NGS data. 
 It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability reasons, mutserve is parallelized using Hadoop MapReduce but also available as a standalone tool.
 
 ## Standalone Usage
-You can run mutserve as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise) and no indels  (``--indel`` otherwise) are called. 
+You can run mutserve as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise).
 
 **Please be aware** that mutserve always reports the non-reference level as the heteroplasmy level, while mtDNA-Server reports the minor component. 
 ```
@@ -38,9 +38,8 @@ By default (`--output filename` does not end with .vcf or .vcf.gz) we export a T
 If you want a **VCF** file as an output, please specify `--output filename.vcf.gz`. Heteroplasmies are coded as 1/0 genotypes, the heteroplasmy level is included in the FORMAT using the **AF** attribute (allele frequency) of the first non-reference allele. Please note that indels are currently not included in the VCF.  This VCF file can be used as an input for https://github.com/seppinho/haplogrep-cmd.
 
 ## Current Shortcomings
-* We currently report homoplasmies only with a coverage of `(FWD/REV) > 30`. 
+* We currently report homoplasmies only with a coverage of `(FWD+REV)/2 >= 30`. 
 * The **insertions/deletions calling** is currently in **beta**, there is currently **no** normalization or realignment applied for indel positions. 
-
 
 ## Performance - Sensitivity and Specificity
 
@@ -48,7 +47,6 @@ If you have a mixture model generated, you can use mutserve for checking precisi
 ```
 java -jar mutserve-1.1.15.jar  performance --in <variantfile> --gold <expectedmutations> --length <size of reference>
 ```
-
 
 ## Citation
 If you use this tool, please cite [this paper](http://nar.oxfordjournals.org/content/early/2016/04/15/nar.gkw247.full).
