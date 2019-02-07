@@ -24,7 +24,7 @@ import htsjdk.samtools.ValidationStringency;
 
 public class PileupToolLocal extends Tool {
 
-	String version = "v1.1.15";
+	String version = "v1.1.16";
 	String mode = "mtdna";
 	String command;
 
@@ -39,7 +39,7 @@ public class PileupToolLocal extends Tool {
 
 		addParameter("input", "input cram/bam file or folder", Tool.STRING);
 		addParameter("output", "output file", Tool.STRING);
-		addOptionalParameter("level", "detection level", Tool.DOUBLE);
+		addOptionalParameter("level", "detection level", Tool.STRING);
 		addParameter("reference", "reference as fasta", Tool.STRING);
 		addOptionalParameter("baseQ", "base quality", Tool.STRING);
 		addOptionalParameter("mapQ", "mapping quality", Tool.STRING);
@@ -69,35 +69,34 @@ public class PileupToolLocal extends Tool {
 		boolean deletions = isFlagSet("deletions");
 
 		boolean insertions = isFlagSet("insertions");
+		
 
 		double level;
-
 		if (getValue("level") == null) {
 			level = 0.01;
 		} else {
-			level = (double) getValue("level");
+			level = Double.parseDouble((String) getValue("level"));
 		}
 
 		int baseQ;
-
 		if (getValue("baseQ") == null) {
 			baseQ = 20;
 		} else {
-			baseQ = (int) getValue("baseQ");
+			baseQ = Integer.parseInt((String) getValue("baseQ"));
 		}
 
 		int mapQ;
 		if (getValue("mapQ") == null) {
 			mapQ = 20;
 		} else {
-			mapQ = (int) getValue("mapQ");
+			mapQ = Integer.parseInt((String) getValue("mapQ"));
 		}
 
 		int alignQ;
 		if (getValue("alignQ") == null) {
 			alignQ = 30;
 		} else {
-			alignQ = (int) getValue("alignQ");
+			alignQ = Integer.parseInt((String) getValue("alignQ"));
 		}
 
 		String refPath = (String) getValue("reference");
