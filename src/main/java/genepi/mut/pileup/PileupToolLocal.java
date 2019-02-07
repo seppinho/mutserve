@@ -39,7 +39,7 @@ public class PileupToolLocal extends Tool {
 
 		addParameter("input", "input cram/bam file or folder", Tool.STRING);
 		addParameter("output", "output file", Tool.STRING);
-		addParameter("level", "detection level", Tool.DOUBLE);
+		addOptionalParameter("level", "detection level", Tool.DOUBLE);
 		addParameter("reference", "reference as fasta", Tool.STRING);
 		addOptionalParameter("baseQ", "base quality", Tool.STRING);
 		addOptionalParameter("mapQ", "mapping quality", Tool.STRING);
@@ -67,31 +67,37 @@ public class PileupToolLocal extends Tool {
 		boolean baq = !isFlagSet("noBaq");
 
 		boolean deletions = isFlagSet("deletions");
-		
+
 		boolean insertions = isFlagSet("insertions");
 
-		double level = (double) getValue("level");
+		double level;
+
+		if (getValue("level") == null) {
+			level = 0.01;
+		} else {
+			level = (double) getValue("level");
+		}
 
 		int baseQ;
 
 		if (getValue("baseQ") == null) {
 			baseQ = 20;
 		} else {
-			baseQ = Integer.valueOf((String) getValue("baseQ"));
+			baseQ = (int) getValue("baseQ");
 		}
 
 		int mapQ;
 		if (getValue("mapQ") == null) {
 			mapQ = 20;
 		} else {
-			mapQ = Integer.valueOf((String) getValue("mapQ"));
+			mapQ = (int) getValue("mapQ");
 		}
 
 		int alignQ;
 		if (getValue("alignQ") == null) {
 			alignQ = 30;
 		} else {
-			alignQ = Integer.valueOf((String) getValue("alignQ"));
+			alignQ = (int) getValue("alignQ");
 		}
 
 		String refPath = (String) getValue("reference");

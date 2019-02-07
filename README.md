@@ -21,6 +21,7 @@ To create a VCF file as an output simple specify `--output filename.vcf.gz`. Ple
 | ------------- |:-------------:| :-------------:| 
 | InputFolder     | <folder> | `--input`|
 | Output File   | <filename> (supported: *.txt, *.vcf, *vcf.gz) | `--output` |
+| Heteroplasmy Level     | 0.01 | `--level`|
 | MappingQuality     | 20 | `--mapQ`|
 | BaseQuality     | 20 | `--baseQ`|
 | AlignmentQuality     | 30 | `--alignQ`|
