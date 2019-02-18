@@ -9,9 +9,9 @@ You can run mutserve as a standalone tool starting with CRAM/BAM files and detec
 
 **Please be aware** that mutserve always reports the non-reference level as the heteroplasmy level, while mtDNA-Server reports the minor component. 
 ```
-wget https://github.com/seppinho/mutserve/releases/download/v1.1.15/mutserve-1.1.15.jar
+wget https://github.com/seppinho/mutserve/releases/download/v1.1.17/mutserve-1.1.17.jar
 
-java -jar mutserve-1.1.15.jar  analyse-local --input <file/folder> --output <filename> --reference <fasta> --level 0.01
+java -jar mutserve-1.1.17.jar  analyse-local --input <file/folder> --output <filename> --reference <fasta> --level 0.01
 ```
 To create a VCF file as an output simple specify `--output filename.vcf.gz`. Please use [this reference file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS.fasta) when using BAQ.
 
@@ -46,7 +46,7 @@ If you want a **VCF** file as an output, please specify `--output filename.vcf.g
 
 If you have a mixture model generated, you can use mutserve for checking precision, specificity and sensitivity. The expected mutations (homoplasmic and heteroplasmic) need to be provided as gold standard in form of a text file, with one column, containing the positions expected. The variant from *analyse-local* are used as input file and length needs to be specified (usually 16,569, but as there are different reference sequence, this can vary as well).
 ```
-java -jar mutserve-1.1.15.jar  performance --in <variantfile> --gold <expectedmutations> --length <size of reference>
+java -jar mutserve-1.1.17.jar  performance --in <variantfile> --gold <expectedmutations> --length <size of reference>
 ```
 
 ## Citation
