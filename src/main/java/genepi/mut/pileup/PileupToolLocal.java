@@ -140,20 +140,17 @@ public class PileupToolLocal extends Tool {
 				System.out.println("Error. Please specify an output file not a directory");
 				return 1;
 			}
-
-			File parentVar = out.getParentFile();
-
-			if (parentVar != null) {
-				out.getParentFile().mkdirs();
-			}
 			
+			String prefix = output.substring(0, output.lastIndexOf('.'));
+			String varFile = prefix +".txt";
+			String rawFile = prefix + "_raw.txt";
+
 			try {
-				writerVar = new LineWriter(new File(output).getAbsolutePath());
+				writerVar = new LineWriter(new File(varFile).getAbsolutePath());
 				writerVar.write(BamAnalyser.headerVariants);
 
 				
-				String outRawString = FileUtil.path(output.substring(0, output.lastIndexOf('.')) + "_raw.txt");
-				writerRaw = new LineWriter(new File(outRawString).getAbsolutePath());
+				writerRaw = new LineWriter(new File(rawFile).getAbsolutePath());
 				writerRaw.write(BamAnalyser.headerRaw);
 
 			} catch (IOException e) {
@@ -228,9 +225,7 @@ public class PileupToolLocal extends Tool {
 
 			if (output.endsWith("vcf.gz") || output.endsWith("vcf")) {
 				VcfWriter writer = new VcfWriter();
-				String outVcfString = FileUtil.path(output);
-				writer.createVCF(output, outVcfString, refPath, "chrM", 16569, version + ";" + command);
-				//FileUtil.deleteFile(outVar);
+				writer.createVCF(varFile, output, refPath, "chrM", 16569, version + ";" + command);
 			}
 
 			System.out.println("Time: " + (System.currentTimeMillis() - start) / 1000 + " sec");
@@ -394,12 +389,12 @@ public class PileupToolLocal extends Tool {
 	}
 
 	public static void main(String[] args) {
-		String input = "/home/seb/Downloads/G100863_NA12878.mt.bam";
+		String input = "/home/seb/git/mutation-server/test-data/mtdna/bam/input";
 		String filename = "test-data/bam-verify.vcf";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta, "--output",
-				filename, "--level", "0.01","--insertions", "--deletions"});
+				filename, "--level", "0.01"});
 
 		pileup.start();
 

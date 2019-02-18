@@ -358,8 +358,6 @@ public class VariantCaller {
 
 		StringBuilder build = new StringBuilder();
 
-		build.setLength(0);
-
 		build.append(result.getId() + "\t");
 
 		build.append(result.getPosition() + "\t");
