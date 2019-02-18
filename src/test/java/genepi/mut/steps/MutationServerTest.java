@@ -517,7 +517,7 @@ public class MutationServerTest {
 
 			assertEquals(100, metric.getPrecision(), 0);
 			//PAPER: assertEquals(59.259, metric.getSensitivity(), 0.1);
-			assertEquals(66.667, metric.getSensitivity(), 0.1);
+			assertEquals(64.0, metric.getSensitivity(), 0.1);
 			assertEquals(100, metric.getSpecificity(), 0);
 		}
 		assertEquals(true, result);

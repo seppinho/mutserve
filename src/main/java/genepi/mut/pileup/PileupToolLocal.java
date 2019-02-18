@@ -147,9 +147,6 @@ public class PileupToolLocal extends Tool {
 				out.getParentFile().mkdirs();
 			}
 			
-			if(!output.endsWith(".txt"))
-			output = FileUtil.path(output + ".txt");
-
 			try {
 				writerVar = new LineWriter(new File(output).getAbsolutePath());
 				writerVar.write(BamAnalyser.headerVariants);
@@ -397,13 +394,12 @@ public class PileupToolLocal extends Tool {
 	}
 
 	public static void main(String[] args) {
-
-		String input = "/home/seb/Desktop/test.bam";
+		String input = "/home/seb/Downloads/G100863_NA12878.mt.bam";
 		String filename = "test-data/bam-verify.vcf";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta, "--output",
-				filename, "--level", "0.01","--noBaq"});
+				filename, "--level", "0.01","--insertions", "--deletions"});
 
 		pileup.start();
 

@@ -2,6 +2,7 @@ package genepi.mut.steps;
 
 import org.junit.Test;
 
+import genepi.io.FileUtil;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.pileup.PileupToolLocal;
@@ -14,7 +15,7 @@ public class LocalToolTest {
 
 		String input = "test-data/mtdna/equal-level/test.bam";
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
-		String out = "test-data/mtdna/equal-level/here.txt";
+		String out = "test-data/mtdna/equal-level/here.vcf";
 
 		PileupToolLocal pileup = new PileupToolLocal(
 				new String[] { "--input", input, "--reference", ref, "--output", out, "--level", "0.01", "--noBaq" });
@@ -36,7 +37,8 @@ public class LocalToolTest {
 				assertEquals('A', line.getTopBaseREV());
 			}
 		}
-
+		FileUtil.deleteFile(out);
+		FileUtil.deleteFile("test-data/mtdna/equal-level/here_raw.txt");
 	}
 
 }
