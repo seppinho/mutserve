@@ -401,23 +401,23 @@ public class VariantLine implements Comparable<VariantLine> {
 
 		if (minorPercentage > 0 && minorPercentage <= 0.5) {
 
-			if (minorPercentage == this.aPercentageFWD) {
+			if (minorPercentage == this.aPercentageFWD && topBaseFWD != 'A') {
 				return 'A';
 			}
 
-			else if (minorPercentage == this.cPercentageFWD) {
+			else if (minorPercentage == this.cPercentageFWD  && topBaseFWD != 'C') {
 				return 'C';
 			}
 
-			else if (minorPercentage == this.gPercentageFWD) {
+			else if (minorPercentage == this.gPercentageFWD  && topBaseFWD != 'G') {
 				return 'G';
 			}
 
-			else if (minorPercentage == this.tPercentageFWD) {
+			else if (minorPercentage == this.tPercentageFWD  && topBaseFWD != 'T') {
 				return 'T';
 			}
 
-			else if (minorPercentage == this.dPercentageFWD) {
+			else if (minorPercentage == this.dPercentageFWD  && topBaseFWD != 'D') {
 				return 'D';
 			}
 
@@ -429,23 +429,23 @@ public class VariantLine implements Comparable<VariantLine> {
 
 		if (minorPercentage > 0 && minorPercentage <= 0.5) {
 
-			if (minorPercentage == this.aPercentageREV) {
+			if (minorPercentage == this.aPercentageREV && topBaseFWD != 'A') {
 				return 'A';
 			}
 
-			else if (minorPercentage == this.cPercentageREV) {
+			else if (minorPercentage == this.cPercentageREV && topBaseFWD != 'C') {
 				return 'C';
 			}
 
-			else if (minorPercentage == this.gPercentageREV) {
+			else if (minorPercentage == this.gPercentageREV && topBaseFWD != 'G') {
 				return 'G';
 			}
 
-			else if (minorPercentage == this.tPercentageREV) {
+			else if (minorPercentage == this.tPercentageREV && topBaseFWD != 'T') {
 				return 'T';
 			}
 
-			else if (minorPercentage == this.dPercentageREV) {
+			else if (minorPercentage == this.dPercentageREV && topBaseFWD != 'D') {
 				return 'D';
 			}
 

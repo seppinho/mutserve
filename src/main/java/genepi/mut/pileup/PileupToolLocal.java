@@ -146,14 +146,16 @@ public class PileupToolLocal extends Tool {
 			if (parentVar != null) {
 				out.getParentFile().mkdirs();
 			}
-
-			String outVar = FileUtil.path(output + ".txt");
+			
+			if(!output.endsWith(".txt"))
+			output = FileUtil.path(output + ".txt");
 
 			try {
-				writerVar = new LineWriter(new File(outVar).getAbsolutePath());
+				writerVar = new LineWriter(new File(output).getAbsolutePath());
 				writerVar.write(BamAnalyser.headerVariants);
 
-				String outRawString = FileUtil.path(output + ".raw.txt");
+				
+				String outRawString = FileUtil.path(output.substring(0, output.lastIndexOf('.')) + "_raw.txt");
 				writerRaw = new LineWriter(new File(outRawString).getAbsolutePath());
 				writerRaw.write(BamAnalyser.headerRaw);
 
@@ -230,8 +232,8 @@ public class PileupToolLocal extends Tool {
 			if (output.endsWith("vcf.gz") || output.endsWith("vcf")) {
 				VcfWriter writer = new VcfWriter();
 				String outVcfString = FileUtil.path(output);
-				writer.createVCF(outVar, outVcfString, refPath, "chrM", 16569, version + ";" + command);
-				FileUtil.deleteFile(outVar);
+				writer.createVCF(output, outVcfString, refPath, "chrM", 16569, version + ";" + command);
+				//FileUtil.deleteFile(outVar);
 			}
 
 			System.out.println("Time: " + (System.currentTimeMillis() - start) / 1000 + " sec");
@@ -396,12 +398,12 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "/data2/genepi/projects/inProgress/paternity-pnas/bam-a-4-2-check/a-4-2-3.bam";
+		String input = "/home/seb/Desktop/test.bam";
 		String filename = "test-data/bam-verify.vcf";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta, "--output",
-				filename, "--level", "0.01", "--noBaq" });
+				filename, "--level", "0.01","--noBaq"});
 
 		pileup.start();
 
