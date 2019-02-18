@@ -24,7 +24,7 @@ import htsjdk.samtools.ValidationStringency;
 
 public class PileupToolLocal extends Tool {
 
-	String version = "v1.1.16";
+	String version = "v1.1.17";
 	String mode = "mtdna";
 	String command;
 
