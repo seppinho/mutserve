@@ -429,23 +429,23 @@ public class VariantLine implements Comparable<VariantLine> {
 
 		if (minorPercentage > 0 && minorPercentage <= 0.5) {
 
-			if (minorPercentage == this.aPercentageREV && topBaseFWD != 'A') {
+			if (minorPercentage == this.aPercentageREV && topBaseREV != 'A') {
 				return 'A';
 			}
 
-			else if (minorPercentage == this.cPercentageREV && topBaseFWD != 'C') {
+			else if (minorPercentage == this.cPercentageREV && topBaseREV != 'C') {
 				return 'C';
 			}
 
-			else if (minorPercentage == this.gPercentageREV && topBaseFWD != 'G') {
+			else if (minorPercentage == this.gPercentageREV && topBaseREV != 'G') {
 				return 'G';
 			}
 
-			else if (minorPercentage == this.tPercentageREV && topBaseFWD != 'T') {
+			else if (minorPercentage == this.tPercentageREV && topBaseREV != 'T') {
 				return 'T';
 			}
 
-			else if (minorPercentage == this.dPercentageREV && topBaseFWD != 'D') {
+			else if (minorPercentage == this.dPercentageREV && topBaseREV != 'D') {
 				return 'D';
 			}
 

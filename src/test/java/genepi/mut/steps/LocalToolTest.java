@@ -15,7 +15,7 @@ public class LocalToolTest {
 
 		String input = "test-data/mtdna/equal-level/test.bam";
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
-		String out = "test-data/mtdna/equal-level/here.vcf";
+		String out = "test-data/mtdna/equal-level/here.txt";
 
 		PileupToolLocal pileup = new PileupToolLocal(
 				new String[] { "--input", input, "--reference", ref, "--output", out, "--level", "0.01", "--noBaq" });
