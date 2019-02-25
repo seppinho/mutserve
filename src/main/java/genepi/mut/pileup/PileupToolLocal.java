@@ -141,7 +141,12 @@ public class PileupToolLocal extends Tool {
 				return 1;
 			}
 			
-			String prefix = output.substring(0, output.lastIndexOf('.'));
+			String prefix = output;
+
+			if (output.contains(".")) {
+				prefix = output.substring(0, output.lastIndexOf('.'));
+			}
+			
 			String varFile = prefix +".txt";
 			String rawFile = prefix + "_raw.txt";
 
