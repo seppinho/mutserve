@@ -11,7 +11,7 @@ You can run mutserve as a standalone tool starting with CRAM/BAM files and detec
 ```
 wget https://github.com/seppinho/mutserve/releases/download/v1.1.17/mutserve-1.1.17.jar
 
-java -jar mutserve-1.1.17.jar  analyse-local --input <file/folder> --output <filename> --reference <fasta> --level 0.01
+java -jar mutserve-1.1.17.jar  analyse-local --input <file/folder> --output <filename.vcf / filename.txt> --reference <fasta> --level 0.01
 ```
 To create a VCF file as an output simple specify `--output filename.vcf.gz`. Please use [this reference file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS.fasta) when using BAQ.
 
