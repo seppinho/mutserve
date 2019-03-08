@@ -40,6 +40,8 @@ public class BamAnalyser {
 	int mapQual;
 
 	int alignQual;
+	
+	int minCoverage;
 
 	boolean baq;
 
@@ -51,12 +53,12 @@ public class BamAnalyser {
 
 	public BamAnalyser(String file, String fastaPath) {
 
-		this(file, fastaPath, 20, 20, 30, true, "mtdna");
+		this(file, fastaPath, 20, 20, 30, true, 30, "mtdna");
 
 	}
 
 	public BamAnalyser(String filename, String fastaPath, int baseQual, int mapQual, int alignQual, boolean baq,
-			String version) {
+			int minCoverage, String version) {
 
 		Path path = new File(fastaPath).toPath();
 
@@ -94,6 +96,8 @@ public class BamAnalyser {
 		this.baq = baq;
 
 		this.version = version;
+		
+		this.minCoverage = minCoverage;
 
 		if (version.equalsIgnoreCase(versionEnum.MTDNA.name())) {
 
@@ -379,6 +383,14 @@ public class BamAnalyser {
 
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+
+	public int getMinCoverage() {
+		return minCoverage;
+	}
+
+	public void setMinCoverage(int minCoverage) {
+		this.minCoverage = minCoverage;
 	}
 
 }

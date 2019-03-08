@@ -29,6 +29,8 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 	HdfsLineWriter writer;
 
 	double level;
+	 
+	int minCoverage;
 
 	protected void setup(Context context) throws IOException, InterruptedException {
 
@@ -40,6 +42,7 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 		reference = ReferenceUtil.readInReference(fastaPath);
 
 		level = context.getConfiguration().getDouble("level", 0.01);
+		minCoverage = context.getConfiguration().getInt("minCoverage", 30);
 
 		hdfsVariants = context.getConfiguration().get("variantsHdfs");
 		HdfsUtil.create(hdfsVariants + "/" + context.getTaskAttemptID());
@@ -179,7 +182,8 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 
 			if (!isHeteroplasmy) {
 
-				VariantResult varResult = VariantCaller.determineVariants(line);
+				//TODO adapt
+				VariantResult varResult = VariantCaller.determineVariants(line, minCoverage);
 
 				if (varResult != null) {
 

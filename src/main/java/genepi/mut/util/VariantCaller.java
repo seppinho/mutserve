@@ -35,13 +35,12 @@ public class VariantCaller {
 		return false;
 	}
 
-	public static VariantResult determineVariants(VariantLine line) {
+	public static VariantResult determineVariants(VariantLine line, int coverage) {
 
 		int type = 0;
-
 		if (line.getTopBaseFWD() == line.getTopBaseREV() && line.getTopBaseFWD() != '-') {
 
-			if (line.getTopBaseFWD() != line.getRef() && ((line.getCovFWD() + line.getCovREV() / 2) >= 30)) {
+			if (line.getTopBaseFWD() != line.getRef() && ((line.getCovFWD() + line.getCovREV() / 2) >= coverage)) {
 
 				if (line.getTopBaseFWD() == 'D') {
 					type = DELETION;

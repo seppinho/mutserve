@@ -29,6 +29,7 @@ public class PileupStep extends HadoopJobStep {
 		String variantsHdfs = context.get("variantsHdfs");
 		String variantsLocal = context.get("variantsLocal");
 		String mappingQual = context.get("mapQuality");
+		String minCoverage = context.get("minCoverage");
 		String baseQual = context.get("baseQuality");
 		String alignQual = context.get("alignQuality");
 		String archive = context.get("archive");
@@ -63,6 +64,7 @@ public class PileupStep extends HadoopJobStep {
 		bamJob.setVariantsPathLocal(variantsLocal);
 		
 		bamJob.setMappingQuality(mappingQual);
+		bamJob.setMinCoverage(minCoverage);
 		bamJob.setBaseQuality(baseQual);
 		bamJob.setAlignmentQuality(alignQual);
 		bamJob.setBAQ(baq);

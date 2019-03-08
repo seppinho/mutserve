@@ -44,6 +44,7 @@ public class PileupToolLocal extends Tool {
 		addOptionalParameter("baseQ", "base quality", Tool.STRING);
 		addOptionalParameter("mapQ", "mapping quality", Tool.STRING);
 		addOptionalParameter("alignQ", "alignment quality", Tool.STRING);
+		addOptionalParameter("minCoverage", "minimal coverage for variants", Tool.STRING);
 		addFlag("noBaq", "turn off BAQ");
 		addFlag("deletions", "Call deletions");
 		addFlag("insertions", "Call insertions (beta)");
@@ -97,6 +98,13 @@ public class PileupToolLocal extends Tool {
 			alignQ = 30;
 		} else {
 			alignQ = Integer.parseInt((String) getValue("alignQ"));
+		}
+		
+		int minCoverage;
+		if (getValue("minCoverage") == null) {
+			minCoverage = 30;
+		} else {
+			minCoverage = Integer.parseInt((String) getValue("minCoverage"));
 		}
 
 		String refPath = (String) getValue("reference");
@@ -172,6 +180,7 @@ public class PileupToolLocal extends Tool {
 			System.out.println("Base Quality: " + baseQ);
 			System.out.println("Map Quality: " + mapQ);
 			System.out.println("Alignment Quality: " + alignQ);
+			System.out.println("Minimal Variant Coverage: " + minCoverage);
 			System.out.println("BAQ: " + baq);
 			System.out.println("Deletions: " + deletions);
 			System.out.println("Insertions: " + insertions);
@@ -192,7 +201,7 @@ public class PileupToolLocal extends Tool {
 
 				else if (reference == Reference.rcrs || reference == Reference.precisionId) {
 
-					BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, baq, mode);
+					BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, baq, minCoverage, mode);
 
 					System.out.println("Processing: " + file.getName());
 					System.out.println("Detected reference: " + reference.toString());
@@ -360,7 +369,7 @@ public class PileupToolLocal extends Tool {
 
 				if (!isHeteroplasmy) {
 
-					VariantResult varResult = VariantCaller.determineVariants(line);
+					VariantResult varResult = VariantCaller.determineVariants(line, analyser.getMinCoverage());
 
 					if (varResult != null) {
 
@@ -394,12 +403,12 @@ public class PileupToolLocal extends Tool {
 	}
 
 	public static void main(String[] args) {
-		String input = "/home/seb/git/mutation-server/test-data/mtdna/bam/input";
-		String filename = "test-data/bam-verify.vcf";
+		String input = "test-data/mtdna/bam/input/";
+		String output = "test-data/out.vcf";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta, "--output",
-				filename, "--level", "0.01"});
+				output, "--level", "0.01", "--minCoverage", "30"});
 
 		pileup.start();
 

@@ -130,6 +130,10 @@ public class PileupJob extends HadoopJob {
 	public void setMappingQuality(String mapQual) {
 		set("mapQual", mapQual);
 	}
+	
+	public void setMinCoverage(String minCoverage) {
+		set("minCoverage", minCoverage);
+	}
 
 	public void setBaseQuality(String baseQual) {
 		set("baseQual", baseQual);

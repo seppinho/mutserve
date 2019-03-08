@@ -186,6 +186,7 @@ public class RawFileAnalysermtDNA {
 		DecimalFormat df = (DecimalFormat) nf;
 		df.setMinimumFractionDigits(2);
 		df.setMaximumFractionDigits(3);
+		int minCoverage = 30;
 
 		CsvTableReader cloudgeneReader = new CsvTableReader(in, '\t');
 
@@ -228,7 +229,7 @@ public class RawFileAnalysermtDNA {
 
 				System.out.println(1 - level);
 
-				VariantResult varResult = VariantCaller.determineVariants(line);
+				VariantResult varResult = VariantCaller.determineVariants(line, 30);
 
 				varResult.setLevel(hetLevel);
 
