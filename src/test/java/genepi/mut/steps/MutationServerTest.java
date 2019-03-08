@@ -604,6 +604,7 @@ public class MutationServerTest {
 		context.setOutput("mapQuality", "20");
 		context.setOutput("baseQuality", "20");
 		context.setOutput("alignQuality", "30");
+		context.setOutput("minCoverage", "30");
 		context.setOutput("statistics", "statistics");
 		context.setOutput("baq", "true");
 
