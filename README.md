@@ -25,7 +25,7 @@ To create a VCF file as an output simple specify `--output filename.vcf.gz`. Ple
 | MappingQuality     | 20 | `--mapQ`|
 | BaseQuality     | 20 | `--baseQ`|
 | AlignmentQuality     | 30 | `--alignQ`|
-| noBAQ     | false | `--noBAQ`|
+| noBaq     | false | `--noBaq`|
 | deletions (beta)     | false | `--deletions`|
 | insertions (beta)     | false | `--insertions`|
 
