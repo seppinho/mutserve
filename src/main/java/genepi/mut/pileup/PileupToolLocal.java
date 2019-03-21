@@ -408,7 +408,7 @@ public class PileupToolLocal extends Tool {
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta, "--output",
-				output, "--level", "0.01", "--minCoverage", "30"});
+				output, "--level", "0.01", "--minCoverage", "30","--deletions","--insertions"});
 
 		pileup.start();
 

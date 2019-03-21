@@ -38,12 +38,22 @@ public class MutationServerReader {
 
 			int type = reader.getInteger("Type");
 
-			if (type == 1 || type == 2) {
+			if (type == 1 || type == 2 || type == 4 || type == 5) {
+
+				Variant variant = new Variant();
 
 				double majorLevel = 0;
 				double minorLevel = 0;
 				int coverage = -1;
-				int pos = reader.getInteger("Pos");
+				int pos;
+
+				if (type != 5) {
+					pos = reader.getInteger("Pos");
+				} else {
+					pos = Integer.valueOf(reader.getString("Pos").split("\\.")[0]);
+					variant.setInsertion(reader.getString("Pos"));
+				}
+
 				char ref = reader.getString("Ref").charAt(0);
 				char var = reader.getString("Variant").charAt(0);
 				double level = reader.getDouble("VariantLevel");
@@ -68,7 +78,6 @@ public class MutationServerReader {
 					continue;
 				}
 
-				Variant variant = new Variant();
 				variant.setPos(pos);
 				variant.setRef(ref);
 				variant.setVariantBase(var);

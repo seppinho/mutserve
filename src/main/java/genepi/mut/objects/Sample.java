@@ -1,12 +1,14 @@
 package genepi.mut.objects;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
 
 public class Sample {
 
 	private String id;
-	private HashMap<Integer, Variant> variants;
+	private HashMap<Integer, ArrayList<Variant>> variants;
 	private int amountHomoplasmies;
 	private int amountVariants;
 	private int amountHeteroplasmies;
@@ -15,14 +17,18 @@ public class Sample {
 	private float sumHeteroplasmyLevel = 0;
 
 	public Sample() {
-		variants = new HashMap<Integer, Variant>();
+		variants = new HashMap<Integer, ArrayList<Variant>>();
 	}
 
-	public Collection<Variant> getVariants() {
+	public Set<Integer> getKeys() {
+		return variants.keySet();
+	}
+	
+	public Collection<ArrayList<Variant>> getVariants() {
 		return variants.values();
 	}
 
-	public Variant getVariant(int pos) {
+	public ArrayList<Variant> getVariants(int pos) {
 		return variants.get(pos);
 	}
 
@@ -36,7 +42,15 @@ public class Sample {
 
 	public void addVariant(Variant var) {
 
-		variants.put(var.getPos(), var);
+		ArrayList<Variant> list = variants.get(var.getPos());
+
+		if (list == null) {
+			list = new ArrayList<Variant>();
+		}
+
+		list.add(var);
+
+		variants.put(var.getPos(), list);
 
 		this.updateCount(var.getType());
 

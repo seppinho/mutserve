@@ -42,8 +42,8 @@ public class VcfWriter {
 
 		for (Sample sample : samples.values()) {
 			header.getGenotypeSamples().add(sample.getId());
-			for (Variant var : sample.getVariants()) {
-				positions.add(var.getPos());
+			for (Integer key : sample.getKeys()) {
+				positions.add(key);
 			}
 		}
 
@@ -61,17 +61,26 @@ public class VcfWriter {
 
 			for (Sample sample : samples.values()) {
 
-				Variant variant = sample.getVariant(pos);
+				ArrayList<Variant> variants = sample.getVariants(pos);
 
-				if (variant != null) {
+				if (variants != null) {
 
-					Allele refAllele = Allele.create(variant.getRef() + "", true);
-					Allele varAllele = Allele.create(variant.getVariant() + "", false);
+					Variant variant = buildVariant(variants);
+
+					String base = String.valueOf(variant.getVariant());
+					char ref = variant.getRef();
+
+					if (variant.getType() == 5) {
+						ref = fasta.charAt(pos - 1);
+						base = ref + "" + variant.getVariant();
+					}
+
+					Allele refAllele = Allele.create(ref + "", true);
+					Allele varAllele = Allele.create(base + "", false);
 					alleles.add(refAllele);
 					alleles.add(varAllele);
 
-					if (variant.getType() == 1) {
-
+					if (variant.getType() == 1 || variant.getType() == 4  || variant.getType() == 5) {
 						final GenotypeBuilder gb = new GenotypeBuilder(sample.getId(), Arrays.asList(varAllele));
 						gb.DP(variant.getCoverage());
 
@@ -82,20 +91,23 @@ public class VcfWriter {
 						Allele genotypeAllele1;
 						Allele genotypeAllele2;
 
+						String major = String.valueOf(variant.getMajor());
+						String minor = String.valueOf(variant.getMinor());
+
 						// check for multiallelic sites
 						if (variant.getMajor() == variant.getRef()) {
-							genotypeAllele1 = Allele.create(variant.getMajor() + "", true);
-							genotypeAllele2 = Allele.create(variant.getMinor() + "", false);
+							genotypeAllele1 = Allele.create(major + "", true);
+							genotypeAllele2 = Allele.create(minor + "", false);
 
 						} else {
-							genotypeAllele1 = Allele.create(variant.getMajor() + "", false);
+							genotypeAllele1 = Allele.create(major + "", false);
 							// REF: C; MAJOR: A; MINOR:T
 							if (variant.getMinor() != variant.getRef()) {
-								genotypeAllele2 = Allele.create(variant.getMinor() + "", false);
+								genotypeAllele2 = Allele.create(minor + "", false);
 								// new allele found, add to alleles
 								alleles.add(genotypeAllele2);
 							} else {
-								genotypeAllele2 = Allele.create(variant.getMinor() + "", true);
+								genotypeAllele2 = Allele.create(minor + "", true);
 							}
 						}
 
@@ -123,7 +135,6 @@ public class VcfWriter {
 					genotypes.add(gb.make());
 				}
 			}
-
 			if (alleles.size() > 0) {
 				vcBuilder.alleles(alleles).genotypes(genotypes);
 				vcBuilder.filter("PASS");
@@ -132,6 +143,25 @@ public class VcfWriter {
 		}
 
 		vcfWriter.close();
+	}
+
+	private Variant buildVariant(ArrayList<Variant> variants) {
+		Variant variant = variants.get(0);
+		
+		// deletions handling
+		if (variant.getVariant() == 'D') {
+			variant.setVariantBase('*');
+		}
+		
+		if (variant.getMajor() == 'D') {
+			variant.setMajor('*');
+		}
+		
+		if (variant.getMinor() == 'D') {
+			variant.setMinor('*');
+		}
+		
+		return variant;
 	}
 
 	private VCFHeader generateHeader(String chromosome, int length, String command) {

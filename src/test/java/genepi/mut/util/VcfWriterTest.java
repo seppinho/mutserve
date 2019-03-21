@@ -3,6 +3,7 @@ package genepi.mut.util;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import org.junit.Test;
 import genepi.mut.objects.Sample;
@@ -33,34 +34,37 @@ public class VcfWriterTest {
 		int countHomoplasmies = 0;
 		int countHeteroplasmies = 0;
 
-		for (Variant variant : sample.getVariants()) {
-			int pos = variant.getPos();
-			char var = variant.getVariant();
+		for (ArrayList<Variant> variants : sample.getVariants()) {
 
-			if (variant.getType() == 1) {
-				countHomoplasmies++;
-				for (final VariantContext vc : reader) {
-					if (vc.getStart() == pos) {
-						Genotype genotype = vc.getGenotype(sampleString);
-						assertEquals(genotype.getGenotypeString(false), String.valueOf(var));
+			for (Variant variant : variants) {
+				int pos = variant.getPos();
+				char var = variant.getVariant();
+
+				if (variant.getType() == 1) {
+					countHomoplasmies++;
+					for (final VariantContext vc : reader) {
+						if (vc.getStart() == pos) {
+							Genotype genotype = vc.getGenotype(sampleString);
+							assertEquals(genotype.getGenotypeString(false), String.valueOf(var));
+						}
+
 					}
 
 				}
 
-			}
+				if (variant.getType() == 2) {
+					for (final VariantContext vc : reader) {
+						if (vc.getStart() == pos) {
+							countHeteroplasmies++;
+							Genotype genotype = vc.getGenotype(sampleString);
+							genotype.getAlleles();
+							String txtGenotype = variant.getMajor() + "/" + variant.getMinor();
+							assertEquals(txtGenotype, genotype.getGenotypeString(true));
+						}
 
-			if (variant.getType() == 2) {
-				for (final VariantContext vc : reader) {
-					if (vc.getStart() == pos) {
-						countHeteroplasmies++;
-						Genotype genotype = vc.getGenotype(sampleString);
-						genotype.getAlleles();
-						String txtGenotype = variant.getMajor() + "/" + variant.getMinor();
-						assertEquals(txtGenotype, genotype.getGenotypeString(true));
 					}
 
 				}
-
 			}
 		}
 
@@ -83,36 +87,41 @@ public class VcfWriterTest {
 		HashMap<String, Sample> samples = readerServer.parse();
 
 		for (Sample sample : samples.values()) {
+			
 			int countHomoplasmies = 0;
 			int countHeteroplasmies = 0;
 
-			for (Variant variant : sample.getVariants()) {
-				int pos = variant.getPos();
-				char var = variant.getVariant();
+			for (ArrayList<Variant> variants : sample.getVariants()) {
 
-				if (variant.getType() == 1) {
-					countHomoplasmies++;
-					for (final VariantContext vc : reader) {
-						if (vc.getStart() == pos) {
-							Genotype genotype = vc.getGenotype(sample.getId());
-							assertEquals(genotype.getGenotypeString(false), String.valueOf(var));
+				for (Variant variant : variants) {
+					
+					int pos = variant.getPos();
+					char var = variant.getVariant();
+
+					if (variant.getType() == 1) {
+						countHomoplasmies++;
+						for (final VariantContext vc : reader) {
+							if (vc.getStart() == pos) {
+								Genotype genotype = vc.getGenotype(sample.getId());
+								assertEquals(genotype.getGenotypeString(false), String.valueOf(var));
+							}
+
 						}
 
 					}
 
-				}
+					if (variant.getType() == 2) {
+						for (final VariantContext vc : reader) {
+							if (vc.getStart() == pos) {
+								countHeteroplasmies++;
+								Genotype genotype = vc.getGenotype(sample.getId());
+								String txtGenotype = variant.getMajor() + "/" + variant.getMinor();
+								assertEquals(txtGenotype, genotype.getGenotypeString(true));
+							}
 
-				if (variant.getType() == 2) {
-					for (final VariantContext vc : reader) {
-						if (vc.getStart() == pos) {
-							countHeteroplasmies++;
-							Genotype genotype = vc.getGenotype(sample.getId());
-							String txtGenotype = variant.getMajor() + "/" + variant.getMinor();
-							assertEquals(txtGenotype, genotype.getGenotypeString(true));
 						}
 
 					}
-
 				}
 			}
 
