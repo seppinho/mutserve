@@ -67,10 +67,23 @@ public class VcfWriter {
 
 					Variant variant = buildVariant(variants);
 
+					// deletions handling
+					if (variant.getVariant() == 'D') {
+						variant.setVariantBase('*');
+					}
+					
+					if (variant.getMajor() == 'D') {
+						variant.setMajor('*');
+					}
+
+					if (variant.getMinor() == 'D') {
+						variant.setMinor('*');
+					}
+					
 					String base = String.valueOf(variant.getVariant());
 					char ref = variant.getRef();
 
-					if (variant.getType() == 5) {
+					if (variant.getType() == 5 && variant.getInsertion().contains(".1")) {
 						ref = fasta.charAt(pos - 1);
 						base = ref + "" + variant.getVariant();
 					}
@@ -80,7 +93,7 @@ public class VcfWriter {
 					alleles.add(refAllele);
 					alleles.add(varAllele);
 
-					if (variant.getType() == 1 || variant.getType() == 4  || variant.getType() == 5) {
+					if (variant.getType() == 1 || variant.getType() == 4 || variant.getType() == 5) {
 						final GenotypeBuilder gb = new GenotypeBuilder(sample.getId(), Arrays.asList(varAllele));
 						gb.DP(variant.getCoverage());
 
@@ -90,10 +103,10 @@ public class VcfWriter {
 
 						Allele genotypeAllele1;
 						Allele genotypeAllele2;
-
+						
 						String major = String.valueOf(variant.getMajor());
 						String minor = String.valueOf(variant.getMinor());
-
+						
 						// check for multiallelic sites
 						if (variant.getMajor() == variant.getRef()) {
 							genotypeAllele1 = Allele.create(major + "", true);
@@ -146,22 +159,9 @@ public class VcfWriter {
 	}
 
 	private Variant buildVariant(ArrayList<Variant> variants) {
-		Variant variant = variants.get(0);
-		
-		// deletions handling
-		if (variant.getVariant() == 'D') {
-			variant.setVariantBase('*');
-		}
-		
-		if (variant.getMajor() == 'D') {
-			variant.setMajor('*');
-		}
-		
-		if (variant.getMinor() == 'D') {
-			variant.setMinor('*');
-		}
-		
-		return variant;
+
+	return variants.get(0);
+	
 	}
 
 	private VCFHeader generateHeader(String chromosome, int length, String command) {
