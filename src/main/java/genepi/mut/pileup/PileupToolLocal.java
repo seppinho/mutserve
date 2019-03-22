@@ -12,6 +12,7 @@ import genepi.io.text.LineWriter;
 import genepi.mut.objects.BasePosition;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.objects.VariantResult;
+import genepi.mut.util.FastaWriter;
 import genepi.mut.util.ReferenceUtil;
 import genepi.mut.util.ReferenceUtil.Reference;
 import genepi.mut.util.VariantCaller;
@@ -48,6 +49,7 @@ public class PileupToolLocal extends Tool {
 		addFlag("noBaq", "turn off BAQ");
 		addFlag("deletions", "Call deletions");
 		addFlag("insertions", "Call insertions (beta)");
+		addFlag("writeFasta", "Write fasta");
 	}
 
 	@Override
@@ -70,6 +72,8 @@ public class PileupToolLocal extends Tool {
 		boolean deletions = isFlagSet("deletions");
 
 		boolean insertions = isFlagSet("insertions");
+		
+		boolean writeFasta = isFlagSet("writeFasta");
 		
 
 		double level;
@@ -148,11 +152,11 @@ public class PileupToolLocal extends Tool {
 				System.out.println("Error. Please specify an output file not a directory");
 				return 1;
 			}
-			
+		
 			String prefix = output;
 
 			if (output.contains(".")) {
-				prefix = output.substring(0, output.lastIndexOf('.'));
+				prefix = output.substring(0, output.indexOf('.'));
 			}
 			
 			String varFile = prefix +".txt";
@@ -240,6 +244,11 @@ public class PileupToolLocal extends Tool {
 			if (output.endsWith("vcf.gz") || output.endsWith("vcf")) {
 				VcfWriter writer = new VcfWriter();
 				writer.createVCF(varFile, output, refPath, "chrM", 16569, version + ";" + command);
+			}
+			
+			if(writeFasta) {
+				FastaWriter writer2 = new FastaWriter();
+				writer2.createFasta(varFile, prefix+".fasta", refPath);
 			}
 
 			System.out.println("Time: " + (System.currentTimeMillis() - start) / 1000 + " sec");
@@ -403,12 +412,12 @@ public class PileupToolLocal extends Tool {
 	}
 
 	public static void main(String[] args) {
-		String input = "test-data/mtdna/bam/input/";
-		String output = "test-data/out.vcf";
+		String input = "test-data/mtdna/bam/input";
+		String output = "test-data/out.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta, "--output",
-				output, "--level", "0.01", "--minCoverage", "30","--deletions","--insertions"});
+				output, "--level", "0.01", "--minCoverage", "30","--deletions","--insertions","--noBaq", "--writeFasta"});
 
 		pileup.start();
 
