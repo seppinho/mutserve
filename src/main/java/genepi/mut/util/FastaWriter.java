@@ -78,18 +78,31 @@ public class FastaWriter {
 							}
 						}
 					} else {
+						
 						if (multiInsertion && !complex) {
-							StringBuilder buildit = new StringBuilder();
+							StringBuilder insertionBuilder = new StringBuilder();
 
 							for (Variant var : vars) {
-								buildit.append(var.getVariant());
-								var.getVariant();
+								if (var.getType() == 5) {
+									insertionBuilder.append(var.getVariant());
+								}
 							}
-							String insertion = buildit.toString();
+							String insertion = insertionBuilder.toString();
 							build.append(ref + insertion);
 						}
 						if (complex) {
-							build.append(ref);
+
+							StringBuilder complexBuilder = new StringBuilder();
+							String variant = ref;
+							for (Variant var : vars) {
+								if (var.getType() == 5) {
+									complexBuilder.append(var.getVariant());
+								} else if (var.getType() == 1 || var.getType() == 2 && var.getLevel() >= level && var.getVariant() !='D') {
+									variant = String.valueOf(var.getVariant());
+								}
+							}
+							String insertion = complexBuilder.toString();
+							build.append(variant + insertion);
 						}
 
 					}
