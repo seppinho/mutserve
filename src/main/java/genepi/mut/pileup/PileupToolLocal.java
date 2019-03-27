@@ -36,7 +36,7 @@ public class PileupToolLocal extends Tool {
 	}
 
 	@Override
-	public void createParameters() {
+	public void createParameters() { 
 
 		addParameter("input", "input cram/bam file or folder", Tool.STRING);
 		addParameter("output", "output file", Tool.STRING);
@@ -72,9 +72,8 @@ public class PileupToolLocal extends Tool {
 		boolean deletions = isFlagSet("deletions");
 
 		boolean insertions = isFlagSet("insertions");
-		
+
 		boolean writeFasta = isFlagSet("writeFasta");
-		
 
 		double level;
 		if (getValue("level") == null) {
@@ -103,7 +102,7 @@ public class PileupToolLocal extends Tool {
 		} else {
 			alignQ = Integer.parseInt((String) getValue("alignQ"));
 		}
-		
+
 		int minCoverage;
 		if (getValue("minCoverage") == null) {
 			minCoverage = 30;
@@ -152,21 +151,20 @@ public class PileupToolLocal extends Tool {
 				System.out.println("Error. Please specify an output file not a directory");
 				return 1;
 			}
-		
+
 			String prefix = output;
 
 			if (output.contains(".")) {
 				prefix = output.substring(0, output.indexOf('.'));
 			}
-			
-			String varFile = prefix +".txt";
+
+			String varFile = prefix + ".txt";
 			String rawFile = prefix + "_raw.txt";
 
 			try {
 				writerVar = new LineWriter(new File(varFile).getAbsolutePath());
 				writerVar.write(BamAnalyser.headerVariants);
 
-				
 				writerRaw = new LineWriter(new File(rawFile).getAbsolutePath());
 				writerRaw.write(BamAnalyser.headerRaw);
 
@@ -205,7 +203,8 @@ public class PileupToolLocal extends Tool {
 
 				else if (reference == Reference.rcrs || reference == Reference.precisionId) {
 
-					BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, baq, minCoverage, mode);
+					BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, baq,
+							minCoverage, mode);
 
 					System.out.println("Processing: " + file.getName());
 					System.out.println("Detected reference: " + reference.toString());
@@ -245,10 +244,10 @@ public class PileupToolLocal extends Tool {
 				VcfWriter writer = new VcfWriter();
 				writer.createVCF(varFile, output, refPath, "chrM", 16569, version + ";" + command);
 			}
-			
-			if(writeFasta) {
+
+			if (writeFasta) {
 				FastaWriter writer2 = new FastaWriter();
-				writer2.createFasta(varFile, prefix+".fasta", refPath);
+				writer2.createFasta(varFile, prefix + ".fasta", refPath);
 			}
 
 			System.out.println("Time: " + (System.currentTimeMillis() - start) / 1000 + " sec");
@@ -350,8 +349,7 @@ public class PileupToolLocal extends Tool {
 					VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorPercentageFwd,
 							minorPercentageRev, llrFwd, llrRev, level, base);
 
-					if (varResult.getType() == VariantCaller.LOW_LEVEL_DELETION
-							|| varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
+					if (varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
 
 						isHeteroplasmy = true;
 
@@ -397,6 +395,8 @@ public class PileupToolLocal extends Tool {
 						varResult.setLevel(hetLevel);
 
 						String res = VariantCaller.writeVariant(varResult);
+						
+						System.out.println(res);
 
 						writerVariants.write(res);
 					}
@@ -412,12 +412,12 @@ public class PileupToolLocal extends Tool {
 	}
 
 	public static void main(String[] args) {
-		String input = "test-data/mtdna/bam/input";
+		String input = "test-data/mtdna/bams";
 		String output = "test-data/out.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta, "--output",
-				output, "--level", "0.01", "--minCoverage", "30","--deletions","--insertions","--noBaq", "--writeFasta"});
+				output, "--level", "0.01", "--minCoverage", "30", "--deletions", "--insertions", "--writeFasta" });
 
 		pileup.start();
 
