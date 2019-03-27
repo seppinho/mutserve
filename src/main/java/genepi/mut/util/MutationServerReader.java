@@ -1,6 +1,7 @@
 package genepi.mut.util;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import genepi.io.table.reader.CsvTableReader;
@@ -38,61 +39,59 @@ public class MutationServerReader {
 
 			int type = reader.getInteger("Type");
 
-			if (type == 1 || type == 2 || type == 4 || type == 5) {
+			Variant variant = new Variant();
 
-				Variant variant = new Variant();
-
-				double majorLevel = 0;
-				double minorLevel = 0;
-				int coverage = -1;
-				int pos;
-
-				if (type != 5) {
-					pos = reader.getInteger("Pos");
-				} else {
-					pos = Integer.valueOf(reader.getString("Pos").split("\\.")[0]);
-					variant.setInsertion(reader.getString("Pos"));
-				}
-
-				char ref = reader.getString("Ref").charAt(0);
-				char var = reader.getString("Variant").charAt(0);
-				double level = reader.getDouble("VariantLevel");
-				char major = reader.getString("MajorBase").charAt(0);
-				char minor = reader.getString("MinorBase").charAt(0);
-
-				if (reader.hasColumn("MajorLevel")) {
-					majorLevel = Double.valueOf(reader.getString("MajorLevel"));
-				}
-
-				if (reader.hasColumn("MinorLevel")) {
-					minorLevel = Double.valueOf(reader.getString("MinorLevel"));
-				}
-
-				if (reader.hasColumn("Coverage")) {
-					coverage = reader.getInteger("Coverage");
-				}
-
-				sample.setId(id);
-
-				if (type == 2 && minorLevel < requiredHetLevel) {
-					continue;
-				}
-
-				variant.setPos(pos);
-				variant.setRef(ref);
-				variant.setVariantBase(var);
-				variant.setLevel(level);
-				variant.setMajor(major);
-				variant.setMinor(minor);
-				variant.setMajorLevel(majorLevel);
-				variant.setMinorLevel(minorLevel);
-				variant.setCoverage(coverage);
-				variant.setType(type);
-
-				sample.addVariant(variant);
-				tmp = id;
+			double majorLevel = 0;
+			double minorLevel = 0;
+			int coverage = -1;
+			int pos;
+ 
+			if (!reader.getString("Pos").contains(".")) {
+				pos = reader.getInteger("Pos");
+			} else {
+				pos = Integer.valueOf(reader.getString("Pos").split("\\.")[0]);
+				variant.setInsertion(reader.getString("Pos"));
 			}
+
+			char ref = reader.getString("Ref").charAt(0);
+			char var = reader.getString("Variant").charAt(0);
+			double level = reader.getDouble("VariantLevel");
+			char major = reader.getString("MajorBase").charAt(0);
+			char minor = reader.getString("MinorBase").charAt(0);
+
+			if (reader.hasColumn("MajorLevel")) {
+				majorLevel = Double.valueOf(reader.getString("MajorLevel"));
+			}
+
+			if (reader.hasColumn("MinorLevel")) {
+				minorLevel = Double.valueOf(reader.getString("MinorLevel"));
+			}
+
+			if (reader.hasColumn("Coverage")) {
+				coverage = reader.getInteger("Coverage");
+			}
+
+			sample.setId(id);
+
+			if (type == 2 && minorLevel < requiredHetLevel) {
+				continue;
+			}
+
+			variant.setPos(pos);
+			variant.setRef(ref);
+			variant.setVariantBase(var);
+			variant.setLevel(level);
+			variant.setMajor(major);
+			variant.setMinor(minor);
+			variant.setMajorLevel(majorLevel);
+			variant.setMinorLevel(minorLevel);
+			variant.setCoverage(coverage);
+			variant.setType(type);
+
+			sample.addVariant(variant);
+			tmp = id;
 		}
+
 		samples.put(sample.getId(), sample);
 
 		return samples;

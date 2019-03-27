@@ -152,8 +152,7 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 				VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorFWD, minorREV, llrFwd,
 						llrRev, level, base);
 
-				if (varResult.getType() == VariantCaller.LOW_LEVEL_DELETION
-						|| varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
+				if (varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) { 
 
 					isHeteroplasmy = true;
 

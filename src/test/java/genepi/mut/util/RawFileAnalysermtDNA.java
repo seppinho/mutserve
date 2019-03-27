@@ -91,12 +91,11 @@ public class RawFileAnalysermtDNA {
 
 								varResult.setLevel(hetLevel);
 
-								if (varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT
-										|| (callDel && varResult.getType() == VariantCaller.LOW_LEVEL_DELETION)) {
+								if (varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
 
 									System.out.println("Lowlevel Variant: " + line.getPosition());
 
-									hetero.add(cloudgeneReader.getDouble("LEVEL"));
+									hetero.add(cloudgeneReader.getDouble("LEVEL")); 
 
 									if (sangerPos.contains(position)) {
 
@@ -211,8 +210,7 @@ public class RawFileAnalysermtDNA {
 
 					varResult.setLevel(hetLevel);
 
-					if (varResult.getType() == VariantCaller.LOW_LEVEL_DELETION
-							|| varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
+					if (varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
 
 						System.out.println("Low Level Variant: " + line.getPosition());
 

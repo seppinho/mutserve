@@ -14,8 +14,6 @@ public class VariantCaller {
 
 	public static int LOW_LEVEL_VARIANT = 2;
 
-	public static int LOW_LEVEL_DELETION = 3;
-
 	public static int DELETION = 4;
 
 	public static int INSERTION = 5;
@@ -27,8 +25,7 @@ public class VariantCaller {
 			return true;
 		}
 
-		if (line.getVariantType() == VariantCaller.DELETION
-				|| line.getVariantType() == VariantCaller.LOW_LEVEL_DELETION) {
+		if (line.getVariantType() == VariantCaller.DELETION) {
 			return true;
 		}
 
@@ -92,12 +89,7 @@ public class VariantCaller {
 
 							if (calcStrandBias(line, minorBasePercentsFWD, minorBasePercentsREV) <= 1) {
 
-								// D can either be on TOP or MINOR base
-								if (minor == 'D') {
-									type = LOW_LEVEL_DELETION;
-								} else {
-									type = LOW_LEVEL_VARIANT;
-								}
+								type = LOW_LEVEL_VARIANT;
 
 								return addVariantResult(line, type);
 
