@@ -389,15 +389,13 @@ public class PileupToolLocal extends Tool {
 								line.getMinorBasePercentsREV());
 
 						varResult.setLevelTop(levelTop);
-
+ 
 						varResult.setLevelMinor(levelMinor);
 
 						varResult.setLevel(hetLevel);
 
 						String res = VariantCaller.writeVariant(varResult);
 						
-						System.out.println(res);
-
 						writerVariants.write(res);
 					}
 				}
@@ -412,12 +410,12 @@ public class PileupToolLocal extends Tool {
 	}
 
 	public static void main(String[] args) {
-		String input = "test-data/mtdna/bams";
+		String input = "test-data/mtdna/bam/input";
 		String output = "test-data/out.txt";
 		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta, "--output",
-				output, "--level", "0.01", "--minCoverage", "30", "--deletions", "--insertions", "--writeFasta" });
+				output, "--level", "0.01", "--minCoverage", "30", "--deletions", "--insertions"});
 
 		pileup.start();
 

@@ -43,6 +43,11 @@ public class VariantLine implements Comparable<VariantLine> {
 	private double llrGFWD;
 	private double llrTFWD;
 
+	private char bayesFwd;
+	private char bayesRev;
+	private double bayesFinalFwd;
+	private double bayesFinalRev;
+
 	private String insPosition;
 
 	private double llrAREV;
@@ -223,7 +228,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		Collections.sort(allelesFWD, Collections.reverseOrder());
 		double topBasePercentsFWD = 0.0;
 		double minorBasePercentsFWD = 0.0;
-		
+
 		if (totalFWD > 0) {
 
 			topBasePercentsFWD = allelesFWD.get(0) / (double) totalFWD;
@@ -231,7 +236,7 @@ public class VariantLine implements Comparable<VariantLine> {
 			minorBasePercentsFWD = allelesFWD.get(1) / (double) totalFWD;
 
 		}
-		
+
 		ArrayList<Integer> allelesREV = new ArrayList<Integer>();
 		allelesREV.add(aREV);
 		allelesREV.add(cREV);
@@ -250,13 +255,13 @@ public class VariantLine implements Comparable<VariantLine> {
 			minorBasePercentsREV = allelesREV.get(1) / (double) totalREV;
 
 		}
-		
+
 		// set
 		this.setTopBasePercentsFWD(topBasePercentsFWD);
 		this.setMinorBasePercentsFWD(minorBasePercentsFWD);
 		this.setTopBasePercentsREV(topBasePercentsREV);
 		this.setMinorBasePercentsREV(minorBasePercentsREV);
-		
+
 		char topBaseFWD = '-';
 		char minorBaseFWD = '-';
 
@@ -311,7 +316,7 @@ public class VariantLine implements Comparable<VariantLine> {
 
 		minorBaseREV = detectMinorREV(minorBasePercentsREV);
 		this.setMinorBaseREV(minorBaseREV);
-		
+
 		minors = new ArrayList<>();
 
 		// start with 1 and ignoring topbase!
@@ -324,13 +329,15 @@ public class VariantLine implements Comparable<VariantLine> {
 			if (checkBases(topBaseFWD, topBaseREV, minorFWD, minorREV)) {
 
 				if (minorFWD != '-') {
-					
 					minors.add(minorFWD);
 
 				}
 			}
 
 		}
+		
+		// caly Bayesian model for homoplasmies
+		calcBayes(base);
 
 		// TODO combine this with LLR for all bases
 		if (minorBasePercentsFWD >= level || minorBasePercentsREV >= level) {
@@ -405,19 +412,19 @@ public class VariantLine implements Comparable<VariantLine> {
 				return 'A';
 			}
 
-			else if (minorPercentage == this.cPercentageFWD  && topBaseFWD != 'C') {
+			else if (minorPercentage == this.cPercentageFWD && topBaseFWD != 'C') {
 				return 'C';
 			}
 
-			else if (minorPercentage == this.gPercentageFWD  && topBaseFWD != 'G') {
+			else if (minorPercentage == this.gPercentageFWD && topBaseFWD != 'G') {
 				return 'G';
 			}
 
-			else if (minorPercentage == this.tPercentageFWD  && topBaseFWD != 'T') {
+			else if (minorPercentage == this.tPercentageFWD && topBaseFWD != 'T') {
 				return 'T';
 			}
 
-			else if (minorPercentage == this.dPercentageFWD  && topBaseFWD != 'D') {
+			else if (minorPercentage == this.dPercentageFWD && topBaseFWD != 'D') {
 				return 'D';
 			}
 
@@ -470,6 +477,144 @@ public class VariantLine implements Comparable<VariantLine> {
 		llr.setLlrREV(Math.abs(fm1REV - fm0REV));
 
 		return llr;
+	}
+ 
+	private void calcBayes(BasePosition base) {
+
+		double probAFor = 0;
+		for (int i = 0; i < base.getaFor(); i++) {
+			byte err = base.getaForQ().get(i);
+			if(probAFor == 0) {
+				probAFor = (1 - Math.pow(10, (-err / 10)));
+			} else {
+				probAFor *= (1 - Math.pow(10, (-err / 10)));	
+			}
+			
+		}
+		
+		double probARev = 0;
+		for (int i = 0; i < base.getaRev(); i++) {
+			byte err = base.getaRevQ().get(i);
+			if(probARev == 0) {
+				probARev = (1 - Math.pow(10, (-err / 10)));
+			} else {
+				probARev *= (1 - Math.pow(10, (-err / 10)));	
+			}
+		}
+
+		double probCFor = 0;
+		for (int i = 0; i < base.getcFor(); i++) {
+			byte err = base.getcForQ().get(i);
+			if(probCFor == 0) {
+				probCFor = (1 - Math.pow(10, (-err / 10)));
+			} else {
+				probCFor *= (1 - Math.pow(10, (-err / 10)));	
+			}
+		}
+
+		double probCRev = 0;
+		for (int i = 0; i < base.getcRev(); i++) {
+			byte err = base.getcRevQ().get(i);
+			if(probCRev == 0) {
+				probCRev = (1 - Math.pow(10, (-err / 10)));
+			} else {
+				probCRev *= (1 - Math.pow(10, (-err / 10)));	
+			}
+		}
+		double probGFor = 0;
+		for (int i = 0; i < base.getgFor(); i++) {
+			byte err = base.getgForQ().get(i);
+			if(probGFor == 0) {
+				probGFor = (1 - Math.pow(10, (-err / 10)));
+			} else {
+				probGFor *= (1 - Math.pow(10, (-err / 10)));	
+			}
+		}
+
+		double probGRev = 0;
+		for (int i = 0; i < base.getgRev(); i++) {
+			byte err = base.getgRevQ().get(i);
+			if(probGRev == 0) {
+				probGRev = (1 - Math.pow(10, (-err / 10)));
+			} else {
+				probGRev *= (1 - Math.pow(10, (-err / 10)));	
+			}
+		}
+
+		double probTFor = 0;
+		for (int i = 0; i < base.gettFor(); i++) {
+			byte err = 20;
+			err = base.gettForQ().get(i);
+			if(probTFor == 0) {
+				probTFor = (1 - Math.pow(10, (-err / 10)));
+			} else {
+				probTFor *= (1 - Math.pow(10, (-err / 10)));	
+			}
+		}
+
+		double probTRev = 0;
+		for (int i = 0; i < base.gettRev(); i++) {
+			byte err = 20;
+			err = base.gettRevQ().get(i);
+			if(probTRev == 0) {
+				probTRev = (1 - Math.pow(10, (-err / 10)));
+			} else {
+				probTRev *= (1 - Math.pow(10, (-err / 10)));	
+			}
+		}
+
+		double totalProb = probAFor + probCFor + probGFor + probTFor;
+		
+		
+		if(base.getPos() == 14698) {
+			System.out.println("SIZE A " + base.getaForQ().size());
+			System.out.println("SIZE G " + base.getgForQ().size());
+			System.out.println("A " + probAFor);
+			System.out.println("C " + probCFor);
+			System.out.println("G " +probGFor);
+			System.out.println("T " + probTFor);
+			System.out.println("total " + totalProb);
+			
+		}
+		
+		
+		char bayesFwd = '-';
+		double bayesPercent = 0;
+		
+		
+		if(totalProb>0) {
+		double probATotal = (probAFor) / totalProb;
+		double probCTotal = (probCFor) / totalProb;
+		double probGTotal = (probGFor) / totalProb;
+		double probTTotal = (probTFor) / totalProb;
+		
+		bayesPercent = Math.max(Math.max(probATotal, probCTotal), Math.max(probGTotal, probTTotal));
+		
+		if (bayesPercent == probATotal) {
+			bayesFwd ='A';
+		} else if (bayesPercent == probCTotal) {
+			bayesFwd ='C';
+		} else if (bayesPercent == probGTotal) {
+			bayesFwd ='G';
+		} else if (bayesPercent == probTTotal) {
+			bayesFwd ='T';
+		}
+		
+		if(base.getPos() == 14698) {
+			System.out.println("a");
+			System.out.println(probAFor);
+			System.out.println(probATotal);
+			System.out.println();
+			System.out.println("g");
+			System.out.println(probGFor);
+			System.out.println(probGTotal);
+		}
+		
+		}
+
+		this.setBayesFinalFwd(bayesPercent);
+		this.setBayesFwd(bayesFwd);
+
 	}
 
 	@Override
@@ -1154,6 +1299,38 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	public void setMinors(ArrayList<Character> minors) {
 		this.minors = minors;
+	}
+
+	public char getBayesFwd() {
+		return bayesFwd;
+	}
+
+	public void setBayesFwd(char bayesFwd) {
+		this.bayesFwd = bayesFwd;
+	}
+
+	public char getBayesRev() {
+		return bayesRev;
+	}
+
+	public void setBayesRev(char bayesRev) {
+		this.bayesRev = bayesRev;
+	}
+
+	public double getBayesFinalFwd() {
+		return bayesFinalFwd;
+	}
+
+	public void setBayesFinalFwd(double bayesFinalFwd) {
+		this.bayesFinalFwd = bayesFinalFwd;
+	}
+
+	public double getBayesFinalRev() {
+		return bayesFinalRev;
+	}
+
+	public void setBayesFinalRev(double bayesFinalRev) {
+		this.bayesFinalRev = bayesFinalRev;
 	}
 
 }
