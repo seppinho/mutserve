@@ -33,30 +33,26 @@ public class VariantCaller {
 	}
 
 	public static VariantResult determineVariants(VariantLine line, int coverage) {
-		
-		int type = 0;
-		
-		if (line.getTopBaseFWD() != '-' && !line.isInsertion()) {
 
-			if (line.getBayesFinalFwd() > 0.9 && line.getBayesFwd() != line.getRef()) {
-				
-				if (line.getBayesFinalFwd() == 'D') {
+		if (!line.isInsertion()) {
+
+			if (line.getBayesBase() != '-' && line.getBayesProbability() > 0.4
+					&& line.getBayesBase() != line.getRef()) {
+
+				int type = VARIANT;
+				if (line.getBayesBase() == 'D') {
 					type = DELETION;
-				} else if (line.isInsertion()) {
-					type = INSERTION;
-				} else {
-					type = VARIANT;
-				}
-				
-				if(line.getPosition() == 14698) {
-					System.out.println(line.getRef());
-					System.out.println(line.getCovFWD());
 				}
 
 				return addVariantResult(line, type);
 
 			}
-
+		} else {
+			if (line.getTopBaseFWD() == line.getTopBaseREV() && line.getTopBaseFWD() != line.getRef()
+					&& ((line.getCovFWD() + line.getCovREV() / 2) >= 100)) {
+				int type = INSERTION;
+				return addVariantResult(line, type);
+			}
 		}
 
 		return null;

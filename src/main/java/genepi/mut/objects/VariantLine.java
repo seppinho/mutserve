@@ -43,10 +43,8 @@ public class VariantLine implements Comparable<VariantLine> {
 	private double llrGFWD;
 	private double llrTFWD;
 
-	private char bayesFwd;
-	private char bayesRev;
-	private double bayesFinalFwd;
-	private double bayesFinalRev;
+	private char bayesBase;
+	private double bayesProbability;
 
 	private String insPosition;
 
@@ -335,7 +333,7 @@ public class VariantLine implements Comparable<VariantLine> {
 			}
 
 		}
-		
+
 		// caly Bayesian model for homoplasmies
 		calcBayes(base);
 
@@ -478,142 +476,157 @@ public class VariantLine implements Comparable<VariantLine> {
 
 		return llr;
 	}
- 
+
 	private void calcBayes(BasePosition base) {
 
-		double probAFor = 0;
+		double probAFor = 1;
+		double probCFor = 1;
+		double probGFor = 1;
+		double probTFor = 1;
+		double probDFor = 1;
+
+		double probARev = 1;
+		double probCRev = 1;
+		double probGRev = 1;
+		double probTRev = 1;
+		double probDRev = 1;
+
 		for (int i = 0; i < base.getaFor(); i++) {
 			byte err = base.getaForQ().get(i);
-			if(probAFor == 0) {
-				probAFor = (1 - Math.pow(10, (-err / 10)));
-			} else {
-				probAFor *= (1 - Math.pow(10, (-err / 10)));	
-			}
-			
-		}
-		
-		double probARev = 0;
-		for (int i = 0; i < base.getaRev(); i++) {
-			byte err = base.getaRevQ().get(i);
-			if(probARev == 0) {
-				probARev = (1 - Math.pow(10, (-err / 10)));
-			} else {
-				probARev *= (1 - Math.pow(10, (-err / 10)));	
-			}
+			double qualScore = Math.pow(10, (-err / 10));
+			probAFor *= 1 - qualScore;
+			probCFor *= qualScore / 4;
+			probGFor *= qualScore / 4;
+			probTFor *= qualScore / 4;
+			probDFor *= qualScore / 4;
 		}
 
-		double probCFor = 0;
 		for (int i = 0; i < base.getcFor(); i++) {
 			byte err = base.getcForQ().get(i);
-			if(probCFor == 0) {
-				probCFor = (1 - Math.pow(10, (-err / 10)));
-			} else {
-				probCFor *= (1 - Math.pow(10, (-err / 10)));	
-			}
+			double qualScore = Math.pow(10, (-err / 10));
+			probCFor *= 1 - qualScore;
+			probAFor *= qualScore / 4;
+			probGFor *= qualScore / 4;
+			probTFor *= qualScore / 4;
+			probDFor *= qualScore / 4;
 		}
 
-		double probCRev = 0;
-		for (int i = 0; i < base.getcRev(); i++) {
-			byte err = base.getcRevQ().get(i);
-			if(probCRev == 0) {
-				probCRev = (1 - Math.pow(10, (-err / 10)));
-			} else {
-				probCRev *= (1 - Math.pow(10, (-err / 10)));	
-			}
-		}
-		double probGFor = 0;
 		for (int i = 0; i < base.getgFor(); i++) {
 			byte err = base.getgForQ().get(i);
-			if(probGFor == 0) {
-				probGFor = (1 - Math.pow(10, (-err / 10)));
-			} else {
-				probGFor *= (1 - Math.pow(10, (-err / 10)));	
-			}
+			double qualScore = Math.pow(10, (-err / 10));
+			probGFor *= 1 - qualScore;
+			probAFor *= qualScore / 4;
+			probCFor *= qualScore / 4;
+			probTFor *= qualScore / 4;
+			probDFor *= qualScore / 4;
 		}
 
-		double probGRev = 0;
-		for (int i = 0; i < base.getgRev(); i++) {
-			byte err = base.getgRevQ().get(i);
-			if(probGRev == 0) {
-				probGRev = (1 - Math.pow(10, (-err / 10)));
-			} else {
-				probGRev *= (1 - Math.pow(10, (-err / 10)));	
-			}
-		}
-
-		double probTFor = 0;
 		for (int i = 0; i < base.gettFor(); i++) {
 			byte err = 20;
 			err = base.gettForQ().get(i);
-			if(probTFor == 0) {
-				probTFor = (1 - Math.pow(10, (-err / 10)));
-			} else {
-				probTFor *= (1 - Math.pow(10, (-err / 10)));	
-			}
+			double qualScore = Math.pow(10, (-err / 10));
+			probTFor *= 1 - qualScore;
+			probAFor *= qualScore / 4;
+			probCFor *= qualScore / 4;
+			probGFor *= qualScore / 4;
+			probDFor *= qualScore / 4;
 		}
 
-		double probTRev = 0;
+		for (int i = 0; i < base.getdFor(); i++) {
+			byte err = 20;
+			err = base.getdForQ().get(i);
+			double qualScore = Math.pow(10, (-err / 10));
+
+			probDFor *= 1 - qualScore;
+			probTFor *= qualScore / 4;
+			probAFor *= qualScore / 4;
+			probCFor *= qualScore / 4;
+			probGFor *= qualScore / 4;
+		}
+
+		for (int i = 0; i < base.getaRev(); i++) {
+			byte err = base.getaRevQ().get(i);
+			double qualScore = Math.pow(10, (-err / 10));
+			probARev *= 1 - qualScore;
+			probCRev *= qualScore / 4;
+			probGRev *= qualScore / 4;
+			probTRev *= qualScore / 4;
+			probDRev *= qualScore / 4;
+		}
+
+		for (int i = 0; i < base.getcRev(); i++) {
+			byte err = base.getcRevQ().get(i);
+			double qualScore = Math.pow(10, (-err / 10));
+			probCRev *= 1 - qualScore;
+			probARev *= qualScore / 4;
+			probGRev *= qualScore / 4;
+			probTRev *= qualScore / 4;
+			probDRev *= qualScore / 4;
+		}
+
+		for (int i = 0; i < base.getgRev(); i++) {
+			byte err = base.getgRevQ().get(i);
+			double qualScore = Math.pow(10, (-err / 10));
+			probGRev *= 1 - qualScore;
+			probARev *= qualScore / 4;
+			probCRev *= qualScore / 4;
+			probTRev *= qualScore / 4;
+			probDRev *= qualScore / 4;
+		}
+
 		for (int i = 0; i < base.gettRev(); i++) {
 			byte err = 20;
 			err = base.gettRevQ().get(i);
-			if(probTRev == 0) {
-				probTRev = (1 - Math.pow(10, (-err / 10)));
-			} else {
-				probTRev *= (1 - Math.pow(10, (-err / 10)));	
+			double qualScore = Math.pow(10, (-err / 10));
+			probTRev *= 1 - qualScore;
+			probARev *= qualScore / 4;
+			probCRev *= qualScore / 4;
+			probGRev *= qualScore / 4;
+			probDRev *= qualScore / 4;
+		}
+
+		for (int i = 0; i < base.getdRev(); i++) {
+			byte err = 20;
+			err = base.getdRevQ().get(i);
+			double qualScore = Math.pow(10, (-err / 10));
+			probDRev *= 1 - qualScore;
+			probTRev *= qualScore / 4;
+			probARev *= qualScore / 4;
+			probCRev *= qualScore / 4;
+			probGRev *= qualScore / 4;
+		}
+
+		double totalProb = probAFor + probCFor + probGFor + probTFor + probDFor + probARev + probCRev + probGRev
+				+ probTRev + probDRev;
+
+		char finalBase = '-';
+		double bayesProb = 0;
+
+		if (totalProb > 0) {
+			double probATotal = (probAFor + probARev) / totalProb;
+			double probCTotal = (probCFor + probCRev) / totalProb;
+			double probGTotal = (probGFor + probGRev) / totalProb;
+			double probTTotal = (probTFor + probTRev) / totalProb;
+			double probDTotal = (probDFor + probDRev) / totalProb;
+
+			bayesProb = Math.max(Math.max(Math.max(probATotal, probCTotal), Math.max(probGTotal, probTTotal)),
+					probDTotal);
+
+			if (bayesProb == probATotal) {
+				finalBase = 'A';
+			} else if (bayesProb == probCTotal) {
+				finalBase = 'C';
+			} else if (bayesProb == probGTotal) {
+				finalBase = 'G';
+			} else if (bayesProb == probTTotal) {
+				finalBase = 'T';
+			} else if (bayesProb == probDTotal) {
+				finalBase = 'D';
 			}
 		}
 
-		double totalProb = probAFor + probCFor + probGFor + probTFor;
-		
-		
-		if(base.getPos() == 14698) {
-			System.out.println("SIZE A " + base.getaForQ().size());
-			System.out.println("SIZE G " + base.getgForQ().size());
-			System.out.println("A " + probAFor);
-			System.out.println("C " + probCFor);
-			System.out.println("G " +probGFor);
-			System.out.println("T " + probTFor);
-			System.out.println("total " + totalProb);
-			
-		}
-		
-		
-		char bayesFwd = '-';
-		double bayesPercent = 0;
-		
-		
-		if(totalProb>0) {
-		double probATotal = (probAFor) / totalProb;
-		double probCTotal = (probCFor) / totalProb;
-		double probGTotal = (probGFor) / totalProb;
-		double probTTotal = (probTFor) / totalProb;
-		
-		bayesPercent = Math.max(Math.max(probATotal, probCTotal), Math.max(probGTotal, probTTotal));
-		
-		if (bayesPercent == probATotal) {
-			bayesFwd ='A';
-		} else if (bayesPercent == probCTotal) {
-			bayesFwd ='C';
-		} else if (bayesPercent == probGTotal) {
-			bayesFwd ='G';
-		} else if (bayesPercent == probTTotal) {
-			bayesFwd ='T';
-		}
-		
-		if(base.getPos() == 14698) {
-			System.out.println("a");
-			System.out.println(probAFor);
-			System.out.println(probATotal);
-			System.out.println();
-			System.out.println("g");
-			System.out.println(probGFor);
-			System.out.println(probGTotal);
-		}
-		
-		}
-
-		this.setBayesFinalFwd(bayesPercent);
-		this.setBayesFwd(bayesFwd);
+		this.setBayesProbability(bayesProb);
+		this.setBayesBase(finalBase);
 
 	}
 
@@ -1301,36 +1314,20 @@ public class VariantLine implements Comparable<VariantLine> {
 		this.minors = minors;
 	}
 
-	public char getBayesFwd() {
-		return bayesFwd;
+	public char getBayesBase() {
+		return bayesBase;
 	}
 
-	public void setBayesFwd(char bayesFwd) {
-		this.bayesFwd = bayesFwd;
+	public void setBayesBase(char bayesBase) {
+		this.bayesBase = bayesBase;
 	}
 
-	public char getBayesRev() {
-		return bayesRev;
+	public double getBayesProbability() {
+		return bayesProbability;
 	}
 
-	public void setBayesRev(char bayesRev) {
-		this.bayesRev = bayesRev;
-	}
-
-	public double getBayesFinalFwd() {
-		return bayesFinalFwd;
-	}
-
-	public void setBayesFinalFwd(double bayesFinalFwd) {
-		this.bayesFinalFwd = bayesFinalFwd;
-	}
-
-	public double getBayesFinalRev() {
-		return bayesFinalRev;
-	}
-
-	public void setBayesFinalRev(double bayesFinalRev) {
-		this.bayesFinalRev = bayesFinalRev;
+	public void setBayesProbability(double bayesProbability) {
+		this.bayesProbability = bayesProbability;
 	}
 
 }
