@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
 
 import genepi.io.table.reader.CsvTableReader;
@@ -137,7 +138,6 @@ public class VariantLine implements Comparable<VariantLine> {
 		this.setTopBaseREV(cloudgeneReader.getString("TOP-REV").charAt(0));
 		this.setMinorBaseFWD(cloudgeneReader.getString("MINOR-FWD").charAt(0));
 		this.setMinorBaseREV(cloudgeneReader.getString("MINOR-REV").charAt(0));
-
 	}
 
 	public void parseLine(BasePosition base, double level) throws IOException {
@@ -479,138 +479,159 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	private void calcBayes(BasePosition base) {
 
+		FrequencyReader reader = new FrequencyReader("/home/seb/Desktop/test.txt.frq");
+		HashMap<String, Double> freq = reader.parse();
+
 		double probAFor = 1;
 		double probCFor = 1;
 		double probGFor = 1;
 		double probTFor = 1;
-		double probDFor = 1;
 
 		double probARev = 1;
 		double probCRev = 1;
 		double probGRev = 1;
 		double probTRev = 1;
-		double probDRev = 1;
+
+		double freqA = 0.01;
+		double freqC = 0.01;
+		double freqG = 0.01;
+		double freqT = 0.01;
+
+		String keyA = base.getPos() + "A";
+		String keyC = base.getPos() + "C";
+		String keyG = base.getPos() + "G";
+		String keyT = base.getPos() + "T";
+
+		if (freq.containsKey(keyA)) {
+			freqA = freq.get(keyA);
+		}
+		if (freq.containsKey(keyC)) {
+			freqC = freq.get(keyC);
+		}
+		if (freq.containsKey(keyG)) {
+			freqG = freq.get(keyG);
+		}
+		if (freq.containsKey(keyT)) {
+			freqT = freq.get(keyT);
+		}
 
 		for (int i = 0; i < base.getaFor(); i++) {
 			byte err = base.getaForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probAFor *= 1 - qualScore;
-			probCFor *= qualScore / 4;
-			probGFor *= qualScore / 4;
-			probTFor *= qualScore / 4;
-			probDFor *= qualScore / 4;
+			probAFor *= (1 - qualScore);
+			probCFor *= qualScore / 3;
+			probGFor *= qualScore / 3;
+			probTFor *= qualScore / 3;
+			// probDFor *= qualScore / 4 * freqD;
 		}
 
 		for (int i = 0; i < base.getcFor(); i++) {
 			byte err = base.getcForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probCFor *= 1 - qualScore;
-			probAFor *= qualScore / 4;
-			probGFor *= qualScore / 4;
-			probTFor *= qualScore / 4;
-			probDFor *= qualScore / 4;
+			probCFor *= (1 - qualScore);
+			probAFor *= qualScore / 3;
+			probGFor *= qualScore / 3;
+			probTFor *= qualScore / 3;
+			// probDFor *= qualScore / 4 * freqD;
 		}
 
 		for (int i = 0; i < base.getgFor(); i++) {
 			byte err = base.getgForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probGFor *= 1 - qualScore;
-			probAFor *= qualScore / 4;
-			probCFor *= qualScore / 4;
-			probTFor *= qualScore / 4;
-			probDFor *= qualScore / 4;
+			probGFor *= (1 - qualScore);
+			probAFor *= qualScore / 3;
+			probCFor *= qualScore / 3;
+			probTFor *= qualScore / 3;
+			// probDFor *= qualScore / 4 * freqD;
 		}
 
 		for (int i = 0; i < base.gettFor(); i++) {
 			byte err = 20;
 			err = base.gettForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probTFor *= 1 - qualScore;
-			probAFor *= qualScore / 4;
-			probCFor *= qualScore / 4;
-			probGFor *= qualScore / 4;
-			probDFor *= qualScore / 4;
-		}
-
-		for (int i = 0; i < base.getdFor(); i++) {
-			byte err = 20;
-			err = base.getdForQ().get(i);
-			double qualScore = Math.pow(10, (-err / 10));
-
-			probDFor *= 1 - qualScore;
-			probTFor *= qualScore / 4;
-			probAFor *= qualScore / 4;
-			probCFor *= qualScore / 4;
-			probGFor *= qualScore / 4;
+			probTFor *= (1 - qualScore);
+			probAFor *= qualScore / 3;
+			probCFor *= qualScore / 3;
+			probGFor *= qualScore / 3;
+			// probDFor *= qualScore / 4 * freqD;
 		}
 
 		for (int i = 0; i < base.getaRev(); i++) {
 			byte err = base.getaRevQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probARev *= 1 - qualScore;
-			probCRev *= qualScore / 4;
-			probGRev *= qualScore / 4;
-			probTRev *= qualScore / 4;
-			probDRev *= qualScore / 4;
+			probARev *= (1 - qualScore);
+			probCRev *= qualScore / 3;
+			probGRev *= qualScore / 3;
+			probTRev *= qualScore / 3;
+			// probDRev *= qualScore / 4 * freqD;
 		}
 
 		for (int i = 0; i < base.getcRev(); i++) {
 			byte err = base.getcRevQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probCRev *= 1 - qualScore;
-			probARev *= qualScore / 4;
-			probGRev *= qualScore / 4;
-			probTRev *= qualScore / 4;
-			probDRev *= qualScore / 4;
+			probCRev *= (1 - qualScore);
+			probARev *= qualScore / 3;
+			probGRev *= qualScore / 3;
+			probTRev *= qualScore / 3;
+			// probDRev *= qualScore / 4 * freqD;
 		}
 
 		for (int i = 0; i < base.getgRev(); i++) {
 			byte err = base.getgRevQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probGRev *= 1 - qualScore;
-			probARev *= qualScore / 4;
-			probCRev *= qualScore / 4;
-			probTRev *= qualScore / 4;
-			probDRev *= qualScore / 4;
+			probGRev *= (1 - qualScore);
+			probARev *= qualScore / 3;
+			probCRev *= qualScore / 3;
+			probTRev *= qualScore / 3;
+			// probDRev *= qualScore / 4 * freqD;
 		}
 
 		for (int i = 0; i < base.gettRev(); i++) {
 			byte err = 20;
 			err = base.gettRevQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probTRev *= 1 - qualScore;
-			probARev *= qualScore / 4;
-			probCRev *= qualScore / 4;
-			probGRev *= qualScore / 4;
-			probDRev *= qualScore / 4;
+			probTRev *= (1 - qualScore);
+			probARev *= qualScore / 3;
+			probCRev *= qualScore / 3;
+			probGRev *= qualScore / 3;
+			// probDRev *= qualScore / 4 * freqD;
 		}
 
-		for (int i = 0; i < base.getdRev(); i++) {
-			byte err = 20;
-			err = base.getdRevQ().get(i);
-			double qualScore = Math.pow(10, (-err / 10));
-			probDRev *= 1 - qualScore;
-			probTRev *= qualScore / 4;
-			probARev *= qualScore / 4;
-			probCRev *= qualScore / 4;
-			probGRev *= qualScore / 4;
-		}
+		/*
+		 * for (int i = 0; i < base.getdFor(); i++) { byte err = 20; err =
+		 * base.getdForQ().get(i); double qualScore = Math.pow(10, (-err / 10));
+		 * 
+		 * probDFor *= 1 - qualScore; probTFor *= qualScore / 4; probAFor *= qualScore /
+		 * 4; probCFor *= qualScore / 4; probGFor *= qualScore / 4}
+		 */
 
-		double totalProb = probAFor + probCFor + probGFor + probTFor + probDFor + probARev + probCRev + probGRev
-				+ probTRev + probDRev;
+		/*
+		 * for (int i = 0; i < base.getdRev(); i++) { byte err = 20; err =
+		 * base.getdRevQ().get(i); double qualScore = Math.pow(10, (-err / 10));
+		 * probDRev *= (1 - qualScore); probTRev *= qualScore / 4; probARev *= qualScore
+		 * / 4; probCRev *= qualScore / 4; probGRev *= qualScore / 4; }
+		 */
+
+		// add prior
+		double probA = (probAFor * probARev) * freqA;
+		double probC = (probCFor * probCRev) * freqC;
+		double probG = (probGFor * probGRev) * freqG;
+		double probT = (probTFor * probTRev) * freqT;
+
+		double totalProb = probA + probC + probG + probT;
 
 		char finalBase = '-';
 		double bayesProb = 0;
 
 		if (totalProb > 0) {
-			double probATotal = (probAFor + probARev) / totalProb;
-			double probCTotal = (probCFor + probCRev) / totalProb;
-			double probGTotal = (probGFor + probGRev) / totalProb;
-			double probTTotal = (probTFor + probTRev) / totalProb;
-			double probDTotal = (probDFor + probDRev) / totalProb;
+			
+			double probATotal = probA / totalProb;
+			double probCTotal = probC / totalProb;
+			double probGTotal = probG / totalProb;
+			double probTTotal = probT / totalProb;
+			// double probDTotal = (probDFor + probDRev) / totalProb;
 
-			bayesProb = Math.max(Math.max(Math.max(probATotal, probCTotal), Math.max(probGTotal, probTTotal)),
-					probDTotal);
+			bayesProb = Math.max(Math.max(probATotal, probCTotal), Math.max(probGTotal, probTTotal));
 
 			if (bayesProb == probATotal) {
 				finalBase = 'A';
@@ -620,8 +641,6 @@ public class VariantLine implements Comparable<VariantLine> {
 				finalBase = 'G';
 			} else if (bayesProb == probTTotal) {
 				finalBase = 'T';
-			} else if (bayesProb == probDTotal) {
-				finalBase = 'D';
 			}
 		}
 

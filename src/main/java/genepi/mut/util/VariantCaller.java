@@ -54,9 +54,7 @@ public class VariantCaller {
 				return addVariantResult(line, type);
 			}
 		}
-
 		return null;
-
 	}
 
 	public static VariantResult determineLowLevelVariant(VariantLine line, double minorBasePercentsFWD,
