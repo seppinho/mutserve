@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 
+import org.apache.commons.math3.stat.Frequency;
+
 import genepi.io.table.reader.CsvTableReader;
 
 public class VariantLine implements Comparable<VariantLine> {
@@ -140,7 +142,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		this.setMinorBaseREV(cloudgeneReader.getString("MINOR-REV").charAt(0));
 	}
 
-	public void parseLine(BasePosition base, double level) throws IOException {
+	public void parseLine(BasePosition base, double level, HashMap<String, Double> frequencies) throws IOException {
 
 		double aFWDPercents = 0;
 		double cFWDPercents = 0;
@@ -334,8 +336,7 @@ public class VariantLine implements Comparable<VariantLine> {
 
 		}
 
-		// caly Bayesian model for homoplasmies
-		calcBayes(base);
+		calcBayes(base, frequencies);
 
 		// TODO combine this with LLR for all bases
 		if (minorBasePercentsFWD >= level || minorBasePercentsREV >= level) {
@@ -477,11 +478,8 @@ public class VariantLine implements Comparable<VariantLine> {
 		return llr;
 	}
 
-	private void calcBayes(BasePosition base) {
-
-		FrequencyReader reader = new FrequencyReader("/home/seb/Desktop/test.txt.frq");
-		HashMap<String, Double> freq = reader.parse();
-
+	private void calcBayes(BasePosition base, HashMap<String, Double> freq) {
+		
 		double probAFor = 1;
 		double probCFor = 1;
 		double probGFor = 1;
@@ -501,7 +499,8 @@ public class VariantLine implements Comparable<VariantLine> {
 		String keyC = base.getPos() + "C";
 		String keyG = base.getPos() + "G";
 		String keyT = base.getPos() + "T";
-
+		
+		if(freq!=null) {
 		if (freq.containsKey(keyA)) {
 			freqA = freq.get(keyA);
 		}
@@ -514,7 +513,8 @@ public class VariantLine implements Comparable<VariantLine> {
 		if (freq.containsKey(keyT)) {
 			freqT = freq.get(keyT);
 		}
-
+		}
+		
 		for (int i = 0; i < base.getaFor(); i++) {
 			byte err = base.getaForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));

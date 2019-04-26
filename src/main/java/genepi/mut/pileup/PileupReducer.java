@@ -24,6 +24,8 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 
 	String reference;
 
+	String freqFile;
+	
 	String hdfsVariants;
 
 	HdfsLineWriter writer;
@@ -39,6 +41,7 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 		CacheStore cache = new CacheStore(context.getConfiguration());
 		File referencePath = new File(cache.getArchive("reference"));
 		String fastaPath = ReferenceUtil.findFileinDir(referencePath, ".fasta");
+		freqFile = ReferenceUtil.findFileinDir(referencePath, ".frq");
 		reference = ReferenceUtil.readInReference(fastaPath);
 
 		level = context.getConfiguration().getDouble("level", 0.01);
@@ -134,7 +137,7 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 			line.setRef(ref);
 
 			// level needed for LLR
-			line.parseLine(basePos, level);
+			line.parseLine(basePos, level, null);
 
 			boolean isHeteroplasmy = false;
 

@@ -1,8 +1,10 @@
 package genepi.mut.pileup;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -10,6 +12,7 @@ import genepi.base.Tool;
 import genepi.io.FileUtil;
 import genepi.io.text.LineWriter;
 import genepi.mut.objects.BasePosition;
+import genepi.mut.objects.BayesFrequencies;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.objects.VariantResult;
 import genepi.mut.util.FastaWriter;
@@ -285,6 +288,10 @@ public class PileupToolLocal extends Tool {
 		HashMap<String, BasePosition> counts = analyser.getCounts();
 
 		String reference = analyser.getReferenceString();
+		
+		//load frequency file
+		InputStream in = this.getClass().getClassLoader().getResourceAsStream("1000g.frq");
+		HashMap<String, Double> freq = BayesFrequencies.instance(new DataInputStream(in));	
 
 		for (String key : counts.keySet()) {
 
@@ -331,7 +338,8 @@ public class PileupToolLocal extends Tool {
 
 				// create all required frequencies for one position
 				// applies checkBases()
-				line.parseLine(basePos, level);
+				
+				line.parseLine(basePos, level, freq);
 
 				boolean isHeteroplasmy = false;
 
