@@ -1,6 +1,8 @@
 package genepi.mut.objects;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -478,158 +480,135 @@ public class VariantLine implements Comparable<VariantLine> {
 		return llr;
 	}
 
-	private void calcBayes(BasePosition base, HashMap<String, Double> freq) {
-		
-		double probAFor = 1;
-		double probCFor = 1;
-		double probGFor = 1;
-		double probTFor = 1;
+	public void calcBayes(BasePosition base, HashMap<String, Double> freq) {
 
-		double probARev = 1;
-		double probCRev = 1;
-		double probGRev = 1;
-		double probTRev = 1;
+		BigDecimal probAFor = new BigDecimal(1);
+		BigDecimal probCFor = new BigDecimal(1);
+		BigDecimal probGFor = new BigDecimal(1);
+		BigDecimal probTFor = new BigDecimal(1);
 
-		double freqA = 0.01;
-		double freqC = 0.01;
-		double freqG = 0.01;
-		double freqT = 0.01;
+		BigDecimal probARev = new BigDecimal(1);
+		BigDecimal probCRev = new BigDecimal(1);
+		BigDecimal probGRev = new BigDecimal(1);
+		BigDecimal probTRev = new BigDecimal(1);
+
+		double freqA = 0.001;
+		double freqC = 0.001;
+		double freqG = 0.001;
+		double freqT = 0.001;
 
 		String keyA = base.getPos() + "A";
 		String keyC = base.getPos() + "C";
 		String keyG = base.getPos() + "G";
 		String keyT = base.getPos() + "T";
-		
-		if(freq!=null) {
-		if (freq.containsKey(keyA)) {
-			freqA = freq.get(keyA);
+
+		if (freq != null) {
+			if (freq.containsKey(keyA)) {
+				freqA = freq.get(keyA);
+			}
+			if (freq.containsKey(keyC)) {
+				freqC = freq.get(keyC);
+			}
+			if (freq.containsKey(keyG)) {
+				freqG = freq.get(keyG);
+			}
+			if (freq.containsKey(keyT)) {
+				freqT = freq.get(keyT);
+			}
 		}
-		if (freq.containsKey(keyC)) {
-			freqC = freq.get(keyC);
-		}
-		if (freq.containsKey(keyG)) {
-			freqG = freq.get(keyG);
-		}
-		if (freq.containsKey(keyT)) {
-			freqT = freq.get(keyT);
-		}
-		}
-		
+
 		for (int i = 0; i < base.getaFor(); i++) {
 			byte err = base.getaForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probAFor *= (1 - qualScore);
-			probCFor *= qualScore / 3;
-			probGFor *= qualScore / 3;
-			probTFor *= qualScore / 3;
-			// probDFor *= qualScore / 4 * freqD;
+			probAFor = probAFor.multiply(new BigDecimal(1 - qualScore));
+			probCFor = probCFor.multiply(new BigDecimal(qualScore / 3));
+			probGFor = probGFor.multiply(new BigDecimal(qualScore / 3));
+			probTFor = probTFor.multiply(new BigDecimal(qualScore / 3));
 		}
 
 		for (int i = 0; i < base.getcFor(); i++) {
 			byte err = base.getcForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probCFor *= (1 - qualScore);
-			probAFor *= qualScore / 3;
-			probGFor *= qualScore / 3;
-			probTFor *= qualScore / 3;
-			// probDFor *= qualScore / 4 * freqD;
+			probCFor = probCFor.multiply(new BigDecimal(1 - qualScore));
+			probAFor = probAFor.multiply(new BigDecimal(qualScore / 3));
+			probGFor = probGFor.multiply(new BigDecimal(qualScore / 3));
+			probTFor = probTFor.multiply(new BigDecimal(qualScore / 3));
 		}
 
 		for (int i = 0; i < base.getgFor(); i++) {
 			byte err = base.getgForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probGFor *= (1 - qualScore);
-			probAFor *= qualScore / 3;
-			probCFor *= qualScore / 3;
-			probTFor *= qualScore / 3;
-			// probDFor *= qualScore / 4 * freqD;
+			probGFor = probGFor.multiply(new BigDecimal(1 - qualScore));
+			probAFor = probAFor.multiply(new BigDecimal(qualScore / 3));
+			probCFor = probCFor.multiply(new BigDecimal(qualScore / 3));
+			probTFor = probTFor.multiply(new BigDecimal(qualScore / 3));
 		}
 
 		for (int i = 0; i < base.gettFor(); i++) {
 			byte err = 20;
 			err = base.gettForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probTFor *= (1 - qualScore);
-			probAFor *= qualScore / 3;
-			probCFor *= qualScore / 3;
-			probGFor *= qualScore / 3;
-			// probDFor *= qualScore / 4 * freqD;
+			probTFor = probTFor.multiply(new BigDecimal(1 - qualScore));
+			probAFor = probAFor.multiply(new BigDecimal(qualScore / 3));
+			probCFor = probCFor.multiply(new BigDecimal(qualScore / 3));
+			probGFor = probGFor.multiply(new BigDecimal(qualScore / 3));
 		}
 
 		for (int i = 0; i < base.getaRev(); i++) {
 			byte err = base.getaRevQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probARev *= (1 - qualScore);
-			probCRev *= qualScore / 3;
-			probGRev *= qualScore / 3;
-			probTRev *= qualScore / 3;
-			// probDRev *= qualScore / 4 * freqD;
+			probARev = probARev.multiply(new BigDecimal(1 - qualScore));
+			probCRev = probCRev.multiply(new BigDecimal(qualScore / 3));
+			probGRev = probGRev.multiply(new BigDecimal(qualScore / 3));
+			probTRev = probTRev.multiply(new BigDecimal(qualScore / 3));
 		}
 
 		for (int i = 0; i < base.getcRev(); i++) {
 			byte err = base.getcRevQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probCRev *= (1 - qualScore);
-			probARev *= qualScore / 3;
-			probGRev *= qualScore / 3;
-			probTRev *= qualScore / 3;
-			// probDRev *= qualScore / 4 * freqD;
+			probCRev = probCRev.multiply(new BigDecimal(1 - qualScore));
+			probARev = probARev.multiply(new BigDecimal(qualScore / 3));
+			probGRev = probGRev.multiply(new BigDecimal(qualScore / 3));
+			probTRev = probTRev.multiply(new BigDecimal(qualScore / 3));
 		}
 
 		for (int i = 0; i < base.getgRev(); i++) {
 			byte err = base.getgRevQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probGRev *= (1 - qualScore);
-			probARev *= qualScore / 3;
-			probCRev *= qualScore / 3;
-			probTRev *= qualScore / 3;
-			// probDRev *= qualScore / 4 * freqD;
+			probGRev = probGRev.multiply(new BigDecimal(1 - qualScore));
+			probARev = probARev.multiply(new BigDecimal(qualScore / 3));
+			probCRev = probCRev.multiply(new BigDecimal(qualScore / 3));
+			probTRev = probTRev.multiply(new BigDecimal(qualScore / 3));
 		}
 
 		for (int i = 0; i < base.gettRev(); i++) {
 			byte err = 20;
 			err = base.gettRevQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probTRev *= (1 - qualScore);
-			probARev *= qualScore / 3;
-			probCRev *= qualScore / 3;
-			probGRev *= qualScore / 3;
-			// probDRev *= qualScore / 4 * freqD;
+			probTRev = probTRev.multiply(new BigDecimal(1 - qualScore));
+			probARev = probARev.multiply(new BigDecimal(qualScore / 3));
+			probCRev = probCRev.multiply(new BigDecimal(qualScore / 3));
+			probGRev = probGRev.multiply(new BigDecimal(qualScore / 3));
 		}
 
-		/*
-		 * for (int i = 0; i < base.getdFor(); i++) { byte err = 20; err =
-		 * base.getdForQ().get(i); double qualScore = Math.pow(10, (-err / 10));
-		 * 
-		 * probDFor *= 1 - qualScore; probTFor *= qualScore / 4; probAFor *= qualScore /
-		 * 4; probCFor *= qualScore / 4; probGFor *= qualScore / 4}
-		 */
-
-		/*
-		 * for (int i = 0; i < base.getdRev(); i++) { byte err = 20; err =
-		 * base.getdRevQ().get(i); double qualScore = Math.pow(10, (-err / 10));
-		 * probDRev *= (1 - qualScore); probTRev *= qualScore / 4; probARev *= qualScore
-		 * / 4; probCRev *= qualScore / 4; probGRev *= qualScore / 4; }
-		 */
-
 		// add prior
-		double probA = (probAFor * probARev) * freqA;
-		double probC = (probCFor * probCRev) * freqC;
-		double probG = (probGFor * probGRev) * freqG;
-		double probT = (probTFor * probTRev) * freqT;
 
-		double totalProb = probA + probC + probG + probT;
+		BigDecimal probA = probAFor.multiply(probARev).multiply(new BigDecimal(freqA));
+		BigDecimal probC = probCFor.multiply(probCRev).multiply(new BigDecimal(freqC));
+		BigDecimal probG = probGFor.multiply(probGRev).multiply(new BigDecimal(freqG));
+		BigDecimal probT = probTFor.multiply(probTRev).multiply(new BigDecimal(freqT));
+
+		BigDecimal totalProb = probA.add(probC).add(probG).add(probT);
 
 		char finalBase = '-';
 		double bayesProb = 0;
 
-		if (totalProb > 0) {
+		if (totalProb.compareTo(BigDecimal.ZERO) > 0) {
 			
-			double probATotal = probA / totalProb;
-			double probCTotal = probC / totalProb;
-			double probGTotal = probG / totalProb;
-			double probTTotal = probT / totalProb;
-			// double probDTotal = (probDFor + probDRev) / totalProb;
+			double probATotal = probA.divide(totalProb, 5, RoundingMode.HALF_UP).doubleValue();
+			double probCTotal = probC.divide(totalProb, 5, RoundingMode.HALF_UP).doubleValue();
+			double probGTotal = probG.divide(totalProb, 5, RoundingMode.HALF_UP).doubleValue();
+			double probTTotal = probT.divide(totalProb, 5, RoundingMode.HALF_UP).doubleValue();
 
 			bayesProb = Math.max(Math.max(probATotal, probCTotal), Math.max(probGTotal, probTTotal));
 
@@ -642,6 +621,11 @@ public class VariantLine implements Comparable<VariantLine> {
 			} else if (bayesProb == probTTotal) {
 				finalBase = 'T';
 			}
+
+			System.out.println("atotal " + probATotal);
+			System.out.println("ctotal " + probCTotal);
+			System.out.println("gtotal " + probGTotal);
+			System.out.println("ttotal " + probTTotal);
 		}
 
 		this.setBayesProbability(bayesProb);

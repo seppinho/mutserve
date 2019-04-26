@@ -38,7 +38,7 @@
 
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
-		
+
 		<resources>
 			<resource>
 				<directory>src</directory>
