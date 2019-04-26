@@ -420,7 +420,7 @@ public class PileupToolLocal extends Tool {
 	public static void main(String[] args) {
 		String input = "test-data/mtdna/bam/input";
 		String output = "test-data/out.txt";
-		String ref = "test-data/mtdna/bam/reference/rCRS.fasta";
+		String ref = "test-data/mtdna/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", ref, "--output",
 				output, "--level", "0.01", "--deletions", "--insertions","--writeFasta"});

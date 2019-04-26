@@ -6,6 +6,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.junit.Test;
+
+import genepi.io.FileUtil;
 import genepi.mut.objects.Sample;
 import genepi.mut.objects.Variant;
 import genepi.mut.util.MutationServerReader;
@@ -21,7 +23,7 @@ public class VcfWriterTest {
 		String in = "test-data/results/variantsLocal1000G";
 		String out = "test-data/results/variantsLocal1000G.vcf";
 		VcfWriter writer = new VcfWriter();
-		writer.createVCF(in, out, "test-data/mtdna/mixtures/reference/rCRS.fasta", "chrM", 16569, "testcommand");
+		writer.createVCF(in, out, "test-data/mtdna/reference/rCRS.fasta", "chrM", 16569, "testcommand");
 
 		VCFFileReader reader = new VCFFileReader(new File(out), false);
 		MutationServerReader readerServer = new MutationServerReader(in);
@@ -72,6 +74,8 @@ public class VcfWriterTest {
 		assertEquals(38, countHomoplasmies);
 
 		reader.close();
+		
+		FileUtil.deleteFile(out);
 	}
 
 	@Test
@@ -79,7 +83,7 @@ public class VcfWriterTest {
 		String in = "test-data/mtdna/cram/output/variants.txt";
 		String vcf = "test-data/mtdna/cram/output/variants.vcf";
 		VcfWriter writer = new VcfWriter();
-		writer.createVCF(in, vcf, "test-data/mtdna/mixtures/reference/rCRS.fasta", "chrM", 16569, "testcommand");
+		writer.createVCF(in, vcf, "test-data/mtdna/reference/rCRS.fasta", "chrM", 16569, "testcommand");
 
 		VCFFileReader reader = new VCFFileReader(new File(vcf), false);
 		MutationServerReader readerServer = new MutationServerReader(in);

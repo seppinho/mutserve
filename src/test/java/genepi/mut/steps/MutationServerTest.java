@@ -100,7 +100,7 @@ public class MutationServerTest {
 	public void AlignmentPETest() throws IOException {
 
 		String inputFolder = "test-data/mtdna/fastqpe/input";
-		String archive = "test-data/mtdna/fastqpe/reference/rcrs.tar.gz";
+		String archive = "test-data/mtdna/reference/rcrs.tar.gz";
 		String hdfsFolder = "inputPE";
 
 		importInputdata(inputFolder, hdfsFolder);
@@ -158,7 +158,7 @@ public class MutationServerTest {
 	public void SortTestSE() throws IOException {
 
 		String inputFolder = "test-data/mtdna/fastqse/input";
-		String archive = "test-data/mtdna/fastqse/reference/rcrs.tar.gz";
+		String archive = "test-data/mtdna/reference/rcrs.tar.gz";
 		String hdfsFolder = "inputSE";
 		String type = "se";
 
@@ -218,7 +218,7 @@ public class MutationServerTest {
 	public void SortTestPE() throws IOException {
 
 		String inputFolder = "test-data/mtdna/fastqpe/input";
-		String archive = "test-data/mtdna/fastqpe/reference/rcrs.tar.gz";
+		String archive = "test-data/mtdna/reference/rcrs.tar.gz";
 		String hdfsFolder = "inputPE";
 		String type = "pe";
 
@@ -271,7 +271,7 @@ public class MutationServerTest {
 	public void PileupFromFastqTest() throws IOException {
 
 		String inputFolder = "test-data/mtdna/fastqse/input";
-		String archive = "test-data/mtdna/fastqse/reference/rcrs.tar.gz";
+		String archive = "test-data/mtdna/reference/rcrs.tar.gz";
 		String hdfsFolder = "inputSE";
 		String type = "se";
 
@@ -313,7 +313,7 @@ public class MutationServerTest {
 	public void Pileup1000GBamTest() throws IOException {
 
 		String inputFolder = "test-data/mtdna/bam/input";
-		String archive = "test-data/mtdna/bam/reference/rcrs.tar.gz";
+		String archive = "test-data/mtdna/reference/rcrs.tar.gz";
 		String hdfsFolder = "input";
 		String type = "bam"; 
 
@@ -367,7 +367,7 @@ public class MutationServerTest {
 	public void Pileup1000GBamAndIndelTest() throws IOException {
 
 		String inputFolder = "test-data/mtdna/bam/input";
-		String archive = "test-data/mtdna/bam/reference/rcrs.tar.gz";
+		String archive = "test-data/mtdna/reference/rcrs.tar.gz";
 		String hdfsFolder = "input";
 		String type = "bam";
 
@@ -466,7 +466,7 @@ public class MutationServerTest {
 		
 		reader.close();
 
-		assertEquals(93, i);
+		assertEquals(94, i);
 		assertEquals(33, deletions);
 
 	}
@@ -475,13 +475,13 @@ public class MutationServerTest {
 	public void DetectPipelinemtDNAMixtureBAMTest() throws IOException {
 
 		String inputFolder = "test-data/mtdna/mixtures/input";
-		String archive = "test-data/mtdna/mixtures/reference/rcrs.tar.gz";
+		String archive = "test-data/mtdna/reference/rcrs.tar.gz";
 		String hdfsFolder = "input2";
 		String type = "bam";
 
 		String level = "0.01";
 
-		String refPath = "test-data/mtdna/mixtures/reference/rCRS.fasta";
+		String refPath = "test-data/mtdna/reference/rCRS.fasta";
 		String sanger = "test-data/mtdna/mixtures/expected/sanger.txt";
 
 		importInputdata(inputFolder, hdfsFolder);
