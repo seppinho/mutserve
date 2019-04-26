@@ -22,7 +22,7 @@ public class FastaWriterTest {
 		String fasta = "test-data/NA20895.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", ref, "--output",
-				out, "--level", "0.01", "--minCoverage", "30", "--insertions", "--deletions" });
+				out, "--level", "0.01", "--insertions", "--deletions" });
 
 		pileup.start();
 
