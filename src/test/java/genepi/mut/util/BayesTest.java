@@ -166,9 +166,9 @@ public class BayesTest {
 		HashMap<String, Double> freq = BayesFrequencies.instance(new DataInputStream(in));
 
 		ArrayList<Byte> g = new ArrayList<>();
-		Byte e = new Byte("20");
-		Byte e1 = new Byte("10");
-
+		Byte e1 = new Byte("20");
+		Byte e = new Byte("30");
+		
 		BasePosition basePos = new BasePosition();
 		basePos.setPos(73);
 		basePos.setaFor(200);

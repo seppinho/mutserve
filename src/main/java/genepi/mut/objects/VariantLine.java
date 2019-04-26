@@ -622,10 +622,6 @@ public class VariantLine implements Comparable<VariantLine> {
 				finalBase = 'T';
 			}
 
-			System.out.println("atotal " + probATotal);
-			System.out.println("ctotal " + probCTotal);
-			System.out.println("gtotal " + probGTotal);
-			System.out.println("ttotal " + probTTotal);
 		}
 
 		this.setBayesProbability(bayesProb);
