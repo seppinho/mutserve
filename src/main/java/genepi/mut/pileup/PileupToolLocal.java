@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import genepi.base.Tool;
-import genepi.io.FileUtil;
 import genepi.io.text.LineWriter;
 import genepi.mut.objects.BasePosition;
 import genepi.mut.objects.BayesFrequencies;
@@ -28,7 +27,7 @@ import htsjdk.samtools.ValidationStringency;
 
 public class PileupToolLocal extends Tool {
 
-	String version = "v1.1.18";
+	String version = "v1.1.19";
 	String mode = "mtdna";
 	String command;
 
@@ -189,6 +188,7 @@ public class PileupToolLocal extends Tool {
 			System.out.println("BAQ: " + baq);
 			System.out.println("Deletions: " + deletions);
 			System.out.println("Insertions: " + insertions);
+			System.out.println("Fasta: " + writeFasta);
 			System.out.println("");
 
 			for (File file : files) {
@@ -420,10 +420,10 @@ public class PileupToolLocal extends Tool {
 	public static void main(String[] args) {
 		String input = "test-data/mtdna/bam/input";
 		String output = "test-data/out.txt";
-		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
+		String ref = "test-data/mtdna/bam/reference/rCRS.fasta";
 
-		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta, "--output",
-				output, "--level", "0.01", "--minCoverage", "30", "--deletions", "--insertions"});
+		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", ref, "--output",
+				output, "--level", "0.01", "--deletions", "--insertions","--writeFasta"});
 
 		pileup.start();
 

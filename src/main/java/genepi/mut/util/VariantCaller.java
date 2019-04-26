@@ -49,7 +49,7 @@ public class VariantCaller {
 			}
 		} else {
 			if (line.getTopBaseFWD() == line.getTopBaseREV() && line.getTopBaseFWD() != line.getRef()
-					&& ((line.getCovFWD() + line.getCovREV() / 2) >= 100)) {
+					&& ((line.getCovFWD() + line.getCovREV() / 2) >= 50)) {
 				int type = INSERTION;
 				return addVariantResult(line, type);
 			}
