@@ -134,8 +134,8 @@ public class BayesTest {
 
 		BasePosition basePos = new BasePosition();
 		basePos.setPos(73);
-		basePos.setaFor(2000);
-		basePos.setgFor(1999);
+		basePos.setaFor(200);
+		basePos.setgFor(199);
 
 		for (int i = 0; i < basePos.getaFor(); i++) {
 			g.add(e);
@@ -153,6 +153,9 @@ public class BayesTest {
 		VariantLine line = new VariantLine();
 		line.calcBayes(basePos, freq);
 
+		System.out.println(line.getBayesBase());
+		System.out.println(line.getBayesProbability());
+		
 		assertEquals('A', line.getBayesBase());
 		assertEquals(0.97757, line.getBayesProbability(), 0.001);
 		System.out.println(line.getBayesBase());
