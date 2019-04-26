@@ -47,7 +47,6 @@ public class PileupToolLocal extends Tool {
 		addOptionalParameter("baseQ", "base quality", Tool.STRING);
 		addOptionalParameter("mapQ", "mapping quality", Tool.STRING);
 		addOptionalParameter("alignQ", "alignment quality", Tool.STRING);
-		addOptionalParameter("minCoverage", "minimal coverage for variants", Tool.STRING);
 		addFlag("noBaq", "turn off BAQ");
 		addFlag("deletions", "Call deletions");
 		addFlag("insertions", "Call insertions (beta)");
@@ -103,13 +102,6 @@ public class PileupToolLocal extends Tool {
 			alignQ = 30;
 		} else {
 			alignQ = Integer.parseInt((String) getValue("alignQ"));
-		}
-
-		int minCoverage;
-		if (getValue("minCoverage") == null) {
-			minCoverage = 30;
-		} else {
-			minCoverage = Integer.parseInt((String) getValue("minCoverage"));
 		}
 
 		String refPath = (String) getValue("reference");
@@ -184,7 +176,6 @@ public class PileupToolLocal extends Tool {
 			System.out.println("Base Quality: " + baseQ);
 			System.out.println("Map Quality: " + mapQ);
 			System.out.println("Alignment Quality: " + alignQ);
-			System.out.println("Minimal Variant Coverage: " + minCoverage);
 			System.out.println("BAQ: " + baq);
 			System.out.println("Deletions: " + deletions);
 			System.out.println("Insertions: " + insertions);
@@ -207,7 +198,7 @@ public class PileupToolLocal extends Tool {
 				else if (reference == Reference.rcrs || reference == Reference.precisionId) {
 
 					BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, baq,
-							minCoverage, mode);
+							mode);
 
 					System.out.println("Processing: " + file.getName());
 					System.out.println("Detected reference: " + reference.toString());
@@ -384,7 +375,7 @@ public class PileupToolLocal extends Tool {
 
 				if (!isHeteroplasmy) {
 
-					VariantResult varResult = VariantCaller.determineVariants(line, analyser.getMinCoverage());
+					VariantResult varResult = VariantCaller.determineVariants(line);
 
 					if (varResult != null) {
 
@@ -419,6 +410,7 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 		String input = "test-data/mtdna/bam/input";
+		input = "/home/seb/Desktop/HG03706.mapped.ILLUMINA.bwa.PJL.low_coverage.20130415.bam";
 		String output = "test-data/out.txt";
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 

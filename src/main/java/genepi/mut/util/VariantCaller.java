@@ -32,7 +32,7 @@ public class VariantCaller {
 		return false;
 	}
 
-	public static VariantResult determineVariants(VariantLine line, int coverage) {
+	public static VariantResult determineVariants(VariantLine line) {
 
 		if (!line.isInsertion()) {
 

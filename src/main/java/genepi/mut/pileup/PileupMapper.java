@@ -65,8 +65,6 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 
 		alignQual = context.getConfiguration().getInt("alignQual", 30);
 		
-		minCoverage = context.getConfiguration().getInt("minCoverage", 30);
-
 		boolean baq = context.getConfiguration().getBoolean("baq", true);
 		
 		String refAsArchive = cache.getArchive("reference");
@@ -75,7 +73,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 
 		String fastaPath = ReferenceUtil.findFileinDir(referencePath, ".fasta");
 		
-		analyser = new BamAnalyser(filename, fastaPath, baseQual, mapQual, alignQual, baq, minCoverage, version);
+		analyser = new BamAnalyser(filename, fastaPath, baseQual, mapQual, alignQual, baq, version);
 		
 		//default is to ignore deletions
 		deletions = context.getConfiguration().getBoolean("deletions", false);
