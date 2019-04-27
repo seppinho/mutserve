@@ -520,28 +520,28 @@ public class VariantLine implements Comparable<VariantLine> {
 		for (int i = 0; i < base.getaFor(); i++) {
 			byte err = base.getaForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probAFor *= (1 - qualScore);
-			probCFor *= qualScore / 3;
-			probGFor *= qualScore / 3;
-			probTFor *= qualScore / 3;
+			probAFor += Math.log10(1 - qualScore);
+			probCFor += Math.log10(qualScore / 3);
+			probGFor += Math.log10(qualScore / 3);
+			probTFor += Math.log10(qualScore / 3);
 		}
 
 		for (int i = 0; i < base.getcFor(); i++) {
 			byte err = base.getcForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probCFor *= (1 - qualScore);
-			probAFor *= qualScore / 3;
-			probGFor *= qualScore / 3;
-			probTFor *= qualScore / 3;
+			probCFor += Math.log10(1 - qualScore);
+			probAFor += Math.log10(qualScore / 3);
+			probGFor += Math.log10(qualScore / 3);
+			probTFor += Math.log10(qualScore / 3);
 		}
 
 		for (int i = 0; i < base.getgFor(); i++) {
 			byte err = base.getgForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probGFor *= (1 - qualScore);
-			probAFor *= qualScore / 3;
-			probCFor *= qualScore / 3;
-			probTFor *= qualScore / 3;
+			probGFor += Math.log10(1 - qualScore);
+			probAFor += Math.log10(qualScore / 3);
+			probCFor += Math.log10(qualScore / 3);
+			probTFor += Math.log10(qualScore / 3);
 
 		}
 
@@ -549,82 +549,75 @@ public class VariantLine implements Comparable<VariantLine> {
 			byte err = 20;
 			err = base.gettForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probTFor *= (1 - qualScore);
-			probAFor *= qualScore / 3;
-			probCFor *= qualScore / 3;
-			probGFor *= qualScore / 3;
+			probTFor += Math.log10(1 - qualScore);
+			probAFor += Math.log10(qualScore / 3);
+			probCFor += Math.log10(qualScore / 3);
+			probGFor += Math.log10(qualScore / 3);
 		}
 
 		for (int i = 0; i < base.getaRev(); i++) {
 			byte err = base.getaRevQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probARev *= (1 - qualScore);
-			probCRev *= qualScore / 3;
-			probGRev *= qualScore / 3;
-			probTRev *= qualScore / 3;
+			probARev += Math.log10(1 - qualScore);
+			probCRev += Math.log10(qualScore / 3);
+			probGRev += Math.log10(qualScore / 3);
+			probTRev += Math.log10(qualScore / 3);
 		}
 
 		for (int i = 0; i < base.getcRev(); i++) {
 			byte err = base.getcRevQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probCRev *= (1 - qualScore);
-			probARev *= qualScore / 3;
-			probGRev *= qualScore / 3;
-			probTRev *= qualScore / 3;
+			probCRev += Math.log10((1 - qualScore));
+			probARev += Math.log10(qualScore / 3);
+			probGRev += Math.log10(qualScore / 3);
+			probTRev += Math.log10(qualScore / 3);
 		}
 
 		for (int i = 0; i < base.getgRev(); i++) {
 			byte err = base.getgRevQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probGRev *= (1 - qualScore);
-			probARev *= qualScore / 3;
-			probCRev *= qualScore / 3;
-			probTRev *= qualScore / 3;
+			probGRev += Math.log10((1 - qualScore));
+			probARev += Math.log10(qualScore / 3);
+			probCRev += Math.log10(qualScore / 3);
+			probTRev += Math.log10(qualScore / 3);
 		}
 
 		for (int i = 0; i < base.gettRev(); i++) {
 			byte err = 20;
 			err = base.gettRevQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probTRev *= (1 - qualScore);
-			probARev *= qualScore / 3;
-			probCRev *= qualScore / 3;
-			probGRev *= qualScore / 3;
+			probTRev += Math.log10(qualScore / 3);
+			probARev += Math.log10(qualScore / 3);
+			probCRev += Math.log10(qualScore / 3);
+			probGRev += Math.log10(qualScore / 3);
 		}
 
 		// add prior
-		double probA = probAFor * probARev * freqA;
-		double probC = probCFor * probCRev * freqC;
-		double probG = probGFor * probGRev * freqG;
-		double probT = probTFor * probTRev * freqT;
-
-		double totalProb = probA + probC + probG + probT;
+		double probA = (probAFor + probARev) + Math.log10(freqA);
+		double probC = (probCFor + probCRev) + Math.log10(freqC);
+		double probG = (probGFor + probGRev) + Math.log10(freqG);
+		double probT = (probTFor + probTRev) + Math.log10(freqT);
 
 		char finalBase = '-';
 		double bayesProb = 0;
 
-		if (totalProb > 0) {
+		bayesProb = Math.max(Math.max(probA, probC), Math.max(probG, probT));
 
-			double probATotal = probA / totalProb;
-			double probCTotal = probC / totalProb;
-			double probGTotal = probG / totalProb;
-			double probTTotal = probT / totalProb;
+		// https://stats.stackexchange.com/questions/105602/example-of-how-the-log-sum-exp-trick-works-in-naive-bayes/253319#253319
+		double d = bayesProb + Math.log10(Math.pow(Math.E, probA - bayesProb) + Math.pow(Math.E, probC - bayesProb)
+				+ Math.pow(Math.E, probG - bayesProb) + Math.pow(Math.E, probT - bayesProb));
 
-			bayesProb = Math.max(Math.max(probATotal, probCTotal), Math.max(probGTotal, probTTotal));
-
-			if (bayesProb == probATotal) {
-				finalBase = 'A';
-			} else if (bayesProb == probCTotal) {
-				finalBase = 'C';
-			} else if (bayesProb == probGTotal) {
-				finalBase = 'G';
-			} else if (bayesProb == probTTotal) {
-				finalBase = 'T';
-			}
-
+		if (bayesProb == probA) {
+			finalBase = 'A';
+		} else if (bayesProb == probC) {
+			finalBase = 'C';
+		} else if (bayesProb == probG) {
+			finalBase = 'G';
+		} else if (bayesProb == probT) {
+			finalBase = 'T';
 		}
 
-		this.setBayesProbability(bayesProb);
+		this.setBayesProbability(Math.pow(10, bayesProb-d));
 		this.setBayesBase(finalBase);
 
 	}

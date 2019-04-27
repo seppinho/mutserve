@@ -38,7 +38,7 @@ public class BayesTest {
 		line.calcBayes(basePos, freq);
 
 		assertEquals('A', line.getBayesBase());
-		assertEquals(1.0, line.getBayesProbability(), 0.0);
+		assertEquals(1.0, line.getBayesProbability(),0.01);
 
 	}
 
@@ -65,7 +65,7 @@ public class BayesTest {
 		line.calcBayes(basePos, freq);
 
 		assertEquals('C', line.getBayesBase());
-		assertEquals(1.0, line.getBayesProbability(), 0.0);
+		assertEquals(1.0, line.getBayesProbability(),0.01);
 
 	}
 
@@ -92,7 +92,8 @@ public class BayesTest {
 		line.calcBayes(basePos, freq);
 
 		assertEquals('G', line.getBayesBase());
-		assertEquals(1.0, line.getBayesProbability(), 0.0);
+		assertEquals(1.0, line.getBayesProbability(),0.01);
+
 
 	}
 
@@ -117,13 +118,12 @@ public class BayesTest {
 
 		VariantLine line = new VariantLine();
 		line.calcBayes(basePos, freq);
-
 		assertEquals('T', line.getBayesBase());
-		assertEquals(1.0, line.getBayesProbability(), 0.0);
+		assertEquals(1.0, line.getBayesProbability(),0.01);
 
 	}
 
-/*	@Test
+	@Test
 	public void BayesTwoBaseFrequenciesTest() {
 
 		InputStream in = this.getClass().getClassLoader().getResourceAsStream("1000g.frq");
@@ -154,7 +154,7 @@ public class BayesTest {
 		line.calcBayes(basePos, freq);
 
 		assertEquals('A', line.getBayesBase());
-		assertEquals(0.97757, line.getBayesProbability(), 0.001);
+		assertEquals(0.83, line.getBayesProbability(),0.01);
 
 	}
 
@@ -170,8 +170,8 @@ public class BayesTest {
 		
 		BasePosition basePos = new BasePosition();
 		basePos.setPos(73);
-		basePos.setaFor(200);
-		basePos.setgFor(199);
+		basePos.setaFor(20000);
+		basePos.setgFor(19999);
 
 		for (int i = 0; i < basePos.getaFor(); i++) {
 			g.add(e1);
@@ -190,9 +190,8 @@ public class BayesTest {
 		line.calcBayes(basePos, freq);
 
 		assertEquals('G', line.getBayesBase());
-		assertEquals(1, line.getBayesProbability(), 0.001);
-		System.out.println(line.getBayesBase());
+		assertEquals(1.0, line.getBayesProbability(),0.0);
 
-	}*/
+	}
 
 }
