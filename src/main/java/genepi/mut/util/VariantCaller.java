@@ -37,7 +37,7 @@ public class VariantCaller {
 		if (!line.isInsertion()) {
 
 			if (line.getBayesBase() != '-' && line.getBayesProbability() > 0.8
-					&& line.getBayesBase() != line.getRef()) {
+					&& line.getBayesBase() != line.getRef() && ((line.getCovFWD()+line.getCovREV())>=2)) {
 
 				int type = VARIANT;
 
