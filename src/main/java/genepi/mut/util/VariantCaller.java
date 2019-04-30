@@ -383,17 +383,11 @@ private static VariantResult addHomoplasmyResult(VariantLine line, int type) {
 
 		build.append(df.format(result.getLevel()) + "\t");
 
-		char minor = result.getMinor();
-
-		if (result.getType() == 1) {
-			minor = '-';
-		}
-
 		build.append(result.getTop() + "\t");
 
 		build.append(df.format(result.getLevelTop()) + "\t");
 
-		build.append(minor + "\t");
+		build.append(result.getMinor() + "\t");
 
 		build.append(df.format(result.getLevelMinor()) + "\t");
 
