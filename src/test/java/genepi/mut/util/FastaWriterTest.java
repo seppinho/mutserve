@@ -13,6 +13,8 @@ import genepi.mut.pileup.PileupToolLocal;
 
 public class FastaWriterTest {
 
+	
+	/*	
 @Test
 	public void testNA20895() {
 
@@ -46,7 +48,7 @@ public class FastaWriterTest {
 
 	}
 
-/*	
+
 	@Test
 	public void testNA18544() {
 

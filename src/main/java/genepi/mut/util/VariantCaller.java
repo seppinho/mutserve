@@ -36,22 +36,23 @@ public class VariantCaller {
 
 		if (!line.isInsertion()) {
 
-			if (line.getBayesBase() != '-' && line.getBayesProbability() > 0.4
+			if (line.getBayesBase() != '-' && line.getBayesProbability() > 0.8
 					&& line.getBayesBase() != line.getRef()) {
 
 				int type = VARIANT;
+
 				if (line.getBayesBase() == 'D') {
 					type = DELETION;
 				}
 
-				return addVariantResult(line, type);
+				return addHomoplasmyResult(line, type);
 
 			}
 		} else {
 			if (line.getTopBaseFWD() == line.getTopBaseREV() && line.getTopBaseFWD() != line.getRef()
 					&& ((line.getCovFWD() + line.getCovREV() / 2) >= 50)) {
 				int type = INSERTION;
-				return addVariantResult(line, type);
+				return addHomoplasmyResult(line, type);
 			}
 		}
 		return null;
@@ -109,6 +110,7 @@ public class VariantCaller {
 	}
 
 	private static VariantResult addVariantResult(VariantLine line, int type) {
+		
 		VariantResult output = new VariantResult();
 		output.setId(line.getId());
 
@@ -124,7 +126,29 @@ public class VariantCaller {
 		output.setCovFWD(line.getCovFWD());
 		output.setCovREV(line.getCovREV());
 		output.setType(type);
+		
+		return output;
+	}
+	
+private static VariantResult addHomoplasmyResult(VariantLine line, int type) {
+		
+		VariantResult output = new VariantResult();
+		output.setId(line.getId());
 
+		if (line.getInsPosition() != null) {
+			output.setPosition(line.getInsPosition());
+		} else {
+			output.setPosition(line.getPosition() + "");
+		}
+
+		output.setTop(line.getBayesBase());
+		output.setLevel(line.getBayesProbability());
+		output.setMinor('-');
+		output.setRef(line.getRef());
+		output.setCovFWD(line.getCovFWD());
+		output.setCovREV(line.getCovREV());
+		output.setType(type);
+		
 		return output;
 	}
 

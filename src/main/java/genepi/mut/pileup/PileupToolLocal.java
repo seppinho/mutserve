@@ -379,20 +379,6 @@ public class PileupToolLocal extends Tool {
 
 					if (varResult != null) {
 
-						double hetLevel = VariantCaller.calcVariantLevel(line, line.getMinorBasePercentsFWD(),
-								line.getMinorBasePercentsREV());
-
-						double levelTop = VariantCaller.calcLevelTop(line);
-
-						double levelMinor = VariantCaller.calcLevelMinor(line, line.getMinorBasePercentsFWD(),
-								line.getMinorBasePercentsREV());
-
-						varResult.setLevelTop(levelTop);
- 
-						varResult.setLevelMinor(levelMinor);
-
-						varResult.setLevel(hetLevel);
-
 						String res = VariantCaller.writeVariant(varResult);
 						
 						writerVariants.write(res);
@@ -409,9 +395,13 @@ public class PileupToolLocal extends Tool {
 	}
 
 	public static void main(String[] args) {
+		
 		String input = "test-data/mtdna/bam/input";
-		input = "/home/seb/Desktop/HG03706.mapped.ILLUMINA.bwa.PJL.low_coverage.20130415.bam";
-		String output = "test-data/out.txt";
+		
+		input = "/home/seb/Desktop/HG01049.mapped.ILLUMINA.bwa.PUR.low_coverage.20120522.bam";
+		
+		String output = "/home/seb/Desktop/sebb.txt";
+		
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", ref, "--output",

@@ -1,17 +1,12 @@
 package genepi.mut.objects;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
-
-import org.apache.commons.math3.stat.Frequency;
-
 import genepi.io.table.reader.CsvTableReader;
 
 public class VariantLine implements Comparable<VariantLine> {
@@ -546,8 +541,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		}
 
 		for (int i = 0; i < base.gettFor(); i++) {
-			byte err = 20;
-			err = base.gettForQ().get(i);
+			byte err = base.gettForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
 			probTFor += Math.log10(1 - qualScore);
 			probAFor += Math.log10(qualScore / 3);
@@ -583,20 +577,20 @@ public class VariantLine implements Comparable<VariantLine> {
 		}
 
 		for (int i = 0; i < base.gettRev(); i++) {
-			byte err = 20;
-			err = base.gettRevQ().get(i);
+			byte err = base.gettRevQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
-			probTRev += Math.log10(qualScore / 3);
+			probTRev += Math.log10((1 - qualScore));
 			probARev += Math.log10(qualScore / 3);
 			probCRev += Math.log10(qualScore / 3);
 			probGRev += Math.log10(qualScore / 3);
 		}
-
+		
 		// add prior
 		double probA = (probAFor + probARev) + Math.log10(freqA);
 		double probC = (probCFor + probCRev) + Math.log10(freqC);
 		double probG = (probGFor + probGRev) + Math.log10(freqG);
 		double probT = (probTFor + probTRev) + Math.log10(freqT);
+		
 
 		char finalBase = '-';
 		double bayesProb = 0;
@@ -616,8 +610,8 @@ public class VariantLine implements Comparable<VariantLine> {
 		} else if (bayesProb == probT) {
 			finalBase = 'T';
 		}
-
-		this.setBayesProbability(Math.pow(10, bayesProb-d));
+		
+		this.setBayesProbability(Math.pow(10, bayesProb - d));
 		this.setBayesBase(finalBase);
 
 	}
