@@ -41,6 +41,7 @@ public class VariantCaller {
 
 				int type = VARIANT;
 
+				//TODO currently ignored for homoplasmies since bayes only includes A,C,G,T
 				if (line.getBayesBase() == 'D') {
 					type = DELETION;
 				}
@@ -50,7 +51,7 @@ public class VariantCaller {
 			}
 		} else {
 			if (line.getTopBaseFWD() == line.getTopBaseREV() && line.getTopBaseFWD() != line.getRef()
-					&& ((line.getCovFWD() + line.getCovREV() / 2) >= 50)) {
+					&& ((line.getCovFWD() + line.getCovREV() / 2) >= 70)) {
 				int type = INSERTION;
 				return addHomoplasmyResult(line, type);
 			}
@@ -141,8 +142,14 @@ private static VariantResult addHomoplasmyResult(VariantLine line, int type) {
 			output.setPosition(line.getPosition() + "");
 		}
 
-		output.setTop(line.getBayesBase());
-		output.setLevel(line.getBayesProbability());
+		if (type == 1) {
+			output.setTop(line.getBayesBase());
+			output.setLevel(line.getBayesProbability());
+		} else {
+			output.setTop(line.getTopBaseFWD());
+			output.setLevel(calcVariantLevel(line, line.getMinorBasePercentsFWD(), line.getMinorBasePercentsREV()));
+		}
+		
 		output.setMinor('-');
 		output.setRef(line.getRef());
 		output.setCovFWD(line.getCovFWD());
