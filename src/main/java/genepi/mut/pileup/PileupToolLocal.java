@@ -398,9 +398,7 @@ public class PileupToolLocal extends Tool {
 		
 		String input = "test-data/mtdna/bam/input";
 		
-		input = "/home/seb/Desktop/HG01049.mapped.ILLUMINA.bwa.PUR.low_coverage.20120522.bam";
-		
-		String output = "/home/seb/Desktop/sebb.txt";
+		String output = "test-data/tmp.txt";
 		
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 
