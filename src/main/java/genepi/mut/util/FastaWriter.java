@@ -16,14 +16,16 @@ public class FastaWriter {
 		double level = 0.5;
 
 		try {
+			
 			String contents = ReferenceUtil.readInReference(reference);
-
 			FileWriter writer = new FileWriter(new File(out));
 			StringBuilder build = new StringBuilder();
 			HashMap<String, Sample> samples = reader.parse();
 
 			for (Sample sam : samples.values()) {
+				
 				build.setLength(0);
+				
 				build.append(">" + sam.getId() + "\n");
 
 				int i = 0;
@@ -31,12 +33,13 @@ public class FastaWriter {
 				for (String ref : contents.split("")) {
 					i++;
 					ArrayList<Variant> vars = sam.getVariants(i);
-
+					
 					// write reference if no variant found
 					if (vars == null) {
 						build.append(ref);
 						continue;
 					}
+					
 
 					int type1 = 0;
 					int type5 = 0;
@@ -57,16 +60,18 @@ public class FastaWriter {
 					} else if (type5 > 1) {
 						multiInsertion = true;
 					}
-
+					
 					if (!complex && !multiInsertion) {
 
-						for (Variant var : vars) {
+							// since nothing complex, there should only be one entry for this position
+							Variant var = vars.get(0);
 
-							// don't write deletions to fasta larger then level
+							// deletions
 							if (var.getVariant() == 'D' && var.getLevel() > level) {
+								System.out.println(var.getPos());
 								continue;
 							}
-							// write heteroplasmies up to a level of 50 %
+							// write heteroplasmies greater than 50 %
 							else if (var.getType() == 2 && var.getLevel() >= level) {
 								build.append(var.getVariant());
 							} else if ((var.getType() == 5)) {
@@ -76,9 +81,8 @@ public class FastaWriter {
 							} else {
 								build.append(ref);
 							}
-						}
 					} else {
-						
+
 						if (multiInsertion && !complex) {
 							StringBuilder insertionBuilder = new StringBuilder();
 
@@ -90,6 +94,7 @@ public class FastaWriter {
 							String insertion = insertionBuilder.toString();
 							build.append(ref + insertion);
 						}
+
 						if (complex) {
 
 							StringBuilder complexBuilder = new StringBuilder();
@@ -97,7 +102,8 @@ public class FastaWriter {
 							for (Variant var : vars) {
 								if (var.getType() == 5) {
 									complexBuilder.append(var.getVariant());
-								} else if (var.getType() == 1 || var.getType() == 2 && var.getLevel() >= level && var.getVariant() !='D') {
+								} else if (var.getType() == 1
+										|| (var.getType() == 2 && var.getLevel() >= level && var.getVariant() != 'D')) {
 									variant = String.valueOf(var.getVariant());
 								}
 							}
