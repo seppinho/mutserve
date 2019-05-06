@@ -68,7 +68,6 @@ public class FastaWriter {
 
 							// deletions
 							if (var.getVariant() == 'D' && var.getLevel() > level) {
-								System.out.println(var.getPos());
 								continue;
 							}
 							// write heteroplasmies greater than 50 %
