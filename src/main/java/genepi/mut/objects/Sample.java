@@ -1,23 +1,23 @@
 package genepi.mut.objects;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class Sample {
 
 	private String id;
-	private HashMap<Integer, ArrayList<Variant>> variants;
+	private TreeMap<Integer, ArrayList<Variant>> variants;
 	private int amountHomoplasmies;
 	private int amountVariants;
 	private int amountHeteroplasmies;
 	boolean chip;
+	private String range;
 	private float sumCoverage = 0;
 	private float sumHeteroplasmyLevel = 0;
 
 	public Sample() {
-		variants = new HashMap<Integer, ArrayList<Variant>>();
+		variants = new TreeMap<Integer, ArrayList<Variant>>();
 	}
 
 	public Set<Integer> getKeys() {
@@ -128,5 +128,13 @@ public class Sample {
 
 	public void setChip(boolean chip) {
 		this.chip = chip;
+	}
+
+	public String getRange() {
+		return range;
+	}
+
+	public void setRange(String range) {
+		this.range = range;
 	}
 }
