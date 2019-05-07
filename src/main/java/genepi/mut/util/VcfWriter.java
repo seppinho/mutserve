@@ -67,7 +67,8 @@ public class VcfWriter {
 					int type1 = 0;
 					int type5 = 0;
 					boolean multiInsertion = false;
-
+					boolean complex = false;
+					
 					for (Variant var : variants) {
 
 						if ((var.getType() == 1)) {
@@ -100,8 +101,8 @@ public class VcfWriter {
 						variant.setMinor('*');
 					}
 					
-					//a position does not consist of variants in combination with insertions
-					if (!multiInsertion) {
+					//default case: a position does not consist of variants in combination with insertions
+					if (!multiInsertion && !complex) {
 
 						// deletions handling
 						base = String.valueOf(variant.getVariant());
@@ -120,6 +121,7 @@ public class VcfWriter {
 
 							StringBuilder insertionBuilder = new StringBuilder();
 
+							//TODO sort!
 							for (Variant var : variants) {
 								if (var.getType() == 5) {
 									insertionBuilder.append(var.getVariant());
@@ -131,6 +133,7 @@ public class VcfWriter {
 						}
 					}
 					
+					//TOOD: heteroplasmy and insertion!
 					if(ref == '-') {
 						continue;
 					}
