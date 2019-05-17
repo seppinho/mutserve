@@ -24,14 +24,14 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 
 	String reference;
 
+	String freqFile;
+	
 	String hdfsVariants;
 
 	HdfsLineWriter writer;
 
 	double level;
 	 
-	int minCoverage;
-
 	protected void setup(Context context) throws IOException, InterruptedException {
 
 		HdfsUtil.setDefaultConfiguration(context.getConfiguration());
@@ -39,11 +39,10 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 		CacheStore cache = new CacheStore(context.getConfiguration());
 		File referencePath = new File(cache.getArchive("reference"));
 		String fastaPath = ReferenceUtil.findFileinDir(referencePath, ".fasta");
+		freqFile = ReferenceUtil.findFileinDir(referencePath, ".frq");
 		reference = ReferenceUtil.readInReference(fastaPath);
 
 		level = context.getConfiguration().getDouble("level", 0.01);
-		minCoverage = context.getConfiguration().getInt("minCoverage", 30);
-
 		hdfsVariants = context.getConfiguration().get("variantsHdfs");
 		HdfsUtil.create(hdfsVariants + "/" + context.getTaskAttemptID());
 		writer = new HdfsLineWriter(hdfsVariants + "/" + context.getTaskAttemptID());
@@ -134,7 +133,7 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 			line.setRef(ref);
 
 			// level needed for LLR
-			line.parseLine(basePos, level);
+			line.parseLine(basePos, level, null);
 
 			boolean isHeteroplasmy = false;
 
@@ -181,28 +180,14 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 
 			if (!isHeteroplasmy) {
 
-				//TODO adapt
-				VariantResult varResult = VariantCaller.determineVariants(line, minCoverage);
+				VariantResult varResult = VariantCaller.determineVariants(line);
 
 				if (varResult != null) {
-
-					double hetLevel = VariantCaller.calcVariantLevel(line, line.getMinorBasePercentsFWD(),
-							line.getMinorBasePercentsREV());
-
-					double levelTop = VariantCaller.calcLevelTop(line);
-
-					double levelMinor = VariantCaller.calcLevelMinor(line, line.getMinorBasePercentsFWD(),
-							line.getMinorBasePercentsREV());
-
-					varResult.setLevelTop(levelTop);
-
-					varResult.setLevelMinor(levelMinor);
-
-					varResult.setLevel(hetLevel);
-
+					
 					String res = VariantCaller.writeVariant(varResult);
-
+					
 					writer.write(res);
+
 
 				}
 

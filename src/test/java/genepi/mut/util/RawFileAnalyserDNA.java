@@ -54,7 +54,6 @@ public class RawFileAnalyserDNA {
 			int trueNegativeCount = 0;
 			int falseNegativeCount = 0;
 			int foundBySanger = 0;
-			int minCoverage = 30;
 			hetero.clear();
 
 			while (cloudgeneReader.next()) {
@@ -70,7 +69,7 @@ public class RawFileAnalyserDNA {
 					VariantCaller.determineLowLevelVariant(line, line.getMinorBasePercentsFWD(),
 							line.getMinorBasePercentsREV(), line.getLlrFWD(), line.getLlrREV(), hetLevel, line.getMinorBaseFWD());
 
-					VariantCaller.determineVariants(line, minCoverage);
+					VariantCaller.determineVariants(line);
 
 					if (VariantCaller.isFinalVariant(line)) {
 

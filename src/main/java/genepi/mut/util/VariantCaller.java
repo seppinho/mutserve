@@ -32,29 +32,31 @@ public class VariantCaller {
 		return false;
 	}
 
-	public static VariantResult determineVariants(VariantLine line, int coverage) {
+	public static VariantResult determineVariants(VariantLine line) {
 
-		int type = 0;
-		if (line.getTopBaseFWD() == line.getTopBaseREV() && line.getTopBaseFWD() != '-') {
+		if (!line.isInsertion()) {
 
-			if (line.getTopBaseFWD() != line.getRef() && ((line.getCovFWD() + line.getCovREV() / 2) >= coverage)) {
+			if (line.getBayesBase() != '-' && line.getBayesProbability() > 0.8
+					&& line.getBayesBase() != line.getRef() && ((line.getCovFWD()+line.getCovREV())>=2)) {
 
-				if (line.getTopBaseFWD() == 'D') {
+				int type = VARIANT;
+
+				//TODO currently ignored for homoplasmies since bayes only includes A,C,G,T
+				if (line.getBayesBase() == 'D') {
 					type = DELETION;
-				} else if (line.isInsertion()) {
-					type = INSERTION;
-				} else {
-					type = VARIANT;
 				}
 
-				return addVariantResult(line, type);
+				return addHomoplasmyResult(line, type);
 
 			}
-
+		} else {
+			if (line.getTopBaseFWD() == line.getTopBaseREV() && line.getTopBaseFWD() != line.getRef()
+					&& ((line.getCovFWD() + line.getCovREV() / 2) >= 70)) {
+				int type = INSERTION;
+				return addHomoplasmyResult(line, type);
+			}
 		}
-
 		return null;
-
 	}
 
 	public static VariantResult determineLowLevelVariant(VariantLine line, double minorBasePercentsFWD,
@@ -109,6 +111,7 @@ public class VariantCaller {
 	}
 
 	private static VariantResult addVariantResult(VariantLine line, int type) {
+		
 		VariantResult output = new VariantResult();
 		output.setId(line.getId());
 
@@ -124,7 +127,35 @@ public class VariantCaller {
 		output.setCovFWD(line.getCovFWD());
 		output.setCovREV(line.getCovREV());
 		output.setType(type);
+		
+		return output;
+	}
+	
+private static VariantResult addHomoplasmyResult(VariantLine line, int type) {
+		
+		VariantResult output = new VariantResult();
+		output.setId(line.getId());
 
+		if (line.getInsPosition() != null) {
+			output.setPosition(line.getInsPosition());
+		} else {
+			output.setPosition(line.getPosition() + "");
+		}
+
+		if (type == 1) {
+			output.setTop(line.getBayesBase());
+			output.setLevel(line.getBayesProbability());
+		} else {
+			output.setTop(line.getTopBaseFWD());
+			output.setLevel(calcVariantLevel(line, line.getMinorBasePercentsFWD(), line.getMinorBasePercentsREV()));
+		}
+		
+		output.setMinor('-');
+		output.setRef(line.getRef());
+		output.setCovFWD(line.getCovFWD());
+		output.setCovREV(line.getCovREV());
+		output.setType(type);
+		
 		return output;
 	}
 
@@ -359,17 +390,11 @@ public class VariantCaller {
 
 		build.append(df.format(result.getLevel()) + "\t");
 
-		char minor = result.getMinor();
-
-		if (result.getType() == 1) {
-			minor = '-';
-		}
-
 		build.append(result.getTop() + "\t");
 
 		build.append(df.format(result.getLevelTop()) + "\t");
 
-		build.append(minor + "\t");
+		build.append(result.getMinor() + "\t");
 
 		build.append(df.format(result.getLevelMinor()) + "\t");
 

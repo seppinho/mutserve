@@ -227,7 +227,7 @@ public class RawFileAnalysermtDNA {
 
 				System.out.println(1 - level);
 
-				VariantResult varResult = VariantCaller.determineVariants(line, 30);
+				VariantResult varResult = VariantCaller.determineVariants(line);
 
 				varResult.setLevel(hetLevel);
 

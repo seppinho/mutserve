@@ -1,15 +1,17 @@
 package genepi.mut.pileup;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 
 import genepi.base.Tool;
-import genepi.io.FileUtil;
 import genepi.io.text.LineWriter;
 import genepi.mut.objects.BasePosition;
+import genepi.mut.objects.BayesFrequencies;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.objects.VariantResult;
 import genepi.mut.util.FastaWriter;
@@ -25,7 +27,7 @@ import htsjdk.samtools.ValidationStringency;
 
 public class PileupToolLocal extends Tool {
 
-	String version = "v1.1.18";
+	String version = "v1.2.0";
 	String mode = "mtdna";
 	String command;
 
@@ -45,7 +47,6 @@ public class PileupToolLocal extends Tool {
 		addOptionalParameter("baseQ", "base quality", Tool.STRING);
 		addOptionalParameter("mapQ", "mapping quality", Tool.STRING);
 		addOptionalParameter("alignQ", "alignment quality", Tool.STRING);
-		addOptionalParameter("minCoverage", "minimal coverage for variants", Tool.STRING);
 		addFlag("noBaq", "turn off BAQ");
 		addFlag("deletions", "Call deletions");
 		addFlag("insertions", "Call insertions (beta)");
@@ -101,13 +102,6 @@ public class PileupToolLocal extends Tool {
 			alignQ = 30;
 		} else {
 			alignQ = Integer.parseInt((String) getValue("alignQ"));
-		}
-
-		int minCoverage;
-		if (getValue("minCoverage") == null) {
-			minCoverage = 30;
-		} else {
-			minCoverage = Integer.parseInt((String) getValue("minCoverage"));
 		}
 
 		String refPath = (String) getValue("reference");
@@ -182,10 +176,10 @@ public class PileupToolLocal extends Tool {
 			System.out.println("Base Quality: " + baseQ);
 			System.out.println("Map Quality: " + mapQ);
 			System.out.println("Alignment Quality: " + alignQ);
-			System.out.println("Minimal Variant Coverage: " + minCoverage);
 			System.out.println("BAQ: " + baq);
 			System.out.println("Deletions: " + deletions);
 			System.out.println("Insertions: " + insertions);
+			System.out.println("Fasta: " + writeFasta);
 			System.out.println("");
 
 			for (File file : files) {
@@ -204,7 +198,7 @@ public class PileupToolLocal extends Tool {
 				else if (reference == Reference.rcrs || reference == Reference.precisionId) {
 
 					BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, baq,
-							minCoverage, mode);
+							mode);
 
 					System.out.println("Processing: " + file.getName());
 					System.out.println("Detected reference: " + reference.toString());
@@ -285,6 +279,10 @@ public class PileupToolLocal extends Tool {
 		HashMap<String, BasePosition> counts = analyser.getCounts();
 
 		String reference = analyser.getReferenceString();
+		
+		//load frequency file
+		InputStream in = this.getClass().getClassLoader().getResourceAsStream("1000g.frq");
+		HashMap<String, Double> freq = BayesFrequencies.instance(new DataInputStream(in));	
 
 		for (String key : counts.keySet()) {
 
@@ -331,7 +329,8 @@ public class PileupToolLocal extends Tool {
 
 				// create all required frequencies for one position
 				// applies checkBases()
-				line.parseLine(basePos, level);
+				
+				line.parseLine(basePos, level, freq);
 
 				boolean isHeteroplasmy = false;
 
@@ -376,28 +375,12 @@ public class PileupToolLocal extends Tool {
 
 				if (!isHeteroplasmy) {
 
-					VariantResult varResult = VariantCaller.determineVariants(line, analyser.getMinCoverage());
+					VariantResult varResult = VariantCaller.determineVariants(line);
 
 					if (varResult != null) {
 
-						double hetLevel = VariantCaller.calcVariantLevel(line, line.getMinorBasePercentsFWD(),
-								line.getMinorBasePercentsREV());
-
-						double levelTop = VariantCaller.calcLevelTop(line);
-
-						double levelMinor = VariantCaller.calcLevelMinor(line, line.getMinorBasePercentsFWD(),
-								line.getMinorBasePercentsREV());
-
-						varResult.setLevelTop(levelTop);
-
-						varResult.setLevelMinor(levelMinor);
-
-						varResult.setLevel(hetLevel);
-
 						String res = VariantCaller.writeVariant(varResult);
 						
-						System.out.println(res);
-
 						writerVariants.write(res);
 					}
 				}
@@ -412,12 +395,15 @@ public class PileupToolLocal extends Tool {
 	}
 
 	public static void main(String[] args) {
-		String input = "test-data/mtdna/bams";
-		String output = "test-data/out.txt";
-		String fasta = "test-data/mtdna/bam/reference/rCRS.fasta";
+		
+		String input = "test-data/mtdna/bam/input";
+		
+		String output = "test-data/tmp.txt";
+		
+		String ref = "test-data/mtdna/reference/rCRS.fasta";
 
-		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", fasta, "--output",
-				output, "--level", "0.01", "--minCoverage", "30", "--deletions", "--insertions", "--writeFasta" });
+		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", ref, "--output",
+				output, "--level", "0.01", "--deletions", "--insertions","--writeFasta"});
 
 		pileup.start();
 

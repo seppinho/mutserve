@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
 import genepi.mut.objects.Sample;
 import genepi.mut.objects.Variant;
 import htsjdk.samtools.SAMSequenceDictionary;
@@ -65,13 +64,35 @@ public class VcfWriter {
 
 				if (variants != null) {
 
-					Variant variant = buildVariant(variants);
+					int type1 = 0;
+					int type5 = 0;
+					boolean multiInsertion = false;
+					boolean complex = false;
+					
+					for (Variant var : variants) {
 
-					// deletions handling
+						if ((var.getType() == 1)) {
+							type1++;
+						}
+						if (var.getType() == 5) {
+							type5++;
+						}
+					}
+
+					if (type1 >= 1 && type5 >= 1) {
+					} else if (type5 > 1) {
+						multiInsertion = true;
+					}
+					
+					String base = null;
+					char ref = '-';
+
+					Variant variant = variants.get(0);
+					
 					if (variant.getVariant() == 'D') {
 						variant.setVariantBase('*');
 					}
-					
+
 					if (variant.getMajor() == 'D') {
 						variant.setMajor('*');
 					}
@@ -80,14 +101,43 @@ public class VcfWriter {
 						variant.setMinor('*');
 					}
 					
-					String base = String.valueOf(variant.getVariant());
-					char ref = variant.getRef();
+					//default case: a position does not consist of variants in combination with insertions
+					if (!multiInsertion && !complex) {
 
-					if (variant.getType() == 5 && variant.getInsertion().contains(".1")) {
-						ref = fasta.charAt(pos - 1);
-						base = ref + "" + variant.getVariant();
+						// deletions handling
+						base = String.valueOf(variant.getVariant());
+						ref = variant.getRef();
+
+						if (variant.getType() == 5) {
+							ref = fasta.charAt(pos - 1);
+							base = ref + "" + variant.getVariant();
+						}
+
+					} else {
+
+						if (multiInsertion) {
+
+							ref = fasta.charAt(pos - 1);
+
+							StringBuilder insertionBuilder = new StringBuilder();
+
+							//TODO sort!
+							for (Variant var : variants) {
+								if (var.getType() == 5) {
+									insertionBuilder.append(var.getVariant());
+								}
+							}
+							String insertion = insertionBuilder.toString();
+							base = ref + insertion;
+							
+						}
 					}
-
+					
+					//TOOD: heteroplasmy and insertion!
+					if(ref == '-') {
+						continue;
+					}
+					
 					Allele refAllele = Allele.create(ref + "", true);
 					Allele varAllele = Allele.create(base + "", false);
 					alleles.add(refAllele);
@@ -103,10 +153,10 @@ public class VcfWriter {
 
 						Allele genotypeAllele1;
 						Allele genotypeAllele2;
-						
+
 						String major = String.valueOf(variant.getMajor());
 						String minor = String.valueOf(variant.getMinor());
-						
+
 						// check for multiallelic sites
 						if (variant.getMajor() == variant.getRef()) {
 							genotypeAllele1 = Allele.create(major + "", true);
@@ -156,12 +206,6 @@ public class VcfWriter {
 		}
 
 		vcfWriter.close();
-	}
-
-	private Variant buildVariant(ArrayList<Variant> variants) {
-
-	return variants.get(0);
-	
 	}
 
 	private VCFHeader generateHeader(String chromosome, int length, String command) {

@@ -5,8 +5,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
-
 import genepi.io.table.reader.CsvTableReader;
 
 public class VariantLine implements Comparable<VariantLine> {
@@ -42,6 +42,9 @@ public class VariantLine implements Comparable<VariantLine> {
 	private double llrCFWD;
 	private double llrGFWD;
 	private double llrTFWD;
+
+	private char bayesBase;
+	private double bayesProbability;
 
 	private String insPosition;
 
@@ -134,10 +137,9 @@ public class VariantLine implements Comparable<VariantLine> {
 		this.setTopBaseREV(cloudgeneReader.getString("TOP-REV").charAt(0));
 		this.setMinorBaseFWD(cloudgeneReader.getString("MINOR-FWD").charAt(0));
 		this.setMinorBaseREV(cloudgeneReader.getString("MINOR-REV").charAt(0));
-
 	}
 
-	public void parseLine(BasePosition base, double level) throws IOException {
+	public void parseLine(BasePosition base, double level, HashMap<String, Double> frequencies) throws IOException {
 
 		double aFWDPercents = 0;
 		double cFWDPercents = 0;
@@ -223,7 +225,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		Collections.sort(allelesFWD, Collections.reverseOrder());
 		double topBasePercentsFWD = 0.0;
 		double minorBasePercentsFWD = 0.0;
-		
+
 		if (totalFWD > 0) {
 
 			topBasePercentsFWD = allelesFWD.get(0) / (double) totalFWD;
@@ -231,7 +233,7 @@ public class VariantLine implements Comparable<VariantLine> {
 			minorBasePercentsFWD = allelesFWD.get(1) / (double) totalFWD;
 
 		}
-		
+
 		ArrayList<Integer> allelesREV = new ArrayList<Integer>();
 		allelesREV.add(aREV);
 		allelesREV.add(cREV);
@@ -250,13 +252,13 @@ public class VariantLine implements Comparable<VariantLine> {
 			minorBasePercentsREV = allelesREV.get(1) / (double) totalREV;
 
 		}
-		
+
 		// set
 		this.setTopBasePercentsFWD(topBasePercentsFWD);
 		this.setMinorBasePercentsFWD(minorBasePercentsFWD);
 		this.setTopBasePercentsREV(topBasePercentsREV);
 		this.setMinorBasePercentsREV(minorBasePercentsREV);
-		
+
 		char topBaseFWD = '-';
 		char minorBaseFWD = '-';
 
@@ -311,7 +313,7 @@ public class VariantLine implements Comparable<VariantLine> {
 
 		minorBaseREV = detectMinorREV(minorBasePercentsREV);
 		this.setMinorBaseREV(minorBaseREV);
-		
+
 		minors = new ArrayList<>();
 
 		// start with 1 and ignoring topbase!
@@ -324,13 +326,14 @@ public class VariantLine implements Comparable<VariantLine> {
 			if (checkBases(topBaseFWD, topBaseREV, minorFWD, minorREV)) {
 
 				if (minorFWD != '-') {
-					
 					minors.add(minorFWD);
 
 				}
 			}
 
 		}
+
+		calcBayes(base, frequencies);
 
 		// TODO combine this with LLR for all bases
 		if (minorBasePercentsFWD >= level || minorBasePercentsREV >= level) {
@@ -393,8 +396,9 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	}
 
+	//TODO check topFWD == minorREV && topREV == minorFWD
 	private boolean checkBases(char topFWD, char topREV, char minorFWD, char minorREV) {
-		return (minorFWD == minorREV && topFWD == topREV || topFWD == minorREV && topREV == minorFWD);
+		return (minorFWD == minorREV && topFWD == topREV);
 	}
 
 	private char detectMinorFWD(double minorPercentage) {
@@ -405,19 +409,19 @@ public class VariantLine implements Comparable<VariantLine> {
 				return 'A';
 			}
 
-			else if (minorPercentage == this.cPercentageFWD  && topBaseFWD != 'C') {
+			else if (minorPercentage == this.cPercentageFWD && topBaseFWD != 'C') {
 				return 'C';
 			}
 
-			else if (minorPercentage == this.gPercentageFWD  && topBaseFWD != 'G') {
+			else if (minorPercentage == this.gPercentageFWD && topBaseFWD != 'G') {
 				return 'G';
 			}
 
-			else if (minorPercentage == this.tPercentageFWD  && topBaseFWD != 'T') {
+			else if (minorPercentage == this.tPercentageFWD && topBaseFWD != 'T') {
 				return 'T';
 			}
 
-			else if (minorPercentage == this.dPercentageFWD  && topBaseFWD != 'D') {
+			else if (minorPercentage == this.dPercentageFWD && topBaseFWD != 'D') {
 				return 'D';
 			}
 
@@ -470,6 +474,147 @@ public class VariantLine implements Comparable<VariantLine> {
 		llr.setLlrREV(Math.abs(fm1REV - fm0REV));
 
 		return llr;
+	}
+
+	public void calcBayes(BasePosition base, HashMap<String, Double> freq) {
+
+		double probAFor = 1;
+		double probCFor = 1;
+		double probGFor = 1;
+		double probTFor = 1;
+
+		double probARev = 1;
+		double probCRev = 1;
+		double probGRev = 1;
+		double probTRev = 1;
+
+		double freqA = 0.001;
+		double freqC = 0.001;
+		double freqG = 0.001;
+		double freqT = 0.001;
+
+		String keyA = base.getPos() + "A";
+		String keyC = base.getPos() + "C";
+		String keyG = base.getPos() + "G";
+		String keyT = base.getPos() + "T";
+
+		if (freq != null) {
+			if (freq.containsKey(keyA)) {
+				freqA = freq.get(keyA);
+			}
+			if (freq.containsKey(keyC)) {
+				freqC = freq.get(keyC);
+			}
+			if (freq.containsKey(keyG)) {
+				freqG = freq.get(keyG);
+			}
+			if (freq.containsKey(keyT)) {
+				freqT = freq.get(keyT);
+			}
+		}
+
+		for (int i = 0; i < base.getaFor(); i++) {
+			byte err = base.getaForQ().get(i);
+			double qualScore = Math.pow(10, (-err / 10));
+			probAFor += Math.log10(1 - qualScore);
+			probCFor += Math.log10(qualScore / 3);
+			probGFor += Math.log10(qualScore / 3);
+			probTFor += Math.log10(qualScore / 3);
+		}
+
+		for (int i = 0; i < base.getcFor(); i++) {
+			byte err = base.getcForQ().get(i);
+			double qualScore = Math.pow(10, (-err / 10));
+			probCFor += Math.log10(1 - qualScore);
+			probAFor += Math.log10(qualScore / 3);
+			probGFor += Math.log10(qualScore / 3);
+			probTFor += Math.log10(qualScore / 3);
+		}
+
+		for (int i = 0; i < base.getgFor(); i++) {
+			byte err = base.getgForQ().get(i);
+			double qualScore = Math.pow(10, (-err / 10));
+			probGFor += Math.log10(1 - qualScore);
+			probAFor += Math.log10(qualScore / 3);
+			probCFor += Math.log10(qualScore / 3);
+			probTFor += Math.log10(qualScore / 3);
+
+		}
+
+		for (int i = 0; i < base.gettFor(); i++) {
+			byte err = base.gettForQ().get(i);
+			double qualScore = Math.pow(10, (-err / 10));
+			probTFor += Math.log10(1 - qualScore);
+			probAFor += Math.log10(qualScore / 3);
+			probCFor += Math.log10(qualScore / 3);
+			probGFor += Math.log10(qualScore / 3);
+		}
+
+		for (int i = 0; i < base.getaRev(); i++) {
+			byte err = base.getaRevQ().get(i);
+			double qualScore = Math.pow(10, (-err / 10));
+			probARev += Math.log10(1 - qualScore);
+			probCRev += Math.log10(qualScore / 3);
+			probGRev += Math.log10(qualScore / 3);
+			probTRev += Math.log10(qualScore / 3);
+		}
+
+		for (int i = 0; i < base.getcRev(); i++) {
+			byte err = base.getcRevQ().get(i);
+			double qualScore = Math.pow(10, (-err / 10));
+			probCRev += Math.log10((1 - qualScore));
+			probARev += Math.log10(qualScore / 3);
+			probGRev += Math.log10(qualScore / 3);
+			probTRev += Math.log10(qualScore / 3);
+		}
+
+		for (int i = 0; i < base.getgRev(); i++) {
+			byte err = base.getgRevQ().get(i);
+			double qualScore = Math.pow(10, (-err / 10));
+			probGRev += Math.log10((1 - qualScore));
+			probARev += Math.log10(qualScore / 3);
+			probCRev += Math.log10(qualScore / 3);
+			probTRev += Math.log10(qualScore / 3);
+		}
+
+		for (int i = 0; i < base.gettRev(); i++) {
+			byte err = base.gettRevQ().get(i);
+			double qualScore = Math.pow(10, (-err / 10));
+			probTRev += Math.log10((1 - qualScore));
+			probARev += Math.log10(qualScore / 3);
+			probCRev += Math.log10(qualScore / 3);
+			probGRev += Math.log10(qualScore / 3);
+		}
+		
+		// add prior
+		double probA = (probAFor + probARev) + Math.log10(freqA);
+		double probC = (probCFor + probCRev) + Math.log10(freqC);
+		double probG = (probGFor + probGRev) + Math.log10(freqG);
+		double probT = (probTFor + probTRev) + Math.log10(freqT);
+		
+
+		char finalBase = '-';
+		double bayesProb = 0;
+
+		bayesProb = Math.max(Math.max(probA, probC), Math.max(probG, probT));
+
+		// https://stats.stackexchange.com/questions/105602/example-of-how-the-log-sum-exp-trick-works-in-naive-bayes/253319#253319
+		double d = bayesProb + Math.log10(Math.pow(Math.E, probA - bayesProb) + Math.pow(Math.E, probC - bayesProb)
+				+ Math.pow(Math.E, probG - bayesProb) + Math.pow(Math.E, probT - bayesProb));
+
+		if (bayesProb == probA) {
+			finalBase = 'A';
+		} else if (bayesProb == probC) {
+			finalBase = 'C';
+		} else if (bayesProb == probG) {
+			finalBase = 'G';
+		} else if (bayesProb == probT) {
+			finalBase = 'T';
+		}
+		
+		this.setBayesProbability(Math.pow(10, bayesProb - d));
+		this.setBayesBase(finalBase);
+
 	}
 
 	@Override
@@ -1154,6 +1299,22 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	public void setMinors(ArrayList<Character> minors) {
 		this.minors = minors;
+	}
+
+	public char getBayesBase() {
+		return bayesBase;
+	}
+
+	public void setBayesBase(char bayesBase) {
+		this.bayesBase = bayesBase;
+	}
+
+	public double getBayesProbability() {
+		return bayesProbability;
+	}
+
+	public void setBayesProbability(double bayesProbability) {
+		this.bayesProbability = bayesProbability;
 	}
 
 }
