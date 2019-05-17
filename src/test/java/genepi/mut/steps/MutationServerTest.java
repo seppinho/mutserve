@@ -418,7 +418,7 @@ public class MutationServerTest {
 
 	}
 	
-	/*@Test
+	@Test
 	public void LpaServerPaperTest() throws IOException {
 
 		String inputFolder = "test-data/dna/lpa-sample/bam";
@@ -469,7 +469,7 @@ public class MutationServerTest {
 		assertEquals(94, i);
 		assertEquals(33, deletions);
 
-	}*/
+	}
 
 	@Test
 	public void DetectPipelinemtDNAMixtureBAMTest() throws IOException {
