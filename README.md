@@ -4,13 +4,14 @@
 Mutserve is a library to detect heteroplasmic and homoplasmic sites in mtDNA NGS data. 
 It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability reasons, mutserve is parallelized using Hadoop MapReduce but also available as a standalone tool.
 
-## Standalone Usage
-You can run mutserve as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise).
-
 ## Differences to mtDNA-Server
 
 - mutserve always reports the non-reference level as the heteroplasmy level, while mtDNA-Server reports the minor component.
 - mutserve includes a Bayesian model for homoplasmy detection. It uses the 1000G Phas3 data as a prior and calculates the most likely posterior probability for each genotype. mtDNA-Server only outputs variants with coverage over 30!
+
+
+## Standalone Usage
+You can run mutserve as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise).
 
 ```
 wget https://github.com/seppinho/mutserve/releases/download/v1.2.0/mutserve-1.2.0.jar
