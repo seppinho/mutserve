@@ -7,11 +7,15 @@ It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For s
 ## Standalone Usage
 You can run mutserve as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise).
 
-**Please be aware** that mutserve always reports the non-reference level as the heteroplasmy level, while mtDNA-Server reports the minor component. 
-```
-wget https://github.com/seppinho/mutserve/releases/download/v1.1.17/mutserve-1.1.17.jar
+## Differences to mtDNA-Server
 
-java -jar mutserve-1.1.17.jar  analyse-local --input <file/folder> --output <filename.vcf / filename.txt> --reference <fasta> --level 0.01
+- mutserve always reports the non-reference level as the heteroplasmy level, while mtDNA-Server reports the minor component.
+- mutserve includes a Bayesian model for homoplasmy detection. It uses the 1000G Phas3 data as a prior and calculates the most likely posterior probability for each genotype. mtDNA-Server only outputs variants with coverage over 30!
+
+```
+wget https://github.com/seppinho/mutserve/releases/download/v1.2.0/mutserve-1.2.0.jar
+
+java -jar mutserve-1.2.0.jar  analyse-local --input <file/folder> --output <filename.vcf / filename.txt> --reference <fasta> --level 0.01
 ```
 To create a VCF file as an output simple specify `--output filename.vcf.gz`. Please use [this reference file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS.fasta) when using BAQ.
 
@@ -21,6 +25,7 @@ To create a VCF file as an output simple specify `--output filename.vcf.gz`. Ple
 | ------------- |:-------------:| :-------------:| 
 | InputFolder     | <folder> | `--input`|
 | Output File   | <filename> (supported: *.txt, *.vcf, *vcf.gz) | `--output` |
+| Output Fasta     |  | `--writeFasta`|
 | Heteroplasmy Level     | 0.01 | `--level`|
 | MappingQuality     | 20 | `--mapQ`|
 | BaseQuality     | 20 | `--baseQ`|
@@ -39,14 +44,13 @@ By default (`--output filename` does not end with .vcf or .vcf.gz) we export a T
 If you want a **VCF** file as an output, please specify `--output filename.vcf.gz`. Heteroplasmies are coded as 1/0 genotypes, the heteroplasmy level is included in the FORMAT using the **AF** attribute (allele frequency) of the first non-reference allele. Please note that indels are currently not included in the VCF.  This VCF file can be used as an input for https://github.com/seppinho/haplogrep-cmd.
 
 ## Current Shortcomings
-* We currently report homoplasmies only with a coverage of `(FWD+REV)/2 >= 30`. 
 * The **insertions/deletions calling** is currently in **beta**, there is currently **no** normalization or realignment applied for indel positions. 
 
 ## Performance - Sensitivity and Specificity
 
 If you have a mixture model generated, you can use mutserve for checking precision, specificity and sensitivity. The expected mutations (homoplasmic and heteroplasmic) need to be provided as gold standard in form of a text file, with one column, containing the positions expected. The variant from *analyse-local* are used as input file and length needs to be specified (usually 16,569, but as there are different reference sequence, this can vary as well).
 ```
-java -jar mutserve-1.1.17.jar  performance --in <variantfile> --gold <expectedmutations> --length <size of reference>
+java -jar mutserve-1.2.0.jar  performance --in <variantfile> --gold <expectedmutations> --length <size of reference>
 ```
 
 ## Citation
