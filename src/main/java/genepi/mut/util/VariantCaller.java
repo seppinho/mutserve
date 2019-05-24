@@ -192,12 +192,14 @@ private static VariantResult addHomoplasmyResult(VariantLine line, int type) {
 	}
 
 	private static boolean checkAlleleCoverage(VariantLine line, double minorPercentFWD, double minorPercentREV) {
-		if (line.getTopBasePercentsREV() * line.getCovREV() <= 5
-				|| (line.getTopBasePercentsFWD() * line.getCovFWD()) <= 5) {
+		int coverage = 2;
+		
+		if (line.getTopBasePercentsREV() * line.getCovREV() <= coverage
+				|| (line.getTopBasePercentsFWD() * line.getCovFWD()) <= coverage) {
 			return false;
 		}
 
-		if ((minorPercentREV * line.getCovREV() <= 5) || (line.getTopBasePercentsFWD() * line.getCovFWD()) <= 5) {
+		if ((minorPercentREV * line.getCovREV() <= coverage) || (line.getTopBasePercentsFWD() * line.getCovFWD()) <= coverage) {
 			return false;
 		}
 
