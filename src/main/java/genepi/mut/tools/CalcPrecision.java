@@ -37,7 +37,7 @@ public class CalcPrecision extends Tool {
 	public int run() {
 
 		final String pos = "Pos";
-		final String sampleId= "SampleID";
+		final String sampleId= "ID";
 		
 		Set<Integer> allPos = new TreeSet<Integer>();
 		Set<Integer> goldPos = new TreeSet<Integer>();
@@ -59,8 +59,6 @@ public class CalcPrecision extends Tool {
 
 		}
 		idReader.close();
-		
-		System.out.println("SampleID\tFound/Total\tFalsePositive\tPrec.\tSens.\tSpec");
 		
 		for (String id : ids) {
 
@@ -138,8 +136,8 @@ public class CalcPrecision extends Tool {
 			String spec = df.format(spec2);
 			String prec = df.format(prec2);
 
-			System.out.println(id+"\t"+truePositiveCount+"/"+ (truePositiveCount + falseNegativeCount)+"\t"+falsePositiveCount+"\t"+prec+"\t"+sens+"\t"+spec);
-
+			System.out.println("ID\t" + "PRECISION" + "\t" + "SENSITIVITY" + "\t" + "SPECIFICITY");
+			System.out.println(id + "\t" + prec + "\t" + sens + "\t" + spec);
 		}
 		return 0;
 	}

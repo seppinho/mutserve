@@ -195,7 +195,7 @@ public class PileupToolLocal extends Tool {
 
 				}
 
-				else if (reference == Reference.rcrs || reference == Reference.precisionId) {
+				else if (reference == Reference.rcrs || reference == Reference.precisionId || reference == Reference.LPA) {
 
 					BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, baq,
 							mode);
@@ -396,9 +396,10 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 		
-		String input = "test-data/mtdna/bam/input";
+		long start = System.currentTimeMillis();
+		String input = "/home/seb/Desktop/HG02508.mapped.ILLUMINA.bwa.ACB.low_coverage.20130415.bam";
 		
-		String output = "test-data/tmp.txt";
+		String output = "test-data/not.vcf.gz";
 		
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 
@@ -406,6 +407,8 @@ public class PileupToolLocal extends Tool {
 				output, "--level", "0.01", "--deletions", "--insertions","--writeFasta"});
 
 		pileup.start();
+		
+		System.out.println((System.currentTimeMillis()-start)/1000);
 
 	}
 
