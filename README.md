@@ -14,9 +14,9 @@ It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For s
 You can run mutserve as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise).
 
 ```
-wget https://github.com/seppinho/mutserve/releases/download/v1.2.2/mutserve-1.2.2.jar
+wget https://github.com/seppinho/mutserve/releases/download/v1.3.0/mutserve-1.3.0.jar
 
-java -jar mutserve-1.2.2.jar  analyse-local --input <file/folder> --output <filename.vcf / filename.txt> --reference <fasta> --level 0.01
+java -jar mutserve-1.3.0.jar  analyse-local --input <file/folder> --output <filename.vcf / filename.txt> --reference <fasta> --level 0.01
 ```
 To create a VCF file as an output simple specify `--output filename.vcf.gz`. Please use [this reference file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS.fasta) when using BAQ.
 
