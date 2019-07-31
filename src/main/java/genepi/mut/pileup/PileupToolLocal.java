@@ -27,7 +27,7 @@ import htsjdk.samtools.ValidationStringency;
 
 public class PileupToolLocal extends Tool {
 
-	String version = "v1.2.2";
+	String version = "v1.3.0";
 	String mode = "mtdna";
 	String command;
 
@@ -396,7 +396,7 @@ public class PileupToolLocal extends Tool {
 	public static void main(String[] args) {
 		
 		String input = "test-data/mtdna/bam/input";
-		input = "/home/seb/Downloads/M1-Clontech_S6.bam";
+		input = "/home/seb/Downloads/M1-Herk_S1.bam";
 		
 		String output = "/home/seb/Desktop/test.txt";
 		
