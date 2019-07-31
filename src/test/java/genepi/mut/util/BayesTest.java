@@ -38,7 +38,7 @@ public class BayesTest {
 		line.calcBayes(basePos, freq);
 
 		assertEquals('A', line.getBayesBase());
-		assertEquals(1.0, line.getBayesProbability(),0.01);
+		assertEquals(1.0, line.getBayesProbability(), 0.01);
 
 	}
 
@@ -65,7 +65,7 @@ public class BayesTest {
 		line.calcBayes(basePos, freq);
 
 		assertEquals('C', line.getBayesBase());
-		assertEquals(1.0, line.getBayesProbability(),0.01);
+		assertEquals(1.0, line.getBayesProbability(), 0.01);
 
 	}
 
@@ -92,8 +92,7 @@ public class BayesTest {
 		line.calcBayes(basePos, freq);
 
 		assertEquals('G', line.getBayesBase());
-		assertEquals(1.0, line.getBayesProbability(),0.01);
-
+		assertEquals(1.0, line.getBayesProbability(), 0.01);
 
 	}
 
@@ -119,7 +118,7 @@ public class BayesTest {
 		VariantLine line = new VariantLine();
 		line.calcBayes(basePos, freq);
 		assertEquals('T', line.getBayesBase());
-		assertEquals(1.0, line.getBayesProbability(),0.01);
+		assertEquals(1.0, line.getBayesProbability(), 0.01);
 
 	}
 
@@ -154,7 +153,7 @@ public class BayesTest {
 		line.calcBayes(basePos, freq);
 
 		assertEquals('A', line.getBayesBase());
-		assertEquals(0.83, line.getBayesProbability(),0.01);
+		assertEquals(0.83, line.getBayesProbability(), 0.01);
 
 	}
 
@@ -167,7 +166,7 @@ public class BayesTest {
 		ArrayList<Byte> g = new ArrayList<>();
 		Byte e1 = new Byte("20");
 		Byte e = new Byte("30");
-		
+
 		BasePosition basePos = new BasePosition();
 		basePos.setPos(73);
 		basePos.setaFor(20000);
@@ -190,8 +189,10 @@ public class BayesTest {
 		line.calcBayes(basePos, freq);
 
 		assertEquals('G', line.getBayesBase());
-		assertEquals(1.0, line.getBayesProbability(),0.0);
+		assertEquals(1.0, line.getBayesProbability(), 0.0);
 
 	}
+
+
 
 }

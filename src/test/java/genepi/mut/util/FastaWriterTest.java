@@ -186,40 +186,6 @@ public class FastaWriterTest {
 	}
 	
 	@Test
-	public void testNA19785() {
-
-		String input = "test-data/mtdna/fasta-files/input/NA19785.mapped.ILLUMINA.bwa.MXL.low_coverage.20120522.bam";
-		String ref = "test-data/mtdna/reference/rCRS.fasta";
-		String out = "test-data/NA19785.txt";
-		String fasta = "test-data/NA19785.fasta";
-
-		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", ref, "--output",
-				out, "--level", "0.01", "--insertions", "--deletions", "--writeFasta" });
-
-		pileup.start();
-
-		FastaWriter writer = new FastaWriter();
-
-		writer.createFasta(out, fasta, ref);
-
-		try {
-			String expected = new String(
-					Files.readAllBytes(Paths.get("test-data/mtdna/fasta-files/expected/NA19785.fasta")));
-			LineReader reader = new LineReader(fasta);
-			reader.next();
-			reader.next();
-			String actual = reader.get();
-			assertEquals(expected, actual);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		FileUtil.deleteFile(out);
-		FileUtil.deleteFile(fasta);
-
-	}
-	
-	@Test
 	public void testNA20851() {
 
 		String input = "test-data/mtdna/fasta-files/input/NA20851.mapped.ILLUMINA.bwa.GIH.low_coverage.20120522.bam";
