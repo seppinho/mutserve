@@ -398,9 +398,8 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	}
 
-	// TODO check topFWD == minorREV && topREV == minorFWD
 	private boolean checkBases(char topFWD, char topREV, char minorFWD, char minorREV) {
-		return (minorFWD == minorREV && topFWD == topREV);
+		return (minorFWD == minorREV && topFWD == topREV ) || (topFWD == minorREV && topREV == minorFWD && topBasePercentsFWD >= 0.4 && topBasePercentsFWD <= 0.6);
 	}
 
 	private char detectMinorFWD(double minorPercentage) {
