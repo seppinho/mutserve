@@ -45,6 +45,8 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	private char bayesBase;
 	private double bayesProbability;
+	private double bayesPercentageFWD;
+	private double bayesPercentageREV;
 
 	private String insPosition;
 
@@ -396,7 +398,7 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	}
 
-	//TODO check topFWD == minorREV && topREV == minorFWD
+	// TODO check topFWD == minorREV && topREV == minorFWD
 	private boolean checkBases(char topFWD, char topREV, char minorFWD, char minorREV) {
 		return (minorFWD == minorREV && topFWD == topREV);
 	}
@@ -585,13 +587,12 @@ public class VariantLine implements Comparable<VariantLine> {
 			probCRev += Math.log10(qualScore / 3);
 			probGRev += Math.log10(qualScore / 3);
 		}
-		
+
 		// add prior
 		double probA = (probAFor + probARev) + Math.log10(freqA);
 		double probC = (probCFor + probCRev) + Math.log10(freqC);
 		double probG = (probGFor + probGRev) + Math.log10(freqG);
 		double probT = (probTFor + probTRev) + Math.log10(freqT);
-		
 
 		char finalBase = '-';
 		double bayesProb = 0;
@@ -611,7 +612,25 @@ public class VariantLine implements Comparable<VariantLine> {
 		} else if (bayesProb == probT) {
 			finalBase = 'T';
 		}
-		
+
+		// write % of final base to top to determine level
+		if (finalBase == 'A') {
+			this.bayesPercentageFWD = aPercentageFWD;
+			this.bayesPercentageREV = aPercentageREV;
+		}
+		if (finalBase == 'C') {
+			this.bayesPercentageFWD = cPercentageFWD;
+			this.bayesPercentageREV = cPercentageREV;
+		}
+		if (finalBase == 'G') {
+			this.bayesPercentageFWD = gPercentageFWD;
+			this.bayesPercentageREV = gPercentageREV;
+		}
+		if (finalBase == 'T') {
+			this.bayesPercentageFWD = tPercentageFWD;
+			this.bayesPercentageREV = tPercentageREV;
+		}
+
 		this.setBayesProbability(Math.pow(10, bayesProb - d));
 		this.setBayesBase(finalBase);
 
@@ -1315,6 +1334,22 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	public void setBayesProbability(double bayesProbability) {
 		this.bayesProbability = bayesProbability;
+	}
+
+	public double getBayesPercentageFWD() {
+		return bayesPercentageFWD;
+	}
+
+	public void setBayesPercentageFWD(double bayesPercentageFWD) {
+		this.bayesPercentageFWD = bayesPercentageFWD;
+	}
+
+	public double getBayesPercentageREV() {
+		return bayesPercentageREV;
+	}
+
+	public void setBayesPercentageREV(double bayesPercentageREV) {
+		this.bayesPercentageREV = bayesPercentageREV;
 	}
 
 }

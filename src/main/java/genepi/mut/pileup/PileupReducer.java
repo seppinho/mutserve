@@ -160,9 +160,9 @@ public class PileupReducer extends Reducer<Text, BasePositionHadoop, Text, Text>
 
 					double hetLevel = VariantCaller.calcVariantLevel(line, minorFWD, minorREV);
 
-					double levelTop = VariantCaller.calcLevelTop(line);
+					double levelTop = VariantCaller.calcLevel(line,line.getTopBasePercentsFWD(), line.getTopBasePercentsREV());
 
-					double levelMinor = VariantCaller.calcLevelMinor(line, minorFWD, minorREV);
+					double levelMinor = VariantCaller.calcLevel(line, minorFWD, minorREV);
 
 					varResult.setLevelTop(levelTop);
 

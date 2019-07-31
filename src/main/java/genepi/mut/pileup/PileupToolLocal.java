@@ -356,10 +356,9 @@ public class PileupToolLocal extends Tool {
 						varResult.setMinor(base);
 
 						double hetLevel = VariantCaller.calcVariantLevel(line, minorPercentageFwd, minorPercentageRev);
+						double levelTop = VariantCaller.calcLevel(line,line.getTopBasePercentsFWD(), line.getTopBasePercentsREV());
 
-						double levelTop = VariantCaller.calcLevelTop(line);
-
-						double levelMinor = VariantCaller.calcLevelMinor(line, minorPercentageFwd, minorPercentageRev);
+						double levelMinor = VariantCaller.calcLevel(line, minorPercentageFwd, minorPercentageRev);
 
 						varResult.setLevelTop(levelTop);
 
@@ -374,7 +373,7 @@ public class PileupToolLocal extends Tool {
 				}
 
 				if (!isHeteroplasmy) {
-
+					
 					VariantResult varResult = VariantCaller.determineVariants(line);
 
 					if (varResult != null) {
@@ -397,13 +396,14 @@ public class PileupToolLocal extends Tool {
 	public static void main(String[] args) {
 		
 		String input = "test-data/mtdna/bam/input";
+		input = "/home/seb/Downloads/M1-Clontech_S6.bam";
 		
-		String output = "test-data/tmp.txt";
+		String output = "/home/seb/Desktop/test.txt";
 		
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", ref, "--output",
-				output, "--level", "0.01", "--deletions", "--insertions","--writeFasta"});
+				output, "--level", "0.01", "--noBaq"});
 
 		pileup.start();
 

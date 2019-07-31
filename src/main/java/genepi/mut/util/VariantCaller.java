@@ -144,7 +144,7 @@ private static VariantResult addHomoplasmyResult(VariantLine line, int type) {
 
 		if (type == 1) {
 			output.setTop(line.getBayesBase());
-			output.setLevel(line.getBayesProbability());
+			output.setLevel(calcLevel(line,line.getBayesPercentageFWD(),line.getBayesPercentageREV()));
 		} else {
 			output.setTop(line.getTopBaseFWD());
 			output.setLevel(calcVariantLevel(line, line.getMinorBasePercentsFWD(), line.getMinorBasePercentsREV()));
@@ -175,18 +175,10 @@ private static VariantResult addHomoplasmyResult(VariantLine line, int type) {
 		return (fwd + rev) / (line.getCovFWD() + line.getCovREV());
 	}
 
-	public static double calcLevelMinor(VariantLine line, double minorPercentFWD, double minorPercentREV) {
+	public static double calcLevel(VariantLine line, double percentFWD, double percentREV) {
 
-		double fwd = minorPercentFWD * line.getCovFWD();
-		double rev = minorPercentREV * line.getCovREV();
-
-		return (fwd + rev) / (line.getCovFWD() + line.getCovREV());
-	}
-
-	public static double calcLevelTop(VariantLine line) {
-
-		double fwd = line.getTopBasePercentsFWD() * line.getCovFWD();
-		double rev = line.getTopBasePercentsREV() * line.getCovREV();
+		double fwd = percentFWD * line.getCovFWD();
+		double rev = percentREV * line.getCovREV();
 
 		return (fwd + rev) / (line.getCovFWD() + line.getCovREV());
 	}
