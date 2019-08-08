@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/seppinho/mutserve.svg?branch=master)](https://travis-ci.org/seppinho/mutserve)
 [![Twitter Follow](https://img.shields.io/twitter/follow/mtdnaserver.svg?style=social&label=Follow)](https://twitter.com/mtdnaserver)
 
-Mutserve is a variant caller for mtDNA with focus on heteroplasmic site detection in sequencing data. 
+Mutserve is a variant caller for mtDNA to detect heteroplasmic sites in NGS data. 
 It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability reasons, mutserve is parallelized using Hadoop MapReduce but also available as a standalone tool.
 
 ## Differences to mtDNA-Server
