@@ -15,8 +15,6 @@ import genepi.mut.objects.BayesFrequencies;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.objects.VariantResult;
 import genepi.mut.util.FastaWriter;
-import genepi.mut.util.ReferenceUtil;
-import genepi.mut.util.ReferenceUtil.Reference;
 import genepi.mut.util.VariantCaller;
 import genepi.mut.util.VcfWriter;
 import htsjdk.samtools.SAMRecord;
@@ -38,7 +36,7 @@ public class PileupToolLocal extends Tool {
 	}
 
 	@Override
-	public void createParameters() { 
+	public void createParameters() {
 
 		addParameter("input", "input cram/bam file or folder", Tool.STRING);
 		addParameter("output", "output file", Tool.STRING);
@@ -184,42 +182,22 @@ public class PileupToolLocal extends Tool {
 
 			for (File file : files) {
 
-				Reference reference = ReferenceUtil.determineReference(file);
+				BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, baq, mode);
 
-				if (reference == Reference.hg19) {
+				System.out.println("Processing: " + file.getName());
 
-					System.out.println("File " + file.getName()
-							+ " excluded! File is aligned to Yoruba (Reference length 16571) and not rCRS. ");
+				try {
 
-					continue;
+					analyseReads(file, analyser, deletions, insertions);
 
+					determineVariants(analyser, writerRaw, writerVar, level);
+
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return 1;
 				}
 
-				else if (reference == Reference.rcrs || reference == Reference.precisionId) {
-
-					BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, baq,
-							mode);
-
-					System.out.println("Processing: " + file.getName());
-					System.out.println("Detected reference: " + reference.toString());
-
-					try {
-
-						analyseReads(file, analyser, deletions, insertions);
-
-						determineVariants(analyser, writerRaw, writerVar, level);
-
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						return 1;
-					}
-
-				} else {
-					System.out.println(
-							"File " + file.getName() + " excluded. Can not identify a valid reference length!");
-					continue;
-				}
 			}
 
 			try {
@@ -279,10 +257,10 @@ public class PileupToolLocal extends Tool {
 		HashMap<String, BasePosition> counts = analyser.getCounts();
 
 		String reference = analyser.getReferenceString();
-		
-		//load frequency file
+
+		// load frequency file
 		InputStream in = this.getClass().getClassLoader().getResourceAsStream("1000g.frq");
-		HashMap<String, Double> freq = BayesFrequencies.instance(new DataInputStream(in));	
+		HashMap<String, Double> freq = BayesFrequencies.instance(new DataInputStream(in));
 
 		for (String key : counts.keySet()) {
 
@@ -329,7 +307,7 @@ public class PileupToolLocal extends Tool {
 
 				// create all required frequencies for one position
 				// applies checkBases()
-				
+
 				line.parseLine(basePos, level, freq);
 
 				boolean isHeteroplasmy = false;
@@ -356,7 +334,8 @@ public class PileupToolLocal extends Tool {
 						varResult.setMinor(base);
 
 						double hetLevel = VariantCaller.calcVariantLevel(line, minorPercentageFwd, minorPercentageRev);
-						double levelTop = VariantCaller.calcLevel(line,line.getTopBasePercentsFWD(), line.getTopBasePercentsREV());
+						double levelTop = VariantCaller.calcLevel(line, line.getTopBasePercentsFWD(),
+								line.getTopBasePercentsREV());
 
 						double levelMinor = VariantCaller.calcLevel(line, minorPercentageFwd, minorPercentageRev);
 
@@ -373,13 +352,13 @@ public class PileupToolLocal extends Tool {
 				}
 
 				if (!isHeteroplasmy) {
-					
+
 					VariantResult varResult = VariantCaller.determineVariants(line);
 
 					if (varResult != null) {
 
 						String res = VariantCaller.writeVariant(varResult);
-						
+
 						writerVariants.write(res);
 					}
 				}
@@ -394,16 +373,16 @@ public class PileupToolLocal extends Tool {
 	}
 
 	public static void main(String[] args) {
-		
+
 		String input = "test-data/mtdna/bam/input";
 		input = "/home/seb/Downloads/M1-Herk_S1.bam";
-		
+
 		String output = "/home/seb/Desktop/test.txt";
-		
+
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", ref, "--output",
-				output, "--level", "0.01", "--noBaq"});
+				output, "--level", "0.01", "--noBaq" });
 
 		pileup.start();
 
