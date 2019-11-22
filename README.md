@@ -4,6 +4,11 @@
 Mutserve is a variant caller for mtDNA to detect heteroplasmic sites in NGS data. 
 It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability reasons, mutserve is parallelized using Hadoop MapReduce but also available as a standalone tool.
 
+Best Practice Pipelines recommend thw following steps to prepare the BAM files:
+- Remove Duplicates (*java -jar picard-tools-2.5.0/picard.jar MarkDuplicates*), 
+- Local realignment around indels (*GenomeAnalysisTK.jar -T RealignerTargetCreator*, *java -jar GenomeAnalysisTK.jar -T IndelRealigner*) 
+- BQSR (*GenomeAnalysisTK.jar -T BaseRecalibrator*).
+
 ## Differences to mtDNA-Server
 
 - mutserve always reports the non-reference level as the heteroplasmy level, while mtDNA-Server reports the minor component.
@@ -45,7 +50,7 @@ By default (`--output filename` does not end with .vcf or .vcf.gz) we export a T
 If you want a **VCF** file as an output, please specify `--output filename.vcf.gz`. Heteroplasmies are coded as 1/0 genotypes, the heteroplasmy level is included in the FORMAT using the **AF** attribute (allele frequency) of the first non-reference allele. Please note that indels are currently not included in the VCF.  This VCF file can be used as an input for https://github.com/seppinho/haplogrep-cmd.
 
 ## Current Shortcomings
-* The **insertions/deletions calling** is currently in **beta**, there is currently **no** normalization or realignment applied for indel positions. 
+* The **insertions/deletions calling** is currently in **beta**.
 
 ## Performance - Sensitivity and Specificity
 
