@@ -4,11 +4,6 @@
 Mutserve is a variant caller for mtDNA to detect heteroplasmic sites in NGS data. 
 It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability reasons, mutserve is parallelized using Hadoop MapReduce but also available as a standalone tool.
 
-Best Practice Pipelines recommend thw following steps to prepare the BAM files:
-- Remove Duplicates (*java -jar picard-tools-2.5.0/picard.jar MarkDuplicates*), 
-- Local realignment around indels (*GenomeAnalysisTK.jar -T RealignerTargetCreator*, *java -jar GenomeAnalysisTK.jar -T IndelRealigner*) 
-- BQSR (*GenomeAnalysisTK.jar -T BaseRecalibrator*).
-
 ## Differences to mtDNA-Server
 
 - mutserve always reports the non-reference level as the heteroplasmy level, while mtDNA-Server reports the minor component.
@@ -24,6 +19,13 @@ wget https://github.com/seppinho/mutserve/releases/download/v1.3.0/mutserve-1.3.
 java -jar mutserve-1.3.0.jar  analyse-local --input <file/folder> --output <filename.vcf / filename.txt> --reference <fasta> --level 0.01
 ```
 To create a VCF file as an output simple specify `--output filename.vcf.gz`. Please use [this reference file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS.fasta) when using BAQ.
+
+### BAM Preperation
+Best Practice Pipelines recommend the following steps for BAM files preperation:
+- Remove Duplicates (*java -jar picard-tools-2.5.0/picard.jar MarkDuplicates*), 
+- Local realignment around indels (*GenomeAnalysisTK.jar -T RealignerTargetCreator*, *java -jar GenomeAnalysisTK.jar -T IndelRealigner*) 
+- BQSR (*GenomeAnalysisTK.jar -T BaseRecalibrator*).
+
 
 ### Default Parameters
 
