@@ -46,6 +46,7 @@ public class PileupToolLocal extends Tool {
 		addOptionalParameter("mapQ", "mapping quality", Tool.STRING);
 		addOptionalParameter("alignQ", "alignment quality", Tool.STRING);
 		addFlag("noBaq", "turn off BAQ");
+		addFlag("noFreq", "turn off 1000G frequency file");
 		addFlag("deletions", "Call deletions");
 		addFlag("insertions", "Call insertions (beta)");
 		addFlag("writeFasta", "Write fasta");
@@ -67,6 +68,8 @@ public class PileupToolLocal extends Tool {
 		String output = (String) getValue("output");
 
 		boolean baq = !isFlagSet("noBaq");
+		
+		boolean freq = !isFlagSet("noFreq");
 
 		boolean deletions = isFlagSet("deletions");
 
@@ -112,7 +115,6 @@ public class PileupToolLocal extends Tool {
 		File[] files;
 
 		if (folderIn.exists()) {
-
 			if (folderIn.isFile()) {
 				files = new File[1];
 				files[0] = new File(folderIn.getAbsolutePath());
@@ -175,10 +177,18 @@ public class PileupToolLocal extends Tool {
 			System.out.println("Map Quality: " + mapQ);
 			System.out.println("Alignment Quality: " + alignQ);
 			System.out.println("BAQ: " + baq);
+			System.out.println("1000G Frequency File: " + freq);
 			System.out.println("Deletions: " + deletions);
 			System.out.println("Insertions: " + insertions);
 			System.out.println("Fasta: " + writeFasta);
 			System.out.println("");
+			
+			// load frequency file
+			HashMap<String, Double> freqFile = null;
+			if(freq) {
+			InputStream in = this.getClass().getClassLoader().getResourceAsStream("1000g.frq");
+			freqFile = BayesFrequencies.instance(new DataInputStream(in));
+			}
 
 			for (File file : files) {
 
@@ -189,8 +199,8 @@ public class PileupToolLocal extends Tool {
 				try {
 
 					analyseReads(file, analyser, deletions, insertions);
-
-					determineVariants(analyser, writerRaw, writerVar, level);
+					
+					determineVariants(analyser, writerRaw, writerVar, level, freqFile);
 
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -225,9 +235,11 @@ public class PileupToolLocal extends Tool {
 			System.out.println("Time: " + (System.currentTimeMillis() - start) / 1000 + " sec");
 			return 0;
 
+		} else {
+			System.out.println("No files found.");
+			return 1;
 		}
 
-		return 0;
 	}
 
 	// mapper
@@ -251,16 +263,12 @@ public class PileupToolLocal extends Tool {
 	}
 
 	// reducer
-	private void determineVariants(BamAnalyser analyser, LineWriter writerRaw, LineWriter writerVariants, double level)
+	private void determineVariants(BamAnalyser analyser, LineWriter writerRaw, LineWriter writerVariants, double level, HashMap<String, Double> freqFile)
 			throws IOException {
 
 		HashMap<String, BasePosition> counts = analyser.getCounts();
 
 		String reference = analyser.getReferenceString();
-
-		// load frequency file
-		InputStream in = this.getClass().getClassLoader().getResourceAsStream("1000g.frq");
-		HashMap<String, Double> freq = BayesFrequencies.instance(new DataInputStream(in));
 
 		for (String key : counts.keySet()) {
 
@@ -308,7 +316,7 @@ public class PileupToolLocal extends Tool {
 				// create all required frequencies for one position
 				// applies checkBases()
 
-				line.parseLine(basePos, level, freq);
+				line.parseLine(basePos, level, freqFile);
 
 				boolean isHeteroplasmy = false;
 
@@ -375,14 +383,13 @@ public class PileupToolLocal extends Tool {
 	public static void main(String[] args) {
 
 		String input = "test-data/mtdna/bam/input";
-		input = "/home/seb/Downloads/M1-Herk_S1.bam";
 
 		String output = "/home/seb/Desktop/test.txt";
 
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 
 		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", ref, "--output",
-				output, "--level", "0.01", "--noBaq" });
+				output, "--level", "0.01", "--noBaq","--noFreq" });
 
 		pileup.start();
 
