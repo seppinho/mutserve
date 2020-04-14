@@ -39,6 +39,7 @@ Best Practice Pipelines recommend the following steps for BAM files preperation:
 | BaseQuality     | 20 | `--baseQ`|
 | AlignmentQuality     | 30 | `--alignQ`|
 | noBaq     | false | `--noBaq`|
+| noFreq     | false | `--noFreq`|
 | deletions (beta)     | false | `--deletions`|
 | insertions (beta)     | false | `--insertions`|
 
