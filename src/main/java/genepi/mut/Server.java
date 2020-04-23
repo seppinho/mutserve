@@ -8,6 +8,7 @@ import genepi.mut.pileup.PileupToolLocal;
 import genepi.mut.sort.SortStep;
 import genepi.mut.stats.StatisticsTool;
 import genepi.mut.tools.CalcPrecision;
+import genepi.mut.tools.GenerateGoldStandard;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -36,6 +37,10 @@ public class Server {
 		// generate base annotation
 		toolbox.addTool("base-annotate", BaseAnnotateTool.class);
 		
+		
+		// calculate Specificity, Sensitivity and Precision 
+		toolbox.addTool("generate-gold", GenerateGoldStandard.class);
+				
 		// calculate Specificity, Sensitivity and Precision 
 		toolbox.addTool("performance", CalcPrecision.class);
 

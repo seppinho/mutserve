@@ -25,7 +25,7 @@ public class CalcPrecision extends Tool {
 		addParameter("gold", "expected positions");
 		addParameter("in", "input csv file");
 		addParameter("length", "length of genome/locus", INTEGER);
-		addParameter("level", "heteroplasmy level applied", DOUBLE); 
+		addParameter("level", "heteroplasmy level applied", DOUBLE);
 
 	}
 
@@ -38,18 +38,19 @@ public class CalcPrecision extends Tool {
 	public int run() {
 
 		final String pos = "Pos";
-		final String sampleId= "ID";
-		final String variantlevel ="VariantLevel";
-		
+		final String sampleId = "ID";
+		final String variantlevel = "VariantLevel";
+
 		Set<Integer> allPos = new TreeSet<Integer>();
 		Set<Integer> goldPos = new TreeSet<Integer>();
 		Set<Integer> falsePositives = new TreeSet<Integer>();
+		Set<Integer> falseNegatives = new TreeSet<Integer>();
 		Set<Integer> both = new TreeSet<Integer>();
 
 		String in = (String) getValue("in");
-		
+
 		String gold = (String) getValue("gold");
-		int length= (int)getValue("length");
+		int length = (int) getValue("length");
 		double level = (double) getValue("level");
 
 		CsvTableReader idReader = new CsvTableReader(in, '\t');
@@ -62,21 +63,22 @@ public class CalcPrecision extends Tool {
 
 		}
 		idReader.close();
-		
-		System.out.println("SampleID\tFound/Total\tFalsePositive\tPrec.\tSens.\tSpec");
-		
+
+		System.out.println("SampleID\tFound\tTotal\tFalsePos\tFalseNeg\tPrecision\tSensitivity\tSpecificity\tIgnored");
+
 		for (String id : ids) {
 
 			CsvTableReader goldReader = new CsvTableReader(gold, '\t');
 
 			while (goldReader.next()) {
-
+				if (goldReader.getDouble(variantlevel)>=level) {
 				goldPos.add(goldReader.getInteger(pos));
 
 				allPos.add(goldReader.getInteger(pos));
+				}
 
 			}
-			
+
 			CsvTableReader variantReader = new CsvTableReader(in, '\t');
 
 			falsePositives.clear();
@@ -86,6 +88,8 @@ public class CalcPrecision extends Tool {
 			int falsePositiveCount = 0;
 			int trueNegativeCount = 0;
 			int falseNegativeCount = 0;
+			String level2low = "";
+			int level2lowCount = 0;
 
 			while (variantReader.next()) {
 
@@ -93,26 +97,29 @@ public class CalcPrecision extends Tool {
 
 				int posSample = variantReader.getInteger(pos);
 
-				double variantlevSample = variantReader.getDouble(variantlevel); 
-						
+				double variantlevSample = variantReader.getDouble(variantlevel);
+
 				if (id.equals(idSample)) {
 
 					int position = posSample;
-					
-					if (variantlevSample>level) {
-					
-					if (goldPos.contains(position)) {
-						goldPos.remove(position);
-						truePositiveCount++;
-						both.add(position);
 
+					if (variantlevSample >= level) {
+
+						if (goldPos.contains(position)) {
+							goldPos.remove(position);
+							truePositiveCount++;
+							both.add(position);
+
+						} else {
+							falsePositives.add(position);
+							falsePositiveCount++;
+						}
 					} else {
-						falsePositives.add(position);
-						falsePositiveCount++;
+						level2low += position + "(" + variantlevSample + ") ";
+						level2lowCount++;
 					}
+				}
 
-				}
-				}
 			}
 
 			for (int j = 1; j <= length; j++) {
@@ -126,12 +133,10 @@ public class CalcPrecision extends Tool {
 
 					else {
 						falseNegativeCount++;
-						
+						falseNegatives.add(j);
 					}
 				}
-
 			}
-		
 
 			variantReader.close();
 
@@ -146,18 +151,21 @@ public class CalcPrecision extends Tool {
 			String spec = df.format(spec2);
 			String prec = df.format(prec2);
 
-			System.out.println(id+"\t"+truePositiveCount+" / "+ (truePositiveCount + falseNegativeCount)+"\t"+falsePositiveCount+"\t"+prec+"\t"+sens+"\t"+spec);
+			System.out.println(id + "\t" + truePositiveCount + "\t " + (truePositiveCount + falseNegativeCount) + "\t"
+					+ falsePositiveCount + " " + falsePositives.toString() + "\t" + "\t" + falseNegativeCount + " "
+					+ falseNegatives.toString() + "\t" + prec + "\t" + sens + "\t" + spec + "\t" + level2lowCount + " ["
+					+ level2low + "]");
 
 		}
 		return 0;
 	}
 
 	public static void main(String[] args) {
-		
-		String gold ="test-data/mtdna/raw-results/sanger.txt";
-		String  in = "test-data/tmp/file.txt";
+
+		String gold = "test-data/mtdna/raw-results/sanger.txt";
+		String in = "test-data/tmp/file.txt";
 		String length = "16569";
-		CalcPrecision precison = new CalcPrecision(new String[] { "--gold", gold, "--in", 	in, "--length", length });
+		CalcPrecision precison = new CalcPrecision(new String[] { "--gold", gold, "--in", in, "--length", length });
 
 		precison.start();
 
