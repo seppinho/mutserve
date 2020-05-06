@@ -14,7 +14,7 @@ It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For s
 You can run mutserve as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise).
 
 ```
-wget https://github.com/seppinho/mutserve/releases/download/v1.3.3/mutserve-1.3.4.jar
+wget https://github.com/seppinho/mutserve/releases/download/v1.3.4/mutserve-1.3.4.jar
 
 java -jar mutserve-1.3.4.jar  analyse-local --input <file/folder> --output <filename.vcf / filename.txt> --reference <fasta> --level 0.01
 ```
@@ -57,7 +57,7 @@ If you want a **VCF** file as an output, please specify `--output filename.vcf.g
 
 ## Mixture-Module and Performance - Sensitivity and Specificity
 
-As with v.1.3.3 you can generate your gold standard given 2 variant files from the source files, which were used to generate mixtures in lab. With those files (call mutserve on the two samples) you can calculate the expected sites (parameter **generate-gold**) given a mixture ratio and subsequently compare the results from the lab-mixture to the this gold-standard with the **performance** parameter.  
+As with v1.3.3 you can generate your gold standard given 2 variant files from the source files, which were used to generate mixtures in lab. With those files (call mutserve on the two samples) you can calculate the expected sites (parameter **generate-gold**) given a mixture ratio and subsequently compare the results from the lab-mixture to the this gold-standard with the **performance** parameter.  
 
 ### Generate Gold-Standard
 Provide the text files from mutserve output of the two files (the txt-variant files from *analyse-local* are used as input files - file1 for the major component and file2 for the minor mixture component), as well as the level of the mixture (value between 0 and 1) and the output file - which is the resulting gold-standard and input file for the next step - performance calculation - see below:
