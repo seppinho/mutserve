@@ -237,7 +237,7 @@ public class PileupToolLocal extends Tool {
 
 		} else {
 			System.out.println("No files found.");
-			return 1;
+			return 0;
 		}
 
 	}
