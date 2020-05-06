@@ -14,9 +14,9 @@ It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For s
 You can run mutserve as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise).
 
 ```
-wget https://github.com/seppinho/mutserve/releases/download/v1.3.3/mutserve-1.3.3.jar
+wget https://github.com/seppinho/mutserve/releases/download/v1.3.3/mutserve-1.3.4.jar
 
-java -jar mutserve-1.3.3.jar  analyse-local --input <file/folder> --output <filename.vcf / filename.txt> --reference <fasta> --level 0.01
+java -jar mutserve-1.3.4.jar  analyse-local --input <file/folder> --output <filename.vcf / filename.txt> --reference <fasta> --level 0.01
 ```
 To create a VCF file as an output simple specify `--output filename.vcf.gz`. Please use [this reference file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS.fasta) when using BAQ.
 
@@ -62,14 +62,14 @@ As with v.1.3.3 you can generate your gold standard given 2 variant files from t
 ### Generate Gold-Standard
 Provide the text files from mutserve output of the two files (the txt-variant files from *analyse-local* are used as input files - file1 for the major component and file2 for the minor mixture component), as well as the level of the mixture (value between 0 and 1) and the output file - which is the resulting gold-standard and input file for the next step - performance calculation - see below:
 ```
-java -jar mutserve-1.3.3.jar  generate-gold --file1 <variantfileMajorComponent.txt> --file2 <variantfileMinorComponent.txt> --level <mixture levels (e.g. 0.01 for 1%)> --output <expectedvariants.txt>
+java -jar mutserve-1.3.4.jar  generate-gold --file1 <variantfileMajorComponent.txt> --file2 <variantfileMinorComponent.txt> --level <mixture levels (e.g. 0.01 for 1%)> --output <expectedvariants.txt>
 ```
 
 
 ### Performance 
 If you have a mixture model generated, you can use mutserve for checking precision, specificity and sensitivity. The expected variants (homoplasmic and heteroplasmic) need to be provided as gold standard in form of a text file, with one column, containing the positions expected (this can now be calculated -see previous step). The txt-variant file from *analyse-local* is used as input file and length needs to be specified (typically 16569 for human mitochondrial genomes, but as there are different reference sequence, this can vary as well). The value provided in *level* indicates the threshold at which heteroplasmic levels are considered in the analysis.
 ```
-java -jar mutserve-1.3.3.jar  performance --in <variantfile.txt> --gold <expectedvariants.txt> --length <size of reference (e.g. 16569)> --level <threshold for heteroplasmic levels (e.g. 0.01)>
+java -jar mutserve-1.3.4.jar  performance --in <variantfile.txt> --gold <expectedvariants.txt> --length <size of reference (e.g. 16569)> --level <threshold for heteroplasmic levels (e.g. 0.01)>
 ```
 
 ## Citation
