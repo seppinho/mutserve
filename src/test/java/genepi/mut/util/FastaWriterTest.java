@@ -27,7 +27,7 @@ public class FastaWriterTest {
 				out, "--level", "0.01", "--insertions", "--deletions", "--writeFasta" });
 
 		pileup.start();
-
+ 
 		FastaWriter writer = new FastaWriter();
 
 		writer.createFasta(out, fasta, ref);

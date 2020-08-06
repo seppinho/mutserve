@@ -32,3 +32,4 @@ public class QCMetric {
 		this.specificity = specificity;
 	}
 }
+ 

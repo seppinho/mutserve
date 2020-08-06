@@ -47,7 +47,7 @@ public class MutationServerTest {
 	public static void tearDown() throws Exception {
 		TestCluster.getInstance().stop();
 	}
- 
+
 	@Test
 	public void AlignmentSETest() throws IOException {
 
@@ -153,7 +153,7 @@ public class MutationServerTest {
 
 		}
 	}
-	
+
 	@Test
 	public void SortTestSE() throws IOException {
 
@@ -196,13 +196,12 @@ public class MutationServerTest {
 		int i = 0;
 		while (s.hasNext()) {
 			SAMRecord rec = s.next();
-			
-			//read having two alignments (first, secondary). 
-			if(rec.getReadName().equals("QS6LK:01115:01248")){
+
+			// read having two alignments (first, secondary).
+			if (rec.getReadName().equals("QS6LK:01115:01248")) {
 				System.out.println("sorted " + rec.getSAMString());
 			}
-			
-			
+
 			if (rec.getReadName().equals("QS6LK:01421:01280")) {
 				assertEquals("rCRS", rec.getContig());
 			}
@@ -211,7 +210,7 @@ public class MutationServerTest {
 
 		assertEquals(317, i);
 
-		//FileUtil.deleteDirectory("test-data/tmp");
+		// FileUtil.deleteDirectory("test-data/tmp");
 	}
 
 	@Test
@@ -266,7 +265,7 @@ public class MutationServerTest {
 		FileUtil.deleteDirectory("test-data/tmp");
 
 	}
-	
+
 	@Test
 	public void PileupFromFastqTest() throws IOException {
 
@@ -292,7 +291,6 @@ public class MutationServerTest {
 		SortStep sort = new SortMock("files");
 		result = sort.run(context);
 
-		
 		PileupStep pileUp = new PileupMock("files");
 		context.setOutput("rawHdfs", "rawHdfs");
 		context.setOutput("rawLocal", "test-data/tmp/rawLocal1000G");
@@ -308,18 +306,17 @@ public class MutationServerTest {
 		FileUtil.deleteDirectory("test-data/tmp");
 	}
 
-
 	@Test
 	public void Pileup1000GBamTest() throws IOException {
 
 		String inputFolder = "test-data/mtdna/bam/input";
 		String archive = "test-data/mtdna/reference/rcrs.tar.gz";
 		String hdfsFolder = "input";
-		String type = "bam"; 
+		String type = "bam";
 
-		Set<String> expected = new HashSet<String>(Arrays.asList("1456", "2746", "3200", "12410", "14071", "14569", "15463",
-				"16093", "16360", "10394", "1438", "152", "15326", "15340", "16519", "263", "4769", "750", "8592", "8860", "3107","302.1","310.1"));
-	
+		Set<String> expected = new HashSet<String>(Arrays.asList("1456", "2746", "3200", "12410", "14071", "14569",
+				"15463", "16093", "16360", "10394", "1438", "152", "15326", "15340", "16519", "263", "4769", "750",
+				"8592", "8860", "3107", "302.1", "310.1"));
 
 		importInputdata(inputFolder, hdfsFolder);
 
@@ -363,7 +360,7 @@ public class MutationServerTest {
 		}
 
 	}
-	
+
 	@Test
 	public void Pileup1000GBamAndIndelTest() throws IOException {
 
@@ -372,9 +369,10 @@ public class MutationServerTest {
 		String hdfsFolder = "input";
 		String type = "bam";
 
-		Set<String> expected = new HashSet<String>(Arrays.asList("1456", "2746", "3200", "12410", "14071", "14569", "15463",
-				"16093", "16360", "10394", "1438", "152", "15326", "15340", "16519", "263", "4769", "750", "8592", "8860", "3107","302.1","310.1"));
-		
+		Set<String> expected = new HashSet<String>(Arrays.asList("1456", "2746", "3200", "12410", "14071", "14569",
+				"15463", "16093", "16360", "10394", "1438", "152", "15326", "15340", "16519", "263", "4769", "750",
+				"8592", "8860", "3107", "302.1", "310.1"));
+
 		// "303.1", "311.1"
 		importInputdata(inputFolder, hdfsFolder);
 
@@ -418,7 +416,7 @@ public class MutationServerTest {
 		}
 
 	}
-	
+
 	@Test
 	public void LpaServerPaperTest() throws IOException {
 
@@ -454,17 +452,17 @@ public class MutationServerTest {
 		while (reader.next()) {
 			i++;
 			String[] splits = reader.get().split("\t");
-			if(splits[1].equals("35")) {
-				assertEquals(new Double(18190),Double.valueOf(splits[9]));
-				assertEquals(new Double(0.999),Double.valueOf(splits[4]));
-				 
+			if (splits[1].equals("35")) {
+				assertEquals(new Double(18190), Double.valueOf(splits[9]));
+				assertEquals(new Double(0.999), Double.valueOf(splits[4]));
+
 			}
-			
-			if(splits[3].contains("D")) {
+
+			if (splits[3].contains("D")) {
 				deletions++;
 			}
 		}
-		
+
 		reader.close();
 
 		assertEquals(94, i);
@@ -487,7 +485,7 @@ public class MutationServerTest {
 
 		importInputdata(inputFolder, hdfsFolder);
 
-		// create workflow context 
+		// create workflow context
 		WorkflowTestContext context = buildContext(hdfsFolder, archive, type);
 
 		PileupStep pileUp = new PileupMock("files");
@@ -517,7 +515,7 @@ public class MutationServerTest {
 			System.out.println(metric.getSpecificity());
 
 			assertEquals(100, metric.getPrecision(), 0);
-			//PAPER: assertEquals(59.259, metric.getSensitivity(), 0.1);
+			// PAPER: assertEquals(59.259, metric.getSensitivity(), 0.1);
 			assertEquals(64.0, metric.getSensitivity(), 0.1);
 			assertEquals(100, metric.getSpecificity(), 0);
 		}
@@ -594,8 +592,7 @@ public class MutationServerTest {
 		HdfsUtil.delete("cloudgene-bwaOut");
 		HdfsUtil.delete("outputBam");
 		HdfsUtil.delete("outputBam-temp");
-		
-		
+
 		WorkflowTestContext context = new WorkflowTestContext();
 
 		context.setInput("input", input);
@@ -616,9 +613,9 @@ public class MutationServerTest {
 	}
 
 	private void importInputdata(String folder, String input) {
-		
+
 		HdfsUtil.delete(input);
-		
+
 		System.out.println("Import Data:");
 		String[] files = FileUtil.getFiles(folder, "*.*");
 		for (String file : files) {
