@@ -160,42 +160,34 @@ public class MutserveTests {
 	}
 	
 	
-	@Test
-	public void testLPAData() throws IOException {
-
-		String input = "test-data/dna/lpa-sample/bam";
-		String ref = "test-data/dna/lpa-sample/reference/kiv2_6.fasta";
-		String out = "test-data/lpa.txt";
-
-		PileupToolLocal pileup = new PileupToolLocal(
-				new String[] { "--input", input, "--reference", ref, "--output", out, "--level", "0.01","--insertions","--deletions","--noBaq"});
-
-		pileup.start();
-
-		LineReader reader = new LineReader(out);
-
-		// header
-		reader.next();
-		int i = 0;
-		int deletions = 0;
-		while (reader.next()) {
-			i++;
-			String[] splits = reader.get().split("\t");
-			if (splits[1].equals("35")) {
-				assertEquals(new Double(18190), Double.valueOf(splits[9]));
-				assertEquals(new Double(0.999), Double.valueOf(splits[4]));
-
-			}
-
-			if (splits[3].contains("D")) {
-				deletions++;
-			}
-		}
-
-		reader.close();
-		assertEquals(94, i);
-		assertEquals(33, deletions);
-
-	}
+	/*
+	 * @Test public void testLPAData() throws IOException {
+	 * 
+	 * String input = "test-data/dna/lpa-sample/bam"; String ref =
+	 * "test-data/dna/lpa-sample/reference/kiv2_6.fasta"; String out =
+	 * "test-data/lpa.txt";
+	 * 
+	 * PileupToolLocal pileup = new PileupToolLocal( new String[] { "--input",
+	 * input, "--reference", ref, "--output", out, "--level",
+	 * "0.01","--insertions","--deletions","--noBaq"});
+	 * 
+	 * pileup.start();
+	 * 
+	 * LineReader reader = new LineReader(out);
+	 * 
+	 * // header reader.next(); int i = 0; int deletions = 0; while (reader.next())
+	 * { i++; String[] splits = reader.get().split("\t"); if
+	 * (splits[1].equals("35")) { assertEquals(new Double(18190),
+	 * Double.valueOf(splits[9])); assertEquals(new Double(0.999),
+	 * Double.valueOf(splits[4]));
+	 * 
+	 * }
+	 * 
+	 * if (splits[3].contains("D")) { deletions++; } }
+	 * 
+	 * reader.close(); assertEquals(94, i); assertEquals(33, deletions);
+	 * 
+	 * }
+	 */
 
 }
