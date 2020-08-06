@@ -80,7 +80,7 @@ public class BamAnalyser {
 		this.refReader = new IndexedFastaSequenceFile(new File(fastaPath),
 				new FastaSequenceIndex(new File(fastaPath + ".fai")));
 
-		this.counts = new HashMap<String, BasePosition>(referenceString.length());
+		this.counts = new HashMap<String, BasePosition>();
 
 		this.baseQual = baseQual;
 
