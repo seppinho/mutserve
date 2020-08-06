@@ -312,11 +312,10 @@ public class MutationServerTest {
 		String inputFolder = "test-data/mtdna/bam/input";
 		String archive = "test-data/mtdna/reference/rcrs.tar.gz";
 		String hdfsFolder = "input";
-		String type = "bam";
+		String type = "bam"; 
 
-		Set<String> expected = new HashSet<String>(Arrays.asList("1456", "2746", "3200", "12410", "14071", "14569",
-				"15463", "16093", "16360", "10394", "1438", "152", "15326", "15340", "16519", "263", "4769", "750",
-				"8592", "8860", "3107", "302.1", "310.1"));
+		Set<Integer> expected = new HashSet<Integer>(Arrays.asList(1456, 2746, 3200, 12410, 14071, 14569, 15463,
+				16093, 16360, 10394, 1438, 152, 15326, 15340, 16519, 263, 4769, 750, 8592, 8860, 3107));
 
 		importInputdata(inputFolder, hdfsFolder);
 
@@ -340,7 +339,7 @@ public class MutationServerTest {
 
 		// header
 		reader.next();
-		while (reader.next()) {
+		while (reader.next()) { 
 			String[] splits = reader.get().split("\t");
 			int pos = Integer.valueOf(splits[1]);
 			results.add(pos);
