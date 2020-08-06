@@ -93,9 +93,7 @@ public class RawFileAnalysermtDNA {
 
 								if (varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
 
-									System.out.println("Lowlevel Variant: " + line.getPosition());
-
-									hetero.add(cloudgeneReader.getDouble("LEVEL")); 
+									hetero.add(cloudgeneReader.getDouble("LEVEL"));
 
 									if (sangerPos.contains(position)) {
 
@@ -152,16 +150,6 @@ public class RawFileAnalysermtDNA {
 			double sens = truePositiveCount / (double) (truePositiveCount + falseNegativeCount) * 100;
 			double spec = trueNegativeCount / (double) (falsePositiveCount + trueNegativeCount) * 100;
 			double prec = truePositiveCount / (double) (truePositiveCount + falsePositiveCount) * 100;
-
-			/*
-			 * System.out.println("  Sensitivity (Recall) -> " + sens +
-			 * " values " + truePositiveCount + "/" + (truePositiveCount +
-			 * falseNegativeCount)); System.out.println("  Specificity -> " +
-			 * " values " + trueNegativeCount + "/" + (falsePositiveCount +
-			 * trueNegativeCount)); System.out.println("  Precision -> " +
-			 * " values " + truePositiveCount + "/" + (truePositiveCount +
-			 * falsePositiveCount));
-			 */
 
 			System.out.println("");
 			System.out.println("Precision\t" + df.format(prec));

@@ -93,7 +93,7 @@ public class VariantLine implements Comparable<VariantLine> {
 	}
 
 	public void parseLineFromFile(CsvTableReader cloudgeneReader) {
-
+ 
 		this.setId(cloudgeneReader.getString("SAMPLE"));
 		this.setPosition(cloudgeneReader.getInteger("POS"));
 		this.setRef(cloudgeneReader.getString("REF").charAt(0));

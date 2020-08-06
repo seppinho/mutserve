@@ -29,7 +29,7 @@ public class TestCluster {
 
 	private TestCluster() {
 
-	}
+	} 
 
 	public static TestCluster getInstance() {
 		if (instance == null) {
