@@ -219,7 +219,7 @@
 		<dependency>
 			<groupId>com.github.samtools</groupId>
 			<artifactId>htsjdk</artifactId>
-			<version>2.18.1</version>
+			<version>2.23.0</version>
 		</dependency>
 
 		<dependency>
@@ -262,13 +262,6 @@
 			<artifactId>hadoop-common</artifactId>
 			<version>2.6.0-cdh5.10.0</version>
 			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-test</artifactId>
-			<version>2.6.0-mr1-cdh5.10.0</version>
 			<scope>test</scope>
 		</dependency>
 
