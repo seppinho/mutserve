@@ -190,17 +190,20 @@ public class Mutserve extends Tool {
 				freqFile = BayesFrequencies.instance(new DataInputStream(in));
 			}
 
+			//iterate over several BAM/CRAM files
 			for (File file : files) {
 
 				BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, baq, mode);
 
+				HashMap<Integer, BasePosition> positions = analyser.getCounts();
+
 				System.out.println("Processing: " + file.getName());
 
+				//first position to analyze
 				int pos = 1;
 
 				try {
 
-					// CNV-Server
 					final SamReader reader = SamReaderFactory.makeDefault()
 							.validationStringency(ValidationStringency.SILENT).open(file);
 
@@ -216,13 +219,29 @@ public class Mutserve extends Tool {
 
 						int current = record.getStart();
 
+						// call variants for (current-1)
 						if (current > pos) {
 
-							varCalling(level, writerRaw, writerVar, file, pos, analyser.getCounts(), reference,
-									freqFile);
+							if (positions.containsKey(pos) && pos <= reference.length()) {
 
-							pos = current;
+								callVariant(writerRaw, writerVar, file.getName(), level, pos, positions.get(pos),
+										reference, freqFile);
 
+								//update pointer
+								pos = current;
+
+							}
+						}
+
+					}
+
+					// analyze remaining positions
+
+					for (int i = pos; i < reference.length(); i++) {
+
+						if (positions.containsKey(pos) && pos <= reference.length()) {
+						callVariant(writerRaw, writerVar, file.getName(), level, i, positions.get(pos), reference,
+								freqFile);
 						}
 
 					}
@@ -265,95 +284,86 @@ public class Mutserve extends Tool {
 
 	}
 
-	private void varCalling(double level, LineWriter writerRaw, LineWriter writerVar, File file, int pos,
-			HashMap<Integer, BasePosition> counts, String reference, HashMap<String, Double> freqFile)
-			throws IOException {
+	private void callVariant(LineWriter writerRaw, LineWriter writerVar, String id, double level, int pos,
+			BasePosition basePosition, String reference, HashMap<String, Double> freqFile) throws IOException {
 
-		if (counts.containsKey(pos) && pos <= reference.length()) {
-			
-			char ref = 'N';
+		basePosition.setId(id);
 
-			BasePosition basePos = counts.get(pos);
+		basePosition.setPos(pos);
 
-			basePos.setId(file.getName());
+		VariantLine line = new VariantLine();
 
-			basePos.setPos(pos);
+		char ref = reference.charAt(pos - 1);
 
-			VariantLine line = new VariantLine();
+		line.setRef(ref);
 
-			ref = reference.charAt(pos - 1);
+		line.parseLine(basePosition, level, freqFile);
 
-			line.setRef(ref);
+		boolean isHeteroplasmy = false;
 
-			line.parseLine(basePos, level, freqFile);
+		for (char base : line.getMinors()) {
 
-			boolean isHeteroplasmy = false;
+			// this only works since minorFWD and minorREV are equal
+			double minorPercentageFwd = VariantCaller.getMinorPercentageFwd(line, base);
 
-			for (char base : line.getMinors()) {
+			double minorPercentageRev = VariantCaller.getMinorPercentageRev(line, base);
 
-				// this only works since minorFWD and minorREV are equal
-				double minorPercentageFwd = VariantCaller.getMinorPercentageFwd(line, base);
+			double llrFwd = VariantCaller.determineLlrFwd(line, base);
 
-				double minorPercentageRev = VariantCaller.getMinorPercentageRev(line, base);
+			double llrRev = VariantCaller.determineLlrRev(line, base);
 
-				double llrFwd = VariantCaller.determineLlrFwd(line, base);
+			VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorPercentageFwd,
+					minorPercentageRev, llrFwd, llrRev, level, base);
 
-				double llrRev = VariantCaller.determineLlrRev(line, base);
+			if (varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
 
-				VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorPercentageFwd,
-						minorPercentageRev, llrFwd, llrRev, level, base);
+				isHeteroplasmy = true;
 
-				if (varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
+				// set correct minor base for output result!
+				varResult.setMinor(base);
 
-					isHeteroplasmy = true;
+				double hetLevel = VariantCaller.calcVariantLevel(line, minorPercentageFwd, minorPercentageRev);
+				double levelTop = VariantCaller.calcLevel(line, line.getTopBasePercentsFWD(),
+						line.getTopBasePercentsREV());
 
-					// set correct minor base for output result!
-					varResult.setMinor(base);
+				double levelMinor = VariantCaller.calcLevel(line, minorPercentageFwd, minorPercentageRev);
 
-					double hetLevel = VariantCaller.calcVariantLevel(line, minorPercentageFwd, minorPercentageRev);
-					double levelTop = VariantCaller.calcLevel(line, line.getTopBasePercentsFWD(),
-							line.getTopBasePercentsREV());
+				varResult.setLevelTop(levelTop);
 
-					double levelMinor = VariantCaller.calcLevel(line, minorPercentageFwd, minorPercentageRev);
+				varResult.setLevelMinor(levelMinor);
 
-					varResult.setLevelTop(levelTop);
+				varResult.setLevel(hetLevel);
 
-					varResult.setLevelMinor(levelMinor);
+				String res = VariantCaller.writeVariant(varResult);
 
-					varResult.setLevel(hetLevel);
-
-					String res = VariantCaller.writeVariant(varResult);
-
-					writerVar.write(res);
-				}
+				writerVar.write(res);
 			}
+		}
 
-			if (!isHeteroplasmy) {
+		if (!isHeteroplasmy) {
 
-				VariantResult varResult = VariantCaller.determineVariants(line);
+			VariantResult varResult = VariantCaller.determineVariants(line);
 
-				if (varResult != null) {
+			if (varResult != null) {
 
-					String res = VariantCaller.writeVariant(varResult);
+				String res = VariantCaller.writeVariant(varResult);
 
-					writerVar.write(res);
-				}
+				writerVar.write(res);
 			}
-			// raw data
-			if (writerRaw != null) {
-				String raw = line.toRawString();
-				writerRaw.write(raw);
-			}
-
+		}
+		// raw data
+		if (writerRaw != null) {
+			String raw = line.toRawString();
+			writerRaw.write(raw);
 		}
 
 	}
 
 	public static void main(String[] args) {
 
-		String input = "/data2/genepi/static/1000g-deep/NA19017.final.cram.mt.bam";
+		String input = "test-data/mtdna/bam/input";
 
-		String output = "/home/seb/Desktop/test.txt";
+		String output = "test-data/tmp.txt";
 
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 
