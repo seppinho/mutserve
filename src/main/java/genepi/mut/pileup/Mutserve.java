@@ -183,11 +183,20 @@ public class Mutserve extends Tool {
 			System.out.println("Fasta: " + writeFasta);
 			System.out.println("");
 
+			// load frequency file
+			HashMap<String, Double> freqFile = null;
+			if (true) {
+				InputStream in = this.getClass().getClassLoader().getResourceAsStream("1000g.frq");
+				freqFile = BayesFrequencies.instance(new DataInputStream(in));
+			}
+
 			for (File file : files) {
 
 				BamAnalyser analyser = new BamAnalyser(file.getName(), refPath, baseQ, mapQ, alignQ, baq, mode);
 
 				System.out.println("Processing: " + file.getName());
+
+				int pos = 1;
 
 				try {
 
@@ -196,8 +205,6 @@ public class Mutserve extends Tool {
 							.validationStringency(ValidationStringency.SILENT).open(file);
 
 					SAMRecordIterator fileIterator = reader.iterator();
-
-					HashMap<Integer, BasePosition> counts = null;
 
 					String reference = analyser.getReferenceString();
 
@@ -209,14 +216,16 @@ public class Mutserve extends Tool {
 
 						int current = record.getStart();
 
-						counts = analyser.getCounts();
+						if (current > pos) {
 
-						varCalling(level, writerRaw, writerVar, file, current, counts, reference);
+							varCalling(level, writerRaw, writerVar, file, pos, analyser.getCounts(), reference,
+									freqFile);
+
+							pos = current;
+
+						}
 
 					}
-
-					System.out.println(" --- ");
-					varCalling(level, writerRaw, writerVar, file, 16569, counts, reference);
 
 					reader.close();
 
@@ -256,98 +265,84 @@ public class Mutserve extends Tool {
 
 	}
 
-	private void varCalling(double level, LineWriter writerRaw, LineWriter writerVar, File file, int current,
-			HashMap<Integer, BasePosition> counts, String reference) throws IOException {
+	private void varCalling(double level, LineWriter writerRaw, LineWriter writerVar, File file, int pos,
+			HashMap<Integer, BasePosition> counts, String reference, HashMap<String, Double> freqFile)
+			throws IOException {
 
-		// load frequency file
-		HashMap<String, Double> freqFile = null;
-		if (true) {
-			InputStream in = this.getClass().getClassLoader().getResourceAsStream("1000g.frq");
-			freqFile = BayesFrequencies.instance(new DataInputStream(in));
-		}
+		if (counts.containsKey(pos) && pos <= reference.length()) {
+			
+			char ref = 'N';
 
-		for (int pos = 1; pos < current; pos++) {
+			BasePosition basePos = counts.get(pos);
 
-			if (counts.containsKey(pos) && pos <= reference.length()) {
+			basePos.setId(file.getName());
 
-				char ref = 'N';
+			basePos.setPos(pos);
 
-				BasePosition basePos = counts.get(pos);
+			VariantLine line = new VariantLine();
 
-				basePos.setId(file.getName());
+			ref = reference.charAt(pos - 1);
 
-				basePos.setPos(pos);
+			line.setRef(ref);
 
-				VariantLine line = new VariantLine();
+			line.parseLine(basePos, level, freqFile);
 
-				ref = reference.charAt(pos - 1);
+			boolean isHeteroplasmy = false;
 
-				line.setRef(ref);
+			for (char base : line.getMinors()) {
 
-				// create all required frequencies for one position
-				// applies checkBases()
+				// this only works since minorFWD and minorREV are equal
+				double minorPercentageFwd = VariantCaller.getMinorPercentageFwd(line, base);
 
-				line.parseLine(basePos, level, freqFile);
+				double minorPercentageRev = VariantCaller.getMinorPercentageRev(line, base);
 
-				boolean isHeteroplasmy = false;
+				double llrFwd = VariantCaller.determineLlrFwd(line, base);
 
-				for (char base : line.getMinors()) {
+				double llrRev = VariantCaller.determineLlrRev(line, base);
 
-					// this only works since minorFWD and minorREV are equal
-					double minorPercentageFwd = VariantCaller.getMinorPercentageFwd(line, base);
+				VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorPercentageFwd,
+						minorPercentageRev, llrFwd, llrRev, level, base);
 
-					double minorPercentageRev = VariantCaller.getMinorPercentageRev(line, base);
+				if (varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
 
-					double llrFwd = VariantCaller.determineLlrFwd(line, base);
+					isHeteroplasmy = true;
 
-					double llrRev = VariantCaller.determineLlrRev(line, base);
+					// set correct minor base for output result!
+					varResult.setMinor(base);
 
-					VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorPercentageFwd,
-							minorPercentageRev, llrFwd, llrRev, level, base);
+					double hetLevel = VariantCaller.calcVariantLevel(line, minorPercentageFwd, minorPercentageRev);
+					double levelTop = VariantCaller.calcLevel(line, line.getTopBasePercentsFWD(),
+							line.getTopBasePercentsREV());
 
-					if (varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
+					double levelMinor = VariantCaller.calcLevel(line, minorPercentageFwd, minorPercentageRev);
 
-						isHeteroplasmy = true;
+					varResult.setLevelTop(levelTop);
 
-						// set correct minor base for output result!
-						varResult.setMinor(base);
+					varResult.setLevelMinor(levelMinor);
 
-						double hetLevel = VariantCaller.calcVariantLevel(line, minorPercentageFwd, minorPercentageRev);
-						double levelTop = VariantCaller.calcLevel(line, line.getTopBasePercentsFWD(),
-								line.getTopBasePercentsREV());
+					varResult.setLevel(hetLevel);
 
-						double levelMinor = VariantCaller.calcLevel(line, minorPercentageFwd, minorPercentageRev);
+					String res = VariantCaller.writeVariant(varResult);
 
-						varResult.setLevelTop(levelTop);
-
-						varResult.setLevelMinor(levelMinor);
-
-						varResult.setLevel(hetLevel);
-
-						String res = VariantCaller.writeVariant(varResult);
-
-						writerVar.write(res);
-					}
+					writerVar.write(res);
 				}
+			}
 
-				if (!isHeteroplasmy) {
+			if (!isHeteroplasmy) {
 
-					VariantResult varResult = VariantCaller.determineVariants(line);
+				VariantResult varResult = VariantCaller.determineVariants(line);
 
-					if (varResult != null) {
+				if (varResult != null) {
 
-						String res = VariantCaller.writeVariant(varResult);
+					String res = VariantCaller.writeVariant(varResult);
 
-						writerVar.write(res);
-					}
+					writerVar.write(res);
 				}
-				// raw data
-				if (writerRaw != null) {
-					String raw = line.toRawString();
-					writerRaw.write(raw);
-				}
-				
-				counts.remove(pos);
+			}
+			// raw data
+			if (writerRaw != null) {
+				String raw = line.toRawString();
+				writerRaw.write(raw);
 			}
 
 		}
@@ -356,7 +351,7 @@ public class Mutserve extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam";
+		String input = "/data2/genepi/static/1000g-deep/NA19017.final.cram.mt.bam";
 
 		String output = "/home/seb/Desktop/test.txt";
 
