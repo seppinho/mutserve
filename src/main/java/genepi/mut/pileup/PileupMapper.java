@@ -87,15 +87,15 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 
 		BasePositionHadoop baseHadoop = new BasePositionHadoop();
 		
-		HashMap<String, BasePosition> counts = analyser.getCounts();
+		HashMap<Integer, BasePosition> counts = analyser.getCounts();
 
 		Text outKey = new Text();
 
-		for (String key : counts.keySet()) {
+		for (int key : counts.keySet()) {
 
 			BasePosition basePos = counts.get(key);
 
-			outKey.set(key);
+			outKey.set(key+"");
 
 			baseHadoop.setBasePosition(basePos);
 			

@@ -23,13 +23,13 @@ import htsjdk.samtools.SamReader;
 import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.ValidationStringency;
 
-public class PileupToolLocal extends Tool {
+public class Mutserve extends Tool {
 
 	String version = "v1.3.4";
 	String mode = "mtdna";
 	String command;
 
-	public PileupToolLocal(String[] args) {
+	public Mutserve(String[] args) {
 		super(args);
 		command = Arrays.toString(args);
 		System.out.println("Command " + command);
@@ -55,7 +55,7 @@ public class PileupToolLocal extends Tool {
 	@Override
 	public void init() {
 		System.out.println("mtDNA Low-frequency Variant Detection " + version);
-		System.out.println("Division of Genetic Epidemiology - Medical University of Innsbruck");
+		System.out.println("Institute of Genetic Epidemiology - Medical University of Innsbruck");
 		System.out.println("(c) Sebastian Schoenherr, Hansi Weissensteiner, Lukas Forer");
 		System.out.println("");
 	}
@@ -68,7 +68,7 @@ public class PileupToolLocal extends Tool {
 		String output = (String) getValue("output");
 
 		boolean baq = !isFlagSet("noBaq");
-		
+
 		boolean freq = !isFlagSet("noFreq");
 
 		boolean deletions = isFlagSet("deletions");
@@ -182,13 +182,6 @@ public class PileupToolLocal extends Tool {
 			System.out.println("Insertions: " + insertions);
 			System.out.println("Fasta: " + writeFasta);
 			System.out.println("");
-			
-			// load frequency file
-			HashMap<String, Double> freqFile = null;
-			if(freq) {
-			InputStream in = this.getClass().getClassLoader().getResourceAsStream("1000g.frq");
-			freqFile = BayesFrequencies.instance(new DataInputStream(in));
-			}
 
 			for (File file : files) {
 
@@ -198,9 +191,34 @@ public class PileupToolLocal extends Tool {
 
 				try {
 
-					analyseReads(file, analyser, deletions, insertions);
-					
-					determineVariants(analyser, writerRaw, writerVar, level, freqFile, file.getName());
+					// CNV-Server
+					final SamReader reader = SamReaderFactory.makeDefault()
+							.validationStringency(ValidationStringency.SILENT).open(file);
+
+					SAMRecordIterator fileIterator = reader.iterator();
+
+					HashMap<Integer, BasePosition> counts = null;
+
+					String reference = analyser.getReferenceString();
+
+					while (fileIterator.hasNext()) {
+
+						SAMRecord record = fileIterator.next();
+
+						analyser.analyseRead(record, deletions, insertions);
+
+						int current = record.getStart();
+
+						counts = analyser.getCounts();
+
+						varCalling(level, writerRaw, writerVar, file, current, counts, reference);
+
+					}
+
+					System.out.println(" --- ");
+					varCalling(level, writerRaw, writerVar, file, 16569, counts, reference);
+
+					reader.close();
 
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -212,11 +230,7 @@ public class PileupToolLocal extends Tool {
 
 			try {
 				writerVar.close();
-
-				if (writerRaw != null) {
-					writerRaw.close();
-				}
-
+				writerRaw.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -242,51 +256,25 @@ public class PileupToolLocal extends Tool {
 
 	}
 
-	// mapper
-	private void analyseReads(File file, BamAnalyser analyser, boolean deletions, boolean insertions) throws Exception {
+	private void varCalling(double level, LineWriter writerRaw, LineWriter writerVar, File file, int current,
+			HashMap<Integer, BasePosition> counts, String reference) throws IOException {
 
-		// TODO double check if primary and secondary alignment is used for
-		// CNV-Server
-		final SamReader reader = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT)
-				.open(file);
-
-		SAMRecordIterator fileIterator = reader.iterator();
-
-		while (fileIterator.hasNext()) {
-
-			SAMRecord record = fileIterator.next();
-
-			analyser.analyseRead(record, deletions, insertions);
-
+		// load frequency file
+		HashMap<String, Double> freqFile = null;
+		if (true) {
+			InputStream in = this.getClass().getClassLoader().getResourceAsStream("1000g.frq");
+			freqFile = BayesFrequencies.instance(new DataInputStream(in));
 		}
-		reader.close();
-	}
 
-	// reducer
-	private void determineVariants(BamAnalyser analyser, LineWriter writerRaw, LineWriter writerVariants, double level, HashMap<String, Double> freqFile, String filename)
-			throws IOException {
+		for (int pos = 1; pos < current; pos++) {
 
-		HashMap<Integer, BasePosition> counts = analyser.getCounts();
-
-		String reference = analyser.getReferenceString();
-
-		for (Integer key : counts.keySet()) {
-
-
-			int pos;
-
-			boolean insertion = false;
-
-			pos = Integer.valueOf(key);
-
-				
-			if (pos > 0 && pos <= reference.length()) {
+			if (counts.containsKey(pos) && pos <= reference.length()) {
 
 				char ref = 'N';
 
-				BasePosition basePos = counts.get(key);
-				
-				basePos.setId(filename);
+				BasePosition basePos = counts.get(pos);
+
+				basePos.setId(file.getName());
 
 				basePos.setPos(pos);
 
@@ -338,7 +326,7 @@ public class PileupToolLocal extends Tool {
 
 						String res = VariantCaller.writeVariant(varResult);
 
-						writerVariants.write(res);
+						writerVar.write(res);
 					}
 				}
 
@@ -350,7 +338,7 @@ public class PileupToolLocal extends Tool {
 
 						String res = VariantCaller.writeVariant(varResult);
 
-						writerVariants.write(res);
+						writerVar.write(res);
 					}
 				}
 				// raw data
@@ -358,21 +346,24 @@ public class PileupToolLocal extends Tool {
 					String raw = line.toRawString();
 					writerRaw.write(raw);
 				}
-
+				
+				counts.remove(pos);
 			}
+
 		}
+
 	}
 
 	public static void main(String[] args) {
 
-		String input = "test-data/mtdna/bam/input/small.bam";
+		String input = "test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam";
 
-		String output = "/home/seb/Desktop/test_old.txt";
+		String output = "/home/seb/Desktop/test.txt";
 
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 
-		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", ref, "--output",
-				output, "--level", "0.01", "--noBaq","--noFreq" });
+		Mutserve pileup = new Mutserve(new String[] { "--input", input, "--reference", ref, "--output", output,
+				"--level", "0.01", "--noBaq", "--noFreq" });
 
 		pileup.start();
 
