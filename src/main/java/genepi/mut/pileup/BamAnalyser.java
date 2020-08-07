@@ -17,9 +17,9 @@ import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 
 public class BamAnalyser {
 
-	final static String headerRaw = "SAMPLE\tPOS\tREF\tTOP-FWD\tMINOR-FWD\tTOP-REV\tMINOR-REV\tCOV-FWD\tCOV-REV\tCOV-TOTAL\tTYPE\tLEVEL\t%A\t%C\t%G\t%T\t%D\t%N\t%a\t%c\t%g\t%t\t%d\t%n\tTOP-FWD-PERCENT\tTOP-REV-PERCENT\tMINOR-FWD-PERCENT\tMINOR-REV-PERCENT\tLLRFWD\tLLRREV\tLLRAFWD\tLLRCFWD\tLLRGFWD\tLLRTFWD\tLLRAREV\tLLRCREV\tLLRGREV\tLLRTREV\tLLRDFWD\tLLRDREV\tMINORS";
+	public final static String headerRaw = "SAMPLE\tPOS\tREF\tTOP-FWD\tMINOR-FWD\tTOP-REV\tMINOR-REV\tCOV-FWD\tCOV-REV\tCOV-TOTAL\tTYPE\tLEVEL\t%A\t%C\t%G\t%T\t%D\t%N\t%a\t%c\t%g\t%t\t%d\t%n\tTOP-FWD-PERCENT\tTOP-REV-PERCENT\tMINOR-FWD-PERCENT\tMINOR-REV-PERCENT\tLLRFWD\tLLRREV\tLLRAFWD\tLLRCFWD\tLLRGFWD\tLLRTFWD\tLLRAREV\tLLRCREV\tLLRGREV\tLLRTREV\tLLRDFWD\tLLRDREV\tMINORS";
 
-	final static String headerVariants = "ID\tPos\tRef\tVariant\tVariantLevel\tMajorBase\tMajorLevel\tMinorBase\tMinorLevel\tCoverage\tType";
+	public final static String headerVariants = "ID\tPos\tRef\tVariant\tVariantLevel\tMajorBase\tMajorLevel\tMinorBase\tMinorLevel\tCoverage\tType";
 
 	HashMap<Integer, BasePosition> counts;
 
@@ -80,7 +80,7 @@ public class BamAnalyser {
 		this.refReader = new IndexedFastaSequenceFile(new File(fastaPath),
 				new FastaSequenceIndex(new File(fastaPath + ".fai")));
 
-		this.counts = new HashMap<Integer, BasePosition>();
+		this.counts = new HashMap<Integer, BasePosition>(referenceString.length());
 
 		this.baseQual = baseQual;
 

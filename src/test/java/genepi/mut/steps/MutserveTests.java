@@ -4,20 +4,14 @@ import org.junit.Test;
 
 import genepi.io.FileUtil;
 import genepi.io.table.reader.CsvTableReader;
-import genepi.io.text.LineReader;
 import genepi.mut.objects.VariantLine;
-import genepi.mut.pileup.Mutserve;
+import genepi.mut.tools.Mutserve;
 import genepi.mut.util.QCMetric;
 import genepi.mut.util.RawFileAnalysermtDNA;
-
+import genepi.mut.vc.VariantCallingTask;
 import static org.junit.Assert.*;
-
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 public class MutserveTests {
 
@@ -27,6 +21,14 @@ public class MutserveTests {
 		String input = "test-data/mtdna/bam-equal-level/test.bam";
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 		String out = "test-data/mtdna/bam-equal-level/here.txt";
+		
+		VariantCallingTask task = new VariantCallingTask();
+		task.setInput(input);
+		task.setOutput(out);
+		task.setReference(ref);
+		task.setLevel(0.01);
+		
+		task.run();
 
 		Mutserve pileup = new Mutserve(
 				new String[] { "--input", input, "--reference", ref, "--output", out, "--level", "0.01", "--noBaq" });
@@ -121,10 +123,13 @@ public class MutserveTests {
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 		String out = "test-data/1000g.txt";
 
-		Mutserve pileup = new Mutserve(
-				new String[] { "--input", input, "--reference", ref, "--output", out, "--level", "0.01" });
-
-		pileup.start();
+		VariantCallingTask task = new VariantCallingTask();
+		task.setInput(input);
+		task.setOutput(out);
+		task.setReference(ref);
+		task.setLevel(0.01);
+		
+		task.run();
 
 		RawFileAnalysermtDNA analyser = new RawFileAnalysermtDNA();
 		analyser.setCallDel(false);
