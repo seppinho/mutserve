@@ -4,14 +4,20 @@ import org.junit.Test;
 
 import genepi.io.FileUtil;
 import genepi.io.table.reader.CsvTableReader;
+import genepi.io.text.LineReader;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.tools.Mutserve;
 import genepi.mut.util.QCMetric;
 import genepi.mut.util.RawFileAnalysermtDNA;
 import genepi.mut.vc.VariantCallingTask;
 import static org.junit.Assert.*;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MutserveTests {
 
@@ -21,13 +27,13 @@ public class MutserveTests {
 		String input = "test-data/mtdna/bam-equal-level/test.bam";
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 		String out = "test-data/mtdna/bam-equal-level/here.txt";
-		
+
 		VariantCallingTask task = new VariantCallingTask();
 		task.setInput(input);
 		task.setOutput(out);
 		task.setReference(ref);
 		task.setLevel(0.01);
-		
+
 		task.run();
 
 		Mutserve pileup = new Mutserve(
@@ -85,36 +91,43 @@ public class MutserveTests {
 	 * }
 	 */
 
-	/*
-	 * @Test public void test1000G() throws IOException {
-	 * 
-	 * File file = new File("test-data/tmp"); if (file.exists()) {
-	 * FileUtil.deleteDirectory(file); }
-	 * 
-	 * String input = "test-data/mtdna/bam/input"; String ref =
-	 * "test-data/mtdna/reference/rCRS.fasta"; String out = "test-data/1000g.txt";
-	 * 
-	 * Set<String> expected = new HashSet<String>(Arrays.asList("1456", "2746",
-	 * "3200", "12410", "14071", "14569", "15463", "16093", "16360", "10394",
-	 * "1438", "152", "15326", "15340", "16519", "263", "4769", "750", "8592",
-	 * "8860", "3107"));
-	 * 
-	 * Mutserve pileup = new Mutserve(new String[] { "--input", input,
-	 * "--reference", ref, "--output", out, "--level", "0.01"});
-	 * 
-	 * pileup.start();
-	 * 
-	 * LineReader reader = new LineReader(out); HashSet<String> results = new
-	 * HashSet<String>();
-	 * 
-	 * // header reader.next(); while (reader.next()) { String[] splits =
-	 * reader.get().split("\t"); results.add(splits[1]);
-	 * System.out.println(splits[1]); }
-	 * 
-	 * assertEquals(true, results.equals(expected));
-	 * 
-	 * }
-	 */
+	@Test
+	public void test1000G() throws IOException {
+
+		File file = new File("test-data/tmp");
+		if (file.exists()) {
+			FileUtil.deleteDirectory(file);
+		}
+
+		String input = "test-data/mtdna/bam/input";
+		String ref = "test-data/mtdna/reference/rCRS.fasta";
+		String out = "test-data/1000g.txt";
+
+		Set<String> expected = new HashSet<String>(
+				Arrays.asList("1456", "2746", "3200", "12410", "14071", "14569", "15463", "16093", "16360", "10394",
+						"1438", "152", "15326", "15340", "16519", "263", "4769", "750", "8592", "8860", "3107"));
+
+		VariantCallingTask task = new VariantCallingTask();
+		task.setInput(input);
+		task.setOutput(out);
+		task.setReference(ref);
+		task.setLevel(0.01);
+
+		task.run();
+
+		LineReader reader = new LineReader(out);
+		HashSet<String> results = new HashSet<String>();
+
+		reader.next();
+		while (reader.next()) {
+			String[] splits = reader.get().split("\t");
+			results.add(splits[1]);
+			System.out.println(splits[1]);
+		}
+
+		assertEquals(true, results.equals(expected));
+
+	}
 
 	@Test
 	public void testmtDNAMixtures() throws IOException {
@@ -128,7 +141,7 @@ public class MutserveTests {
 		task.setOutput(out);
 		task.setReference(ref);
 		task.setLevel(0.01);
-		
+
 		task.run();
 
 		RawFileAnalysermtDNA analyser = new RawFileAnalysermtDNA();
@@ -137,8 +150,8 @@ public class MutserveTests {
 		String refPath = "test-data/mtdna/reference/rCRS.fasta";
 		String sanger = "test-data/mtdna/mixtures/expected/sanger.txt";
 
-		ArrayList<QCMetric> list = analyser.calculateLowLevelForTest(
-				"test-data/1000g_raw.txt", refPath, sanger, Double.valueOf(0.01));
+		ArrayList<QCMetric> list = analyser.calculateLowLevelForTest("test-data/1000g_raw.txt", refPath, sanger,
+				Double.valueOf(0.01));
 
 		assertTrue(list.size() == 1);
 
@@ -154,8 +167,7 @@ public class MutserveTests {
 		}
 
 	}
-	
-	
+
 	/*
 	 * @Test public void testLPAData() throws IOException {
 	 * 
