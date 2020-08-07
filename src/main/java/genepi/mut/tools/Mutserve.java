@@ -30,8 +30,6 @@ public class Mutserve extends Tool {
 		addOptionalParameter("alignQ", "alignment quality", Tool.STRING);
 		addFlag("noBaq", "turn off BAQ");
 		addFlag("noFreq", "turn off 1000G frequency file");
-		addFlag("deletions", "Call deletions");
-		addFlag("insertions", "Call insertions (beta)");
 		addFlag("writeFasta", "Write fasta");
 	}
 
@@ -53,10 +51,6 @@ public class Mutserve extends Tool {
 		boolean baq = !isFlagSet("noBaq");
 
 		boolean freq = !isFlagSet("noFreq");
-
-		boolean deletions = isFlagSet("deletions");
-
-		boolean insertions = isFlagSet("insertions");
 
 		boolean writeFasta = isFlagSet("writeFasta");
 
@@ -100,8 +94,6 @@ public class Mutserve extends Tool {
 		System.out.println("Alignment Quality: " + alignQ);
 		System.out.println("BAQ: " + baq);
 		System.out.println("1000G Frequency File: " + freq);
-		System.out.println("Deletions: " + deletions);
-		System.out.println("Insertions: " + insertions);
 		System.out.println("Fasta: " + writeFasta);
 		System.out.println("");
 
@@ -115,8 +107,6 @@ public class Mutserve extends Tool {
 		task.setAlignQ(alignQ);
 		task.setBaq(baq);
 		task.setFreq(freq);
-		task.setDeletions(deletions);
-		task.setInsertions(insertions);
 		task.setReference(reference);
 		task.setMode(mode);
 		task.setCommand(command);
