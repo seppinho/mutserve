@@ -256,7 +256,7 @@ public class PileupToolLocal extends Tool {
 
 			SAMRecord record = fileIterator.next();
 
-			analyser.analyseRead(record, deletions, insertions);
+			analyser.analyseRead(record);
 
 		}
 		reader.close();

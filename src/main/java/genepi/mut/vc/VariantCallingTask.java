@@ -32,8 +32,6 @@ public class VariantCallingTask {
 	private int alignQ = 30;
 	boolean baq = true;
 	boolean freq = false;
-	boolean deletions = false;
-	boolean insertions = false;
 	boolean writeFasta;
 	String reference;
 	String mode = "mtdna";
@@ -136,7 +134,7 @@ public class VariantCallingTask {
 
 						SAMRecord record = fileIterator.next();
 
-						analyser.analyseRead(record, deletions, insertions);
+						analyser.analyseRead(record);
 
 						int current = record.getStart();
 						
@@ -339,22 +337,6 @@ public class VariantCallingTask {
 
 	public void setFreq(boolean freq) {
 		this.freq = freq;
-	}
-
-	public boolean isDeletions() {
-		return deletions;
-	}
-
-	public void setDeletions(boolean deletions) {
-		this.deletions = deletions;
-	}
-
-	public boolean isInsertions() {
-		return insertions;
-	}
-
-	public void setInsertions(boolean insertions) {
-		this.insertions = insertions;
 	}
 
 	public boolean isWriteFasta() {
