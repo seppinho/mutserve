@@ -113,7 +113,7 @@ public class BamAnalyser {
 		this.counts = counts;
 	}
 
-	public void analyseRead(SAMRecord samRecord) throws Exception {
+	public void analyseRead(SAMRecord samRecord, boolean deletions, boolean insertions) throws Exception {
 
 		if (samRecord.getMappingQuality() < mapQual) {
 			return;
@@ -231,6 +231,8 @@ public class BamAnalyser {
 			}
 		}
 
+		if (deletions || insertions) {
+
 			Integer currentReferencePos = samRecord.getAlignmentStart();
 
 			int sequencePos = 0;
@@ -239,7 +241,7 @@ public class BamAnalyser {
 
 				Integer cigarElementLength = cigarElement.getLength();
 
-				if (cigarElement.getOperator() == CigarOperator.D) {
+				if (deletions && cigarElement.getOperator() == CigarOperator.D) {
 
 					// start of D is currentRefPos: Don't add 1 before!
 					Integer cigarElementStart = currentReferencePos;
@@ -323,6 +325,7 @@ public class BamAnalyser {
 				}
 			}
 
+		}
 	}
 
 	public String getReferenceString() {

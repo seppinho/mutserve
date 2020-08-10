@@ -112,7 +112,7 @@ public class PileupMapper extends Mapper<LongWritable, SAMRecordWritable, Text, 
 			countStats(context, value.get());
 					
 			//analyse SAM read			
-			analyser.analyseRead(value.get());
+			analyser.analyseRead(value.get(), deletions, insertions);
 
 		} catch (Exception e) {
 			e.printStackTrace();
