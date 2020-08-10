@@ -23,7 +23,7 @@ import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.ValidationStringency;
 
 public class VariantCallingTask {
-	
+
 	private String input;
 	private String output;
 	private double level;
@@ -39,10 +39,9 @@ public class VariantCallingTask {
 	String mode = "mtdna";
 	String command;
 	String version;
-	
+
 	public int run() {
-		
-		
+
 		LineWriter writerRaw = null;
 		LineWriter writerVar = null;
 
@@ -139,11 +138,9 @@ public class VariantCallingTask {
 						analyser.analyseRead(record, deletions, insertions);
 
 						int current = record.getStart();
-						
-						// call variants between pos and current
-						while(pos < current) {
 
-							positions.remove(pos - 1);
+						// call variants between pos and current
+						while (pos < current) {
 
 							if (positions.containsKey(pos) && pos <= reference.length()) {
 
@@ -151,20 +148,20 @@ public class VariantCallingTask {
 										reference, freqFile);
 
 							}
+							positions.remove(pos);
 							pos++;
 						}
-						
+
 					}
 
 					// analyze remaining positions
-					for (int i = pos-1; i <= reference.length(); i++) {
+					for (int i = pos; i <= reference.length(); i++) {
 						if (positions.containsKey(pos) && pos <= reference.length()) {
 							callVariant(writerRaw, writerVar, file.getName(), level, i, positions.get(i), reference,
 									freqFile);
 						}
 						positions.remove(i);
 					}
-
 					reader.close();
 
 				} catch (Exception e) {

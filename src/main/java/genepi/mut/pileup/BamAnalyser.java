@@ -40,7 +40,7 @@ public class BamAnalyser {
 	int mapQual;
 
 	int alignQual;
-	
+
 	boolean baq;
 
 	enum versionEnum {
@@ -55,7 +55,8 @@ public class BamAnalyser {
 
 	}
 
-	public BamAnalyser(String filename, String fastaPath, int baseQual, int mapQual, int alignQual, boolean baq, String version) {
+	public BamAnalyser(String filename, String fastaPath, int baseQual, int mapQual, int alignQual, boolean baq,
+			String version) {
 
 		Path path = new File(fastaPath).toPath();
 
@@ -93,7 +94,7 @@ public class BamAnalyser {
 		this.baq = baq;
 
 		this.version = version;
-		
+
 		if (version.equalsIgnoreCase(versionEnum.MTDNA.name())) {
 
 			baqHMMAltered = new BaqAlt(1e-4, 1e-2, 7, (byte) 0, true);
