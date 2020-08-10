@@ -1,203 +1,103 @@
 package genepi.mut.vc;
 
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 
 import genepi.io.text.LineWriter;
 import genepi.mut.objects.BasePosition;
-import genepi.mut.objects.BayesFrequencies;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.objects.VariantResult;
 import genepi.mut.pileup.BamAnalyser;
-import genepi.mut.util.FastaWriter;
 import genepi.mut.util.VariantCaller;
-import genepi.mut.util.VcfWriter;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMRecordIterator;
 import htsjdk.samtools.SamReader;
 import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.ValidationStringency;
+import lukfor.progress.tasks.ITaskRunnable;
+import lukfor.progress.tasks.monitors.ITaskMonitor;
 
-public class VariantCallingTask {
+public class VariantCallingTask implements ITaskRunnable {
 
-	private String input;
+	private File file;
+	private LineWriter writerVar;
+	private LineWriter writerRaw;
 	private String output;
+	private HashMap<String, Double> freqFile;
 	private double level;
 	private int baseQ = 20;
 	private int mapQ = 20;
 	private int alignQ = 30;
 	boolean baq = true;
-	boolean freq = false;
 	boolean deletions = false;
 	boolean insertions = false;
-	boolean writeFasta;
 	String reference;
 	String mode = "mtdna";
-	String command;
-	String version;
 
-	public int run() {
+	@Override
+	public void run(ITaskMonitor monitor) throws Exception {
 
-		LineWriter writerRaw = null;
-		LineWriter writerVar = null;
+		BamAnalyser analyser = new BamAnalyser(file.getName(), reference, baseQ, mapQ, alignQ, baq, mode);
 
-		File folderIn = new File(input);
-		File[] files;
+		HashMap<Integer, BasePosition> positions = analyser.getCounts();
 
-		if (folderIn.exists()) {
-			if (folderIn.isFile()) {
-				files = new File[1];
-				files[0] = new File(folderIn.getAbsolutePath());
+		// first position to analyze
+		int pos = 1;
 
-				if (!files[0].getName().toLowerCase().endsWith(".cram")
-						&& !files[0].getName().toLowerCase().endsWith(".bam")) {
-					System.out.println("Please upload a CRAM/BAM file");
-					return 1;
-				}
+		try {
 
-			} else {
-				files = folderIn.listFiles(new FilenameFilter() {
-					public boolean accept(File dir, String name) {
-						return name.toLowerCase().endsWith(".bam") || name.toLowerCase().endsWith(".cram");
-					}
-				});
-			}
-		} else {
-			System.out.println("Please check input path!");
-			return 1;
-		}
+			final SamReader reader = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT)
+					.open(file);
 
-		if (files.length > 0) {
+			SAMRecordIterator fileIterator = reader.iterator();
 
-			File out = new File(output);
+			String reference = analyser.getReferenceString();
+			
+			monitor.begin(file.getName());
+			
+			while (fileIterator.hasNext()) {
 
-			if (out.isDirectory()) {
-				System.out.println("Error. Please specify an output file not a directory");
-				return 1;
-			}
+				SAMRecord record = fileIterator.next();
 
-			String prefix = output;
+				analyser.analyseRead(record, deletions, insertions);
 
-			if (output.contains(".")) {
-				prefix = output.substring(0, output.indexOf('.'));
-			}
+				int current = record.getStart();
 
-			String varFile = prefix + ".txt";
-			String rawFile = prefix + "_raw.txt";
+				// call variants between pos and current
+				while (pos < current) {
 
-			try {
-				writerVar = new LineWriter(new File(varFile).getAbsolutePath());
-				writerVar.write(BamAnalyser.headerVariants);
-
-				writerRaw = new LineWriter(new File(rawFile).getAbsolutePath());
-				writerRaw.write(BamAnalyser.headerRaw);
-
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			long start = System.currentTimeMillis();
-
-			// load frequency file
-			HashMap<String, Double> freqFile = null;
-			if (true) {
-				InputStream in = this.getClass().getClassLoader().getResourceAsStream("1000g.frq");
-				freqFile = BayesFrequencies.instance(new DataInputStream(in));
-			}
-
-			// iterate over several BAM/CRAM files
-			for (File file : files) {
-
-				BamAnalyser analyser = new BamAnalyser(file.getName(), reference, baseQ, mapQ, alignQ, baq, mode);
-
-				HashMap<Integer, BasePosition> positions = analyser.getCounts();
-
-				System.out.println("Processing: " + file.getName());
-
-				// first position to analyze
-				int pos = 1;
-
-				try {
-
-					final SamReader reader = SamReaderFactory.makeDefault()
-							.validationStringency(ValidationStringency.SILENT).open(file);
-
-					SAMRecordIterator fileIterator = reader.iterator();
-
-					String reference = analyser.getReferenceString();
-
-					while (fileIterator.hasNext()) {
-
-						SAMRecord record = fileIterator.next();
-
-						analyser.analyseRead(record, deletions, insertions);
-
-						int current = record.getStart();
-
-						// call variants between pos and current
-						while (pos < current) {
-
-							if (positions.containsKey(pos) && pos <= reference.length()) {
-
-								callVariant(writerRaw, writerVar, file.getName(), level, pos, positions.get(pos),
-										reference, freqFile);
-
-							}
-							positions.remove(pos);
-							pos++;
-						}
+					if (positions.containsKey(pos) && pos <= reference.length()) {
+						callVariant(writerRaw, writerVar, file.getName(), level, pos, positions.get(pos), reference,
+								freqFile);
 
 					}
-
-					// analyze remaining positions
-					for (int i = pos; i <= reference.length(); i++) {
-						if (positions.containsKey(pos) && pos <= reference.length()) {
-							callVariant(writerRaw, writerVar, file.getName(), level, i, positions.get(i), reference,
-									freqFile);
-						}
-						positions.remove(i);
-					}
-					reader.close();
-
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return 1;
+					positions.remove(pos);
+					pos++;
 				}
 
 			}
 
-			try {
-				writerVar.close();
-				writerRaw.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			// analyze remaining positions
+			for (int i = pos; i <= reference.length(); i++) {
+				if (positions.containsKey(pos) && pos <= reference.length()) {
+					callVariant(writerRaw, writerVar, file.getName(), level, i, positions.get(i), reference, freqFile);
+				}
+				positions.remove(i);
 			}
+			reader.close();
 
-			if (output.endsWith("vcf.gz") || output.endsWith("vcf")) {
-				VcfWriter writer = new VcfWriter();
-				writer.createVCF(varFile, output, reference, "chrM", 16569, version + ";" + command);
-			}
-
-			if (writeFasta) {
-				FastaWriter writer2 = new FastaWriter();
-				writer2.createFasta(varFile, prefix + ".fasta", reference);
-			}
-
-			System.out.println("Time: " + (System.currentTimeMillis() - start) / 1000 + " sec");
-			return 0;
-
-		} else {
-			System.out.println("No files found.");
-			return 0;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw e;
 		}
+
+		monitor.worked(1);
+
 	}
+
+	// monitor.done();
 
 	private void callVariant(LineWriter writerRaw, LineWriter writerVar, String id, double level, int pos,
 			BasePosition basePosition, String reference, HashMap<String, Double> freqFile) throws IOException {
@@ -274,14 +174,6 @@ public class VariantCallingTask {
 
 	}
 
-	public String getInput() {
-		return input;
-	}
-
-	public void setInput(String input) {
-		this.input = input;
-	}
-
 	public String getOutput() {
 		return output;
 	}
@@ -330,14 +222,6 @@ public class VariantCallingTask {
 		this.baq = baq;
 	}
 
-	public boolean isFreq() {
-		return freq;
-	}
-
-	public void setFreq(boolean freq) {
-		this.freq = freq;
-	}
-
 	public boolean isDeletions() {
 		return deletions;
 	}
@@ -352,14 +236,6 @@ public class VariantCallingTask {
 
 	public void setInsertions(boolean insertions) {
 		this.insertions = insertions;
-	}
-
-	public boolean isWriteFasta() {
-		return writeFasta;
-	}
-
-	public void setWriteFasta(boolean writeFasta) {
-		this.writeFasta = writeFasta;
 	}
 
 	public String getReference() {
@@ -378,20 +254,36 @@ public class VariantCallingTask {
 		this.mode = mode;
 	}
 
-	public String getCommand() {
-		return command;
+	public File getFile() {
+		return file;
 	}
 
-	public void setCommand(String command) {
-		this.command = command;
+	public void setFile(File file) {
+		this.file = file;
 	}
 
-	public String getVersion() {
-		return version;
+	public LineWriter getWriterVar() {
+		return writerVar;
 	}
 
-	public void setVersion(String version) {
-		this.version = version;
+	public void setWriterVar(LineWriter writerVar) {
+		this.writerVar = writerVar;
+	}
+
+	public LineWriter getWriterRaw() {
+		return writerRaw;
+	}
+
+	public void setWriterRaw(LineWriter writerRaw) {
+		this.writerRaw = writerRaw;
+	}
+
+	public HashMap<String, Double> getFreqFile() {
+		return freqFile;
+	}
+
+	public void setFreqFile(HashMap<String, Double> freqFile) {
+		this.freqFile = freqFile;
 	}
 
 }

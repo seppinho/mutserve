@@ -34,6 +34,12 @@
 			<url>file://${basedir}/libs</url>
 		</repository>
 
+		<repository>
+			<id>bintray-lukfor-maven</id>
+			<name>bintray</name>
+			<url>https://dl.bintray.com/lukfor/maven</url>
+		</repository>
+
 	</repositories>
 
 	<build>
@@ -95,6 +101,7 @@
 									<include>au.com.bytecode:opencsv:*:*</include>
 									<include>org.apache.commons:commons-math3:*:*</include>
 									<include>commons-lang:commons-lang:*:*</include>
+									<include>com.github.lukfor:magic-progress:*:*</include>
 
 								</includes>
 							</artifactSet>
@@ -302,6 +309,13 @@
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.github.lukfor</groupId>
+			<artifactId>magic-progress</artifactId>
+			<version>0.3.0</version>
+		</dependency>
+
 	</dependencies>
 
 </project>
