@@ -5,9 +5,7 @@ import org.junit.Test;
 import genepi.io.FileUtil;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.text.LineReader;
-import genepi.io.text.LineWriter;
 import genepi.mut.objects.VariantLine;
-import genepi.mut.pileup.BamAnalyser;
 import genepi.mut.tools.VariantCallingCommand;
 import genepi.mut.util.QCMetric;
 import genepi.mut.util.RawFileAnalysermtDNA;
@@ -37,7 +35,9 @@ public class MutserveTests {
 		task.setOutput(out);
 		task.setReference(ref);
 		task.setLevel(0.01);
-
+		task.setVarName(out);
+		
+		TaskService.setAnsiSupport(false);
 		TaskService.run(task);
 
 		VariantCallingCommand pileup = new VariantCallingCommand(
@@ -67,14 +67,10 @@ public class MutserveTests {
 	@Test
 	public void test1000GIndel() throws IOException {
 
-		File file = new File("test-data/tmp");
-		if (file.exists()) {
-			FileUtil.deleteDirectory(file);
-		}
-
 		String input = "test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam";
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 		String out = "test-data/1000g.txt";
+		String raw = "test-data/1000g_out.txt";
 		
 		VariantCallingTask task = new VariantCallingTask();
 		task.setFile(new File(input));
@@ -82,18 +78,17 @@ public class MutserveTests {
 		task.setReference(ref);
 		task.setLevel(0.01);
 		task.setDeletions(true);
+		task.setVarName(out);
+		task.setRawName(raw);
 
+		TaskService.setAnsiSupport(false);
+		TaskService.run(task);
 
 		Set<String> expected = new HashSet<String>(Arrays.asList("1456", "2746", "3200", "12410", "14071", "14569",
 				"15463", "16093", "16360", "10394", "1438", "152", "15326", "15340", "16519", "263", "4769", "750",
 				"8592", "8860", "3107"));
 		
 		// insertions:  "302.1", "310.1"
-
-		VariantCallingCommand pileup = new VariantCallingCommand(new String[] { "--input", input, "--reference", ref, "--output", out, "--level",
-				"0.01", "--deletions", "--insertions" });
-
-		pileup.start();
 
 		LineReader reader = new LineReader(out);
 		HashSet<String> results = new HashSet<String>();
@@ -114,14 +109,10 @@ public class MutserveTests {
 	@Test
 	public void test1000G() throws IOException {
 
-		File file = new File("test-data/tmp");
-		if (file.exists()) {
-			FileUtil.deleteDirectory(file);
-		}
-
 		String input = "test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam";
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 		String out = "test-data/1000g.txt";
+		String raw = "test-data/1000g_raw.txt";
 
 		Set<String> expected = new HashSet<String>(
 				Arrays.asList("1456", "2746", "3200", "12410", "14071", "14569", "15463", "16093", "16360", "10394",
@@ -132,7 +123,9 @@ public class MutserveTests {
 		task.setOutput(out);
 		task.setReference(ref);
 		task.setLevel(0.01);
-
+		task.setVarName(out);
+		task.setRawName(raw);
+		TaskService.setAnsiSupport(false);
 		TaskService.run(task);
 
 		LineReader reader = new LineReader(out);
@@ -156,26 +149,18 @@ public class MutserveTests {
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 		String out = "test-data/1000g.txt";
 		String outRaw = "test-data/1000g_raw.txt";
-		LineWriter writerVar = new LineWriter(new File(out).getAbsolutePath());
-		writerVar.write(BamAnalyser.headerVariants);
-		
-		LineWriter writerRaw = new LineWriter(new File(outRaw).getAbsolutePath());
-		writerRaw.write(BamAnalyser.headerRaw);
-		
 		
 		VariantCallingTask task = new VariantCallingTask();
 		task.setFile(new File(input));
 		task.setOutput(out);
 		task.setReference(ref);
-		task.setWriterVar(writerVar);
-		task.setWriterRaw(writerRaw);
+		task.setVarName(out);
+		task.setRawName(outRaw);
 		task.setLevel(0.01);
 		TaskService.setAnsiSupport(false);
 		TaskService.run(task);
 		
-		writerVar.close();
-		writerRaw.close();
-
+		
 		RawFileAnalysermtDNA analyser = new RawFileAnalysermtDNA();
 		analyser.setCallDel(false);
 

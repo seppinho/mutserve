@@ -21,8 +21,8 @@ import lukfor.progress.tasks.monitors.ITaskMonitor;
 public class VariantCallingTask implements ITaskRunnable {
 
 	private File file;
-	private LineWriter writerVar;
-	private LineWriter writerRaw;
+	private String varName;
+	private String rawName;
 	private String output;
 	private HashMap<String, Double> freqFile;
 	private double level;
@@ -42,6 +42,12 @@ public class VariantCallingTask implements ITaskRunnable {
 
 		HashMap<Integer, BasePosition> positions = analyser.getCounts();
 
+		LineWriter writerVar = new LineWriter(new File(varName).getAbsolutePath());
+		writerVar.write(BamAnalyser.headerVariants);
+
+		LineWriter writerRaw = new LineWriter(new File(rawName).getAbsolutePath());
+		writerRaw.write(BamAnalyser.headerRaw);
+
 		// first position to analyze
 		int pos = 1;
 
@@ -53,9 +59,9 @@ public class VariantCallingTask implements ITaskRunnable {
 			SAMRecordIterator fileIterator = reader.iterator();
 
 			String reference = analyser.getReferenceString();
-			
+
 			monitor.begin(file.getName());
-			
+
 			while (fileIterator.hasNext()) {
 
 				SAMRecord record = fileIterator.next();
@@ -94,6 +100,8 @@ public class VariantCallingTask implements ITaskRunnable {
 		}
 
 		monitor.worked(1);
+		writerVar.close();
+		writerRaw.close();
 
 	}
 
@@ -262,28 +270,28 @@ public class VariantCallingTask implements ITaskRunnable {
 		this.file = file;
 	}
 
-	public LineWriter getWriterVar() {
-		return writerVar;
-	}
-
-	public void setWriterVar(LineWriter writerVar) {
-		this.writerVar = writerVar;
-	}
-
-	public LineWriter getWriterRaw() {
-		return writerRaw;
-	}
-
-	public void setWriterRaw(LineWriter writerRaw) {
-		this.writerRaw = writerRaw;
-	}
-
 	public HashMap<String, Double> getFreqFile() {
 		return freqFile;
 	}
 
 	public void setFreqFile(HashMap<String, Double> freqFile) {
 		this.freqFile = freqFile;
+	}
+
+	public String getVarName() {
+		return varName;
+	}
+
+	public void setVarName(String varName) {
+		this.varName = varName;
+	}
+
+	public String getRawName() {
+		return rawName;
+	}
+
+	public void setRawName(String rawName) {
+		this.rawName = rawName;
 	}
 
 }

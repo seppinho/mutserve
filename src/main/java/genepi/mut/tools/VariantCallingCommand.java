@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import genepi.base.Tool;
@@ -64,6 +66,7 @@ public class VariantCallingCommand extends Tool {
 		addOptionalParameter("threads", "amount of threads", Tool.STRING);
 		addFlag("noBaq", "turn off BAQ");
 		addFlag("noFreq", "turn off 1000G frequency file");
+		addFlag("no-ansi", "Disable ANSI output");
 		addFlag("deletions", "Call deletions");
 		addFlag("insertions", "Call insertions (beta)");
 		addFlag("writeFasta", "Write fasta");
@@ -99,6 +102,8 @@ public class VariantCallingCommand extends Tool {
 		boolean insertions = isFlagSet("insertions");
 
 		boolean writeFasta = isFlagSet("writeFasta");
+
+		boolean noAnsi = isFlagSet("no-ansi");
 
 		double level;
 
@@ -191,13 +196,21 @@ public class VariantCallingCommand extends Tool {
 		watch.start();
 
 		List<VariantCallingTask> tasks = new Vector<VariantCallingTask>();
+		int index = 0;
 
+		Set<String> varPaths = new HashSet<String>();
+		Set<String> rawPaths = new HashSet<String>();
+		
 		for (File file : files) {
+			String varName = varFile + "." + index;
+			String rawName = rawFile + "." + index;
+			varPaths.add(varName);
+			rawPaths.add(rawName);
 			VariantCallingTask task = new VariantCallingTask();
 
 			task.setFile(file);
-			task.setWriterVar(writerVar);
-			task.setWriterRaw(writerRaw);
+			task.setVarName(varName);
+			task.setRawName(rawName);
 			task.setFreqFile(freqFile);
 			task.setOutput(output);
 			task.setLevel(level);
@@ -211,9 +224,14 @@ public class VariantCallingCommand extends Tool {
 			task.setMode(mode);
 
 			tasks.add(task);
+			index++;
 
 		}
-		// TaskService.setAnsiSupport(false);
+
+		if (noAnsi) {
+			TaskService.setAnsiSupport(false);
+		}
+
 		TaskService.setThreads(threads);
 		TaskService.monitor(STYLE_LONG_TASK).run(tasks);
 
@@ -280,14 +298,14 @@ public class VariantCallingCommand extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "/data2/genepi/static/1000g-deep";
+		String input = "test-data/mtdna/bam/input";
 
 		String output = "test-data/tmp.txt";
 
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 
 		VariantCallingCommand pileup = new VariantCallingCommand(new String[] { "--input", input, "--reference", ref,
-				"--output", output, "--level", "0.01", "--noBaq", "--noFreq" });
+				"--output", output, "--level", "0.01", "--noBaq", "--noFreq", "--no-ansi" });
 
 		pileup.start();
 
