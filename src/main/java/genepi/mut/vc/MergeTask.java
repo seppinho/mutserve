@@ -12,6 +12,8 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 
+import genepi.io.text.LineWriter;
+import genepi.mut.pileup.BamAnalyser;
 import lukfor.progress.tasks.ITaskRunnable;
 import lukfor.progress.tasks.monitors.ITaskMonitor;
 
@@ -20,9 +22,9 @@ public class MergeTask implements ITaskRunnable {
 	private File[] variantInputs;
 
 	private File[] rawInputs;
-	
+
 	private String rawPath;
-	
+
 	private String variantPath;
 
 	public void setInputs(List<VariantCallingTask> tasks) {
@@ -39,25 +41,33 @@ public class MergeTask implements ITaskRunnable {
 	@Override
 	public void run(ITaskMonitor monitor) throws Exception {
 
-		monitor.begin("Merge files");
+		monitor.begin("Merge output files");
 
 		assert (variantInputs != null);
 		assert (variantInputs.length > 0);
 
-		appendFiles(new File(variantPath), variantInputs);
+		new File(variantPath).delete();
+		new File(rawPath).delete();
 
+		LineWriter writerVar = new LineWriter(variantPath);
+		writerVar.write(BamAnalyser.headerVariants + "\n");
+		writerVar.close();
+
+		LineWriter writerRaw = new LineWriter(rawPath);
+		writerRaw.write(BamAnalyser.headerRaw + "\n");
+		writerRaw.close();
+
+		appendFiles(new File(variantPath), variantInputs);
 		if (rawInputs != null) {
 			appendFiles(new File(rawPath), rawInputs);
 		}
-		
-		
+
 		monitor.done();
 	}
 
 	public static void appendFiles(File destination, File[] sources) throws IOException {
 		OutputStream output = null;
 		try {
-			destination.delete();
 			output = new BufferedOutputStream(new FileOutputStream(destination, true));
 			for (File source : sources) {
 				appendFile(output, source);

@@ -274,7 +274,7 @@ public class VariantCallingCommand extends Tool {
 
 		String input = "test-data/mtdna/bam/input";
 
-		String output = "test-data/tmp.txt";
+		String output = "test-data/tmp.vcf";
 
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 
