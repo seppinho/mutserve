@@ -18,6 +18,7 @@ import genepi.mut.objects.BayesFrequencies;
 import genepi.mut.pileup.BamAnalyser;
 import genepi.mut.util.FastaWriter;
 import genepi.mut.util.VcfWriter;
+import genepi.mut.vc.MergeTask;
 import genepi.mut.vc.VariantCallingTask;
 import htsjdk.samtools.util.StopWatch;
 import lukfor.progress.TaskService;
@@ -36,9 +37,9 @@ public class VariantCallingCommand extends Tool {
 	public static ProgressIndicatorGroup STYLE_SHORT_TASK = new ProgressIndicatorGroup(SPACE, SPINNER, SPACE,
 			TASK_NAME);
 
-	public static final String URL = "https://github.com/seppingo/mutserve";
+	public static final String URL = "https://github.com/seppinho/mutserve";
 
-	public static final String APP = "mtDNA Low-frequency Variant Detection";
+	public static final String APP = "mtDNA Variant Detection";
 
 	public static final String VERSION = "v2.0.0-rc";
 
@@ -167,8 +168,9 @@ public class VariantCallingCommand extends Tool {
 			freqFile = BayesFrequencies.instance(new DataInputStream(in));
 		}
 
-		LineWriter writerRaw = null;
-		LineWriter writerVar = null;
+		if (noAnsi) {
+			TaskService.setAnsiSupport(false);
+		}
 
 		String prefix = output;
 
@@ -176,21 +178,8 @@ public class VariantCallingCommand extends Tool {
 			prefix = output.substring(0, output.indexOf('.'));
 		}
 
-		String varFile = prefix + ".txt";
-		String rawFile = prefix + "_raw.txt";
-
-		try {
-
-			writerVar = new LineWriter(new File(varFile).getAbsolutePath());
-			writerVar.write(BamAnalyser.headerVariants);
-
-			writerRaw = new LineWriter(new File(rawFile).getAbsolutePath());
-			writerRaw.write(BamAnalyser.headerRaw);
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		String variantPath = prefix + ".txt";
+		String rawPath = prefix + "_raw.txt";
 
 		StopWatch watch = new StopWatch();
 		watch.start();
@@ -198,59 +187,49 @@ public class VariantCallingCommand extends Tool {
 		List<VariantCallingTask> tasks = new Vector<VariantCallingTask>();
 		int index = 0;
 
-		Set<String> varPaths = new HashSet<String>();
-		Set<String> rawPaths = new HashSet<String>();
-		
 		for (File file : files) {
-			String varName = varFile + "." + index;
-			String rawName = rawFile + "." + index;
-			varPaths.add(varName);
-			rawPaths.add(rawName);
-			VariantCallingTask task = new VariantCallingTask();
+			String varName = variantPath + ".tmp." + index;
+			String rawName = rawPath + ".tmp." + index;
 
-			task.setFile(file);
-			task.setVarName(varName);
-			task.setRawName(rawName);
-			task.setFreqFile(freqFile);
-			task.setOutput(output);
-			task.setLevel(level);
-			task.setBaseQ(baseQ);
-			task.setMapQ(mapQ);
-			task.setAlignQ(alignQ);
-			task.setBaq(baq);
-			task.setDeletions(deletions);
-			task.setInsertions(insertions);
-			task.setReference(reference);
-			task.setMode(mode);
+			VariantCallingTask vc = new VariantCallingTask();
 
-			tasks.add(task);
+			vc.setFile(file);
+			vc.setVarName(varName);
+			vc.setRawName(rawName);
+			vc.setFreqFile(freqFile);
+			vc.setOutput(output);
+			vc.setLevel(level);
+			vc.setBaseQ(baseQ);
+			vc.setMapQ(mapQ);
+			vc.setAlignQ(alignQ);
+			vc.setBaq(baq);
+			vc.setDeletions(deletions);
+			vc.setInsertions(insertions);
+			vc.setReference(reference);
+			vc.setMode(mode);
+
+			tasks.add(vc);
 			index++;
 
-		}
-
-		if (noAnsi) {
-			TaskService.setAnsiSupport(false);
 		}
 
 		TaskService.setThreads(threads);
 		TaskService.monitor(STYLE_LONG_TASK).run(tasks);
 
-		try {
-			writerRaw.close();
-			writerVar.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		MergeTask mergeTask = new MergeTask();
+		mergeTask.setInputs(tasks);
+		mergeTask.setRawPath(rawPath);
+		mergeTask.setVariantPath(variantPath);
+		TaskService.monitor(STYLE_SHORT_TASK).run(mergeTask);
 
 		if (output.endsWith("vcf.gz") || output.endsWith("vcf")) {
-			VcfWriter writer = new VcfWriter();
-			writer.createVCF(varFile, output, reference, "chrM", 16569, VERSION + ";" + command);
+			VcfWriter vcfWriter = new VcfWriter();
+			vcfWriter.createVCF(variantPath, output, reference, "chrM", 16569, VERSION + ";" + command);
 		}
 
 		if (writeFasta) {
-			FastaWriter writer2 = new FastaWriter();
-			writer2.createFasta(varFile, prefix + ".fasta", reference);
+			FastaWriter fastaWriter = new FastaWriter();
+			fastaWriter.createFasta(variantPath, prefix + ".fasta", reference);
 		}
 
 		System.out.println();

@@ -42,11 +42,13 @@ public class VariantCallingTask implements ITaskRunnable {
 
 		HashMap<Integer, BasePosition> positions = analyser.getCounts();
 
-		LineWriter writerVar = new LineWriter(new File(varName).getAbsolutePath());
-		writerVar.write(BamAnalyser.headerVariants);
-
-		LineWriter writerRaw = new LineWriter(new File(rawName).getAbsolutePath());
-		writerRaw.write(BamAnalyser.headerRaw);
+		File varFile = new File(varName);
+		varFile.deleteOnExit();
+		File rawFile = new File(rawName);
+		rawFile.deleteOnExit();
+		
+		LineWriter writerVar = new LineWriter(varFile.getAbsolutePath());
+		LineWriter writerRaw = new LineWriter(rawFile.getAbsolutePath());
 
 		// first position to analyze
 		int pos = 1;
@@ -63,6 +65,10 @@ public class VariantCallingTask implements ITaskRunnable {
 			monitor.begin(file.getName());
 
 			while (fileIterator.hasNext()) {
+
+				if (monitor.isCanceled()) {
+					throw new Exception("Calculation canceled!");
+				}
 
 				SAMRecord record = fileIterator.next();
 
@@ -91,6 +97,8 @@ public class VariantCallingTask implements ITaskRunnable {
 				}
 				positions.remove(i);
 			}
+			
+			positions = null;
 			reader.close();
 
 		} catch (Exception e) {
@@ -99,13 +107,11 @@ public class VariantCallingTask implements ITaskRunnable {
 			throw e;
 		}
 
-		monitor.worked(1);
+		monitor.done();
 		writerVar.close();
 		writerRaw.close();
 
 	}
-
-	// monitor.done();
 
 	private void callVariant(LineWriter writerRaw, LineWriter writerVar, String id, double level, int pos,
 			BasePosition basePosition, String reference, HashMap<String, Double> freqFile) throws IOException {
