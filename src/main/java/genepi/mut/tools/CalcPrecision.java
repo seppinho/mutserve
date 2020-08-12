@@ -1,5 +1,7 @@
 package genepi.mut.tools;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -8,6 +10,7 @@ import java.util.TreeSet;
 
 import genepi.base.Tool;
 import genepi.io.table.reader.CsvTableReader;
+import genepi.io.table.writer.CsvTableWriter;
 
 public class CalcPrecision extends Tool {
 
@@ -55,6 +58,14 @@ public class CalcPrecision extends Tool {
 
 		CsvTableReader idReader = new CsvTableReader(in, '\t');
 
+		FileWriter writePerformance=null;
+		try {
+			writePerformance = new FileWriter(in+"_perform.txt");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		Set<String> ids = new TreeSet<String>();
 
 		while (idReader.next()) {
@@ -64,8 +75,12 @@ public class CalcPrecision extends Tool {
 		}
 		idReader.close();
 
-		System.out.println("SampleID\tFound\tTotal\tFalsePos\tFalseNeg\tPrecision\tSensitivity\tSpecificity\tIgnored");
-
+		System.out.println("SampleID\tFound\tTotal\tFalsePosN\tFalsePosSNPs\tFalseNeg\tFalseNegSNP\tPrecision\tSensitivity\tSpecificity\tIgnored\tIgnoredSNPs");
+		try {
+			writePerformance.write("SampleID\tFound\tTotal\tFalsePos\tFalsePosSNPs\tFalseNeg\tFalseNegSNP\tPrecision\tSensitivity\tSpecificity\tIgnored\tIgnoredSNPs\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		for (String id : ids) {
 
 			CsvTableReader goldReader = new CsvTableReader(gold, '\t');
@@ -82,6 +97,7 @@ public class CalcPrecision extends Tool {
 			CsvTableReader variantReader = new CsvTableReader(in, '\t');
 
 			falsePositives.clear();
+			falseNegatives.clear();
 
 			both.clear();
 			int truePositiveCount = 0;
@@ -152,11 +168,28 @@ public class CalcPrecision extends Tool {
 			String prec = df.format(prec2);
 
 			System.out.println(id + "\t" + truePositiveCount + "\t " + (truePositiveCount + falseNegativeCount) + "\t"
-					+ falsePositiveCount + " " + falsePositives.toString() + "\t" + "\t" + falseNegativeCount + " "
-					+ falseNegatives.toString() + "\t" + prec + "\t" + sens + "\t" + spec + "\t" + level2lowCount + " ["
-					+ level2low + "]");
-
+					+ falsePositiveCount + "\t" + " " + "\t" + falseNegativeCount + "\t"
+					+ " " + "\t" + prec + "\t" + sens + "\t" + spec + "\t" + level2lowCount + " ["
+					+ " " + "]");
+			try {
+				writePerformance.write(id + "\t" + truePositiveCount + "\t " + (truePositiveCount + falseNegativeCount) + "\t"
+						+ falsePositiveCount + "\t" + falsePositives.toString() + "\t" + falseNegativeCount + "\t"
+						+ falseNegatives.toString() + "\t" + prec + "\t" + sens + "\t" + spec + "\t" + level2lowCount + "\t["
+						+ level2low + "]\n");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
+		try {
+			writePerformance.flush();
+			writePerformance.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return 0;
 	}
 
