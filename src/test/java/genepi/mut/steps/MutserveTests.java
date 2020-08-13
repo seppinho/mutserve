@@ -6,15 +6,16 @@ import genepi.io.FileUtil;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.text.LineReader;
 import genepi.mut.objects.VariantLine;
-import genepi.mut.pileup.PileupToolLocal;
+import genepi.mut.tools.VariantCallingCommand;
 import genepi.mut.util.QCMetric;
 import genepi.mut.util.RawFileAnalysermtDNA;
+import genepi.mut.vc.VariantCallingTask;
+import lukfor.progress.TaskService;
 
 import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -29,7 +30,17 @@ public class MutserveTests {
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 		String out = "test-data/mtdna/bam-equal-level/here.txt";
 
-		PileupToolLocal pileup = new PileupToolLocal(
+		VariantCallingTask task = new VariantCallingTask();
+		task.setFile(new File(input));
+		task.setOutput(out);
+		task.setReference(ref);
+		task.setLevel(0.01);
+		task.setVarName(out);
+		
+		TaskService.setAnsiSupport(false);
+		TaskService.run(task);
+
+		VariantCallingCommand pileup = new VariantCallingCommand(
 				new String[] { "--input", input, "--reference", ref, "--output", out, "--level", "0.01", "--noBaq" });
 
 		pileup.start();
@@ -56,23 +67,28 @@ public class MutserveTests {
 	@Test
 	public void test1000GIndel() throws IOException {
 
-		File file = new File("test-data/tmp");
-		if (file.exists()) {
-			FileUtil.deleteDirectory(file);
-		}
-
-		String input = "test-data/mtdna/bam/input";
+		String input = "test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam";
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 		String out = "test-data/1000g.txt";
+		String raw = "test-data/1000g_out.txt";
+		
+		VariantCallingTask task = new VariantCallingTask();
+		task.setFile(new File(input));
+		task.setOutput(out);
+		task.setReference(ref);
+		task.setLevel(0.01);
+		task.setDeletions(true);
+		task.setVarName(out);
+		task.setRawName(raw);
+
+		TaskService.setAnsiSupport(false);
+		TaskService.run(task);
 
 		Set<String> expected = new HashSet<String>(Arrays.asList("1456", "2746", "3200", "12410", "14071", "14569",
 				"15463", "16093", "16360", "10394", "1438", "152", "15326", "15340", "16519", "263", "4769", "750",
-				"8592", "8860", "3107", "302.1", "310.1"));
-
-		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", ref, "--output",
-				out, "--level", "0.01", "--deletions", "--insertions" });
-
-		pileup.start();
+				"8592", "8860", "3107"));
+		
+		// insertions:  "302.1", "310.1"
 
 		LineReader reader = new LineReader(out);
 		HashSet<String> results = new HashSet<String>();
@@ -80,7 +96,9 @@ public class MutserveTests {
 		// header
 		reader.next();
 		while (reader.next()) {
-			String[] splits = reader.get().split("\t");
+			String[] splits =
+
+					reader.get().split("\t");
 			results.add(splits[1]);
 		}
 
@@ -91,32 +109,33 @@ public class MutserveTests {
 	@Test
 	public void test1000G() throws IOException {
 
-		File file = new File("test-data/tmp");
-		if (file.exists()) {
-			FileUtil.deleteDirectory(file);
-		}
-
-		String input = "test-data/mtdna/bam/input";
+		String input = "test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam";
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 		String out = "test-data/1000g.txt";
+		String raw = "test-data/1000g_raw.txt";
 
-		Set<String> expected = new HashSet<String>(Arrays.asList("1456", "2746", "3200", "12410", "14071", "14569",
-				"15463", "16093", "16360", "10394", "1438", "152", "15326", "15340", "16519", "263", "4769", "750",
-				"8592", "8860", "3107", "302.1", "310.1"));
+		Set<String> expected = new HashSet<String>(
+				Arrays.asList("1456", "2746", "3200", "12410", "14071", "14569", "15463", "16093", "16360", "10394",
+						"1438", "152", "15326", "15340", "16519", "263", "4769", "750", "8592", "8860", "3107"));
 
-		PileupToolLocal pileup = new PileupToolLocal(new String[] { "--input", input, "--reference", ref, "--output",
-				out, "--level", "0.01", "--insertions" });
-
-		pileup.start();
+		VariantCallingTask task = new VariantCallingTask();
+		task.setFile(new File(input));
+		task.setOutput(out);
+		task.setReference(ref);
+		task.setLevel(0.01);
+		task.setVarName(out);
+		task.setRawName(raw);
+		TaskService.setAnsiSupport(false);
+		TaskService.run(task);
 
 		LineReader reader = new LineReader(out);
 		HashSet<String> results = new HashSet<String>();
 
-		// header
 		reader.next();
 		while (reader.next()) {
 			String[] splits = reader.get().split("\t");
 			results.add(splits[1]);
+			System.out.println(splits[1]);
 		}
 
 		assertEquals(true, results.equals(expected));
@@ -126,23 +145,30 @@ public class MutserveTests {
 	@Test
 	public void testmtDNAMixtures() throws IOException {
 
-		String input = "test-data/mtdna/mixtures/input";
+		String input= "test-data/mtdna/mixtures/input/s4.bam";
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 		String out = "test-data/1000g.txt";
-
-		PileupToolLocal pileup = new PileupToolLocal(
-				new String[] { "--input", input, "--reference", ref, "--output", out, "--level", "0.01" });
-
-		pileup.start();
-
+		String outRaw = "test-data/1000g_raw.txt";
+		
+		VariantCallingTask task = new VariantCallingTask();
+		task.setFile(new File(input));
+		task.setOutput(out);
+		task.setReference(ref);
+		task.setVarName(out);
+		task.setRawName(outRaw);
+		task.setLevel(0.01);
+		TaskService.setAnsiSupport(false);
+		TaskService.run(task);
+		
+		
 		RawFileAnalysermtDNA analyser = new RawFileAnalysermtDNA();
 		analyser.setCallDel(false);
 
 		String refPath = "test-data/mtdna/reference/rCRS.fasta";
 		String sanger = "test-data/mtdna/mixtures/expected/sanger.txt";
 
-		ArrayList<QCMetric> list = analyser.calculateLowLevelForTest(
-				"test-data/1000g_raw.txt", refPath, sanger, Double.valueOf(0.01));
+		ArrayList<QCMetric> list = analyser.calculateLowLevelForTest("test-data/1000g_raw.txt", refPath, sanger,
+				Double.valueOf(0.01));
 
 		assertTrue(list.size() == 1);
 
@@ -158,44 +184,35 @@ public class MutserveTests {
 		}
 
 	}
-	
-	
-	@Test
-	public void testLPAData() throws IOException {
 
-		String input = "test-data/dna/lpa-sample/bam";
-		String ref = "test-data/dna/lpa-sample/reference/kiv2_6.fasta";
-		String out = "test-data/lpa.txt";
-
-		PileupToolLocal pileup = new PileupToolLocal(
-				new String[] { "--input", input, "--reference", ref, "--output", out, "--level", "0.01","--insertions","--deletions","--noBaq"});
-
-		pileup.start();
-
-		LineReader reader = new LineReader(out);
-
-		// header
-		reader.next();
-		int i = 0;
-		int deletions = 0;
-		while (reader.next()) {
-			i++;
-			String[] splits = reader.get().split("\t");
-			if (splits[1].equals("35")) {
-				assertEquals(new Double(18190), Double.valueOf(splits[9]));
-				assertEquals(new Double(0.999), Double.valueOf(splits[4]));
-
-			}
-
-			if (splits[3].contains("D")) {
-				deletions++;
-			}
-		}
-
-		reader.close();
-		assertEquals(94, i);
-		assertEquals(33, deletions);
-
-	}
+	/*
+	 * @Test public void testLPAData() throws IOException {
+	 * 
+	 * String input = "test-data/dna/lpa-sample/bam"; String ref =
+	 * "test-data/dna/lpa-sample/reference/kiv2_6.fasta"; String out =
+	 * "test-data/lpa.txt";
+	 * 
+	 * PileupToolLocal pileup = new PileupToolLocal( new String[] { "--input",
+	 * input, "--reference", ref, "--output", out, "--level",
+	 * "0.01","--insertions","--deletions","--noBaq"});
+	 * 
+	 * pileup.start();
+	 * 
+	 * LineReader reader = new LineReader(out);
+	 * 
+	 * // header reader.next(); int i = 0; int deletions = 0; while (reader.next())
+	 * { i++; String[] splits = reader.get().split("\t"); if
+	 * (splits[1].equals("35")) { assertEquals(new Double(18190),
+	 * Double.valueOf(splits[9])); assertEquals(new Double(0.999),
+	 * Double.valueOf(splits[4]));
+	 * 
+	 * }
+	 * 
+	 * if (splits[3].contains("D")) { deletions++; } }
+	 * 
+	 * reader.close(); assertEquals(94, i); assertEquals(33, deletions);
+	 * 
+	 * }
+	 */
 
 }

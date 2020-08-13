@@ -9,6 +9,7 @@ import genepi.mut.sort.SortStep;
 import genepi.mut.stats.StatisticsTool;
 import genepi.mut.tools.CalcPrecision;
 import genepi.mut.tools.GenerateGoldStandard;
+import genepi.mut.tools.VariantCallingCommand;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -29,7 +30,7 @@ public class Server {
 		toolbox.addTool("analyse", PileupStep.class);
 
 		// read in BAM file and count per POS locally
-		toolbox.addTool("analyse-local", PileupToolLocal.class);
+		toolbox.addTool("call", VariantCallingCommand.class);
 
 		// generate statistics
 		toolbox.addTool("stats", StatisticsTool.class);

@@ -200,7 +200,7 @@ public class PileupToolLocal extends Tool {
 
 					analyseReads(file, analyser, deletions, insertions);
 					
-					determineVariants(analyser, writerRaw, writerVar, level, freqFile);
+					determineVariants(analyser, writerRaw, writerVar, level, freqFile, file.getName());
 
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -263,53 +263,36 @@ public class PileupToolLocal extends Tool {
 	}
 
 	// reducer
-	private void determineVariants(BamAnalyser analyser, LineWriter writerRaw, LineWriter writerVariants, double level, HashMap<String, Double> freqFile)
+	private void determineVariants(BamAnalyser analyser, LineWriter writerRaw, LineWriter writerVariants, double level, HashMap<String, Double> freqFile, String filename)
 			throws IOException {
 
-		HashMap<String, BasePosition> counts = analyser.getCounts();
+		HashMap<Integer, BasePosition> counts = analyser.getCounts();
 
 		String reference = analyser.getReferenceString();
 
-		for (String key : counts.keySet()) {
+		for (Integer key : counts.keySet()) {
 
-			String idKey = key.split(":")[0];
-
-			String positionKey = key.split(":")[1];
 
 			int pos;
 
 			boolean insertion = false;
 
-			if (positionKey.contains(".")) {
-				pos = Integer.valueOf(positionKey.split("\\.")[0]);
-				insertion = true;
-			} else {
-				pos = Integer.valueOf(positionKey);
-			}
+			pos = Integer.valueOf(key);
 
+				
 			if (pos > 0 && pos <= reference.length()) {
 
 				char ref = 'N';
 
 				BasePosition basePos = counts.get(key);
-				basePos.setId(idKey);
+				
+				basePos.setId(filename);
 
 				basePos.setPos(pos);
 
 				VariantLine line = new VariantLine();
 
-				if (!insertion) {
-
-					ref = reference.charAt(pos - 1);
-
-				} else {
-
-					ref = '-';
-
-					line.setInsertion(true);
-
-					line.setInsPosition(positionKey);
-				}
+				ref = reference.charAt(pos - 1);
 
 				line.setRef(ref);
 
@@ -382,9 +365,9 @@ public class PileupToolLocal extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "test-data/mtdna/bam/input";
+		String input = "test-data/mtdna/bam/input/small.bam";
 
-		String output = "/home/seb/Desktop/test.txt";
+		String output = "/home/seb/Desktop/test_old.txt";
 
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 

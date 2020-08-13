@@ -17,11 +17,11 @@ import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 
 public class BamAnalyser {
 
-	final static String headerRaw = "SAMPLE\tPOS\tREF\tTOP-FWD\tMINOR-FWD\tTOP-REV\tMINOR-REV\tCOV-FWD\tCOV-REV\tCOV-TOTAL\tTYPE\tLEVEL\t%A\t%C\t%G\t%T\t%D\t%N\t%a\t%c\t%g\t%t\t%d\t%n\tTOP-FWD-PERCENT\tTOP-REV-PERCENT\tMINOR-FWD-PERCENT\tMINOR-REV-PERCENT\tLLRFWD\tLLRREV\tLLRAFWD\tLLRCFWD\tLLRGFWD\tLLRTFWD\tLLRAREV\tLLRCREV\tLLRGREV\tLLRTREV\tLLRDFWD\tLLRDREV\tMINORS";
+	public final static String headerRaw = "SAMPLE\tPOS\tREF\tTOP-FWD\tMINOR-FWD\tTOP-REV\tMINOR-REV\tCOV-FWD\tCOV-REV\tCOV-TOTAL\tTYPE\tLEVEL\t%A\t%C\t%G\t%T\t%D\t%N\t%a\t%c\t%g\t%t\t%d\t%n\tTOP-FWD-PERCENT\tTOP-REV-PERCENT\tMINOR-FWD-PERCENT\tMINOR-REV-PERCENT\tLLRFWD\tLLRREV\tLLRAFWD\tLLRCFWD\tLLRGFWD\tLLRTFWD\tLLRAREV\tLLRCREV\tLLRGREV\tLLRTREV\tLLRDFWD\tLLRDREV\tMINORS";
 
-	final static String headerVariants = "ID\tPos\tRef\tVariant\tVariantLevel\tMajorBase\tMajorLevel\tMinorBase\tMinorLevel\tCoverage\tType";
+	public final static String headerVariants = "ID\tPos\tRef\tVariant\tVariantLevel\tMajorBase\tMajorLevel\tMinorBase\tMinorLevel\tCoverage\tType";
 
-	HashMap<String, BasePosition> counts;
+	HashMap<Integer, BasePosition> counts;
 
 	IndexedFastaSequenceFile refReader;
 
@@ -40,7 +40,7 @@ public class BamAnalyser {
 	int mapQual;
 
 	int alignQual;
-	
+
 	boolean baq;
 
 	enum versionEnum {
@@ -55,7 +55,8 @@ public class BamAnalyser {
 
 	}
 
-	public BamAnalyser(String filename, String fastaPath, int baseQual, int mapQual, int alignQual, boolean baq, String version) {
+	public BamAnalyser(String filename, String fastaPath, int baseQual, int mapQual, int alignQual, boolean baq,
+			String version) {
 
 		Path path = new File(fastaPath).toPath();
 
@@ -80,7 +81,7 @@ public class BamAnalyser {
 		this.refReader = new IndexedFastaSequenceFile(new File(fastaPath),
 				new FastaSequenceIndex(new File(fastaPath + ".fai")));
 
-		this.counts = new HashMap<String, BasePosition>(referenceString.length());
+		this.counts = new HashMap<Integer, BasePosition>();
 
 		this.baseQual = baseQual;
 
@@ -93,7 +94,7 @@ public class BamAnalyser {
 		this.baq = baq;
 
 		this.version = version;
-		
+
 		if (version.equalsIgnoreCase(versionEnum.MTDNA.name())) {
 
 			baqHMMAltered = new BaqAlt(1e-4, 1e-2, 7, (byte) 0, true);
@@ -105,11 +106,11 @@ public class BamAnalyser {
 
 	}
 
-	public HashMap<String, BasePosition> getCounts() {
+	public HashMap<Integer, BasePosition> getCounts() {
 		return counts;
 	}
 
-	public void setCounts(HashMap<String, BasePosition> counts) {
+	public void setCounts(HashMap<Integer, BasePosition> counts) {
 		this.counts = counts;
 	}
 
@@ -164,7 +165,7 @@ public class BamAnalyser {
 
 				if (samRecord.getBaseQualities()[i] >= baseQual) {
 
-					String key = filename + ":" + currentPos;
+					int key = currentPos;
 
 					BasePosition basePos = counts.get(key);
 
@@ -250,7 +251,7 @@ public class BamAnalyser {
 
 					while (cigarElementStart < cigarElementEnd) {
 
-						String key = filename + ":" + cigarElementStart;
+						int key = cigarElementStart;
 
 						BasePosition basePos = counts.get(key);
 
@@ -274,85 +275,45 @@ public class BamAnalyser {
 
 				}
 
-				if (insertions && cigarElement.getOperator() == CigarOperator.I) {
-
-					// returns e.g. 310 but Insertion need to be added to last pos (so 309)
-					int currentReferencePosIns = currentReferencePos - 1;
-
-					int i = 1;
-
-					int length = cigarElement.getLength();
-
-					while (i <= length) {
-
-						char insBase = samRecord.getReadString().charAt(sequencePos + i - 1);
-
-						byte quality = samRecord.getBaseQualities()[sequencePos + i - 1];
-
-						String key = filename + ":" + currentReferencePosIns + "." + i;
-
-						BasePosition basePos = counts.get(key);
-
-						i++;
-
-						if (basePos == null) {
-							basePos = new BasePosition();
-							counts.put(key, basePos);
-						}
-
-						if ((samRecord.getFlags() & 0x10) == 0x10) {
-
-							switch (insBase) {
-							case 'A':
-								basePos.addaRev(1);
-								basePos.addaRevQ(quality);
-								break;
-							case 'C':
-								basePos.addcRev(1);
-								basePos.addcRevQ(quality);
-								break;
-							case 'G':
-								basePos.addgRev(1);
-								basePos.addgRevQ(quality);
-								break;
-							case 'T':
-								basePos.addtRev(1);
-								basePos.addtRevQ(quality);
-								break;
-							case 'N':
-								basePos.addnRev(1);
-								break;
-							default:
-								break;
-							}
-						} else {
-
-							switch (insBase) {
-							case 'A':
-								basePos.addaFor(1);
-								basePos.addaForQ(quality);
-								break;
-							case 'C':
-								basePos.addcFor(1);
-								basePos.addcForQ(quality);
-								break;
-							case 'G':
-								basePos.addgFor(1);
-								basePos.addgForQ(quality);
-								break;
-							case 'T':
-								basePos.addtFor(1);
-								basePos.addtForQ(quality);
-								break;
-							case 'N':
-								basePos.addnFor(1);
-								break;
-							default:
-								break;
-							}
-						}
-					}
-				}
+				/*
+				 * if (insertions && cigarElement.getOperator() == CigarOperator.I) {
+				 * 
+				 * // returns e.g. 310 but Insertion need to be added to last pos (so 309) int
+				 * currentReferencePosIns = currentReferencePos - 1;
+				 * 
+				 * int i = 1;
+				 * 
+				 * int length = cigarElement.getLength();
+				 * 
+				 * while (i <= length) {
+				 * 
+				 * char insBase = samRecord.getReadString().charAt(sequencePos + i - 1);
+				 * 
+				 * byte quality = samRecord.getBaseQualities()[sequencePos + i - 1];
+				 * 
+				 * String key = filename + ":" + currentReferencePosIns + "." + i;
+				 * 
+				 * BasePosition basePos = counts.get(key);
+				 * 
+				 * i++;
+				 * 
+				 * if (basePos == null) { basePos = new BasePosition(); counts.put(key,
+				 * basePos); }
+				 * 
+				 * if ((samRecord.getFlags() & 0x10) == 0x10) {
+				 * 
+				 * switch (insBase) { case 'A': basePos.addaRev(1); basePos.addaRevQ(quality);
+				 * break; case 'C': basePos.addcRev(1); basePos.addcRevQ(quality); break; case
+				 * 'G': basePos.addgRev(1); basePos.addgRevQ(quality); break; case 'T':
+				 * basePos.addtRev(1); basePos.addtRevQ(quality); break; case 'N':
+				 * basePos.addnRev(1); break; default: break; } } else {
+				 * 
+				 * switch (insBase) { case 'A': basePos.addaFor(1); basePos.addaForQ(quality);
+				 * break; case 'C': basePos.addcFor(1); basePos.addcForQ(quality); break; case
+				 * 'G': basePos.addgFor(1); basePos.addgForQ(quality); break; case 'T':
+				 * basePos.addtFor(1); basePos.addtForQ(quality); break; case 'N':
+				 * basePos.addnFor(1); break; default: break; } } } }
+				 */
 
 				// only M and D operators consume bases
 				if (cigarElement.getOperator().consumesReferenceBases()) {
