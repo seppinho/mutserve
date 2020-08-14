@@ -1,4 +1,4 @@
-package genepi.mut.vc;
+package genepi.mut.tasks;
 
 import java.io.File;
 import java.io.IOException;
