@@ -30,14 +30,14 @@ public class VariantCallingTask implements ITaskRunnable {
 	private String rawName;
 	private HashMap<String, Double> freqFile;
 	private double level;
-	private int baseQ;
-	private int mapQ;
-	private int alignQ;
-	boolean baq;
-	boolean deletions;
-	boolean insertions;
+	private int baseQ = 20;
+	private int mapQ = 20;
+	private int alignQ = 30;
+	boolean baq = true;
+	boolean deletions = false;
+	boolean insertions = false;
 	String reference;
-	String mode;
+	String mode ="mtdna";
 	String contig;
 
 	@Override
@@ -76,6 +76,7 @@ public class VariantCallingTask implements ITaskRunnable {
 
 			}
 
+			System.out.println(mode);
 			BamAnalyser analyser = new BamAnalyser(name, reference, baseQ, mapQ, alignQ, baq, mode);
 
 			HashMap<Integer, BasePosition> positions = analyser.getCounts();

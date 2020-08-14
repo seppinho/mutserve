@@ -145,9 +145,9 @@ public class MutserveTest {
 		TaskService.monitor(null).run(tasks);
 		
 		MergeTask mergeTask = new MergeTask();
-		mergeTask.setInputs(tasks);
 		mergeTask.setRawPath(outRawFinal);
 		mergeTask.setVariantPath(outFinal);
+		mergeTask.setInputs(tasks);
 		TaskService.run(mergeTask);
 
 		LineReader reader = new LineReader(outFinal);
@@ -168,10 +168,10 @@ public class MutserveTest {
 
 		String input = "test-data/mtdna/mixtures/input/s4.bam";
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
-		String out = "test-data/1000g.txt.0";
-		String outRaw = "test-data/1000g_raw.txt.0";
-		String outFinal = "test-data/1000g.txt";
-		String outRawFinal = "test-data/1000g_raw.txt";
+		String out = "test-data/s4.txt.0";
+		String outRaw = "test-data/s4.raw.txt.0";
+		String outFinal = "test-data/s4.txt";
+		String outRawFinal = "test-data/s4.raw.txt";
 		
 		List<VariantCallingTask> tasks = new Vector<VariantCallingTask>();
 		VariantCallingTask task = new VariantCallingTask();
@@ -185,9 +185,9 @@ public class MutserveTest {
 		TaskService.monitor(null).run(tasks);
 		
 		MergeTask mergeTask = new MergeTask();
-		mergeTask.setInputs(tasks);
 		mergeTask.setRawPath(outRawFinal);
 		mergeTask.setVariantPath(outFinal);
+		mergeTask.setInputs(tasks);
 		TaskService.run(mergeTask);
 
 		RawFileAnalysermtDNA analyser = new RawFileAnalysermtDNA();
