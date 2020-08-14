@@ -46,7 +46,7 @@ public class VariantCallingTask implements ITaskRunnable {
 		try {
 			SamReader reader = null;
 			String name = null;
-
+			
 			if (input.startsWith("http://") || input.startsWith("ftp://")) {
 				reader = SamReaderFactory.makeDefault()
 						.validationStringency(htsjdk.samtools.ValidationStringency.SILENT)
@@ -76,7 +76,6 @@ public class VariantCallingTask implements ITaskRunnable {
 
 			}
 
-			System.out.println(mode);
 			BamAnalyser analyser = new BamAnalyser(name, reference, baseQ, mapQ, alignQ, baq, mode);
 
 			HashMap<Integer, BasePosition> positions = analyser.getCounts();

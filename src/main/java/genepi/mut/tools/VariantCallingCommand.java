@@ -29,7 +29,7 @@ public class VariantCallingCommand implements Callable<Integer> {
 	@Parameters(description = "BAM/CRAM files")
 	List<String> input;
 
-	@Option(names = { "--output" }, description = "Output filename", required = true)
+	@Option(names = { "--output" }, description = "\"Output (txt or vcf)", required = true)
 	String output;
 
 	@Option(names = { "--reference" }, description = "Reference", required = true)
@@ -38,7 +38,7 @@ public class VariantCallingCommand implements Callable<Integer> {
 	@Option(names = { "--threads" }, description = "Number of threads", required = false)
 	int threads = 1;
 
-	@Option(names = { "--level" }, description = "Output filename", required = false)
+	@Option(names = { "--level" }, description = "Minimum Heteroplasmy Level", required = false)
 	double level = 0.01;
 
 	@Option(names = {
@@ -53,12 +53,12 @@ public class VariantCallingCommand implements Callable<Integer> {
 			"--alignQ" }, description = "Minimum Align Quality", required = false, showDefaultValue = Visibility.ALWAYS)
 	int alignQ = 30;
 
-	@Option(names = { "--no-baq" }, description = "Disable BAQ", required = false, showDefaultValue = Visibility.ALWAYS)
-	boolean baq = true;
+	@Option(names = { "--baq" }, description = "Enable BAQ", required = false, showDefaultValue = Visibility.ALWAYS)
+	boolean baq = false;
 
 	@Option(names = {
 			"--no-freq" }, description = "Use Frequency File", required = false, showDefaultValue = Visibility.ALWAYS)
-	boolean freq = true;
+	boolean noFreq = false;
 
 	@Option(names = {
 			"--deletions" }, description = "Call deletions (beta)", required = false, showDefaultValue = Visibility.ALWAYS)
@@ -105,8 +105,9 @@ public class VariantCallingCommand implements Callable<Integer> {
 		}
 
 		HashMap<String, Double> freqFile = null;
-
-		if (freq) {
+		
+		if (!noFreq) {
+			System.out.println("Load 1000G frequency file");
 			InputStream in = this.getClass().getClassLoader().getResourceAsStream("1000g.frq");
 			freqFile = BayesFrequencies.instance(new DataInputStream(in));
 		}
@@ -135,10 +136,10 @@ public class VariantCallingCommand implements Callable<Integer> {
 		int index = 0;
 
 		for (String name : input) {
-
+			
 			if (new File(name).getAbsolutePath().endsWith(".bam")
 					|| new File(name).getAbsolutePath().endsWith(".cram")) {
-
+				
 				String varName = variantPath + ".tmp." + index;
 
 				String rawName = null;
