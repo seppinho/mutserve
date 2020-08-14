@@ -30,12 +30,12 @@ public class VariantCallingTask implements ITaskRunnable {
 	private String rawName;
 	private HashMap<String, Double> freqFile;
 	private double level;
-	private int baseQ = 20;
-	private int mapQ = 20;
-	private int alignQ = 30;
-	boolean baq = true;
-	boolean deletions = false;
-	boolean insertions = false;
+	private int baseQ;
+	private int mapQ;
+	private int alignQ;
+	boolean baq;
+	boolean deletions;
+	boolean insertions;
 	String reference;
 	String mode;
 	String contig;

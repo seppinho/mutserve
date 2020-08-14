@@ -191,7 +191,7 @@ public class VariantCallingCommand implements Callable<Integer> {
 
 		if (output.endsWith("vcf.gz") || output.endsWith("vcf")) {
 			VcfWriter vcfWriter = new VcfWriter();
-			vcfWriter.createVCF(variantPath, output, reference, "chrM", 16569, App.VERSION + ";" + "COMMAND");
+			vcfWriter.createVCF(variantPath, output, reference, "chrM", 16569, App.VERSION + ";" + App.COMMAND);
 		}
 
 		if (writeFasta) {

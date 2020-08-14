@@ -6,6 +6,8 @@ import static lukfor.progress.Components.SPINNER;
 import static lukfor.progress.Components.TASK_NAME;
 import static lukfor.progress.Components.TIME;
 
+import java.util.Arrays;
+
 import genepi.mut.pileup.PileupToolLocal;
 import genepi.mut.tools.VariantCallingCommand;
 import lukfor.progress.renderer.ProgressIndicatorGroup;
@@ -23,7 +25,7 @@ public class App {
 
 	// public static String[] ARGS = new String[0];
 
-	String command;
+	public static String COMMAND;
 
 	public static void main(String[] args) {
 
@@ -36,6 +38,7 @@ public class App {
 			System.out.println(COPYRIGHT);
 		}
 
+		COMMAND = Arrays.toString(args);
 		new CommandLine(new VariantCallingCommand()).execute(args);
 
 	}
