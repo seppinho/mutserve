@@ -1,6 +1,7 @@
 package genepi.mut.tools;
 
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -9,10 +10,10 @@ import java.util.concurrent.Callable;
 
 import genepi.mut.App;
 import genepi.mut.objects.BayesFrequencies;
+import genepi.mut.tasks.MergeTask;
+import genepi.mut.tasks.VariantCallingTask;
 import genepi.mut.util.FastaWriter;
 import genepi.mut.util.VcfWriter;
-import genepi.mut.vc.MergeTask;
-import genepi.mut.vc.VariantCallingTask;
 import htsjdk.samtools.util.StopWatch;
 import lukfor.progress.TaskService;
 import lukfor.progress.tasks.Task;
@@ -78,38 +79,31 @@ public class VariantCallingCommand implements Callable<Integer> {
 	@Option(names = {
 			"--contig-name" }, description = "Specifify mtDNA contig name", required = false, showDefaultValue = Visibility.ALWAYS)
 	String contig;
-	
+
 	@Option(names = {
-	"--mode" }, description = "Specifify mutserve mode", required = false, showDefaultValue = Visibility.ALWAYS)
+			"--mode" }, description = "Specifify mutserve mode", required = false, showDefaultValue = Visibility.ALWAYS)
 	String mode = "mtdna";
 
 	@Option(names = {
 			"--no-ansi" }, description = "Disable ANSI support", required = false, showDefaultValue = Visibility.ALWAYS)
-	boolean noAnsi = true;
-	
+	boolean noAnsi = false;
+
 	@Option(names = { "--version" }, versionHelp = true)
 	boolean showVersion;
-	
+
 	@Option(names = { "--help" }, usageHelp = true)
 	boolean showHelp;
 
 	@Override
 	public Integer call() {
 
-		System.out.println("Parameters:");
-		System.out.println("Input: " + input);
-		System.out.println("Output: " + output);
-		System.out.println("Detection limit: " + level);
-		System.out.println("Base Quality: " + baseQ);
-		System.out.println("Map Quality: " + mapQ);
-		System.out.println("Alignment Quality: " + alignQ);
-		System.out.println("BAQ: " + baq);
-		System.out.println("1000G Frequency File: " + freq);
-		System.out.println("Deletions: " + deletions);
-		System.out.println("Insertions: " + insertions);
-		System.out.println("Fasta: " + writeFasta);
-		System.out.println("");
-		
+		if (input == null || input.isEmpty()) {
+			System.out.println();
+			System.out.println("Please provide at least one indexed CRAM or BAM file.");
+			System.out.println();
+			return 1;
+		}
+
 		HashMap<String, Double> freqFile = null;
 
 		if (freq) {
@@ -142,35 +136,40 @@ public class VariantCallingCommand implements Callable<Integer> {
 
 		for (String name : input) {
 
-			String varName = variantPath + ".tmp." + index;
+			if (new File(name).getAbsolutePath().endsWith(".bam")
+					|| new File(name).getAbsolutePath().endsWith(".cram")) {
 
-			String rawName = null;
+				String varName = variantPath + ".tmp." + index;
 
-			if (rawPath != null) {
-				rawName = rawPath + ".tmp." + index;
+				String rawName = null;
+
+				if (rawPath != null) {
+					rawName = rawPath + ".tmp." + index;
+				}
+
+				VariantCallingTask vc = new VariantCallingTask();
+
+				vc.setInput(name);
+				vc.setVarName(varName);
+				vc.setRawName(rawName);
+				vc.setFreqFile(freqFile);
+				vc.setLevel(level);
+				vc.setBaseQ(baseQ);
+				vc.setMapQ(mapQ);
+				vc.setAlignQ(alignQ);
+				vc.setBaq(baq);
+				vc.setDeletions(deletions);
+				vc.setInsertions(insertions);
+				vc.setReference(reference);
+				vc.setMode(mode);
+				vc.setContig(contig);
+
+				tasks.add(vc);
+				index++;
+
 			}
-
-			VariantCallingTask vc = new VariantCallingTask();
-
-			vc.setInput(name);
-			vc.setVarName(varName);
-			vc.setRawName(rawName);
-			vc.setFreqFile(freqFile);
-			vc.setLevel(level);
-			vc.setBaseQ(baseQ);
-			vc.setMapQ(mapQ);
-			vc.setAlignQ(alignQ);
-			vc.setBaq(baq);
-			vc.setDeletions(deletions);
-			vc.setInsertions(insertions);
-			vc.setReference(reference);
-			vc.setMode(mode);
-			vc.setContig(contig);
-
-			tasks.add(vc);
-			index++;
-
 		}
+
 		TaskService.setFailureStrategy(TaskFailureStrategy.CANCEL_TASKS);
 		TaskService.setThreads(threads);
 		List<Task> taskList = TaskService.monitor(App.STYLE_LONG_TASK).run(tasks);
@@ -179,7 +178,7 @@ public class VariantCallingCommand implements Callable<Integer> {
 			if (!task.getStatus().isSuccess()) {
 				System.out.println();
 				System.out.println("Variant Calling failed. Mutserve terminated.");
-				return -1;
+				return 1;
 			}
 		}
 

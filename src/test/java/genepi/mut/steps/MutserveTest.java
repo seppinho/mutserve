@@ -6,10 +6,10 @@ import genepi.io.FileUtil;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.text.LineReader;
 import genepi.mut.objects.VariantLine;
+import genepi.mut.tasks.MergeTask;
+import genepi.mut.tasks.VariantCallingTask;
 import genepi.mut.util.QCMetric;
 import genepi.mut.util.RawFileAnalysermtDNA;
-import genepi.mut.vc.MergeTask;
-import genepi.mut.vc.VariantCallingTask;
 import lukfor.progress.TaskService;
 
 import static org.junit.Assert.*;
