@@ -2,6 +2,8 @@ package genepi.mut.vc;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 
 import genepi.io.text.LineWriter;
@@ -23,7 +25,7 @@ import lukfor.progress.tasks.monitors.ITaskMonitor;
 
 public class VariantCallingTask implements ITaskRunnable {
 
-	private File file;
+	private String input;
 	private String varName;
 	private String rawName;
 	private HashMap<String, Double> freqFile;
@@ -35,95 +37,125 @@ public class VariantCallingTask implements ITaskRunnable {
 	boolean deletions = false;
 	boolean insertions = false;
 	String reference;
-	String mode = "mtdna";
+	String mode;
 	String contig;
 
 	@Override
 	public void run(ITaskMonitor monitor) throws Exception {
 
-		monitor.begin(file.getName());
-
-		BamAnalyser analyser = new BamAnalyser(file.getName(), reference, baseQ, mapQ, alignQ, baq, mode);
-
-		HashMap<Integer, BasePosition> positions = analyser.getCounts();
-		File varFile = new File(varName);
-		varFile.deleteOnExit();
-		File rawFile = new File(rawName);
-		rawFile.deleteOnExit();
-
-		LineWriter writerVar = new LineWriter(varFile.getAbsolutePath());
-		LineWriter writerRaw = new LineWriter(rawFile.getAbsolutePath());
-
-		// first position to analyze
-		int pos = 1;
-
-		final SamReader reader = SamReaderFactory.makeDefault()
-				.validationStringency(htsjdk.samtools.ValidationStringency.SILENT).open(SamInputResource.of(file));
-
-		SAMFileHeader header = reader.getFileHeader();
-		SAMSequenceDictionary seqDictionary = header.getSequenceDictionary();
-		
-		// only if user has not defined a contig
-		if (contig == null) {
-
-			for (SAMSequenceRecord record : seqDictionary.getSequences()) {
-
-				if (record.getSequenceLength() == 16569) {
-					contig = record.getSequenceName();
-				}
-			}
-
-		}
-
-		SAMRecordIterator reads = null;
 		try {
-			reads = reader.query(contig, 0, 0, false);
-		} catch (Exception e) {
-			throw new Exception(e.getMessage());
-		}
+			SamReader reader = null;
+			String name = null;
 
-		String reference = analyser.getReferenceString();
-
-		while (reads.hasNext()) {
-
-			if (monitor.isCanceled()) {
-				return;
+			if (input.startsWith("http://") || input.startsWith("ftp://")) {
+				reader = SamReaderFactory.makeDefault()
+						.validationStringency(htsjdk.samtools.ValidationStringency.SILENT)
+						.open(SamInputResource.of(new URL(input)));
+				name = new URL(input).getFile();
+			} else {
+				reader = SamReaderFactory.makeDefault()
+						.validationStringency(htsjdk.samtools.ValidationStringency.SILENT)
+						.open(SamInputResource.of(new File(input)));
+				name = new File(input).getName();
 			}
 
-			SAMRecord record = reads.next();
+			monitor.begin(name);
 
-			analyser.analyseRead(record, deletions, insertions);
+			SAMFileHeader header = reader.getFileHeader();
+			SAMSequenceDictionary seqDictionary = header.getSequenceDictionary();
 
-			int current = record.getStart();
+			// only if user has not defined a contig
+			if (contig == null) {
 
-			// call variants between pos and current
-			while (pos < current) {
+				for (SAMSequenceRecord record : seqDictionary.getSequences()) {
 
-				if (positions.containsKey(pos) && pos <= reference.length()) {
-					callVariant(writerRaw, writerVar, file.getName(), level, pos, positions.get(pos), reference,
-							freqFile);
-
+					if (record.getSequenceLength() == 16569) {
+						contig = record.getSequenceName();
+					}
 				}
-				positions.remove(pos);
-				pos++;
+
 			}
 
-		}
+			BamAnalyser analyser = new BamAnalyser(name, reference, baseQ, mapQ, alignQ, baq, mode);
 
-		// analyze remaining positions
-		for (int i = pos; i <= reference.length(); i++) {
-			if (positions.containsKey(pos) && pos <= reference.length()) {
-				callVariant(writerRaw, writerVar, file.getName(), level, i, positions.get(i), reference, freqFile);
+			HashMap<Integer, BasePosition> positions = analyser.getCounts();
+
+			LineWriter writerRaw = null;
+
+			if (rawName != null) {
+				File rawFile = new File(rawName);
+				rawFile.deleteOnExit();
+				writerRaw = new LineWriter(rawFile.getAbsolutePath());
 			}
-			positions.remove(i);
+
+			File varFile = new File(varName);
+			varFile.deleteOnExit();
+			LineWriter writerVar = new LineWriter(varFile.getAbsolutePath());
+
+			String reference = analyser.getReferenceString();
+
+			// first position to analyze
+			int pos = 1;
+
+			SAMRecordIterator reads = null;
+			try {
+				reads = reader.query(contig, 0, 0, false);
+			} catch (Exception e) {
+				throw new Exception(e.getMessage());
+			}
+
+			while (reads.hasNext()) {
+
+				if (monitor.isCanceled()) {
+					return;
+				}
+
+				SAMRecord record = reads.next();
+
+				analyser.analyseRead(record, deletions, insertions);
+
+				int current = record.getStart();
+
+				// call variants between pos and current
+				while (pos < current) {
+
+					if (positions.containsKey(pos) && pos <= reference.length()) {
+						callVariant(writerRaw, writerVar, name, level, pos, positions.get(pos), reference, freqFile);
+
+					}
+					positions.remove(pos);
+					pos++;
+				}
+
+			}
+
+			// analyze remaining positions
+			for (int i = pos; i <= reference.length(); i++) {
+				if (positions.containsKey(pos) && pos <= reference.length()) {
+					callVariant(writerRaw, writerVar, name, level, i, positions.get(i), reference, freqFile);
+				}
+				positions.remove(i);
+			}
+
+			positions = null;
+			reader.close();
+
+			monitor.done();
+			writerVar.close();
+			if (writerRaw != null) {
+				writerRaw.close();
+			}
+
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		positions = null;
-		reader.close();
-
-		monitor.done();
-		writerVar.close();
-		writerRaw.close();
 
 	}
 
@@ -274,14 +306,6 @@ public class VariantCallingTask implements ITaskRunnable {
 		this.mode = mode;
 	}
 
-	public File getFile() {
-		return file;
-	}
-
-	public void setFile(File file) {
-		this.file = file;
-	}
-
 	public HashMap<String, Double> getFreqFile() {
 		return freqFile;
 	}
@@ -312,6 +336,14 @@ public class VariantCallingTask implements ITaskRunnable {
 
 	public void setContig(String contig) {
 		this.contig = contig;
+	}
+
+	public String getInput() {
+		return input;
+	}
+
+	public void setInput(String input) {
+		this.input = input;
 	}
 
 }

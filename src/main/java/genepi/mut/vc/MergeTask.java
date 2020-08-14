@@ -34,35 +34,46 @@ public class MergeTask implements ITaskRunnable {
 		for (int i = 0; i < variantInputs.length; i++) {
 			VariantCallingTask task = tasks.get(i);
 			this.variantInputs[i] = new File(task.getVarName());
-			this.rawInputs[i] = new File(task.getRawName());
+		}
+		if (rawPath != null) {
+			for (int i = 0; i < rawInputs.length; i++) {
+				VariantCallingTask task = tasks.get(i);
+				this.rawInputs[i] = new File(task.getRawName());
+			}
+
 		}
 	}
 
 	@Override
 	public void run(ITaskMonitor monitor) throws Exception {
 
-		monitor.begin("Merge output files");
+		try {
+			monitor.begin("Merge output files");
 
-		assert (variantInputs != null);
-		assert (variantInputs.length > 0);
+			assert (variantInputs != null);
+			assert (variantInputs.length > 0);
 
-		new File(variantPath).delete();
-		new File(rawPath).delete();
+			new File(variantPath).delete();
 
-		LineWriter writerVar = new LineWriter(variantPath);
-		writerVar.write(BamAnalyser.headerVariants + "\n");
-		writerVar.close();
+			LineWriter writerVar = new LineWriter(variantPath);
+			writerVar.write(BamAnalyser.headerVariants + "\n");
+			writerVar.close();
 
-		LineWriter writerRaw = new LineWriter(rawPath);
-		writerRaw.write(BamAnalyser.headerRaw + "\n");
-		writerRaw.close();
+			appendFiles(new File(variantPath), variantInputs);
 
-		appendFiles(new File(variantPath), variantInputs);
-		if (rawInputs != null) {
-			appendFiles(new File(rawPath), rawInputs);
+			if (rawPath != null) {
+				new File(rawPath).delete();
+				LineWriter writerRaw = new LineWriter(rawPath);
+				writerRaw.write(BamAnalyser.headerRaw + "\n");
+				writerRaw.close();
+				appendFiles(new File(rawPath), rawInputs);
+			}
+
+			monitor.done();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		monitor.done();
 	}
 
 	public static void appendFiles(File destination, File[] sources) throws IOException {

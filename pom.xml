@@ -85,7 +85,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>genepi.mut.Server</mainClass>
+									<mainClass>genepi.mut.App</mainClass>
 								</transformer>
 							</transformers>
 
@@ -103,6 +103,7 @@
 									<include>commons-lang:commons-lang:*:*</include>
 									<include>com.github.lukfor:magic-progress:*:*</include>
 									<include>commons-io:commons-io:*:*</include>
+									<include>info.picocli:picocli:*:*</include>
 
 								</includes>
 							</artifactSet>
@@ -315,6 +316,12 @@
 			<groupId>com.github.lukfor</groupId>
 			<artifactId>magic-progress</artifactId>
 			<version>0.3.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>info.picocli</groupId>
+			<artifactId>picocli</artifactId>
+			<version>4.2.0</version>
 		</dependency>
 
 	</dependencies>

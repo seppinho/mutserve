@@ -37,7 +37,7 @@ public class MutserveTest {
 		String outRawFinal = "test-data/mtdna/bam-equal-level/here.raw.txt";
 		
 		VariantCallingTask task = new VariantCallingTask();
-		task.setFile(new File(input));
+		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
 		task.setVarName(out);
@@ -82,7 +82,7 @@ public class MutserveTest {
 		String outFinal = "test-data/1000g.indel.txt";
 		String outRawFinal = "test-data/1000g.raw.indel.txt";
 		VariantCallingTask task = new VariantCallingTask();
-		task.setFile(new File(input));
+		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
 		task.setDeletions(true);
@@ -135,7 +135,7 @@ public class MutserveTest {
 
 		List<VariantCallingTask> tasks = new Vector<VariantCallingTask>();
 		VariantCallingTask task = new VariantCallingTask();
-		task.setFile(new File(input));
+		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
 		task.setVarName(out);
@@ -175,7 +175,7 @@ public class MutserveTest {
 		
 		List<VariantCallingTask> tasks = new Vector<VariantCallingTask>();
 		VariantCallingTask task = new VariantCallingTask();
-		task.setFile(new File(input));
+		task.setInput(input);
 		task.setReference(ref);
 		task.setVarName(out);
 		task.setRawName(outRaw);
