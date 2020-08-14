@@ -18,7 +18,7 @@ public class Server {
 	public static void main(String[] args) throws InstantiationException, IllegalAccessException, SecurityException,
 			NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
 
-		Toolbox toolbox = new Toolbox("mutation-server-1.1.X.jar", args); 
+		Toolbox toolbox = new Toolbox("mutation-server-1.1.X.jar", args);
 
 		// align SE and PE with jbwa and MapReduce
 		toolbox.addTool("align", AlignStep.class);
@@ -34,15 +34,14 @@ public class Server {
 
 		// generate statistics
 		toolbox.addTool("stats", StatisticsTool.class);
-		
+
 		// generate base annotation
 		toolbox.addTool("base-annotate", BaseAnnotateTool.class);
-		
-		
-		// calculate Specificity, Sensitivity and Precision 
+
+		// calculate Specificity, Sensitivity and Precision
 		toolbox.addTool("generate-gold", GenerateGoldStandard.class);
-				
-		// calculate Specificity, Sensitivity and Precision 
+
+		// calculate Specificity, Sensitivity and Precision
 		toolbox.addTool("performance", CalcPrecision.class);
 
 		toolbox.start();

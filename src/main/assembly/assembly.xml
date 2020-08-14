@@ -8,6 +8,7 @@
 	<formats>
 		<format>zip</format>
 		<format>tar.gz</format>
+		<format>dir</format>
 	</formats>
 
 	<includeBaseDirectory>false</includeBaseDirectory>
@@ -27,8 +28,8 @@
 	<files>
 		<file>
 			<outputDirectory>/</outputDirectory>
-			<source>${project.build.directory}/${project.artifactId}-${project.version}.jar</source>
-			<destName>${project.artifactId}-${project.version}.jar</destName>
+			<source>${project.build.directory}/${project.artifactId}.jar</source>
+			<destName>${project.artifactId}.jar</destName>
 		</file>
 	</files>
 

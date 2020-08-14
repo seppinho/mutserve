@@ -1,0 +1,15 @@
+#! /bin/bash
+#  Mutserve CLI
+
+
+# The path to the folder containing MyDaemon.jar
+FILE_PATH=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+# Our classpath including our jar file
+CLASS_PATH="$FILE_PATH/mutserve.jar"
+
+# The fully qualified name of the class to execute
+CLASS="genepi.mut.App"
+
+# execute cloudgene
+java -cp $CLASS_PATH $CLASS "$@"
