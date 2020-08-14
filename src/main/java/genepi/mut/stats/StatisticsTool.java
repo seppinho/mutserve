@@ -1,7 +1,6 @@
 package genepi.mut.stats;
 
 import genepi.base.Tool;
-import genepi.mut.annotate.BaseAnnotateTool;
 
 public class StatisticsTool extends Tool {
 
