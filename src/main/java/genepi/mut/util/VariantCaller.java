@@ -395,9 +395,7 @@ private static VariantResult addHomoplasmyResult(VariantLine line, int type) {
 		build.append((result.getCovFWD() + result.getCovREV()) + "\t");
 
 		build.append(result.getType());
-
-		build.append("\r");
-
+		
 		return build.toString();
 
 	};

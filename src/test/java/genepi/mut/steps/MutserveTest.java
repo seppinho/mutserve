@@ -47,9 +47,10 @@ public class MutserveTest {
 		TaskService.monitor(null).run(tasks);
 		
 		MergeTask mergeTask = new MergeTask();
-		mergeTask.setInputs(tasks);
 		mergeTask.setRawPath(outRawFinal);
 		mergeTask.setVariantPath(outFinal);
+		mergeTask.setInputs(tasks);
+		
 		TaskService.run(mergeTask);
 
 		CsvTableReader cloudgeneReader = new CsvTableReader(outRawFinal, '\t');
@@ -163,6 +164,123 @@ public class MutserveTest {
 
 	}
 
+	@Test
+	public void test2Samples1000G() throws IOException {
+
+		String input = "test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam";
+		String ref = "test-data/mtdna/reference/rCRS.fasta";
+		String out = "test-data/1000g.txt.0";
+		String raw = "test-data/1000g_raw.txt.0";
+		String outFinal = "test-data/1000g.multi.txt";
+		String outRawFinal = "test-data/1000g_raw.multi.txt";
+
+		List<VariantCallingTask> tasks = new Vector<VariantCallingTask>();
+		VariantCallingTask task = new VariantCallingTask();
+		task.setInput(input);
+		task.setReference(ref);
+		task.setLevel(0.01);
+		task.setVarName(out);
+		task.setRawName(raw);
+		TaskService.setAnsiSupport(false);
+		tasks.add(task);
+		
+		task = new VariantCallingTask();
+		input = "test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123_2.bam";
+		out = "test-data/1000g.txt.1";
+		raw = "test-data/1000g_raw.txt.1";
+		task.setInput(input);
+		task.setReference(ref);
+		task.setLevel(0.01);
+		task.setVarName(out);
+		task.setRawName(raw);
+		TaskService.setAnsiSupport(false);
+		tasks.add(task);
+		
+		TaskService.monitor(null).run(tasks);
+		
+		MergeTask mergeTask = new MergeTask();
+		mergeTask.setRawPath(outRawFinal);
+		mergeTask.setVariantPath(outFinal);
+		mergeTask.setInputs(tasks);
+		TaskService.run(mergeTask);
+
+		LineReader reader = new LineReader(outFinal);
+
+		reader.next();
+		int count = 0;
+		while (reader.next()) {
+			count++;
+		}
+
+		assertEquals(21*2, count);
+
+	}
+	
+	@Test
+	public void test3Samples1000G() throws IOException {
+
+		String input = "test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam";
+		String ref = "test-data/mtdna/reference/rCRS.fasta";
+		String out = "test-data/1000g.txt.0";
+		String raw = "test-data/1000g_raw.txt.0";
+		String outFinal = "test-data/1000g.multi.txt";
+		String outRawFinal = "test-data/1000g_raw.multi.txt";
+
+		List<VariantCallingTask> tasks = new Vector<VariantCallingTask>();
+		VariantCallingTask task = new VariantCallingTask();
+		task.setInput(input);
+		task.setReference(ref);
+		task.setLevel(0.01);
+		task.setVarName(out);
+		task.setRawName(raw);
+		TaskService.setAnsiSupport(false);
+		tasks.add(task);
+		
+		task = new VariantCallingTask();
+		input = "test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123_2.bam";
+		out = "test-data/1000g.txt.1";
+		raw = "test-data/1000g_raw.txt.1";
+		task.setInput(input);
+		task.setReference(ref);
+		task.setLevel(0.01);
+		task.setVarName(out);
+		task.setRawName(raw);
+		TaskService.setAnsiSupport(false);
+		tasks.add(task);
+		
+		task = new VariantCallingTask();
+		input = "test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123_3.bam";
+		out = "test-data/1000g.txt.2";
+		raw = "test-data/1000g_raw.txt.2";
+		task.setInput(input);
+		task.setReference(ref);
+		task.setLevel(0.01);
+		task.setVarName(out);
+		task.setRawName(raw);
+		TaskService.setAnsiSupport(false);
+		tasks.add(task);
+		
+		TaskService.monitor(null).run(tasks);
+		
+		MergeTask mergeTask = new MergeTask();
+		mergeTask.setRawPath(outRawFinal);
+		mergeTask.setVariantPath(outFinal);
+		mergeTask.setInputs(tasks);
+		TaskService.run(mergeTask);
+
+		LineReader reader = new LineReader(outFinal);
+
+		reader.next();
+		int count = 0;
+		while (reader.next()) {
+			count++;
+		}
+
+		assertEquals(21*3, count);
+
+	}
+
+	
 	@Test
 	public void testmtDNAMixtures() throws IOException {
 
