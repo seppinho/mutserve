@@ -10,11 +10,14 @@ import genepi.mut.objects.VariantLine;
 import genepi.mut.objects.VariantResult;
 import genepi.mut.pileup.BamAnalyser;
 import genepi.mut.util.VariantCaller;
+import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMRecordIterator;
+import htsjdk.samtools.SAMSequenceDictionary;
+import htsjdk.samtools.SAMSequenceRecord;
+import htsjdk.samtools.SamInputResource;
 import htsjdk.samtools.SamReader;
 import htsjdk.samtools.SamReaderFactory;
-import htsjdk.samtools.ValidationStringency;
 import lukfor.progress.tasks.ITaskRunnable;
 import lukfor.progress.tasks.monitors.ITaskMonitor;
 
@@ -23,7 +26,6 @@ public class VariantCallingTask implements ITaskRunnable {
 	private File file;
 	private String varName;
 	private String rawName;
-	private String output;
 	private HashMap<String, Double> freqFile;
 	private double level;
 	private int baseQ = 20;
@@ -34,78 +36,90 @@ public class VariantCallingTask implements ITaskRunnable {
 	boolean insertions = false;
 	String reference;
 	String mode = "mtdna";
+	String contig;
 
 	@Override
 	public void run(ITaskMonitor monitor) throws Exception {
 
+		monitor.begin(file.getName());
+
 		BamAnalyser analyser = new BamAnalyser(file.getName(), reference, baseQ, mapQ, alignQ, baq, mode);
 
 		HashMap<Integer, BasePosition> positions = analyser.getCounts();
-
 		File varFile = new File(varName);
 		varFile.deleteOnExit();
 		File rawFile = new File(rawName);
 		rawFile.deleteOnExit();
-		
+
 		LineWriter writerVar = new LineWriter(varFile.getAbsolutePath());
 		LineWriter writerRaw = new LineWriter(rawFile.getAbsolutePath());
 
 		// first position to analyze
 		int pos = 1;
 
-		try {
+		final SamReader reader = SamReaderFactory.makeDefault()
+				.validationStringency(htsjdk.samtools.ValidationStringency.SILENT).open(SamInputResource.of(file));
 
-			final SamReader reader = SamReaderFactory.makeDefault().validationStringency(ValidationStringency.SILENT)
-					.open(file);
+		SAMFileHeader header = reader.getFileHeader();
+		SAMSequenceDictionary seqDictionary = header.getSequenceDictionary();
+		
+		// only if user has not defined a contig
+		if (contig == null) {
 
-			SAMRecordIterator fileIterator = reader.iterator();
+			for (SAMSequenceRecord record : seqDictionary.getSequences()) {
 
-			String reference = analyser.getReferenceString();
-
-			monitor.begin(file.getName());
-
-			while (fileIterator.hasNext()) {
-
-				if (monitor.isCanceled()) {
-					throw new Exception("Calculation canceled!");
+				if (record.getSequenceLength() == 16569) {
+					contig = record.getSequenceName();
 				}
-
-				SAMRecord record = fileIterator.next();
-
-				analyser.analyseRead(record, deletions, insertions);
-
-				int current = record.getStart();
-
-				// call variants between pos and current
-				while (pos < current) {
-
-					if (positions.containsKey(pos) && pos <= reference.length()) {
-						callVariant(writerRaw, writerVar, file.getName(), level, pos, positions.get(pos), reference,
-								freqFile);
-
-					}
-					positions.remove(pos);
-					pos++;
-				}
-
 			}
 
-			// analyze remaining positions
-			for (int i = pos; i <= reference.length(); i++) {
-				if (positions.containsKey(pos) && pos <= reference.length()) {
-					callVariant(writerRaw, writerVar, file.getName(), level, i, positions.get(i), reference, freqFile);
-				}
-				positions.remove(i);
-			}
-			
-			positions = null;
-			reader.close();
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw e;
 		}
+
+		SAMRecordIterator reads = null;
+		try {
+			reads = reader.query(contig, 0, 0, false);
+		} catch (Exception e) {
+			throw new Exception(e.getMessage());
+		}
+
+		String reference = analyser.getReferenceString();
+
+		while (reads.hasNext()) {
+
+			if (monitor.isCanceled()) {
+				return;
+			}
+
+			SAMRecord record = reads.next();
+
+			analyser.analyseRead(record, deletions, insertions);
+
+			int current = record.getStart();
+
+			// call variants between pos and current
+			while (pos < current) {
+
+				if (positions.containsKey(pos) && pos <= reference.length()) {
+					callVariant(writerRaw, writerVar, file.getName(), level, pos, positions.get(pos), reference,
+							freqFile);
+
+				}
+				positions.remove(pos);
+				pos++;
+			}
+
+		}
+
+		// analyze remaining positions
+		for (int i = pos; i <= reference.length(); i++) {
+			if (positions.containsKey(pos) && pos <= reference.length()) {
+				callVariant(writerRaw, writerVar, file.getName(), level, i, positions.get(i), reference, freqFile);
+			}
+			positions.remove(i);
+		}
+
+		positions = null;
+		reader.close();
 
 		monitor.done();
 		writerVar.close();
@@ -186,14 +200,6 @@ public class VariantCallingTask implements ITaskRunnable {
 			writerRaw.write(raw);
 		}
 
-	}
-
-	public String getOutput() {
-		return output;
-	}
-
-	public void setOutput(String output) {
-		this.output = output;
 	}
 
 	public double getLevel() {
@@ -298,6 +304,14 @@ public class VariantCallingTask implements ITaskRunnable {
 
 	public void setRawName(String rawName) {
 		this.rawName = rawName;
+	}
+
+	public String getContig() {
+		return contig;
+	}
+
+	public void setContig(String contig) {
+		this.contig = contig;
 	}
 
 }

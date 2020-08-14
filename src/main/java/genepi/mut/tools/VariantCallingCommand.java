@@ -18,6 +18,9 @@ import genepi.mut.vc.VariantCallingTask;
 import htsjdk.samtools.util.StopWatch;
 import lukfor.progress.TaskService;
 import lukfor.progress.renderer.ProgressIndicatorGroup;
+import lukfor.progress.tasks.Task;
+import lukfor.progress.tasks.TaskFailureStrategy;
+
 import static lukfor.progress.Components.PROGRESS_BAR;
 import static lukfor.progress.Components.SPACE;
 import static lukfor.progress.Components.SPINNER;
@@ -36,7 +39,7 @@ public class VariantCallingCommand extends Tool {
 
 	public static final String APP = "mtDNA Variant Detection";
 
-	public static final String VERSION = "v2.0.0-rc";
+	public static final String VERSION = "v2.0.0";
 
 	public static final String COPYRIGHT = "(c) Sebastian Schoenherr, Hansi Weissensteiner, Lukas Forer";
 
@@ -60,6 +63,7 @@ public class VariantCallingCommand extends Tool {
 		addOptionalParameter("mapQ", "mapping quality", Tool.STRING);
 		addOptionalParameter("alignQ", "alignment quality", Tool.STRING);
 		addOptionalParameter("threads", "amount of threads", Tool.STRING);
+		addOptionalParameter("contig", "chrM contig name", Tool.STRING);
 		addFlag("noBaq", "turn off BAQ");
 		addFlag("noFreq", "turn off 1000G frequency file");
 		addFlag("no-ansi", "Disable ANSI output");
@@ -137,12 +141,15 @@ public class VariantCallingCommand extends Tool {
 			threads = Integer.parseInt((String) getValue("threads"));
 		}
 
+		String contig = (String) getValue("contig");
+
 		String reference = (String) getValue("reference");
 
 		System.out.println("Parameters:");
 		System.out.println("Input: " + new File(input).getAbsolutePath());
 		System.out.println("Output: " + new File(output).getAbsolutePath());
 		System.out.println("Detection limit: " + level);
+		System.out.println("Threads: " + threads);
 		System.out.println("Base Quality: " + baseQ);
 		System.out.println("Map Quality: " + mapQ);
 		System.out.println("Alignment Quality: " + alignQ);
@@ -183,6 +190,7 @@ public class VariantCallingCommand extends Tool {
 		int index = 0;
 
 		for (File file : files) {
+			
 			String varName = variantPath + ".tmp." + index;
 			String rawName = rawPath + ".tmp." + index;
 
@@ -192,7 +200,6 @@ public class VariantCallingCommand extends Tool {
 			vc.setVarName(varName);
 			vc.setRawName(rawName);
 			vc.setFreqFile(freqFile);
-			vc.setOutput(output);
 			vc.setLevel(level);
 			vc.setBaseQ(baseQ);
 			vc.setMapQ(mapQ);
@@ -202,14 +209,23 @@ public class VariantCallingCommand extends Tool {
 			vc.setInsertions(insertions);
 			vc.setReference(reference);
 			vc.setMode(mode);
+			vc.setContig(contig);
 
 			tasks.add(vc);
 			index++;
 
 		}
-
+		TaskService.setFailureStrategy(TaskFailureStrategy.CANCEL_TASKS);
 		TaskService.setThreads(threads);
-		TaskService.monitor(STYLE_LONG_TASK).run(tasks);
+		List<Task> d = TaskService.monitor(STYLE_LONG_TASK).run(tasks);
+
+		for (Task d1 : d) {
+			if (!d1.getStatus().isSuccess()) {
+				System.out.println();
+				System.out.println("Variant Calling failed. Mutserve terminated.");
+				return -1;
+			}
+		}
 
 		MergeTask mergeTask = new MergeTask();
 		mergeTask.setInputs(tasks);
@@ -272,14 +288,15 @@ public class VariantCallingCommand extends Tool {
 
 	public static void main(String[] args) {
 
-		String input = "test-data/mtdna/bam/input";
+		String input = "test-data/mtdna/mixtures/input/s4.bam";
 
 		String output = "test-data/tmp.vcf";
 
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 
-		VariantCallingCommand pileup = new VariantCallingCommand(new String[] { "--input", input, "--reference", ref,
-				"--output", output, "--level", "0.01", "--noBaq", "--noFreq", "--no-ansi" });
+		VariantCallingCommand pileup = new VariantCallingCommand(
+				new String[] { "--input", input, "--reference", ref, "--output", output, "--level", "0.01", "--noBaq",
+						"--noFreq", "--no-ansi", "--threads", "2"});
 
 		pileup.start();
 
