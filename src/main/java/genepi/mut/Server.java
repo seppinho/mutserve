@@ -2,7 +2,6 @@ package genepi.mut;
 
 import genepi.base.Toolbox;
 import genepi.mut.align.AlignStep;
-import genepi.mut.annotate.BaseAnnotate;
 import genepi.mut.pileup.PileupStep;
 import genepi.mut.sort.SortStep;
 import genepi.mut.stats.StatisticsTool;
@@ -35,7 +34,7 @@ public class Server {
 		toolbox.addTool("stats", StatisticsTool.class);
 		
 		// generate base annotation
-			toolbox.addTool("annotate", BaseAnnotate.class);
+		//	toolbox.addTool("annotate", BaseAnnotate.class);
 
 		// calculate Specificity, Sensitivity and Precision
 		toolbox.addTool("generate-gold", GenerateGoldStandard.class);
