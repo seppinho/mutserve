@@ -2,6 +2,7 @@ package genepi.mut;
 
 import genepi.base.Toolbox;
 import genepi.mut.align.AlignStep;
+import genepi.mut.annotate.BaseAnnotate;
 import genepi.mut.annotate.BaseAnnotateTool;
 import genepi.mut.pileup.PileupStep;
 import genepi.mut.pileup.PileupToolLocal;
@@ -37,6 +38,9 @@ public class Server {
 
 		// generate base annotation
 		toolbox.addTool("base-annotate", BaseAnnotateTool.class);
+		
+		// generate base annotation
+			toolbox.addTool("annotate", BaseAnnotate.class);
 
 		// calculate Specificity, Sensitivity and Precision
 		toolbox.addTool("generate-gold", GenerateGoldStandard.class);
