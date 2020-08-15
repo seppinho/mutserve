@@ -37,7 +37,7 @@ public class VariantCallingTask implements ITaskRunnable {
 	boolean deletions = false;
 	boolean insertions = false;
 	String reference;
-	String mode ="mtdna";
+	String mode = "mtdna";
 	String contig;
 
 	@Override
@@ -46,7 +46,7 @@ public class VariantCallingTask implements ITaskRunnable {
 		try {
 			SamReader reader = null;
 			String name = null;
-			
+
 			if (input.startsWith("http://") || input.startsWith("ftp://")) {
 				reader = SamReaderFactory.makeDefault()
 						.validationStringency(htsjdk.samtools.ValidationStringency.SILENT)
@@ -95,7 +95,7 @@ public class VariantCallingTask implements ITaskRunnable {
 			String reference = analyser.getReferenceString();
 
 			// first position to analyze
-			int pos = 1;
+			int index = 1;
 
 			SAMRecordIterator reads = null;
 			try {
@@ -114,27 +114,28 @@ public class VariantCallingTask implements ITaskRunnable {
 
 				analyser.analyseRead(record, deletions, insertions);
 
-				int current = record.getStart();
+				int recordStart = record.getStart();
 
-				// call variants between pos and current
-				while (pos < current) {
-
-					if (positions.containsKey(pos) && pos <= reference.length()) {
-						callVariant(writerRaw, writerVar, name, level, pos, positions.get(pos), reference, freqFile);
+				// call variants of all positions that are analyzed
+				while (index < recordStart) {
+					if (positions.containsKey(index) && index <= reference.length()) {
+						callVariant(writerRaw, writerVar, name, level, index, positions.get(index), reference,
+								freqFile);
 
 					}
-					positions.remove(pos);
-					pos++;
+					positions.remove(index);
+					index++;
 				}
 
 			}
 
 			// analyze remaining positions
-			for (int i = pos; i <= reference.length(); i++) {
-				if (positions.containsKey(pos) && pos <= reference.length()) {
-					callVariant(writerRaw, writerVar, name, level, i, positions.get(i), reference, freqFile);
+			while (index <= reference.length()) {
+				if (positions.containsKey(index) && index <= reference.length()) {
+					callVariant(writerRaw, writerVar, name, level, index, positions.get(index), reference, freqFile);
 				}
-				positions.remove(i);
+				positions.remove(index);
+				index++;
 			}
 
 			positions = null;

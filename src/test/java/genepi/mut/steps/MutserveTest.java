@@ -1,5 +1,6 @@
 package genepi.mut.steps;
 
+import org.codehaus.groovy.ast.stmt.AssertStatement;
 import org.junit.Test;
 
 import genepi.io.FileUtil;
@@ -325,6 +326,50 @@ public class MutserveTest {
 			assertEquals(64.0, metric.getSensitivity(), 0.1);
 			assertEquals(100, metric.getSpecificity(), 0);
 		}
+
+	}
+	
+	@Test
+	public void testSampleWithSnpsAtEnd() throws IOException {
+
+		String input = "test-data/mtdna/bam-complex/M5-PCR-NEB_S30.bam";
+		String ref = "test-data/mtdna/reference/rCRS.fasta";
+		String out = "test-data/complex.txt.0";
+		String outRaw = "test-data/complex.raw.txt.0";
+		String outFinal = "test-data/complex.txt";
+		String outRawFinal = "test-data/complex.raw.txt";
+		
+		List<VariantCallingTask> tasks = new Vector<VariantCallingTask>();
+		VariantCallingTask task = new VariantCallingTask();
+		task.setInput(input);
+		task.setReference(ref);
+		task.setVarName(out);
+		task.setRawName(outRaw);
+		task.setLevel(0.004);
+		task.setBaq(false);
+		TaskService.setAnsiSupport(false);
+		tasks.add(task);
+		TaskService.monitor(null).run(tasks);
+		
+		MergeTask mergeTask = new MergeTask();
+		mergeTask.setRawPath(outRawFinal);
+		mergeTask.setVariantPath(outFinal);
+		mergeTask.setInputs(tasks);
+		TaskService.run(mergeTask);
+		
+		
+		LineReader reader = new LineReader(outFinal);
+		HashSet<String> results = new HashSet<String>();
+
+		reader.next();
+		while (reader.next()) {
+			String[] splits = reader.get().split("\t");
+			results.add(splits[1]);
+		}
+		
+			assertTrue(results.contains("16541"));
+			assertTrue(results.contains("16544"));
+			
 
 	}
 
