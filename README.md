@@ -1,11 +1,10 @@
 [![Build Status](https://travis-ci.org/seppinho/mutserve.svg?branch=master)](https://travis-ci.org/seppinho/mutserve)
 [![Twitter Follow](https://img.shields.io/twitter/follow/mtdnaserver.svg?style=social&label=Follow)](https://twitter.com/mtdnaserver)
 
-Mutserve is a fast variant caller for mtDNA to detect homoplasmic and heteroplasmic sites in sequence data and requires sorted and indexed BAM/CRAM files as an input. 
+Mutserve is a fast variant caller for the mitochondrial genome to detect homoplasmic and heteroplasmic sites in sequence data. It has been integrated into [haplocheck](https://github.com/genepi/haplocheck) and [mtDNA-Server](https://mtdna-server.uibk.ac.at).
 
 ## Getting started
-You can run mutserve as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is not used (``--baq`` otherwise).
-
+Mutserve requires sorted and indexed CRAM/BAM files as an input.
 ```
 mkdir mutserve
 cd mutserve
@@ -13,7 +12,7 @@ curl -sL mutserve.vercel.app | bash
 ./mutserve --reference rCRS.fasta --output s4.vcf.gz *.cram
 ```
 
-Please use [this reference file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS.fasta) when using BAQ.
+Please use [this reference file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS.fasta) when using BAQ (disabled by default since v2.0.0).
 
 ### BAM Preperation
 Best Practice Pipelines recommend the following steps for BAM files preperation:
