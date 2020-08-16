@@ -29,8 +29,8 @@ Please use [this reference file](https://raw.githubusercontent.com/seppinho/muts
 | MappingQuality     | 20 | `--mapQ`|
 | BaseQuality     | 20 | `--baseQ`|
 | AlignmentQuality     | 30 | `--alignQ`|
-| BAse Alignment Quality (BAQ)     | false | `--baq`|
-| 1000 Genoems Frequence File     | false | `--noFreq`|
+| Enable Base Alignment Quality (BAQ)     | false | `--baq`|
+| Disale 1000 Genomes Frequence File     | false | `--noFreq`|
 | Call deletions (beta)     | false | `--deletions`|
 | Call insertions (beta)     | false | `--insertions`|
 | Disable ANSI output     |  | `--no-ansi`|
