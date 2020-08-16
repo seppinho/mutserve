@@ -332,7 +332,7 @@ public class MutserveTest {
 	@Test
 	public void testSampleWithSnpsAtEnd() throws IOException {
 
-		String input = "test-data/mtdna/bam-complex/M5-PCR-NEB_S30.bam";
+		String input = "test-data/mtdna/bam-complex/m5.bam";
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 		String out = "test-data/complex.txt.0";
 		String outRaw = "test-data/complex.raw.txt.0";
