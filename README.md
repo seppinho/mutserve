@@ -9,28 +9,23 @@ Mutserve requires sorted and indexed CRAM/BAM files as an input.
 mkdir mutserve
 cd mutserve
 curl -sL mutserve.vercel.app | bash
-./mutserve --reference rCRS.fasta --output s4.vcf.gz *.cram
+./mutserve --reference rCRS.fasta --output s4.vcf.gz --threads 4 *.cram 
 ```
 
 Please use [this reference file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS.fasta) when using BAQ (disabled by default since v2.0.0).
-
-### BAM Preperation
-Best Practice Pipelines recommend the following steps for BAM files preperation:
-- Remove Duplicates (*java -jar picard-tools-2.5.0/picard.jar MarkDuplicates*), 
-- Local realignment around indels (*GenomeAnalysisTK.jar -T RealignerTargetCreator*, *java -jar GenomeAnalysisTK.jar -T IndelRealigner*) 
-- BQSR (*GenomeAnalysisTK.jar -T BaseRecalibrator*).
-
 
 ### Parameters
 
 | Parameter        | Default Value           | Command Line Option | 
 | ------------- |:-------------:| :-------------:| 
-| InputFolder     | <files> | `--input`|
-| Output File   | <filename> (supported: *.txt, *.vcf, *vcf.gz) | `--output` |
-| Rerference  | <file> | `--reference` |
+| Files     | BAM/CRAM files | |
+| Output   | <filename> (supported: *.txt, *.vcf, *vcf.gz) | `--output` |
+| Reference  | <file> | `--reference` |
 | Threads     | 1 | `--threads`|
 | Heteroplasmy Level     | 0.01 | `--level`|
-| Output Fasta     |  | `--writeFasta`|
+| Define mtDNA contig in whole-genome file     | null | `--contig`|
+| Output Fasta     | false | `--writeFasta`|
+| Output Raw File     | false | `--writeRaw`|
 | MappingQuality     | 20 | `--mapQ`|
 | BaseQuality     | 20 | `--baseQ`|
 | AlignmentQuality     | 30 | `--alignQ`|
@@ -38,6 +33,9 @@ Best Practice Pipelines recommend the following steps for BAM files preperation:
 | noFreq     | false | `--noFreq`|
 | deletions (beta)     | false | `--deletions`|
 | insertions (beta)     | false | `--insertions`|
+| Disable ANSI output     |  | `--no-ansi`|
+| Show version     |  | `--version`|
+| Show help     |  | `--help`|
 
 ## Differences to mtDNA-Server
 
@@ -45,6 +43,12 @@ The previous version of mutserve has been integrated in [mtDNA-Server](https://m
 
 - mutserve always reports the non-reference level as the heteroplasmy level, while mtDNA-Server reports the minor component.
 - mutserve includes a Bayesian model for homoplasmy detection. It uses the 1000G Phase 3 data as a prior and calculates the most likely posterior probability for each genotype. mtDNA-Server only outputs homoplasmic variants with a coverage > 30.
+
+### BAM Preperation
+Best Practice Pipelines recommend the following steps for BAM files preperation:
+- Remove Duplicates (*java -jar picard-tools-2.5.0/picard.jar MarkDuplicates*), 
+- Local realignment around indels (*GenomeAnalysisTK.jar -T RealignerTargetCreator*, *java -jar GenomeAnalysisTK.jar -T IndelRealigner*) 
+- BQSR (*GenomeAnalysisTK.jar -T BaseRecalibrator*).
 
 ## Output Formats
 
