@@ -18,11 +18,11 @@ Please use [this reference file](https://raw.githubusercontent.com/seppinho/muts
 
 ### Parameters
 
-| Parameter        | Default Value           | Command Line Option | 
+| Parameter        | Default Value / Comment          | Command Line Option | 
 | ------------- |:-------------:| :-------------:| 
-| Input Files     | | |
-| Output Name   | <filename> (supported: *.txt, *.vcf, *vcf.gz) | `--output` |
-| Reference  | <file> | `--reference` |
+| Input Files     | sorted and indexed BAM/CRAM files | |
+| Output Name   | output file; supported: \*.txt, \*.vcf, \*vcf.gz | `--output` |
+| Reference  | reference file | `--reference` |
 | Threads     | 1 | `--threads`|
 | Minimum Heteroplasmy Level     | 0.01 | `--level`|
 | Define specific mtDNA contig in whole-genome file     | null | `--contig`|
