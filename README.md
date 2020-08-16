@@ -18,21 +18,21 @@ Please use [this reference file](https://raw.githubusercontent.com/seppinho/muts
 
 | Parameter        | Default Value           | Command Line Option | 
 | ------------- |:-------------:| :-------------:| 
-| Files     | BAM/CRAM files | |
-| Output   | <filename> (supported: *.txt, *.vcf, *vcf.gz) | `--output` |
+| Input Files     | | |
+| Output Name   | <filename> (supported: *.txt, *.vcf, *vcf.gz) | `--output` |
 | Reference  | <file> | `--reference` |
 | Threads     | 1 | `--threads`|
-| Heteroplasmy Level     | 0.01 | `--level`|
-| Define mtDNA contig in whole-genome file     | null | `--contig`|
+| Minimum Heteroplasmy Level     | 0.01 | `--level`|
+| Define specific mtDNA contig in whole-genome file     | null | `--contig`|
 | Output Fasta     | false | `--writeFasta`|
 | Output Raw File     | false | `--writeRaw`|
 | MappingQuality     | 20 | `--mapQ`|
 | BaseQuality     | 20 | `--baseQ`|
 | AlignmentQuality     | 30 | `--alignQ`|
-| baq     | false | `--baq`|
-| noFreq     | false | `--noFreq`|
-| deletions (beta)     | false | `--deletions`|
-| insertions (beta)     | false | `--insertions`|
+| BAse Alignment Quality (BAQ)     | false | `--baq`|
+| 1000 Genoems Frequence File     | false | `--noFreq`|
+| Call deletions (beta)     | false | `--deletions`|
+| Call insertions (beta)     | false | `--insertions`|
 | Disable ANSI output     |  | `--no-ansi`|
 | Show version     |  | `--version`|
 | Show help     |  | `--help`|
