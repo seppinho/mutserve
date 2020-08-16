@@ -1,24 +1,19 @@
 [![Build Status](https://travis-ci.org/seppinho/mutserve.svg?branch=master)](https://travis-ci.org/seppinho/mutserve)
 [![Twitter Follow](https://img.shields.io/twitter/follow/mtdnaserver.svg?style=social&label=Follow)](https://twitter.com/mtdnaserver)
 
-Mutserve is a variant caller for mtDNA to detect heteroplasmic sites in NGS data. 
-It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability reasons, mutserve is parallelized using Hadoop MapReduce but also available as a standalone tool.
+Mutserve is a fast variant caller for mtDNA to detect homoplasmic and heteroplasmic sites in sequence data and requires sorted and indexed BAM/CRAM files as an input. 
 
-## Differences to mtDNA-Server
-
-- mutserve always reports the non-reference level as the heteroplasmy level, while mtDNA-Server reports the minor component.
-- mutserve includes a Bayesian model for homoplasmy detection. It uses the 1000G Phase 3 data as a prior and calculates the most likely posterior probability for each genotype. mtDNA-Server only outputs homoplasmic variants with a coverage > 30.
-
-
-## Standalone Usage
-You can run mutserve as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise).
+## Getting started
+You can run mutserve as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is not used (``--baq`` otherwise).
 
 ```
-wget https://github.com/seppinho/mutserve/releases/download/v1.3.4/mutserve-1.3.4.jar
-
-java -jar mutserve-1.3.4.jar  analyse-local --input <file/folder> --output <filename.vcf / filename.txt> --reference <fasta> --level 0.01
+mkdir mutserve
+cd mutserve
+curl -sL mutserve.vercel.app | bash
+./mutserve --reference rCRS.fasta --output s4.vcf.gz *.cram
 ```
-To create a VCF file as an output simple specify `--output filename.vcf.gz`. Please use [this reference file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS.fasta) when using BAQ.
+
+Please use [this reference file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS.fasta) when using BAQ.
 
 ### BAM Preperation
 Best Practice Pipelines recommend the following steps for BAM files preperation:
@@ -27,22 +22,30 @@ Best Practice Pipelines recommend the following steps for BAM files preperation:
 - BQSR (*GenomeAnalysisTK.jar -T BaseRecalibrator*).
 
 
-### Default Parameters
+### Parameters
 
 | Parameter        | Default Value           | Command Line Option | 
 | ------------- |:-------------:| :-------------:| 
-| InputFolder     | <folder> | `--input`|
+| InputFolder     | <files> | `--input`|
 | Output File   | <filename> (supported: *.txt, *.vcf, *vcf.gz) | `--output` |
-| Output Fasta     |  | `--writeFasta`|
+| Rerference  | <file> | `--reference` |
+| Threads     | 1 | `--threads`|
 | Heteroplasmy Level     | 0.01 | `--level`|
+| Output Fasta     |  | `--writeFasta`|
 | MappingQuality     | 20 | `--mapQ`|
 | BaseQuality     | 20 | `--baseQ`|
 | AlignmentQuality     | 30 | `--alignQ`|
-| noBaq     | false | `--noBaq`|
+| baq     | false | `--baq`|
 | noFreq     | false | `--noFreq`|
 | deletions (beta)     | false | `--deletions`|
 | insertions (beta)     | false | `--insertions`|
 
+## Differences to mtDNA-Server
+
+The previous version of mutserve has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability reasons, mutserve is parallelized using Hadoop MapReduce but also available as a standalone tool.
+
+- mutserve always reports the non-reference level as the heteroplasmy level, while mtDNA-Server reports the minor component.
+- mutserve includes a Bayesian model for homoplasmy detection. It uses the 1000G Phase 3 data as a prior and calculates the most likely posterior probability for each genotype. mtDNA-Server only outputs homoplasmic variants with a coverage > 30.
 
 ## Output Formats
 
