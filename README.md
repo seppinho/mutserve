@@ -5,12 +5,18 @@
 
 Mutserve is a variant caller for the mitochondrial genome to detect homoplasmic and heteroplasmic sites in sequence data. It has been integrated into [haplocheck](https://github.com/genepi/haplocheck) and [mtDNA-Server](https://mtdna-server.uibk.ac.at).
 
-## Getting started
+## Installation
 Mutserve requires sorted and indexed CRAM/BAM files as an input.
+
 ```
 mkdir mutserve
 cd mutserve
 curl -sL mutserve.vercel.app | bash
+./mutserve --reference rCRS.fasta --output s4.vcf.gz --threads 4 *.cram 
+```
+## Usage
+
+```
 ./mutserve --reference rCRS.fasta --output s4.vcf.gz --threads 4 *.cram 
 ```
 
