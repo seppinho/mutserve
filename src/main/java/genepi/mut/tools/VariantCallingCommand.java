@@ -3,6 +3,7 @@ package genepi.mut.tools;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -96,6 +97,7 @@ public class VariantCallingCommand implements Callable<Integer> {
 
 	@Override
 	public Integer call() {
+		System.out.println();
 
 		if (input == null || input.isEmpty()) {
 			System.out.println();
@@ -104,10 +106,16 @@ public class VariantCallingCommand implements Callable<Integer> {
 			return 1;
 		}
 
+		if (input.size() == 1 && new File(input.get(0)).isDirectory()) {
+			for (File f : new File(input.get(0)).listFiles()) {
+				input.add(f.getAbsolutePath());
+			}
+			input.remove(0);
+		}
+
 		HashMap<String, Double> freqFile = null;
-		
+
 		if (!noFreq) {
-			System.out.println("Load 1000G frequency file");
 			InputStream in = this.getClass().getClassLoader().getResourceAsStream("1000g.frq");
 			freqFile = BayesFrequencies.instance(new DataInputStream(in));
 		}
@@ -136,10 +144,10 @@ public class VariantCallingCommand implements Callable<Integer> {
 		int index = 0;
 
 		for (String name : input) {
-			
+
 			if (new File(name).getAbsolutePath().endsWith(".bam")
 					|| new File(name).getAbsolutePath().endsWith(".cram")) {
-				
+
 				String varName = variantPath + ".tmp." + index;
 
 				String rawName = null;
