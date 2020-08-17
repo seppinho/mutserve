@@ -1,48 +1,56 @@
+# Mutserve
+
 [![Build Status](https://travis-ci.org/seppinho/mutserve.svg?branch=master)](https://travis-ci.org/seppinho/mutserve)
 [![Twitter Follow](https://img.shields.io/twitter/follow/mtdnaserver.svg?style=social&label=Follow)](https://twitter.com/mtdnaserver)
 
-Mutserve is a variant caller for mtDNA to detect heteroplasmic sites in NGS data. 
-It has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability reasons, mutserve is parallelized using Hadoop MapReduce but also available as a standalone tool.
+Mutserve is a variant caller for the mitochondrial genome to detect homoplasmic and heteroplasmic sites in sequence data. It has been integrated into [haplocheck](https://github.com/genepi/haplocheck) and [mtDNA-Server](https://mtdna-server.uibk.ac.at).
+
+## Getting started
+Mutserve requires sorted and indexed CRAM/BAM files as an input.
+```
+mkdir mutserve
+cd mutserve
+curl -sL mutserve.vercel.app | bash
+./mutserve --reference rCRS.fasta --output s4.vcf.gz --threads 4 *.cram 
+```
+
+Please use [this reference file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS.fasta) when using BAQ (disabled by default since v2.0.0).
+
+### Parameters
+
+| Parameter        | Default Value / Comment          | Command Line Option | 
+| ------------- |:-------------:| :-------------:| 
+| Input Files     | sorted and indexed BAM/CRAM files | |
+| Output Name   | output file; supported: \*.txt, \*.vcf, \*vcf.gz | `--output` |
+| Reference  | reference file | `--reference` |
+| Threads     | 1 | `--threads`|
+| Minimum Heteroplasmy Level     | 0.01 | `--level`|
+| Define specific mtDNA contig in whole-genome file     | null | `--contig`|
+| Output Fasta     | false | `--writeFasta`|
+| Output Raw File     | false | `--writeRaw`|
+| MappingQuality     | 20 | `--mapQ`|
+| BaseQuality     | 20 | `--baseQ`|
+| AlignmentQuality     | 30 | `--alignQ`|
+| Enable Base Alignment Quality (BAQ)     | false | `--baq`|
+| Disale 1000 Genomes Frequence File     | false | `--noFreq`|
+| Call deletions (beta)     | false | `--deletions`|
+| Call insertions (beta)     | false | `--insertions`|
+| Disable ANSI output     |  | `--no-ansi`|
+| Show version     |  | `--version`|
+| Show help     |  | `--help`|
 
 ## Differences to mtDNA-Server
 
+The previous version of mutserve has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability reasons, mutserve is parallelized using Hadoop MapReduce but also available as a standalone tool.
+
 - mutserve always reports the non-reference level as the heteroplasmy level, while mtDNA-Server reports the minor component.
 - mutserve includes a Bayesian model for homoplasmy detection. It uses the 1000G Phase 3 data as a prior and calculates the most likely posterior probability for each genotype. mtDNA-Server only outputs homoplasmic variants with a coverage > 30.
-
-
-## Standalone Usage
-You can run mutserve as a standalone tool starting with CRAM/BAM files and detecting heteroplasmic and homoplasmic sites. By default BAQ is set (``--noBaq`` otherwise).
-
-```
-wget https://github.com/seppinho/mutserve/releases/download/v1.3.4/mutserve-1.3.4.jar
-
-java -jar mutserve-1.3.4.jar  analyse-local --input <file/folder> --output <filename.vcf / filename.txt> --reference <fasta> --level 0.01
-```
-To create a VCF file as an output simple specify `--output filename.vcf.gz`. Please use [this reference file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS.fasta) when using BAQ.
 
 ### BAM Preperation
 Best Practice Pipelines recommend the following steps for BAM files preperation:
 - Remove Duplicates (*java -jar picard-tools-2.5.0/picard.jar MarkDuplicates*), 
 - Local realignment around indels (*GenomeAnalysisTK.jar -T RealignerTargetCreator*, *java -jar GenomeAnalysisTK.jar -T IndelRealigner*) 
 - BQSR (*GenomeAnalysisTK.jar -T BaseRecalibrator*).
-
-
-### Default Parameters
-
-| Parameter        | Default Value           | Command Line Option | 
-| ------------- |:-------------:| :-------------:| 
-| InputFolder     | <folder> | `--input`|
-| Output File   | <filename> (supported: *.txt, *.vcf, *vcf.gz) | `--output` |
-| Output Fasta     |  | `--writeFasta`|
-| Heteroplasmy Level     | 0.01 | `--level`|
-| MappingQuality     | 20 | `--mapQ`|
-| BaseQuality     | 20 | `--baseQ`|
-| AlignmentQuality     | 30 | `--alignQ`|
-| noBaq     | false | `--noBaq`|
-| noFreq     | false | `--noFreq`|
-| deletions (beta)     | false | `--deletions`|
-| insertions (beta)     | false | `--insertions`|
-
 
 ## Output Formats
 
