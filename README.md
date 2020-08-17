@@ -12,7 +12,6 @@ Mutserve requires sorted and indexed CRAM/BAM files as an input.
 mkdir mutserve
 cd mutserve
 curl -sL mutserve.vercel.app | bash
-./mutserve --reference rCRS.fasta --output s4.vcf.gz --threads 4 *.cram 
 ```
 ## Usage
 
