@@ -12,11 +12,20 @@ Mutserve requires sorted and indexed CRAM/BAM files as an input.
 mkdir mutserve
 cd mutserve
 curl -sL mutserve.vercel.app | bash
+./mutserve
 ```
 ## Usage
 
+## Available Tools
+Currently two subcommands are available. 
+
+* [call](#mutserve-call) calls homoplasmic and heteroplasmic positions. 
+* [annotate](#mutserve-annotate) annotates the mutserve variant file (generated with `mutserve call`). 
+
+## Mutserve Call
+
 ```
-./mutserve --reference rCRS.fasta --output s4.vcf.gz --threads 4 *.cram 
+./mutserve call --reference rCRS.fasta --output s4.vcf.gz --threads 4 *.cram 
 ```
 
 Please use [this reference file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS.fasta) when using BAQ (disabled by default since v2.0.0).
