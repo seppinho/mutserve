@@ -10,10 +10,14 @@ import java.util.Arrays;
 
 import genepi.mut.pileup.PileupToolLocal;
 import genepi.mut.tools.VariantCallingCommand;
+import genepi.mut.tools.AnnotationCommand;
 import lukfor.progress.renderer.ProgressIndicatorGroup;
 import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
-public class App {
+@Command(name = "mutserve")
+public class App implements Runnable {
 
 	public static final String URL = "https://github.com/seppinho/mutserve";
 
@@ -26,6 +30,11 @@ public class App {
 	// public static String[] ARGS = new String[0];
 
 	public static String COMMAND;
+	
+	static CommandLine commandLine; 
+	
+	@Option(names = { "--version" }, versionHelp = true)
+	boolean showVersion;
 
 	public static void main(String[] args) {
 
@@ -39,8 +48,14 @@ public class App {
 		}
 
 		COMMAND = Arrays.toString(args);
-		new CommandLine(new VariantCallingCommand()).execute(args);
 
+		commandLine = new CommandLine(new App());
+		commandLine.addSubcommand("call", new VariantCallingCommand());
+		commandLine.addSubcommand("annotate", new AnnotationCommand());
+
+		commandLine.setExecutionStrategy(new CommandLine.RunLast());
+		commandLine.execute(args);
+		
 	}
 
 	public static ProgressIndicatorGroup STYLE_LONG_TASK = new ProgressIndicatorGroup(SPACE, SPINNER, SPACE, TASK_NAME,
@@ -48,5 +63,12 @@ public class App {
 
 	public static ProgressIndicatorGroup STYLE_SHORT_TASK = new ProgressIndicatorGroup(SPACE, SPINNER, SPACE,
 			TASK_NAME);
+
+	@Override
+	public void run() {
+		System.out.println("mutserve");
+		commandLine.usage(System.out);
+
+	}
 
 }

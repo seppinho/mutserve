@@ -24,7 +24,7 @@ import picocli.CommandLine.Help.Visibility;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-@Command(name = App.APP, version = App.VERSION)
+@Command(name = "call", version = App.VERSION, description="Call homoplasmic and heteroplasmic positions.")
 public class VariantCallingCommand implements Callable<Integer> {
 
 	@Parameters(description = "BAM/CRAM files")
