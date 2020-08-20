@@ -9,15 +9,12 @@ Mutserve is a variant caller for the mitochondrial genome to detect homoplasmic 
 Mutserve requires sorted and indexed CRAM/BAM files as an input.
 
 ```
-mkdir mutserve
-cd mutserve
 curl -sL mutserve.vercel.app | bash
 ./mutserve
 ```
-## Usage
 
 ## Available Tools
-Currently two subcommands are available. 
+Currently two tools are available. 
 
 * [call](#mutserve-call) calls homoplasmic and heteroplasmic positions. 
 * [annotate](#mutserve-annotate) annotates the mutserve variant file (generated with `mutserve call`). 
