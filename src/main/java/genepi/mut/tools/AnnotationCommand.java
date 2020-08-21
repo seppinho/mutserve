@@ -41,8 +41,8 @@ public class AnnotationCommand implements Callable<Integer> {
 			return 1;
 		}
 
-		Table inputTable;
-		inputTable = TableBuilder.fromTableReader(input, new CsvTableReader(input, '\t'), false);
+		Table inputTable = TableBuilder.fromCsvFile(input).withColumnTypeDetection(false).withSeparator('\t').load();
+
 		inputTable.getColumns().append(new StringColumn("Mutation"), new IBuildValueFunction() {
 
 			public String buildValue(Row row) throws IOException {
