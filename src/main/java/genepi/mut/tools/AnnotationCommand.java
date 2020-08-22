@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
-import genepi.io.table.reader.CsvTableReader;
 import lukfor.tables.Table;
 import lukfor.tables.columns.IBuildValueFunction;
 import lukfor.tables.columns.types.StringColumn;
@@ -59,11 +58,12 @@ public class AnnotationCommand implements Callable<Integer> {
 			}
 		});
 
-		Table annotationTable = TableBuilder.fromTableReader(annotation, new CsvTableReader(annotation, '\t'), false);
+		Table annotationTable = TableBuilder.fromCsvFile(annotation).withColumnTypeDetection(false).withSeparator('\t')
+				.load();
 
 		if (annotationTable.getColumn("Mutation") == null) {
 			System.out
-					.println("Missing column 'Mutation' in annotaion file '" + annotationFile.getAbsolutePath() + "'.");
+					.println("Missing column 'Mutation' in annotation file '" + annotationFile.getAbsolutePath() + "'.");
 			return 1;
 		}
 
