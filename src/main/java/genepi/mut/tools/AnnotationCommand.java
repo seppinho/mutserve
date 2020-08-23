@@ -28,6 +28,8 @@ public class AnnotationCommand implements Callable<Integer> {
 	@Override
 	public Integer call() throws Exception {
 
+		Table.disableLog();
+
 		File inputFile = new File(input);
 		if (!inputFile.exists()) {
 			System.out.println("Input file '" + inputFile.getAbsolutePath() + "' not found.");
@@ -62,14 +64,16 @@ public class AnnotationCommand implements Callable<Integer> {
 				.load();
 
 		if (annotationTable.getColumn("Mutation") == null) {
-			System.out
-					.println("Missing column 'Mutation' in annotation file '" + annotationFile.getAbsolutePath() + "'.");
+			System.out.println(
+					"Missing column 'Mutation' in annotation file '" + annotationFile.getAbsolutePath() + "'.");
 			return 1;
 		}
 
 		inputTable.merge(annotationTable, "Mutation");
 
 		TableWriter.writeToCsv(inputTable, output, '\t');
+
+		System.out.println("Results written to file '" + output + "'.");
 
 		return 0;
 	}
