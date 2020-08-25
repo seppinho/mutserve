@@ -91,7 +91,7 @@
 									<include>org.apache.commons:commons-math3:*:*</include>
 									<include>commons-lang:commons-lang:*:*</include>
 									<include>com.github.lukfor:magic-progress:*:*</include>
-									<include>lukfor:magic-tables:*:*</include>
+									<include>com.github.lukfor:magic-tables:*:*</include>
 									<include>commons-io:commons-io:*:*</include>
 									<include>info.picocli:picocli:*:*</include>
 
@@ -244,13 +244,12 @@
 			<groupId>info.picocli</groupId>
 			<artifactId>picocli</artifactId>
 			<version>4.5.0</version>
-		</dependency>
-		
+		</dependency>		
 		
 		<dependency>
-			<groupId>lukfor</groupId>
+			<groupId>com.github.lukfor</groupId>
 			<artifactId>magic-tables</artifactId>
-			<version>0.2.1</version>
+			<version>0.3.0</version>
 		</dependency>
 
 	</dependencies>
