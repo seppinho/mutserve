@@ -19,7 +19,7 @@ Currently two tools are available.
 * [call](#mutserve-call) calls homoplasmic and heteroplasmic positions. 
 * [annotate](#mutserve-annotate) annotates the mutserve variant file (generated with `mutserve call`). 
 
-## Mutserve Call
+## <a name="mutserve-call">Mutserve Call</a>
 
 ```
 ./mutserve call --reference rCRS.fasta --output s4.vcf.gz --threads 4 *.cram 
@@ -49,6 +49,14 @@ Please use [this reference file](https://raw.githubusercontent.com/seppinho/muts
 | Disable ANSI output     |  | `--no-ansi`|
 | Show version     |  | `--version`|
 | Show help     |  | `--help`|
+
+## <a name="mutserve-annotate">Mutserve Annotate</a>
+
+Mutserve allows to annotate the variant file (.txt) with a predefined [annotation file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS_annotation_2020-08-20.txt) 
+
+```
+./mutserve annotate --input variantfile.txt --annotation rCRS_annotation_2020-08-20.txt --output AnnotatedVariants.txt
+```
 
 ## Differences to mtDNA-Server
 
