@@ -393,6 +393,10 @@ private static VariantResult addHomoplasmyResult(VariantLine line, int type) {
 		build.append(df.format(result.getLevelMinor()) + "\t");
 
 		build.append((result.getCovFWD() + result.getCovREV()) + "\t");
+		
+		build.append((result.getCovFWD()) + "\t");
+		
+		build.append((result.getCovREV()) + "\t");
 
 		build.append(result.getType());
 		
