@@ -1,6 +1,5 @@
 package genepi.mut.steps;
 
-import org.codehaus.groovy.ast.stmt.AssertStatement;
 import org.junit.Test;
 
 import genepi.io.FileUtil;
