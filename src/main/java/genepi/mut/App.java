@@ -23,7 +23,7 @@ public class App implements Runnable {
 
 	public static final String APP = "mtDNA Variant Detection";
 
-	public static final String VERSION = "v2.0.0-rc5";
+	public static final String VERSION = "v2.0.0-rc6";
 
 	public static final String COPYRIGHT = "(c) Sebastian Schoenherr, Hansi Weissensteiner, Lukas Forer";
 
