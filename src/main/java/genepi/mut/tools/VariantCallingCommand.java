@@ -3,7 +3,6 @@ package genepi.mut.tools;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -24,7 +23,7 @@ import picocli.CommandLine.Help.Visibility;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "call", version = App.VERSION, description="Call homoplasmic and heteroplasmic positions.")
+@Command(name = "call", version = App.VERSION, description = "Call homoplasmic and heteroplasmic positions.")
 public class VariantCallingCommand implements Callable<Integer> {
 
 	@Parameters(description = "BAM/CRAM files")
@@ -97,20 +96,24 @@ public class VariantCallingCommand implements Callable<Integer> {
 
 	@Override
 	public Integer call() {
-		System.out.println();
 
+		if (input.size() == 1 && new File(input.get(0)).isDirectory()) {
+			int count = 0;
+			for (File f : new File(input.get(0)).listFiles()) {
+				if(f.getName().endsWith("bam") || f.getName().endsWith("cram")) {
+					input.add(f.getAbsolutePath());
+					count++;
+				}
+			}
+			System.out.println(count + " files added.");
+			input.remove(0);
+		}
+		
 		if (input == null || input.isEmpty()) {
 			System.out.println();
 			System.out.println("Please provide at least one indexed CRAM or BAM file.");
 			System.out.println();
-			return 1;
-		}
-
-		if (input.size() == 1 && new File(input.get(0)).isDirectory()) {
-			for (File f : new File(input.get(0)).listFiles()) {
-				input.add(f.getAbsolutePath());
-			}
-			input.remove(0);
+			System.exit(-1);
 		}
 
 		HashMap<String, Double> freqFile = null;
@@ -142,11 +145,8 @@ public class VariantCallingCommand implements Callable<Integer> {
 
 		List<VariantCallingTask> tasks = new Vector<VariantCallingTask>();
 		int index = 0;
-
+ 
 		for (String name : input) {
-
-			if (new File(name).getAbsolutePath().endsWith(".bam")
-					|| new File(name).getAbsolutePath().endsWith(".cram")) {
 
 				String varName = variantPath + ".tmp." + index;
 
@@ -176,7 +176,6 @@ public class VariantCallingCommand implements Callable<Integer> {
 				tasks.add(vc);
 				index++;
 
-			}
 		}
 
 		TaskService.setFailureStrategy(TaskFailureStrategy.CANCEL_TASKS);
@@ -185,9 +184,8 @@ public class VariantCallingCommand implements Callable<Integer> {
 
 		for (Task task : taskList) {
 			if (!task.getStatus().isSuccess()) {
-				System.out.println();
 				System.out.println("Variant Calling failed. Mutserve terminated.");
-				return 1;
+				System.exit(-1);
 			}
 		}
 
