@@ -43,7 +43,6 @@ public class VariantCallingTask implements ITaskRunnable {
 	@Override
 	public void run(ITaskMonitor monitor) throws Exception {
 
-		try {
 			SamReader reader = null;
 			String name = null;
 
@@ -65,7 +64,7 @@ public class VariantCallingTask implements ITaskRunnable {
 			SAMSequenceDictionary seqDictionary = header.getSequenceDictionary();
 
 			// only if user has not defined a contig
-			if (contig == null) {
+			if (contig == null) { 
 
 				for (SAMSequenceRecord record : seqDictionary.getSequences()) {
 
@@ -101,6 +100,7 @@ public class VariantCallingTask implements ITaskRunnable {
 			try {
 				reads = reader.query(contig, 0, 0, false);
 			} catch (Exception e) {
+				monitor.setCanceled(true);
 				throw new Exception(e.getMessage());
 			}
 
@@ -148,16 +148,6 @@ public class VariantCallingTask implements ITaskRunnable {
 				writerRaw.close();
 			}
 
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 	}
 
