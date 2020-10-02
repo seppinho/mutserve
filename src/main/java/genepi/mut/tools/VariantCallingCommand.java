@@ -103,7 +103,7 @@ public class VariantCallingCommand implements Callable<Integer> {
 				if(f.getName().endsWith("bam") || f.getName().endsWith("cram")) {
 					input.add(f.getAbsolutePath());
 					count++;
-				}
+				} 
 			}
 			System.out.println(count + " files added.");
 			input.remove(0);
@@ -121,7 +121,7 @@ public class VariantCallingCommand implements Callable<Integer> {
 		if (!noFreq) {
 			InputStream in = this.getClass().getClassLoader().getResourceAsStream("1000g.frq");
 			freqFile = BayesFrequencies.instance(new DataInputStream(in));
-		}
+		} 
 
 		if (noAnsi) {
 			TaskService.setAnsiSupport(false);
@@ -184,6 +184,7 @@ public class VariantCallingCommand implements Callable<Integer> {
 
 		for (Task task : taskList) {
 			if (!task.getStatus().isSuccess()) {
+				System.out.println(task.getStatus().getThrowable().toString());
 				System.out.println("Variant Calling failed. Mutserve terminated.");
 				System.exit(-1);
 			}
