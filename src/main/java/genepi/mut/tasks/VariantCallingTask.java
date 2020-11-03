@@ -145,6 +145,7 @@ public class VariantCallingTask implements ITaskRunnable {
 			writerVar.write("");
 			writerVar.close();
 			if (writerRaw != null) {
+				writerRaw.write("");
 				writerRaw.close();
 			}
 
