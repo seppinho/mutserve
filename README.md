@@ -67,7 +67,6 @@ The previous version of mutserve has been integrated in [mtDNA-Server](https://m
 
 ### BAM Preperation
 Best Practice Pipelines recommend the following steps for BAM files preperation:
-- Remove Duplicates (*java -jar picard-tools-2.5.0/picard.jar MarkDuplicates*), 
 - Local realignment around indels (*GenomeAnalysisTK.jar -T RealignerTargetCreator*, *java -jar GenomeAnalysisTK.jar -T IndelRealigner*) 
 - BQSR (*GenomeAnalysisTK.jar -T BaseRecalibrator*).
 
