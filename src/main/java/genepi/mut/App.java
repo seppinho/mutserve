@@ -8,7 +8,6 @@ import static lukfor.progress.Components.TIME;
 
 import java.util.Arrays;
 
-import genepi.mut.pileup.PileupToolLocal;
 import genepi.mut.tools.VariantCallingCommand;
 import genepi.mut.tools.AnnotationCommand;
 import lukfor.progress.renderer.ProgressIndicatorGroup;

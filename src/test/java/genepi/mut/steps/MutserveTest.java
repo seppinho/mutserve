@@ -75,36 +75,35 @@ public class MutserveTest {
 	@Test
 	public void test1000GIndel() throws IOException {
 
-		List<VariantCallingTask> tasks = new Vector<VariantCallingTask>();
 		String input = "test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam";
 		String ref = "test-data/mtdna/reference/rCRS.fasta";
 		String out = "test-data/1000g.indel.txt.0";
 		String raw = "test-data/1000g.raw.indel.txt.0";
 		String outFinal = "test-data/1000g.indel.txt";
 		String outRawFinal = "test-data/1000g.raw.indel.txt";
+		
+		List<VariantCallingTask> tasks = new Vector<VariantCallingTask>();
 		VariantCallingTask task = new VariantCallingTask();
 		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
-		task.setDeletions(true);
 		task.setVarName(out);
 		task.setRawName(raw);
+		task.setDeletions(true);
 		task.setBaq(true);
-		tasks.add(task);
 		TaskService.setAnsiSupport(false);
+		tasks.add(task);
 		TaskService.monitor(null).run(tasks);
 		
 		MergeTask mergeTask = new MergeTask();
-		mergeTask.setInputs(tasks);
 		mergeTask.setRawPath(outRawFinal);
 		mergeTask.setVariantPath(outFinal);
+		mergeTask.setInputs(tasks);
 		TaskService.run(mergeTask);
 
 		Set<String> expected = new HashSet<String>(
 				Arrays.asList("1456", "2746", "3200", "12410", "14071", "14569", "15463", "16093", "16360", "10394",
 						"1438", "152", "15326", "15340", "16519", "263", "4769", "750", "8592", "8860", "3107"));
-
-		// insertions: "302.1", "310.1"
 
 		LineReader reader = new LineReader(outFinal);
 		HashSet<String> results = new HashSet<String>();

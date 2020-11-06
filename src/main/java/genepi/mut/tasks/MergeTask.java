@@ -77,25 +77,17 @@ public class MergeTask implements ITaskRunnable {
 	}
 
 	public static void appendFiles(File destination, File[] sources) throws IOException {
-		OutputStream output = null;
-		try {
-			output = new BufferedOutputStream(new FileOutputStream(destination, true));
+		try (OutputStream output = new BufferedOutputStream(new FileOutputStream(destination, true))) {
 			for (File source : sources) {
 				appendFile(output, source);
 				source.delete();
 			}
-		} finally {
-			IOUtils.closeQuietly(output);
 		}
 	}
 
 	private static void appendFile(OutputStream output, File source) throws IOException {
-		InputStream input = null;
-		try {
-			input = new BufferedInputStream(new FileInputStream(source));
+		try (InputStream input = new BufferedInputStream(new FileInputStream(source))) {
 			IOUtils.copy(input, output);
-		} finally {
-			IOUtils.closeQuietly(input);
 		}
 	}
 
