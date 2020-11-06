@@ -14,7 +14,7 @@
 	</properties>
 
 	<repositories>
-
+	
 		<repository>
 			<id>genepi</id>
 			<url>https://raw.github.com/genepi/maven-repository/mvn-repo/</url>
@@ -22,6 +22,12 @@
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
+		</repository>
+	
+		<repository>
+			<id>bintray-lukfor-maven</id>
+			<name>bintray</name>
+			<url>https://dl.bintray.com/lukfor/maven</url>
 		</repository>
 
 		<repository>
@@ -36,9 +42,9 @@
 		</repository>
 
 		<repository>
-			<id>bintray-lukfor-maven</id>
+			<id>bintray-genepi-maven</id>
 			<name>bintray</name>
-			<url>https://dl.bintray.com/lukfor/maven</url>
+			<url>https://dl.bintray.com/genepi/maven</url>
 		</repository>
 
 	</repositories>
@@ -138,7 +144,7 @@
 		<dependency>
 			<groupId>genepi</groupId>
 			<artifactId>genepi-hadoop</artifactId>
-			<version>mr1-1.2.0</version>
+			<version>mr1-1.4.1</version>
 		</dependency>
 
 		<dependency>
@@ -255,3 +261,4 @@
 	</dependencies>
 
 </project>
+	
