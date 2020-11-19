@@ -146,6 +146,7 @@ public class VcfWriter {
 					if (variant.getType() == 1 || variant.getType() == 4 || variant.getType() == 5) {
 						final GenotypeBuilder gb = new GenotypeBuilder(sample.getId(), Arrays.asList(varAllele));
 						gb.DP(variant.getCoverage());
+						gb.attribute("AF", variant.getLevel());
 
 						genotypes.add(gb.make());
 
