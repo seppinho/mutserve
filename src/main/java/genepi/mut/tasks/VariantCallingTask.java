@@ -41,9 +41,9 @@ public class VariantCallingTask implements ITaskRunnable {
 	String contig;
 
 	@Override
-	public void run(ITaskMonitor monitor) {
+	public void run(ITaskMonitor monitor) throws Exception  {
 
-		try {
+		
 			SamReader reader = null;
 			String name = null;
 
@@ -150,16 +150,6 @@ public class VariantCallingTask implements ITaskRunnable {
 				writerRaw.write("");
 				writerRaw.close();
 			}
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 	}
 
