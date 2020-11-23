@@ -68,7 +68,7 @@ public class VcfWriter {
 					int type5 = 0;
 					boolean multiInsertion = false;
 					boolean complex = false;
-
+					
 					for (Variant var : variants) {
 
 						if ((var.getType() == 1)) {
@@ -83,12 +83,12 @@ public class VcfWriter {
 					} else if (type5 > 1) {
 						multiInsertion = true;
 					}
-
+					
 					String base = null;
 					char ref = '-';
 
 					Variant variant = variants.get(0);
-
+					
 					if (variant.getVariant() == 'D') {
 						variant.setVariantBase('*');
 					}
@@ -100,9 +100,8 @@ public class VcfWriter {
 					if (variant.getMinor() == 'D') {
 						variant.setMinor('*');
 					}
-
-					// default case: a position does not consist of variants in combination with
-					// insertions
+					
+					//default case: a position does not consist of variants in combination with insertions
 					if (!multiInsertion && !complex) {
 
 						// deletions handling
@@ -122,7 +121,7 @@ public class VcfWriter {
 
 							StringBuilder insertionBuilder = new StringBuilder();
 
-							// TODO sort!
+							//TODO sort!
 							for (Variant var : variants) {
 								if (var.getType() == 5) {
 									insertionBuilder.append(var.getVariant());
@@ -130,15 +129,15 @@ public class VcfWriter {
 							}
 							String insertion = insertionBuilder.toString();
 							base = ref + insertion;
-
+							
 						}
 					}
-
-					// TOOD: heteroplasmy and insertion!
-					if (ref == '-') {
+					
+					//TOOD: heteroplasmy and insertion!
+					if(ref == '-') {
 						continue;
 					}
-
+					
 					Allele refAllele = Allele.create(ref + "", true);
 					Allele varAllele = Allele.create(base + "", false);
 					alleles.add(refAllele);
@@ -180,7 +179,16 @@ public class VcfWriter {
 								Arrays.asList(genotypeAllele1, genotypeAllele2));
 						gb.DP(variant.getCoverage());
 
-						gb.attribute("AF", variant.getLevel());
+						String alleleFreq = variant.getLevel() + "";
+
+						if (variant.getLevel() == variant.getMajorLevel() && variant.getMinor() != variant.getRef()) {
+							alleleFreq += "," + variant.getMinorLevel();
+						} else if (variant.getLevel() == variant.getMinorLevel()
+								&& variant.getMajor() != variant.getRef()) {
+							alleleFreq += "," + variant.getMajorLevel();
+						}
+
+						gb.attribute("AF", alleleFreq);
 
 						genotypes.add(gb.make());
 
@@ -220,7 +228,7 @@ public class VcfWriter {
 
 		header.addMetaDataLine(new VCFFilterHeaderLine("PASS", "Variants passed mtDNA-Server"));
 
-		header.addMetaDataLine(new VCFFormatHeaderLine("AF", 1, VCFHeaderLineType.Float,
+		header.addMetaDataLine(new VCFFormatHeaderLine("AF", 1, VCFHeaderLineType.String,
 				"Inferred Allele Frequency of top (non-reference) allele"));
 
 		header.addMetaDataLine(new VCFFormatHeaderLine("DP", 1, VCFHeaderLineType.Integer, "Read Depth"));
