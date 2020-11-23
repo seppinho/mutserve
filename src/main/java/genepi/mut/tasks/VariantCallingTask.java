@@ -41,18 +41,19 @@ public class VariantCallingTask implements ITaskRunnable {
 	String contig;
 
 	@Override
-	public void run(ITaskMonitor monitor) throws Exception {
+	public void run(ITaskMonitor monitor) throws Exception  {
 
+		
 			SamReader reader = null;
 			String name = null;
 
 			if (input.startsWith("http://") || input.startsWith("ftp://")) {
-				reader = SamReaderFactory.makeDefault()
+				reader = SamReaderFactory.makeDefault().referenceSequence(new File(reference).toPath())
 						.validationStringency(htsjdk.samtools.ValidationStringency.SILENT)
 						.open(SamInputResource.of(new URL(input)));
 				name = new URL(input).getFile();
 			} else {
-				reader = SamReaderFactory.makeDefault()
+				reader = SamReaderFactory.makeDefault().referenceSequence(new File(reference).toPath())
 						.validationStringency(htsjdk.samtools.ValidationStringency.SILENT)
 						.open(SamInputResource.of(new File(input)));
 				name = new File(input).getName();
@@ -64,12 +65,12 @@ public class VariantCallingTask implements ITaskRunnable {
 			SAMSequenceDictionary seqDictionary = header.getSequenceDictionary();
 
 			// only if user has not defined a contig
-			if (contig == null) { 
+			if (contig == null) {
 
 				for (SAMSequenceRecord record : seqDictionary.getSequences()) {
-
 					if (record.getSequenceLength() == 16569) {
 						contig = record.getSequenceName();
+						break;
 					}
 				}
 
@@ -101,6 +102,7 @@ public class VariantCallingTask implements ITaskRunnable {
 				reads = reader.query(contig, 0, 0, false);
 			} catch (Exception e) {
 				monitor.setCanceled(true);
+				e.printStackTrace();
 				throw new Exception(e.getMessage());
 			}
 
@@ -148,7 +150,6 @@ public class VariantCallingTask implements ITaskRunnable {
 				writerRaw.write("");
 				writerRaw.close();
 			}
-
 
 	}
 
