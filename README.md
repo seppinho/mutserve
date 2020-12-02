@@ -36,7 +36,7 @@ Please use [this reference file](https://raw.githubusercontent.com/seppinho/muts
 | Reference  | reference file | `--reference` |
 | Threads     | 1 | `--threads`|
 | Minimum Heteroplasmy Level     | 0.01 | `--level`|
-| Define specific mtDNA contig in whole-genome file     | null | `--contig`|
+| Define specific mtDNA contig in whole-genome file     | null | `--contig-name`|
 | Output Fasta     | false | `--writeFasta`|
 | Output Raw File     | false | `--writeRaw`|
 | MappingQuality     | 20 | `--mapQ`|
