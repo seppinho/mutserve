@@ -14,7 +14,7 @@ import genepi.mut.objects.VariantResult;
 public class VariantCaller {
 
 	public enum Filter {
-		PASS, BLACK_LISTED, STRAND_BIAS, LLR_ERROR;
+		PASS, BLACKLISTED, STRAND_BIAS, LLR_ERROR, DETECTION_LIMIT;
 	}
 
 	private static Set<Integer> blacklist = new HashSet<Integer>(
@@ -88,7 +88,6 @@ public class VariantCaller {
 			 * all alleles have support from at least two reads on each strand
 			 **/
 			if (!checkAlleleCoverage(line, minorBasePercentsFWD, minorBasePercentsREV)) {
-
 				return null;
 			}
 
@@ -97,9 +96,9 @@ public class VariantCaller {
 			 * strands
 			 **/
 			if (!(minorBasePercentsFWD >= level || minorBasePercentsREV >= level)) {
-
-				return null;
-
+				filter = Filter.DETECTION_LIMIT;
+				line.setFilter(filter);
+				return addVariantResult(line, type, filter);
 			}
 
 			/**
@@ -107,16 +106,20 @@ public class VariantCaller {
 			 * no less than 5
 			 **/
 			if (!(llrFwd >= 5 || llrRev >= 5)) {
-				return null;
+				filter = Filter.LLR_ERROR;
+				line.setFilter(filter);
+				return addVariantResult(line, type, filter);
 			}
 
 			if (!(calcStrandBias(line, minorBasePercentsFWD, minorBasePercentsREV) <= 1)) {
-
-				return null;
+				type = LOW_LEVEL_VARIANT;
+				filter = Filter.STRAND_BIAS;
+				line.setFilter(filter);
+				return addVariantResult(line, type, filter);
 			}
-
+			
+			line.setFilter(Filter.PASS);
 			type = LOW_LEVEL_VARIANT;
-
 			return addVariantResult(line, type);
 
 		} catch (Exception e) {
@@ -154,7 +157,7 @@ public class VariantCaller {
 		}
 
 		if (filter == null && blacklist.contains(line.getPosition())) {
-			filter = Filter.BLACK_LISTED;
+			filter = Filter.BLACKLISTED;
 		}
 		output.setFilter(filter);
 
@@ -188,7 +191,7 @@ public class VariantCaller {
 
 		Filter filter = Filter.PASS;
 		if (blacklist.contains(line.getPosition())) {
-			filter = Filter.BLACK_LISTED;
+			filter = Filter.BLACKLISTED;
 		}
 		output.setFilter(filter);
 

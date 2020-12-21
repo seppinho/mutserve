@@ -103,7 +103,7 @@ public class MutserveTest {
 
 		Set<String> expected = new HashSet<String>(
 				Arrays.asList("1456", "2746", "3200", "12410", "14071", "14569", "15463", "16093", "16360", "10394",
-						"1438", "152", "15326", "15340", "16519", "263", "4769", "750", "8592", "8860", "3107"));
+						"1438", "152", "15326", "15340", "16519", "263", "4769", "750", "8592", "8860"));
 
 		LineReader reader = new LineReader(outFinal);
 		HashSet<String> results = new HashSet<String>();
@@ -112,7 +112,9 @@ public class MutserveTest {
 		reader.next();
 		while (reader.next()) {
 			String[] splits = reader.get().split("\t");
+			if(splits[1].equals("PASS")) {
 			results.add(splits[2]);
+			}
 		}
 
 		assertEquals(true, results.equals(expected));
@@ -131,7 +133,7 @@ public class MutserveTest {
 
 		Set<String> expected = new HashSet<String>(
 				Arrays.asList("1456", "2746", "3200", "12410", "14071", "14569", "15463", "16093", "16360", "10394",
-						"1438", "152", "15326", "15340", "16519", "263", "4769", "750", "8592", "8860", "3107"));
+						"1438", "152", "15326", "15340", "16519", "263", "4769", "750", "8592", "8860"));
 
 		List<VariantCallingTask> tasks = new Vector<VariantCallingTask>();
 		VariantCallingTask task = new VariantCallingTask();
@@ -156,7 +158,11 @@ public class MutserveTest {
 		reader.next();
 		while (reader.next()) {
 			String[] splits = reader.get().split("\t");
+			if(splits[1].equals("PASS")) {
+				System.out.println("XX");
+				System.out.println(splits[2]);
 			results.add(splits[2]);
+			}
 		}
 
 		assertEquals(true, results.equals(expected));
@@ -208,10 +214,13 @@ public class MutserveTest {
 		reader.next();
 		int count = 0;
 		while (reader.next()) {
+			String[] splits = reader.get().split("\t");
+			if(splits[1].equals("PASS")) {
 			count++;
+			}
 		}
 
-		assertEquals(21*2, count);
+		assertEquals(20*2, count);
 
 	}
 	
@@ -272,10 +281,13 @@ public class MutserveTest {
 		reader.next();
 		int count = 0;
 		while (reader.next()) {
-			count++;
+			String[] splits = reader.get().split("\t");
+			if(splits[1].equals("PASS")) {
+				count++;
+			}
 		}
 
-		assertEquals(21*3, count);
+		assertEquals(20*3, count);
 
 	}
 

@@ -8,10 +8,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import genepi.io.table.reader.CsvTableReader;
+import genepi.mut.util.VariantCaller.Filter;
 
 public class VariantLine implements Comparable<VariantLine> {
 
 	private String id;
+	private Filter filter;
 	private int position;
 	private char ref;
 	private int covFWD;
@@ -1387,6 +1389,14 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	public void setBayesPercentageREV(double bayesPercentageREV) {
 		this.bayesPercentageREV = bayesPercentageREV;
+	}
+
+	public Filter getFilter() {
+		return filter;
+	}
+
+	public void setFilter(Filter filter) {
+		this.filter = filter;
 	}
 
 }

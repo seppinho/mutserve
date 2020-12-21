@@ -12,6 +12,7 @@ import java.util.TreeSet;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.objects.VariantResult;
+import genepi.mut.util.VariantCaller.Filter;
 
 public class RawFileAnalysermtDNA {
 
@@ -91,7 +92,7 @@ public class RawFileAnalysermtDNA {
 
 								
 
-								if (varResult != null && varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
+								if (varResult != null && varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT && varResult.getFilter() == Filter.PASS) {
 									
 									varResult.setLevel(hetLevel);
 
