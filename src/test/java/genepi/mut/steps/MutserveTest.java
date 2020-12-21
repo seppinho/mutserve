@@ -112,7 +112,7 @@ public class MutserveTest {
 		reader.next();
 		while (reader.next()) {
 			String[] splits = reader.get().split("\t");
-			results.add(splits[1]);
+			results.add(splits[2]);
 		}
 
 		assertEquals(true, results.equals(expected));
@@ -156,7 +156,7 @@ public class MutserveTest {
 		reader.next();
 		while (reader.next()) {
 			String[] splits = reader.get().split("\t");
-			results.add(splits[1]);
+			results.add(splits[2]);
 		}
 
 		assertEquals(true, results.equals(expected));
@@ -362,7 +362,7 @@ public class MutserveTest {
 		reader.next();
 		while (reader.next()) {
 			String[] splits = reader.get().split("\t");
-			results.add(splits[1]);
+			results.add(splits[2]);
 		}
 		
 			assertTrue(results.contains("16541"));

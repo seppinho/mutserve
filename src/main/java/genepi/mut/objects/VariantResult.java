@@ -1,5 +1,7 @@
 package genepi.mut.objects;
 
+import genepi.mut.util.VariantCaller.Filter;
+
 public class VariantResult {
 
 	private String id;
@@ -14,6 +16,7 @@ public class VariantResult {
 	private int covFWD;
 	private int covREV;
 	private int type;
+	private Filter filter;
 
 	public int getType() {
 		return type;
@@ -109,6 +112,14 @@ public class VariantResult {
 
 	public void setCovREV(int covREV) {
 		this.covREV = covREV;
+	}
+
+	public Filter getFilter() {
+		return filter;
+	}
+
+	public void setFilter(Filter filter) {
+		this.filter = filter;
 	}
 	
 }

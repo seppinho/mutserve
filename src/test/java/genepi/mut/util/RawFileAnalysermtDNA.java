@@ -89,9 +89,11 @@ public class RawFileAnalysermtDNA {
 										line.getMinorBasePercentsFWD(), line.getMinorBasePercentsREV(),
 										line.getLlrFWD(), line.getLlrREV(), level, line.getMinorBaseFWD());
 
-								varResult.setLevel(hetLevel);
+								
 
-								if (varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
+								if (varResult != null && varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
+									
+									varResult.setLevel(hetLevel);
 
 									hetero.add(cloudgeneReader.getDouble("LEVEL"));
 

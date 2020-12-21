@@ -41,114 +41,125 @@ public class VariantCallingTask implements ITaskRunnable {
 	String contig;
 
 	@Override
-	public void run(ITaskMonitor monitor) throws Exception  {
+	public void run(ITaskMonitor monitor) {
 
 		
-			SamReader reader = null;
-			String name = null;
-
-			if (input.startsWith("http://") || input.startsWith("ftp://")) {
-				reader = SamReaderFactory.makeDefault().referenceSequence(new File(reference).toPath())
-						.validationStringency(htsjdk.samtools.ValidationStringency.SILENT)
-						.open(SamInputResource.of(new URL(input)));
-				name = new URL(input).getFile();
-			} else {
-				reader = SamReaderFactory.makeDefault().referenceSequence(new File(reference).toPath())
-						.validationStringency(htsjdk.samtools.ValidationStringency.SILENT)
-						.open(SamInputResource.of(new File(input)));
-				name = new File(input).getName();
-			}
-
-			monitor.begin(name);
-
-			SAMFileHeader header = reader.getFileHeader();
-			SAMSequenceDictionary seqDictionary = header.getSequenceDictionary();
-
-			// only if user has not defined a contig
-			if (contig == null) {
-
-				for (SAMSequenceRecord record : seqDictionary.getSequences()) {
-					if (record.getSequenceLength() == 16569) {
-						contig = record.getSequenceName();
-						break;
-					}
-				}
-
-			}
-
-			BamAnalyser analyser = new BamAnalyser(name, reference, baseQ, mapQ, alignQ, baq, mode);
-
-			HashMap<Integer, BasePosition> positions = analyser.getCounts();
-
-			LineWriter writerRaw = null;
-
-			if (rawName != null) {
-				File rawFile = new File(rawName);
-				rawFile.deleteOnExit();
-				writerRaw = new LineWriter(rawFile.getAbsolutePath());
-			}
-
-			File varFile = new File(varName);
-			varFile.deleteOnExit();
-			LineWriter writerVar = new LineWriter(varFile.getAbsolutePath());
-
-			String reference = analyser.getReferenceString();
-
-			// first position to analyze
-			int index = 1;
-
-			SAMRecordIterator reads = null;
 			try {
-				reads = reader.query(contig, 0, 0, false);
-			} catch (Exception e) {
-				monitor.setCanceled(true);
-				e.printStackTrace();
-				throw new Exception(e.getMessage());
-			}
+				SamReader reader = null;
+				String name = null;
 
-			while (reads.hasNext()) {
-
-				if (monitor.isCanceled()) {
-					return;
+				if (input.startsWith("http://") || input.startsWith("ftp://")) {
+					reader = SamReaderFactory.makeDefault().referenceSequence(new File(reference).toPath())
+							.validationStringency(htsjdk.samtools.ValidationStringency.SILENT)
+							.open(SamInputResource.of(new URL(input)));
+					name = new URL(input).getFile();
+				} else {
+					reader = SamReaderFactory.makeDefault().referenceSequence(new File(reference).toPath())
+							.validationStringency(htsjdk.samtools.ValidationStringency.SILENT)
+							.open(SamInputResource.of(new File(input)));
+					name = new File(input).getName();
 				}
 
-				SAMRecord record = reads.next();
+				monitor.begin(name);
 
-				analyser.analyseRead(record, deletions, insertions);
+				SAMFileHeader header = reader.getFileHeader();
+				SAMSequenceDictionary seqDictionary = header.getSequenceDictionary();
 
-				int recordStart = record.getStart();
+				// only if user has not defined a contig
+				if (contig == null) {
 
-				// call variants of all positions that are analyzed
-				while (index < recordStart) {
+					for (SAMSequenceRecord record : seqDictionary.getSequences()) {
+						if (record.getSequenceLength() == 16569) {
+							contig = record.getSequenceName();
+							break;
+						}
+					}
+
+				}
+
+				BamAnalyser analyser = new BamAnalyser(name, reference, baseQ, mapQ, alignQ, baq, mode);
+
+				HashMap<Integer, BasePosition> positions = analyser.getCounts();
+
+				LineWriter writerRaw = null;
+
+				if (rawName != null) {
+					File rawFile = new File(rawName);
+					rawFile.deleteOnExit();
+					writerRaw = new LineWriter(rawFile.getAbsolutePath());
+				}
+
+				File varFile = new File(varName);
+				varFile.deleteOnExit();
+				LineWriter writerVar = new LineWriter(varFile.getAbsolutePath());
+
+				String reference = analyser.getReferenceString();
+
+				// first position to analyze
+				int index = 1;
+
+				SAMRecordIterator reads = null;
+				try {
+					reads = reader.query(contig, 0, 0, false);
+				} catch (Exception e) {
+					monitor.setCanceled(true);
+					e.printStackTrace();
+					throw new Exception(e.getMessage());
+				}
+
+				while (reads.hasNext()) {
+
+					if (monitor.isCanceled()) {
+						return;
+					}
+
+					SAMRecord record = reads.next();
+
+					analyser.analyseRead(record, deletions, insertions);
+
+					int recordStart = record.getStart();
+
+					// call variants of all positions that are analyzed
+					while (index < recordStart) {
+						if (positions.containsKey(index) && index <= reference.length()) {
+							callVariant(writerRaw, writerVar, name, level, index, positions.get(index), reference,
+									freqFile);
+
+						}
+						positions.remove(index);
+						index++;
+					}
+
+				}
+
+				// analyze remaining positions
+				while (index <= reference.length()) {
 					if (positions.containsKey(index) && index <= reference.length()) {
-						callVariant(writerRaw, writerVar, name, level, index, positions.get(index), reference,
-								freqFile);
-
+						callVariant(writerRaw, writerVar, name, level, index, positions.get(index), reference, freqFile);
 					}
 					positions.remove(index);
 					index++;
 				}
 
-			}
+				positions = null;
+				reader.close();
 
-			// analyze remaining positions
-			while (index <= reference.length()) {
-				if (positions.containsKey(index) && index <= reference.length()) {
-					callVariant(writerRaw, writerVar, name, level, index, positions.get(index), reference, freqFile);
+				monitor.done();
+				writerVar.write("");
+				writerVar.close();
+				if (writerRaw != null) {
+					writerRaw.write("");
+					writerRaw.close();
 				}
-				positions.remove(index);
-				index++;
-			}
-
-			positions = null;
-			reader.close();
-
-			monitor.done();
-			writerVar.write("");
-			writerVar.close();
-			if (writerRaw != null) {
-				writerRaw.write("");
-				writerRaw.close();
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
 	}
@@ -184,7 +195,7 @@ public class VariantCallingTask implements ITaskRunnable {
 			VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorPercentageFwd,
 					minorPercentageRev, llrFwd, llrRev, level, base);
 
-			if (varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
+			if (varResult != null && varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
 
 				isHeteroplasmy = true;
 
