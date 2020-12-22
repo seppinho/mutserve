@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <title>Data Tables Example</title>
+
+  {{import_style("https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css")}}
+  {{import_style("https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css")}}
+  {{import_script("https://code.jquery.com/jquery-3.5.1.slim.min.js")}}
+  {{import_script("https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js")}}
+
+</head>
+
+<body>
+
+<main class="container">
+  <div class="py-5 px-3">
+
+	<h1>{{title}}</h1>
+
+	<h2>Overview</h2>
+
+	<table id="table1" class="display"></table>
+  </div>
+ </main>
+
+
+{{import_script("index.js")}}
+
+</body>
+</html>
+

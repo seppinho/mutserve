@@ -95,6 +95,8 @@
 									<include>com.github.lukfor:magic-tables:*:*</include>
 									<include>commons-io:commons-io:*:*</include>
 									<include>info.picocli:picocli:*:*</include>
+									<include>com.github.lukfor:magic-reports:*</include>
+									<include>io.marioslab.basis:template:*</include>
 
 								</includes>
 							</artifactSet>
@@ -226,10 +228,16 @@
 			<version>0.3.0</version>
 		</dependency>
 		
-				<dependency>
+		<dependency>
 			<groupId>cloudgene</groupId>
 			<artifactId>cloudgene-java-sdk</artifactId>
 			<version>1.0.2</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.github.lukfor</groupId>
+			<artifactId>magic-reports</artifactId>
+			<version>0.0.1</version>
 		</dependency>
 		
 

@@ -1,4 +1,4 @@
-package genepi.mut.tools;
+package genepi.mut.commands;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -222,7 +222,7 @@ public class VariantCallingCommand implements Callable<Integer> {
 		System.out.println();
 		System.out.println("Execution Time: " + formatTime(watch.getElapsedTimeSecs()));
 		System.out.println();
-
+		
 		watch.stop();
 
 		return 0;

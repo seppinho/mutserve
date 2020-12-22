@@ -1,11 +1,11 @@
-package genepi.mut.tools;
+package genepi.mut.commands;
 
 import java.io.File;
 
 import cloudgene.sdk.internal.WorkflowContext;
 import cloudgene.sdk.internal.WorkflowStep;
 
-public class MailStep extends WorkflowStep {
+public class MailCommand extends WorkflowStep {
 
 	@Override
 	public boolean run(WorkflowContext context) {
