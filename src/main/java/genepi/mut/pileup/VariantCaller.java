@@ -1,4 +1,4 @@
-package genepi.mut.util;
+package genepi.mut.pileup;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -10,6 +10,7 @@ import java.util.Set;
 
 import genepi.mut.objects.VariantLine;
 import genepi.mut.objects.VariantResult;
+import genepi.mut.util.StatUtil;
 
 public class VariantCaller {
 

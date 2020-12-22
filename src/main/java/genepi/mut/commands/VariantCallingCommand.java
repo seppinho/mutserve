@@ -10,10 +10,10 @@ import java.util.concurrent.Callable;
 
 import genepi.mut.App;
 import genepi.mut.objects.BayesFrequencies;
+import genepi.mut.pileup.VcfWriter;
 import genepi.mut.tasks.MergeTask;
 import genepi.mut.tasks.VariantCallingTask;
 import genepi.mut.util.FastaWriter;
-import genepi.mut.util.VcfWriter;
 import htsjdk.samtools.reference.FastaSequenceFile;
 import htsjdk.samtools.reference.ReferenceSequence;
 import htsjdk.samtools.util.StopWatch;

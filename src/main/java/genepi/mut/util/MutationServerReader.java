@@ -7,7 +7,7 @@ import java.util.HashMap;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.mut.objects.Sample;
 import genepi.mut.objects.Variant;
-import genepi.mut.util.VariantCaller.Filter;
+import genepi.mut.pileup.VariantCaller.Filter;
 
 public class MutationServerReader {
 

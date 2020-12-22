@@ -1,4 +1,4 @@
-package genepi.mut.util;
+package genepi.mut.pileup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +9,9 @@ import java.util.Set;
 import java.util.TreeSet;
 import genepi.mut.objects.Sample;
 import genepi.mut.objects.Variant;
-import genepi.mut.util.VariantCaller.Filter;
+import genepi.mut.pileup.VariantCaller.Filter;
+import genepi.mut.util.MutationServerReader;
+import genepi.mut.util.ReferenceUtil;
 import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.SAMSequenceRecord;
 import htsjdk.variant.variantcontext.Allele;

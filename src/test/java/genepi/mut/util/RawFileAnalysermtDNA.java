@@ -12,7 +12,8 @@ import java.util.TreeSet;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.objects.VariantResult;
-import genepi.mut.util.VariantCaller.Filter;
+import genepi.mut.pileup.VariantCaller;
+import genepi.mut.pileup.VariantCaller.Filter;
 
 public class RawFileAnalysermtDNA {
 

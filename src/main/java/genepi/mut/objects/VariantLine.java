@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import genepi.io.table.reader.CsvTableReader;
-import genepi.mut.util.VariantCaller.Filter;
+import genepi.mut.pileup.VariantCaller.Filter;
 
 public class VariantLine implements Comparable<VariantLine> {
 

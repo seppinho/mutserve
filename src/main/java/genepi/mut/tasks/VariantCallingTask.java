@@ -10,7 +10,7 @@ import genepi.mut.objects.BasePosition;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.objects.VariantResult;
 import genepi.mut.pileup.BamAnalyser;
-import genepi.mut.util.VariantCaller;
+import genepi.mut.pileup.VariantCaller;
 import htsjdk.samtools.BAMIndexer;
 import htsjdk.samtools.SAMException;
 import htsjdk.samtools.SAMFileHeader;

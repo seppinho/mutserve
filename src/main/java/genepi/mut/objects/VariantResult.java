@@ -1,6 +1,6 @@
 package genepi.mut.objects;
 
-import genepi.mut.util.VariantCaller.Filter;
+import genepi.mut.pileup.VariantCaller.Filter;
 
 public class VariantResult {
 
