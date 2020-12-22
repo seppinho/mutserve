@@ -73,8 +73,6 @@ public class AnnotationCommand implements Callable<Integer> {
 
 		TableWriter.writeToCsv(inputTable, output, '\t');
 
-		System.out.println("Results written to file '" + output + "'.");
-
 		return 0;
 	}
 

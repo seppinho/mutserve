@@ -33,8 +33,8 @@ public class MailCommand extends WorkflowStep {
 			context.ok("We have sent an email to <b>" + mail + "</b>.");
 
 			StringBuffer text = new StringBuffer();
-			// text.append("The final contamination report can be found here: " +
-			// context.createLinkToFile("report", "report.html") +"<br>");
+			 text.append("The final mtDNA-Server report can be found here: " +
+			 context.createLinkToFile("report", "report.html") +"<br>");
 			context.ok(text.toString());
 
 			String subject = "Job " + context.getJobName() + " is complete.";

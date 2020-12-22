@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
-  <title>Data Tables Example</title>
+  <title>{{title}}</title>
 
   {{import_style("https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css")}}
   {{import_style("https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css")}}
@@ -20,15 +20,21 @@
   <div class="py-5 px-3">
 
 	<h1>{{title}}</h1>
-
-	<h2>Overview</h2>
-
+<br>
+	<h2>Detected Variants</h2>
+	
+	This table includes all detected variants. Only variants with final filter <b>PASS</b> are included in the VCF file and can be used for downstream analysis. 
+	<br> <br>
 	<table id="table1" class="display"></table>
   </div>
+  
+  <h2>Coverage Plots</h2>
+	<i>todo</i>
  </main>
 
 
 {{import_script("index.js")}}
+
 
 </body>
 </html>

@@ -97,6 +97,7 @@
 									<include>info.picocli:picocli:*:*</include>
 									<include>com.github.lukfor:magic-reports:*</include>
 									<include>io.marioslab.basis:template:*</include>
+									<include>com.google.code.gson:gson:*:*</include>
 
 								</includes>
 							</artifactSet>
