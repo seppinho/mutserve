@@ -211,7 +211,7 @@ public class VariantCallingCommand implements Callable<Integer> {
 
 			VcfWriter vcfWriter = new VcfWriter();
 			vcfWriter.createVCF(variantPath, output, reference, referenceSequence.getName(),
-					referenceSequence.getBaseString().length(), App.VERSION + ";" + App.COMMAND);
+					referenceSequence.getBaseString().length(), App.VERSION);
 			fastaFile.close();
 		}
 
