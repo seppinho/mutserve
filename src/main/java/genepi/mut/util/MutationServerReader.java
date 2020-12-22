@@ -7,6 +7,7 @@ import java.util.HashMap;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.mut.objects.Sample;
 import genepi.mut.objects.Variant;
+import genepi.mut.util.VariantCaller.Filter;
 
 public class MutationServerReader {
 
@@ -31,6 +32,7 @@ public class MutationServerReader {
 		while (reader.next()) {
 
 			String id = reader.getString("ID");
+			Filter filter = Filter.valueOf(reader.getString("Filter"));
 
 			if (tmp != null && !id.equals(tmp)) {
 				samples.put(sample.getId(), sample);
@@ -78,6 +80,7 @@ public class MutationServerReader {
 			}
 
 			variant.setPos(pos);
+			variant.setFilter(filter);
 			variant.setRef(ref);
 			variant.setVariantBase(var);
 			variant.setLevel(level);

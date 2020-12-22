@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import genepi.mut.objects.Sample;
 import genepi.mut.objects.Variant;
+import genepi.mut.util.VariantCaller.Filter;
 import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.SAMSequenceRecord;
 import htsjdk.variant.variantcontext.Allele;
@@ -88,6 +89,11 @@ public class VcfWriter {
 					char ref = '-';
 
 					Variant variant = variants.get(0);
+					
+					// Write only PASS to VCF
+					if(variant.getFilter() != Filter.PASS) {
+						continue;
+					}
 					
 					if (variant.getVariant() == 'D') {
 						variant.setVariantBase('*');

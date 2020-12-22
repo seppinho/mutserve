@@ -5,11 +5,15 @@ import org.junit.Test;
 import genepi.io.FileUtil;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.text.LineReader;
+import genepi.mut.App;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.tasks.MergeTask;
 import genepi.mut.tasks.VariantCallingTask;
 import genepi.mut.util.QCMetric;
 import genepi.mut.util.RawFileAnalysermtDNA;
+import genepi.mut.util.VcfWriter;
+import htsjdk.samtools.reference.FastaSequenceFile;
+import htsjdk.samtools.reference.ReferenceSequence;
 import lukfor.progress.TaskService;
 
 import static org.junit.Assert.*;
@@ -159,14 +163,25 @@ public class MutserveTest {
 		while (reader.next()) {
 			String[] splits = reader.get().split("\t");
 			if(splits[1].equals("PASS")) {
-				System.out.println("XX");
-				System.out.println(splits[2]);
 			results.add(splits[2]);
 			}
 		}
 
 		assertEquals(true, results.equals(expected));
 
+		FastaSequenceFile fastaFile = new FastaSequenceFile(new File("files/rCRS.fasta"), false);
+		final ReferenceSequence referenceSequence = fastaFile.nextSequence();
+
+		if (referenceSequence == null) {
+			System.out.println("Can not reference fasta file");
+			System.exit(-1);
+		}
+		
+		VcfWriter vcfWriter = new VcfWriter();
+		vcfWriter.createVCF(outFinal, "test-data/out.vcf", "files/rCRS.fasta", referenceSequence.getName(),
+				referenceSequence.getBaseString().length(), App.VERSION + ";" + App.COMMAND);
+		fastaFile.close();
+		
 	}
 
 	@Test
@@ -221,6 +236,20 @@ public class MutserveTest {
 		}
 
 		assertEquals(20*2, count);
+		
+		
+		FastaSequenceFile fastaFile = new FastaSequenceFile(new File("files/rCRS.fasta"), false);
+		final ReferenceSequence referenceSequence = fastaFile.nextSequence();
+
+		if (referenceSequence == null) {
+			System.out.println("Can not reference fasta file");
+			System.exit(-1);
+		}
+		
+		VcfWriter vcfWriter = new VcfWriter();
+		vcfWriter.createVCF(outFinal, "test-data/out.vcf", "files/rCRS.fasta", referenceSequence.getName(),
+				referenceSequence.getBaseString().length(), App.VERSION + ";" + App.COMMAND);
+		fastaFile.close();
 
 	}
 	
