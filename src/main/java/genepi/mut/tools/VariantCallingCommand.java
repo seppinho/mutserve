@@ -14,7 +14,6 @@ import genepi.mut.tasks.MergeTask;
 import genepi.mut.tasks.VariantCallingTask;
 import genepi.mut.util.FastaWriter;
 import genepi.mut.util.VcfWriter;
-import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.reference.FastaSequenceFile;
 import htsjdk.samtools.reference.ReferenceSequence;
 import htsjdk.samtools.util.StopWatch;
