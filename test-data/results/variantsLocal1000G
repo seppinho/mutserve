@@ -1,46 +1,46 @@
-ID	Pos	Ref	Variant	VariantLevel	MajorBase	MajorLevel	MinorBase	MinorLevel	Coverage	Type
-test.cram	9438	G	A	0.996	A	0.996	-	0.004	1457	1
-test.cram	15025	C	T	0.996	T	0.996	-	0.004	1437	1
-test.cram	15043	G	A	0.997	A	0.997	-	0.003	1432	1
-test.cram	16311	T	C	0.998	C	0.998	-	0.002	1289	1
-test.cram	8010	T	C	0.149	T	0.851	C	0.149	1135	2
-test.cram	16220	A	G	0.996	G	0.996	-	0.004	1020	1
-test.cram	16223	C	T	0.997	T	0.997	-	0.003	1060	1
-test.cram	16270	C	G	0.997	G	0.997	-	0.003	1296	1
-test.cram	16209	T	C	0.993	C	0.993	-	0.005	1025	1
-test.cram	7028	C	T	1.00	T	1.00	-	0.00	676	1
-test.cram	16126	T	C	0.999	C	0.999	-	0.001	1444	1
-test.cram	750	A	G	1.00	G	1.00	-	0.00	1167	1
-test.cram	8149	A	G	0.994	G	0.994	-	0.006	1397	1
-test.cram	8188	A	G	0.994	G	0.994	-	0.004	1397	1
-test.cram	9540	T	C	0.999	C	0.999	-	0.001	1465	1
-test.cram	16189	T	C	0.999	C	0.999	-	0.001	878	1
-test.cram	513	G	A	0.045	G	0.954	A	0.045	1076	2
-test.cram	417	G	A	0.997	A	0.997	-	0.003	1191	1
-test.cram	489	T	C	0.998	C	0.998	-	0.002	1105	1
-test.cram	8701	A	G	0.996	G	0.996	-	0.004	1395	1
-test.cram	8731	T	C	0.082	T	0.917	C	0.082	1307	2
-test.cram	263	A	G	0.999	G	0.999	-	0.001	998	1
-test.cram	9949	T	C	0.041	T	0.959	C	0.041	1594	2
-test.cram	1438	A	G	0.999	G	0.999	-	0.001	1387	1
-test.cram	10873	T	C	0.997	C	0.997	-	0.003	1682	1
-test.cram	11899	T	C	0.992	C	0.992	-	0.006	1399	1
-test.cram	11719	G	A	1.00	A	1.00	-	0.00	1410	1
-test.cram	10400	C	T	0.997	T	0.997	-	0.003	1531	1
-test.cram	10398	A	G	0.998	G	0.998	-	0.002	1530	1
-test.cram	3107	N	T	0.706	T	0.706	C	0.265	34	2
-test.cram	10295	A	G	0.997	G	0.997	-	0.003	1241	1
-test.cram	4769	A	G	1.00	G	1.00	-	0.00	410	1
-test.cram	3483	G	A	0.985	A	0.985	-	0.014	859	1
-test.cram	12705	C	T	0.995	T	0.995	-	0.005	1476	1
-test.cram	2089	T	C	0.063	T	0.936	C	0.063	1596	2
-test.cram	73	A	G	0.999	G	0.999	-	0.001	1106	1
-test.cram	12279	A	G	0.994	G	0.994	-	0.005	1594	1
-test.cram	14783	T	C	0.996	C	0.996	-	0.004	1599	1
-test.cram	14766	C	T	0.999	T	0.999	-	0.001	1707	1
-test.cram	8860	A	G	1.00	G	1.00	-	0.00	271	1
-test.cram	15301	G	A	0.997	A	0.997	-	0.003	1181	1
-test.cram	15326	A	G	1.00	G	1.00	-	0.00	1357	1
-test.cram	4386	T	C	0.047	T	0.953	C	0.047	534	2
-test.cram	16519	T	C	0.999	C	0.999	-	0.001	1067	1
-test.cram	15229	T	C	0.997	C	0.997	-	0.003	1401	1
+ID	Filter	Pos	Ref	Variant	VariantLevel	MajorBase	MajorLevel	MinorBase	MinorLevel	Coverage	Type
+test.cram	PASS	9438	G	A	0.996	A	0.996	-	0.004	1457	1
+test.cram	PASS	15025	C	T	0.996	T	0.996	-	0.004	1437	1
+test.cram	PASS	15043	G	A	0.997	A	0.997	-	0.003	1432	1
+test.cram	PASS	16311	T	C	0.998	C	0.998	-	0.002	1289	1
+test.cram	PASS	8010	T	C	0.149	T	0.851	C	0.149	1135	2
+test.cram	PASS	16220	A	G	0.996	G	0.996	-	0.004	1020	1
+test.cram	PASS	16223	C	T	0.997	T	0.997	-	0.003	1060	1
+test.cram	PASS	16270	C	G	0.997	G	0.997	-	0.003	1296	1
+test.cram	PASS	16209	T	C	0.993	C	0.993	-	0.005	1025	1
+test.cram	PASS	7028	C	T	1.00	T	1.00	-	0.00	676	1
+test.cram	PASS	16126	T	C	0.999	C	0.999	-	0.001	1444	1
+test.cram	PASS	750	A	G	1.00	G	1.00	-	0.00	1167	1
+test.cram	PASS	8149	A	G	0.994	G	0.994	-	0.006	1397	1
+test.cram	PASS	8188	A	G	0.994	G	0.994	-	0.004	1397	1
+test.cram	PASS	9540	T	C	0.999	C	0.999	-	0.001	1465	1
+test.cram	PASS	16189	T	C	0.999	C	0.999	-	0.001	878	1
+test.cram	PASS	513	G	A	0.045	G	0.954	A	0.045	1076	2
+test.cram	PASS	417	G	A	0.997	A	0.997	-	0.003	1191	1
+test.cram	PASS	489	T	C	0.998	C	0.998	-	0.002	1105	1
+test.cram	PASS	8701	A	G	0.996	G	0.996	-	0.004	1395	1
+test.cram	PASS	8731	T	C	0.082	T	0.917	C	0.082	1307	2
+test.cram	PASS	263	A	G	0.999	G	0.999	-	0.001	998	1
+test.cram	PASS	9949	T	C	0.041	T	0.959	C	0.041	1594	2
+test.cram	PASS	1438	A	G	0.999	G	0.999	-	0.001	1387	1
+test.cram	PASS	10873	T	C	0.997	C	0.997	-	0.003	1682	1
+test.cram	PASS	11899	T	C	0.992	C	0.992	-	0.006	1399	1
+test.cram	PASS	11719	G	A	1.00	A	1.00	-	0.00	1410	1
+test.cram	PASS	10400	C	T	0.997	T	0.997	-	0.003	1531	1
+test.cram	PASS	10398	A	G	0.998	G	0.998	-	0.002	1530	1
+test.cram	PASS	3107	N	T	0.706	T	0.706	C	0.265	34	2
+test.cram	PASS	10295	A	G	0.997	G	0.997	-	0.003	1241	1
+test.cram	PASS	4769	A	G	1.00	G	1.00	-	0.00	410	1
+test.cram	PASS	3483	G	A	0.985	A	0.985	-	0.014	859	1
+test.cram	PASS	12705	C	T	0.995	T	0.995	-	0.005	1476	1
+test.cram	PASS	2089	T	C	0.063	T	0.936	C	0.063	1596	2
+test.cram	PASS	73	A	G	0.999	G	0.999	-	0.001	1106	1
+test.cram	PASS	12279	A	G	0.994	G	0.994	-	0.005	1594	1
+test.cram	PASS	14783	T	C	0.996	C	0.996	-	0.004	1599	1
+test.cram	PASS	14766	C	T	0.999	T	0.999	-	0.001	1707	1
+test.cram	PASS	8860	A	G	1.00	G	1.00	-	0.00	271	1
+test.cram	PASS	15301	G	A	0.997	A	0.997	-	0.003	1181	1
+test.cram	PASS	15326	A	G	1.00	G	1.00	-	0.00	1357	1
+test.cram	PASS	4386	T	C	0.047	T	0.953	C	0.047	534	2
+test.cram	PASS	16519	T	C	0.999	C	0.999	-	0.001	1067	1
+test.cram	PASS	15229	T	C	0.997	C	0.997	-	0.003	1401	1
