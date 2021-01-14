@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>genepi</groupId>
 	<artifactId>mutserve</artifactId>
-	<version>2.0.0-rc10</version>
+	<version>2.0.0-rc11</version>
 	<packaging>jar</packaging>
 
 	<properties>
@@ -95,6 +95,9 @@
 									<include>com.github.lukfor:magic-tables:*:*</include>
 									<include>commons-io:commons-io:*:*</include>
 									<include>info.picocli:picocli:*:*</include>
+									<include>com.github.lukfor:magic-reports:*</include>
+									<include>io.marioslab.basis:template:*</include>
+									<include>com.google.code.gson:gson:*:*</include>
 
 								</includes>
 							</artifactSet>
@@ -225,6 +228,19 @@
 			<artifactId>magic-tables</artifactId>
 			<version>0.3.0</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>cloudgene</groupId>
+			<artifactId>cloudgene-java-sdk</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.github.lukfor</groupId>
+			<artifactId>magic-reports</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		
 
 	</dependencies>
 

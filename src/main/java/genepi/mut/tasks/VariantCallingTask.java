@@ -2,7 +2,6 @@ package genepi.mut.tasks;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
@@ -11,7 +10,9 @@ import genepi.mut.objects.BasePosition;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.objects.VariantResult;
 import genepi.mut.pileup.BamAnalyser;
-import genepi.mut.util.VariantCaller;
+import genepi.mut.pileup.VariantCaller;
+import htsjdk.samtools.BAMIndexer;
+import htsjdk.samtools.SAMException;
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMRecordIterator;
@@ -41,9 +42,8 @@ public class VariantCallingTask implements ITaskRunnable {
 	String contig;
 
 	@Override
-	public void run(ITaskMonitor monitor) throws Exception  {
+	public void run(ITaskMonitor monitor) throws Exception {
 
-		
 			SamReader reader = null;
 			String name = null;
 
@@ -55,8 +55,34 @@ public class VariantCallingTask implements ITaskRunnable {
 			} else {
 				reader = SamReaderFactory.makeDefault().referenceSequence(new File(reference).toPath())
 						.validationStringency(htsjdk.samtools.ValidationStringency.SILENT)
+						.enable(SamReaderFactory.Option.INCLUDE_SOURCE_IN_RECORDS)
 						.open(SamInputResource.of(new File(input)));
 				name = new File(input).getName();
+			}
+
+			if (reader.type() != SamReader.Type.BAM_TYPE) {
+				throw new SAMException("Input file must be bam file, not sam file.");
+			}
+
+			if (!reader.getFileHeader().getSortOrder().equals(SAMFileHeader.SortOrder.coordinate)) {
+				throw new SAMException("Input bam file must be sorted by coordinate");
+			}
+
+			if (!reader.hasIndex()) {
+				
+				BAMIndexer.createIndex(reader, new File(new File(input).getAbsolutePath() + ".bai"));
+				reader.close();
+				
+				reader = SamReaderFactory.makeDefault().referenceSequence(new File(reference).toPath())
+						.validationStringency(htsjdk.samtools.ValidationStringency.SILENT)
+						.enable(SamReaderFactory.Option.INCLUDE_SOURCE_IN_RECORDS)
+						.open(SamInputResource.of(new File(input)));
+			
+			}
+			
+		
+			if(!reader.hasIndex()) {
+				throw new IOException("No index available!");
 			}
 
 			monitor.begin(name);
@@ -98,6 +124,7 @@ public class VariantCallingTask implements ITaskRunnable {
 			int index = 1;
 
 			SAMRecordIterator reads = null;
+
 			try {
 				reads = reader.query(contig, 0, 0, false);
 			} catch (Exception e) {
@@ -150,7 +177,6 @@ public class VariantCallingTask implements ITaskRunnable {
 				writerRaw.write("");
 				writerRaw.close();
 			}
-
 	}
 
 	private void callVariant(LineWriter writerRaw, LineWriter writerVar, String id, double level, int pos,
@@ -184,7 +210,7 @@ public class VariantCallingTask implements ITaskRunnable {
 			VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorPercentageFwd,
 					minorPercentageRev, llrFwd, llrRev, level, base);
 
-			if (varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
+			if (varResult != null && varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
 
 				isHeteroplasmy = true;
 

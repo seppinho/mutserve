@@ -1,14 +1,25 @@
-package genepi.mut.util;
+package genepi.mut.pileup;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import genepi.mut.objects.VariantLine;
 import genepi.mut.objects.VariantResult;
+import genepi.mut.util.StatUtil;
 
 public class VariantCaller {
+
+	public enum Filter {
+		PASS, BLACKLISTED, STRAND_BIAS, LLR_ERROR, DETECTION_LIMIT;
+	}
+
+	private static Set<Integer> blacklist = new HashSet<Integer>(
+			Arrays.asList(301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 315, 316, 3105, 3106, 3107, 16182));
 
 	public static int VARIANT = 1;
 
@@ -36,16 +47,15 @@ public class VariantCaller {
 
 		if (!line.isInsertion()) {
 
-			if (line.getBayesBase() != '-' && line.getBayesProbability() > 0.8
-					&& line.getBayesBase() != line.getRef() && ((line.getCovFWD()+line.getCovREV())>=2)) {
+			if (line.getBayesBase() != '-' && line.getBayesProbability() > 0.8 && line.getBayesBase() != line.getRef()
+					&& ((line.getCovFWD() + line.getCovREV()) >= 2)) {
 
 				int type = VARIANT;
 
-				//TODO currently ignored for homoplasmies since bayes only includes A,C,G,T
+				// TODO currently ignored for homoplasmies since bayes only includes A,C,G,T
 				if (line.getBayesBase() == 'D') {
 					type = DELETION;
 				}
-
 				return addHomoplasmyResult(line, type);
 
 			}
@@ -64,54 +74,69 @@ public class VariantCaller {
 
 		int type = 0;
 
+		Filter filter = null;
 		try {
 
 			/**
 			 * 10× coverage of qualified bases on both positive and negative strands;
 			 */
 
-			if (checkCoverage(line)) {
-
-				/**
-				 * all alleles have support from at least two reads on each strand
-				 **/
-				if (checkAlleleCoverage(line, minorBasePercentsFWD, minorBasePercentsREV)) {
-
-					/**
-					 * the raw frequency for the minor allele is no less than 1% on one of the
-					 * strands
-					 **/
-					if (minorBasePercentsFWD >= level || minorBasePercentsREV >= level) {
-
-						/**
-						 * high-confidence heteroplasmy was defined as candidate heteroplasmy with LLR
-						 * no less than 5
-						 **/
-						if (llrFwd >= 5 || llrRev >= 5) {
-
-							if (calcStrandBias(line, minorBasePercentsFWD, minorBasePercentsREV) <= 1) {
-
-								type = LOW_LEVEL_VARIANT;
-
-								return addVariantResult(line, type);
-
-							}
-						}
-					}
-				}
-			} else {
-				line.setMessage("Position coverage not sufficient. No model can be applied");
+			if (!checkCoverage(line)) {
+				return null;
 			}
+
+			/**
+			 * all alleles have support from at least two reads on each strand
+			 **/
+			if (!checkAlleleCoverage(line, minorBasePercentsFWD, minorBasePercentsREV)) {
+				return null;
+			}
+
+			/**
+			 * the raw frequency for the minor allele is no less than 1% on one of the
+			 * strands
+			 **/
+			if (!(minorBasePercentsFWD >= level || minorBasePercentsREV >= level)) {
+				filter = Filter.DETECTION_LIMIT;
+				line.setFilter(filter);
+				return addVariantResult(line, type, filter);
+			}
+
+			/**
+			 * high-confidence heteroplasmy was defined as candidate heteroplasmy with LLR
+			 * no less than 5
+			 **/
+			if (!(llrFwd >= 5 || llrRev >= 5)) {
+				filter = Filter.LLR_ERROR;
+				line.setFilter(filter);
+				return addVariantResult(line, type, filter);
+			}
+
+			if (!(calcStrandBias(line, minorBasePercentsFWD, minorBasePercentsREV) <= 1)) {
+				type = LOW_LEVEL_VARIANT;
+				filter = Filter.STRAND_BIAS;
+				line.setFilter(filter);
+				return addVariantResult(line, type, filter);
+			}
+			
+			line.setFilter(Filter.PASS);
+			type = LOW_LEVEL_VARIANT;
+			return addVariantResult(line, type);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return addVariantResult(line, type);
+
+		return null;
 
 	}
 
 	private static VariantResult addVariantResult(VariantLine line, int type) {
-		
+		return addVariantResult(line, type, null);
+	}
+
+	private static VariantResult addVariantResult(VariantLine line, int type, Filter filter) {
+
 		VariantResult output = new VariantResult();
 		output.setId(line.getId());
 
@@ -127,12 +152,21 @@ public class VariantCaller {
 		output.setCovFWD(line.getCovFWD());
 		output.setCovREV(line.getCovREV());
 		output.setType(type);
-		
+
+		if (filter == null) {
+			filter = Filter.PASS;
+		}
+
+		if (filter == null && blacklist.contains(line.getPosition())) {
+			filter = Filter.BLACKLISTED;
+		}
+		output.setFilter(filter);
+
 		return output;
 	}
-	
-private static VariantResult addHomoplasmyResult(VariantLine line, int type) {
-		
+
+	private static VariantResult addHomoplasmyResult(VariantLine line, int type) {
+
 		VariantResult output = new VariantResult();
 		output.setId(line.getId());
 
@@ -144,18 +178,24 @@ private static VariantResult addHomoplasmyResult(VariantLine line, int type) {
 
 		if (type == 1) {
 			output.setTop(line.getBayesBase());
-			output.setLevel(calcLevel(line,line.getBayesPercentageFWD(),line.getBayesPercentageREV()));
+			output.setLevel(calcLevel(line, line.getBayesPercentageFWD(), line.getBayesPercentageREV()));
 		} else {
 			output.setTop(line.getTopBaseFWD());
-			output.setLevel(calcVariantLevel(line, line.getMinorBasePercentsFWD(), line.getMinorBasePercentsREV()));
+			output.setLevel(calcLevel(line, line.getMinorBasePercentsFWD(), line.getMinorBasePercentsREV()));
 		}
-		
+
 		output.setMinor('-');
 		output.setRef(line.getRef());
 		output.setCovFWD(line.getCovFWD());
 		output.setCovREV(line.getCovREV());
 		output.setType(type);
-		
+
+		Filter filter = Filter.PASS;
+		if (blacklist.contains(line.getPosition())) {
+			filter = Filter.BLACKLISTED;
+		}
+		output.setFilter(filter);
+
 		return output;
 	}
 
@@ -185,13 +225,14 @@ private static VariantResult addHomoplasmyResult(VariantLine line, int type) {
 
 	private static boolean checkAlleleCoverage(VariantLine line, double minorPercentFWD, double minorPercentREV) {
 		int coverage = 2;
-		
+
 		if (line.getTopBasePercentsREV() * line.getCovREV() <= coverage
 				|| (line.getTopBasePercentsFWD() * line.getCovFWD()) <= coverage) {
 			return false;
 		}
 
-		if ((minorPercentREV * line.getCovREV() <= coverage) || (line.getTopBasePercentsFWD() * line.getCovFWD()) <= coverage) {
+		if ((minorPercentREV * line.getCovREV() <= coverage)
+				|| (line.getTopBasePercentsFWD() * line.getCovFWD()) <= coverage) {
 			return false;
 		}
 
@@ -376,6 +417,8 @@ private static VariantResult addHomoplasmyResult(VariantLine line, int type) {
 
 		build.append(result.getId() + "\t");
 
+		build.append(result.getFilter() + "\t");
+
 		build.append(result.getPosition() + "\t");
 
 		build.append(result.getRef() + "\t");
@@ -393,13 +436,13 @@ private static VariantResult addHomoplasmyResult(VariantLine line, int type) {
 		build.append(df.format(result.getLevelMinor()) + "\t");
 
 		build.append((result.getCovFWD() + result.getCovREV()) + "\t");
-		
+
 		build.append((result.getCovFWD()) + "\t");
-		
+
 		build.append((result.getCovREV()) + "\t");
 
 		build.append(result.getType());
-		
+
 		return build.toString();
 
 	};

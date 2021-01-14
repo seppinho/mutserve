@@ -1,4 +1,4 @@
-package genepi.mut.tools;
+package genepi.mut.util;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

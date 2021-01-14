@@ -1,0 +1,103 @@
+name: mtDNA-Server v2 Beta (rc11)
+description: This service is able to detect heteroplasmies in mitochondrial DNA. Users can specify BAM or CRAM files as an input and receive variant files in return.
+version: v2.0.0
+
+workflow:
+
+      
+  steps:
+
+    - name: Variant Calling (v2.0.0-rc11)
+      jar: jars/mutserve.jar
+      params: call --level $level --reference $archive --mapQ $mapQ --baseQ $baseQ --deletions --output ${variants}.vcf.gz --no-ansi $files --threads $threads --write-raw
+      runtime: java
+      stdout: true
+
+    - name: Variant Annotate (v2.0.0-rc11)
+      jar: jars/mutserve.jar
+      params: annotate --input ${variants}.txt --output ${variants}_ann.txt --annotation files/rCRS_annotation_2020-08-20.txt
+      runtime: java
+      stdout: true    
+
+    - name: Haplogroup Classification with Haplogrep
+      jar: jars/haplogrep.jar
+      params: classify --format vcf --in ${variants}.vcf.gz --out ${haplogroups}.txt --phylotree 17
+      runtime: java
+      stdout: true
+
+    - name: Contamination Detection with Haplocheck
+      jar: jars/haplocheck.jar
+      params: --out ${contamination}.txt --raw ${variants}.vcf.gz     
+      runtime: java
+      stdout: true
+
+    - name: Report Generation
+      jar: jars/mutserve.jar
+      params: report --input ${variants}.txt --output ${report}.html
+      runtime: java
+      stdout: true
+
+    - name: Sending Mail
+      jar: jars/mutserve.jar
+      classname: genepi.mut.commands.MailCommand
+
+  inputs:
+
+    - id: files
+      description: Input Files (BAM/CRAM)
+      type: local-folder
+
+    - id: archive
+      description: Reference FASTA
+      type: text
+      visible: false
+      value: files/rCRS.fasta
+
+    - id: level
+      description: Level
+      type: number
+      visible: false
+      value: 0.01  
+            
+    - id: baseQ
+      description: Minimal Base Quality
+      type: number
+      visible: false 
+      value: 20  
+      
+    - id: mapQ
+      description: Minimal Map Quality
+      type: number
+      visible: false
+      value: 20  
+
+    - id: threads
+      description: Threads for Variant Calling
+      type: number
+      visible: false
+      value: 4  
+      
+
+  outputs:  
+         
+    - id: variants
+      description: Variants file
+      type: local-file
+      removeHeader: false
+      download: true
+      temp: false
+
+    - id: haplogroups
+      description: Detected Haplogroups (using Haplogrep)
+      type: local-file
+      download: true  
+      
+    - id: contamination
+      description: Contamination Result (using Haplocheck)
+      type: local-file
+      download: true
+   
+    - id: report
+      description: mtDNA-Server Interactive Report
+      type: local-file
+      download: true

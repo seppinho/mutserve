@@ -8,8 +8,9 @@ import static lukfor.progress.Components.TIME;
 
 import java.util.Arrays;
 
-import genepi.mut.tools.VariantCallingCommand;
-import genepi.mut.tools.AnnotationCommand;
+import genepi.mut.commands.AnnotationCommand;
+import genepi.mut.commands.ReportCommand;
+import genepi.mut.commands.VariantCallingCommand;
 import lukfor.progress.renderer.ProgressIndicatorGroup;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -22,7 +23,7 @@ public class App implements Runnable {
 
 	public static final String APP = "mtDNA Variant Detection";
 
-	public static final String VERSION = "v2.0.0-rc10";
+	public static final String VERSION = "v2.0.0-rc11";
 
 	public static final String COPYRIGHT = "(c) Sebastian Schoenherr, Hansi Weissensteiner, Lukas Forer";
 
@@ -47,10 +48,13 @@ public class App implements Runnable {
 		}
 
 		COMMAND = Arrays.toString(args);
+		
+		System.out.println(COMMAND);
 
 		commandLine = new CommandLine(new App());
 		commandLine.addSubcommand("call", new VariantCallingCommand());
 		commandLine.addSubcommand("annotate", new AnnotationCommand());
+		commandLine.addSubcommand("report", new ReportCommand());
 
 		commandLine.setExecutionStrategy(new CommandLine.RunLast());
 		commandLine.execute(args);

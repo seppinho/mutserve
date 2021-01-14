@@ -1,4 +1,4 @@
-package genepi.mut.tools;
+package genepi.mut.commands;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -10,11 +10,10 @@ import java.util.concurrent.Callable;
 
 import genepi.mut.App;
 import genepi.mut.objects.BayesFrequencies;
+import genepi.mut.pileup.VcfWriter;
 import genepi.mut.tasks.MergeTask;
 import genepi.mut.tasks.VariantCallingTask;
 import genepi.mut.util.FastaWriter;
-import genepi.mut.util.VcfWriter;
-import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.reference.FastaSequenceFile;
 import htsjdk.samtools.reference.ReferenceSequence;
 import htsjdk.samtools.util.StopWatch;
@@ -211,7 +210,7 @@ public class VariantCallingCommand implements Callable<Integer> {
 
 			VcfWriter vcfWriter = new VcfWriter();
 			vcfWriter.createVCF(variantPath, output, reference, referenceSequence.getName(),
-					referenceSequence.getBaseString().length(), App.VERSION + ";" + App.COMMAND);
+					referenceSequence.getBaseString().length(), App.VERSION);
 			fastaFile.close();
 		}
 
@@ -223,7 +222,7 @@ public class VariantCallingCommand implements Callable<Integer> {
 		System.out.println();
 		System.out.println("Execution Time: " + formatTime(watch.getElapsedTimeSecs()));
 		System.out.println();
-
+		
 		watch.stop();
 
 		return 0;

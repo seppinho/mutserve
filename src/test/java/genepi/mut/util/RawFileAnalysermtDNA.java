@@ -12,6 +12,8 @@ import java.util.TreeSet;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.mut.objects.VariantLine;
 import genepi.mut.objects.VariantResult;
+import genepi.mut.pileup.VariantCaller;
+import genepi.mut.pileup.VariantCaller.Filter;
 
 public class RawFileAnalysermtDNA {
 
@@ -89,9 +91,11 @@ public class RawFileAnalysermtDNA {
 										line.getMinorBasePercentsFWD(), line.getMinorBasePercentsREV(),
 										line.getLlrFWD(), line.getLlrREV(), level, line.getMinorBaseFWD());
 
-								varResult.setLevel(hetLevel);
+								
 
-								if (varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
+								if (varResult != null && varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT && varResult.getFilter() == Filter.PASS) {
+									
+									varResult.setLevel(hetLevel);
 
 									hetero.add(cloudgeneReader.getDouble("LEVEL"));
 

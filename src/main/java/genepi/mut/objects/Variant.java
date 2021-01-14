@@ -1,8 +1,11 @@
 package genepi.mut.objects;
 
+import genepi.mut.pileup.VariantCaller.Filter;
+
 public class Variant {
 
 	private int pos;
+	private Filter filter;
 	private char ref;
 	private char variantBase;
 	private double level;
@@ -105,5 +108,13 @@ public class Variant {
 	public String toString() {
 		return pos + "\t" + ref + "\t" + variantBase + "\t" + level + "\t" + major + "\t" + majorLevel + "\t" + minor + "\t" + minorLevel + "\t"
 				+ coverage + "\t" + type;
+	}
+
+	public Filter getFilter() {
+		return filter;
+	}
+
+	public void setFilter(Filter filter) {
+		this.filter = filter;
 	}
 }

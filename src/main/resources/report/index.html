@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <title>{{title}}</title>
+
+  {{import_style("https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css")}}
+  {{import_style("https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css")}}
+  {{import_script("https://code.jquery.com/jquery-3.5.1.slim.min.js")}}
+  {{import_script("https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js")}}
+
+</head>
+
+<body>
+
+<main class="container">
+  <div class="py-5 px-3">
+
+	<h1>{{title}}</h1>
+<br>
+	<h2>Detected Variants</h2>
+	
+	This table includes all detected variants. Only variants with final filter <b>PASS</b> are included in the VCF file and can be used for downstream analysis. 
+	<br> <br>
+	<table id="table1" class="display"></table>
+  </div>
+  
+  <h2>Coverage Plots</h2>
+	<i>todo</i>
+ </main>
+
+
+{{import_script("index.js")}}
+
+
+</body>
+</html>
+

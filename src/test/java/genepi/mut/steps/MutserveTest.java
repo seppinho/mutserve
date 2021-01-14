@@ -5,11 +5,15 @@ import org.junit.Test;
 import genepi.io.FileUtil;
 import genepi.io.table.reader.CsvTableReader;
 import genepi.io.text.LineReader;
+import genepi.mut.App;
 import genepi.mut.objects.VariantLine;
+import genepi.mut.pileup.VcfWriter;
 import genepi.mut.tasks.MergeTask;
 import genepi.mut.tasks.VariantCallingTask;
 import genepi.mut.util.QCMetric;
 import genepi.mut.util.RawFileAnalysermtDNA;
+import htsjdk.samtools.reference.FastaSequenceFile;
+import htsjdk.samtools.reference.ReferenceSequence;
 import lukfor.progress.TaskService;
 
 import static org.junit.Assert.*;
@@ -103,7 +107,7 @@ public class MutserveTest {
 
 		Set<String> expected = new HashSet<String>(
 				Arrays.asList("1456", "2746", "3200", "12410", "14071", "14569", "15463", "16093", "16360", "10394",
-						"1438", "152", "15326", "15340", "16519", "263", "4769", "750", "8592", "8860", "3107"));
+						"1438", "152", "15326", "15340", "16519", "263", "4769", "750", "8592", "8860"));
 
 		LineReader reader = new LineReader(outFinal);
 		HashSet<String> results = new HashSet<String>();
@@ -112,7 +116,9 @@ public class MutserveTest {
 		reader.next();
 		while (reader.next()) {
 			String[] splits = reader.get().split("\t");
-			results.add(splits[1]);
+			if(splits[1].equals("PASS")) {
+			results.add(splits[2]);
+			}
 		}
 
 		assertEquals(true, results.equals(expected));
@@ -131,7 +137,7 @@ public class MutserveTest {
 
 		Set<String> expected = new HashSet<String>(
 				Arrays.asList("1456", "2746", "3200", "12410", "14071", "14569", "15463", "16093", "16360", "10394",
-						"1438", "152", "15326", "15340", "16519", "263", "4769", "750", "8592", "8860", "3107"));
+						"1438", "152", "15326", "15340", "16519", "263", "4769", "750", "8592", "8860"));
 
 		List<VariantCallingTask> tasks = new Vector<VariantCallingTask>();
 		VariantCallingTask task = new VariantCallingTask();
@@ -156,11 +162,26 @@ public class MutserveTest {
 		reader.next();
 		while (reader.next()) {
 			String[] splits = reader.get().split("\t");
-			results.add(splits[1]);
+			if(splits[1].equals("PASS")) {
+			results.add(splits[2]);
+			}
 		}
 
 		assertEquals(true, results.equals(expected));
 
+		FastaSequenceFile fastaFile = new FastaSequenceFile(new File("files/rCRS.fasta"), false);
+		final ReferenceSequence referenceSequence = fastaFile.nextSequence();
+
+		if (referenceSequence == null) {
+			System.out.println("Can not reference fasta file");
+			System.exit(-1);
+		}
+		
+		VcfWriter vcfWriter = new VcfWriter();
+		vcfWriter.createVCF(outFinal, "test-data/out.vcf", "files/rCRS.fasta", referenceSequence.getName(),
+				referenceSequence.getBaseString().length(), App.VERSION + ";" + App.COMMAND);
+		fastaFile.close();
+		
 	}
 
 	@Test
@@ -208,10 +229,27 @@ public class MutserveTest {
 		reader.next();
 		int count = 0;
 		while (reader.next()) {
+			String[] splits = reader.get().split("\t");
+			if(splits[1].equals("PASS")) {
 			count++;
+			}
 		}
 
-		assertEquals(21*2, count);
+		assertEquals(20*2, count);
+		
+		
+		FastaSequenceFile fastaFile = new FastaSequenceFile(new File("files/rCRS.fasta"), false);
+		final ReferenceSequence referenceSequence = fastaFile.nextSequence();
+
+		if (referenceSequence == null) {
+			System.out.println("Can not reference fasta file");
+			System.exit(-1);
+		}
+		
+		VcfWriter vcfWriter = new VcfWriter();
+		vcfWriter.createVCF(outFinal, "test-data/out.vcf", "files/rCRS.fasta", referenceSequence.getName(),
+				referenceSequence.getBaseString().length(), App.VERSION + ";" + App.COMMAND);
+		fastaFile.close();
 
 	}
 	
@@ -272,10 +310,13 @@ public class MutserveTest {
 		reader.next();
 		int count = 0;
 		while (reader.next()) {
-			count++;
+			String[] splits = reader.get().split("\t");
+			if(splits[1].equals("PASS")) {
+				count++;
+			}
 		}
 
-		assertEquals(21*3, count);
+		assertEquals(20*3, count);
 
 	}
 
@@ -362,7 +403,7 @@ public class MutserveTest {
 		reader.next();
 		while (reader.next()) {
 			String[] splits = reader.get().split("\t");
-			results.add(splits[1]);
+			results.add(splits[2]);
 		}
 		
 			assertTrue(results.contains("16541"));

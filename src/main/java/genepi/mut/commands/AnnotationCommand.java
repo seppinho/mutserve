@@ -1,4 +1,4 @@
-package genepi.mut.tools;
+package genepi.mut.commands;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,8 +72,6 @@ public class AnnotationCommand implements Callable<Integer> {
 		inputTable.merge(annotationTable, "Mutation");
 
 		TableWriter.writeToCsv(inputTable, output, '\t');
-
-		System.out.println("Results written to file '" + output + "'.");
 
 		return 0;
 	}
