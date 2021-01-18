@@ -60,15 +60,16 @@ Mutserve allows to annotate the variant file (.txt) with a predefined [annotatio
 
 ## Differences to mtDNA-Server
 
-The previous version of mutserve has been integrated in [mtDNA-Server](https://mtdna-server.uibk.ac.at). For scalability reasons, mutserve is parallelized using Hadoop MapReduce but also available as a standalone tool.
+The previous version of mutserve has been integrated in [mtDNA-Server v1](https://mtdna-server.uibk.ac.at).
 
+The new changes includes the following changes: 
 - mutserve always reports the non-reference level as the heteroplasmy level, while mtDNA-Server reports the minor component.
 - mutserve includes a Bayesian model for homoplasmy detection. It uses the 1000G Phase 3 data as a prior and calculates the most likely posterior probability for each genotype. mtDNA-Server only outputs homoplasmic variants with a coverage > 30.
 
 ### BAM Preperation
-Best Practice Pipelines recommend the following steps for BAM files preperation:
-- Local realignment around indels (*GenomeAnalysisTK.jar -T RealignerTargetCreator*, *java -jar GenomeAnalysisTK.jar -T IndelRealigner*) 
-- BQSR (*GenomeAnalysisTK.jar -T BaseRecalibrator*).
+Mutserve is not focused on indel calling. 
+Best Practice Pipelines include steps for BAM files preperation like local realignment around indels (*GenomeAnalysisTK.jar -T RealignerTargetCreator*, *java -jar GenomeAnalysisTK.jar -T IndelRealigner*) or BQSR (*GenomeAnalysisTK.jar -T BaseRecalibrator*).
+Please also have a look at the [Mutect2 Pipeline](https://gnomad.broadinstitute.org/blog/2020-11-gnomad-v3-1-mitochondrial-dna-variants/).
 
 ## Output Formats
 
