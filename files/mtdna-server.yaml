@@ -1,5 +1,5 @@
-name: mtDNA-Server v2 Beta (rc11)
-description: This service is able to detect heteroplasmies in mitochondrial DNA. Users can specify BAM or CRAM files as an input and receive variant files in return.
+name: mtDNA-Server v2 Beta (rc12)
+description: This service is able to detect heteroplasmies in mitochondrial DNA. Users can specify BAM or CRAM files as an input and receive variant files in return. It includes Haplogrep for haplogroup classification and Haplocheck to detect in-sample contamination. 
 version: v2.0.0
 
 workflow:
@@ -7,13 +7,13 @@ workflow:
       
   steps:
 
-    - name: Variant Calling (v2.0.0-rc11)
+    - name: Variant Calling
       jar: jars/mutserve.jar
       params: call --level $level --reference $archive --mapQ $mapQ --baseQ $baseQ --deletions --output ${variants}.vcf.gz --no-ansi $files --threads $threads --write-raw
       runtime: java
       stdout: true
 
-    - name: Variant Annotate (v2.0.0-rc11)
+    - name: Variant Annotate
       jar: jars/mutserve.jar
       params: annotate --input ${variants}.txt --output ${variants}_ann.txt --annotation files/rCRS_annotation_2020-08-20.txt
       runtime: java
