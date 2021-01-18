@@ -4,10 +4,12 @@ $(document).ready(function() {
 	$('#table1').DataTable({
 		columns: [
 		   		{data: "id", title: "Sample"},
-		   		{data: "filter", title: "Filter"},
-		   		{data: "pos", title: "Position"},
+				{data: "pos", title: "Position"},
 		   		{data: "var", title: "Variant"},
-		   		{data: "ref", title: "Reference"}
+		   		{data: "ref", title: "Reference"},
+		   		{data: "level", title: "Level"},
+		   		{data: "type", title: "Type"},
+		   		{data: "filter", title: "Filter"}
 		],
 		data: {{json(variants)}}
 	})

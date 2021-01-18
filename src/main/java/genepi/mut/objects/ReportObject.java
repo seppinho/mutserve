@@ -6,6 +6,7 @@ public class ReportObject {
 	private int pos;
 	private char var;
 	private char ref;
+	private double level;
 	private int coverage;
 	private int type;
 	private String filter;
@@ -51,5 +52,11 @@ public class ReportObject {
 	}
 	public void setFilter(String filter) {
 		this.filter = filter;
+	}
+	public double getLevel() {
+		return level;
+	}
+	public void setLevel(double level) {
+		this.level = level;
 	}
 }

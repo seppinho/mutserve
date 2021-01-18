@@ -60,6 +60,7 @@ public class ReportCommand implements Callable<Integer> {
 				reportObject.setRef(variant.getRef());
 				reportObject.setVar(variant.getVariant());
 				variants.add(reportObject);
+				
 				}
 			}
 		}
