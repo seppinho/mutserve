@@ -21,7 +21,7 @@ workflow:
 
     - name: Haplogroup Classification with Haplogrep
       jar: jars/haplogrep.jar
-      params: classify --format vcf --in ${variants}.vcf.gz --out ${haplogroups}.txt --phylotree 17
+      params: classify --format vcf --in ${variants}.vcf.gz --out ${haplogroups}.txt --phylotree 17 --extend-report
       runtime: java
       stdout: true
 
