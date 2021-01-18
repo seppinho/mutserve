@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/seppinho/mutserve.svg?branch=master)](https://travis-ci.org/seppinho/mutserve)
 [![Twitter Follow](https://img.shields.io/twitter/follow/mtdnaserver.svg?style=social&label=Follow)](https://twitter.com/mtdnaserver)
 
-Mutserve is a variant caller for the mitochondrial genome to detect homoplasmic and heteroplasmic sites in sequence data. It has been integrated into [haplocheck](https://github.com/genepi/haplocheck) and [mtDNA-Server](https://mtdna-server.uibk.ac.at).
+Mutserve is a variant caller for the mitochondrial genome to detect homoplasmic and heteroplasmic sites in sequence data. It is used by [haplocheck](https://github.com/genepi/haplocheck) and [mtDNA-Server](https://mitoverse.i-med.ac.at).
 
 ## Installation
 Mutserve requires sorted and indexed CRAM/BAM files as an input.
