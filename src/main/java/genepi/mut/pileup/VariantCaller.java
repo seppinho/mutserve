@@ -118,7 +118,7 @@ public class VariantCaller {
 				line.setFilter(filter);
 				return addVariantResult(line, type, filter);
 			}
-			
+
 			line.setFilter(Filter.PASS);
 			type = LOW_LEVEL_VARIANT;
 			return addVariantResult(line, type);
@@ -429,11 +429,19 @@ public class VariantCaller {
 
 		build.append(result.getTop() + "\t");
 
-		build.append(df.format(result.getLevelTop()) + "\t");
+		if (result.getType() != 1) {
+			build.append(df.format(result.getLevelTop()) + "\t");
+		} else {
+			build.append("" + "\t");
+		}
 
 		build.append(result.getMinor() + "\t");
 
-		build.append(df.format(result.getLevelMinor()) + "\t");
+		if (result.getType() != 1) {
+			build.append(df.format(result.getLevelMinor()) + "\t");
+		} else {
+			build.append("" + "\t");
+		}
 
 		build.append((result.getCovFWD() + result.getCovREV()) + "\t");
 

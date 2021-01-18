@@ -61,11 +61,11 @@ public class MutationServerReader {
 			char major = reader.getString("MajorBase").charAt(0);
 			char minor = reader.getString("MinorBase").charAt(0);
 
-			if (reader.hasColumn("MajorLevel")) {
+			if (reader.hasColumn("MajorLevel") && type != 1) {
 				majorLevel = Double.valueOf(reader.getString("MajorLevel"));
 			}
 
-			if (reader.hasColumn("MinorLevel")) {
+			if (reader.hasColumn("MinorLevel")  && type != 1) {
 				minorLevel = Double.valueOf(reader.getString("MinorLevel"));
 			}
 
