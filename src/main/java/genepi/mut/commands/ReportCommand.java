@@ -1,23 +1,8 @@
 package genepi.mut.commands;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.Callable;
-
-import genepi.mut.objects.ReportObject;
-import genepi.mut.objects.Sample;
-import genepi.mut.objects.Variant;
-import genepi.mut.util.MutationServerReader;
-import lukfor.reports.HtmlReport;
-import lukfor.tables.Table;
-import lukfor.tables.columns.IBuildValueFunction;
-import lukfor.tables.columns.types.StringColumn;
-import lukfor.tables.io.TableBuilder;
-import lukfor.tables.io.TableWriter;
-import lukfor.tables.rows.Row;
+import genepi.mut.tasks.ReportTask;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -39,35 +24,10 @@ public class ReportCommand implements Callable<Integer> {
 			return 1;
 		}
 		
-		HtmlReport report = new HtmlReport("/report");
-		report.setSelfContained(true);
-		report.set("title", "mtDNA Server Report v2 (Beta)");
-
-		List<ReportObject> variants = new ArrayList<ReportObject>();
-		MutationServerReader reader = new MutationServerReader(input);
-		HashMap<String, Sample> samples = reader.parse();
-
-		for (Sample sample : samples.values()) {
-			
-			for (ArrayList<Variant> a : sample.getVariants()) {
-				
-				for(Variant variant : a) {
-				ReportObject reportObject = new ReportObject();
-				reportObject.setCoverage(variant.getCoverage());
-				reportObject.setId(sample.getId());
-				reportObject.setPos(variant.getPos());
-				reportObject.setFilter(variant.getFilter().name());
-				reportObject.setRef(variant.getRef());
-				reportObject.setVar(variant.getVariant());
-				variants.add(reportObject);
-				
-				}
-			}
-		}
-
-		report.set("variants", variants);
-		report.generate(new File(output));
-
+		ReportTask task = new ReportTask();
+		task.setInput(input);
+		task.setOutput(output);
+		task.createReport();
 		return 0;
 	}
 
