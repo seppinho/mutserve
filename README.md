@@ -22,7 +22,9 @@ Currently two tools are available.
 ## <a name="mutserve-call">Mutserve Call</a>
 
 ```
-./mutserve call --reference rCRS.fasta --output s4.vcf.gz --threads 4 *.cram 
+wget https://github.com/seppinho/mutserve/raw/master/test-data/mtdna/bam/input/HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123.bam
+curl -sL mutserve.vercel.app | bash
+./mutserve call --reference rCRS.fasta --output HG00096.vcf.gz --threads 4 *.bam 
 ```
 
 Please use [this reference file](https://raw.githubusercontent.com/seppinho/mutserve/master/files/rCRS.fasta) when using BAQ (disabled by default since v2.0.0).
