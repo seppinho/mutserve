@@ -1,5 +1,5 @@
 **Columns**|**Description**
-:-----:|:-----:
+:-----|:-----
 ID|Sample Identifier
 Pos|Position on locus (integer)
 Ref|Reference nucleotide (A,C,G,T,N)
