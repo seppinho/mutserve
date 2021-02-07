@@ -16,6 +16,9 @@ curl -sL mutserve.vercel.app | bash
 ## Documentation
 Full documentation for mutserve can be found [here](https://mitoverse.readthedocs.io/en/latest/mutserve/mutserve/). 
 
+## Contact
+See [here](https://mitoverse.readthedocs.io/en/latest/contact/).
+
 ## Citation
 Weissensteiner H, Forer L, Fuchsberger C, Schöpf B, Kloss-Brandstätter A, Specht G, Kronenberg F, Schönherr S. 2016. mtDNA-Server: next-generation sequencing data analysis of human mitochondrial DNA in the cloud. Nucleic Acids Res 44: W64–9.
 
