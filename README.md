@@ -14,7 +14,7 @@ curl -sL mutserve.vercel.app | bash
 ```
 
 ## Documentation
-Full documentation for mutserve can be found [here](https://mitoverse.readthedocs.io/en/latest/mutserve/mutserve/). 
+Full documentation for mutserve can be found [here](https://mitoverse.readthedocs.io/mutserve/mutserve/). 
 
 ## Contact
 See [here](https://mitoverse.readthedocs.io/en/latest/contact/).
