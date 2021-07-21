@@ -55,7 +55,7 @@ public class AnnotationCommand implements Callable<Integer> {
 		}
 
 		inputTable.getColumns().append(new StringColumn("Mutation"), new IBuildValueFunction() {
-			public String buildValue(Row row) throws IOException {
+			public String buildValue(Row row) {
 				return row.getString("Pos") + row.getString("Variant");
 			}
 		});

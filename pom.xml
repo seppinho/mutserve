@@ -25,22 +25,16 @@
 	<repositories>
 
 		<repository>
-			<id>bintray-lukfor-maven</id>
-			<name>bintray</name>
-			<url>https://dl.bintray.com/lukfor/maven</url>
-		</repository>
-
-		<repository>
 			<id>in-project</id>
 			<name>In Project Repo</name>
 			<url>file://${basedir}/libs</url>
 		</repository>
 
-		<repository>
-			<id>bintray-genepi-maven</id>
-			<name>bintray</name>
-			<url>https://dl.bintray.com/genepi/maven</url>
-		</repository>
+	<repository>
+		<id>jfrog-genepi-maven</id>
+		<name>jfrog-genepi-maven</name>
+		<url>https://genepi.jfrog.io/artifactory/maven/</url>
+	</repository>
 
 	</repositories>
 
@@ -213,9 +207,9 @@
 
 		<dependency>
 			<groupId>com.github.lukfor</groupId>
-			<artifactId>magic-progress</artifactId>
-			<version>0.3.0</version>
-		</dependency>
+			<artifactId>magic-reports</artifactId>
+			<version>0.0.1</version>
+			</dependency>
 
 		<dependency>
 			<groupId>info.picocli</groupId>
@@ -224,12 +218,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.github.lukfor</groupId>
-			<artifactId>magic-tables</artifactId>
-			<version>0.3.0</version>
-		</dependency>
-		
-		<dependency>
 			<groupId>cloudgene</groupId>
 			<artifactId>cloudgene-java-sdk</artifactId>
 			<version>1.0.2</version>
@@ -237,10 +225,22 @@
 		
 		<dependency>
 			<groupId>com.github.lukfor</groupId>
+			<artifactId>magic-progress</artifactId>
+			<version>0.3.2</version>
+		</dependency>
+		
+		
+		<dependency>
+			<groupId>com.github.lukfor</groupId>
 			<artifactId>magic-reports</artifactId>
 			<version>0.0.1</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>com.github.lukfor</groupId>
+			<artifactId>magic-tables</artifactId>
+			<version>0.3.1</version>
+		</dependency>
 
 	</dependencies>
 
