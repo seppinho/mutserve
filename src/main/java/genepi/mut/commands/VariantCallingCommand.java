@@ -186,7 +186,7 @@ public class VariantCallingCommand implements Callable<Integer> {
 
 		for (Task task : taskList) {
 			if (!task.getStatus().isSuccess()) {
-				System.out.println(task.getStatus().getThrowable().toString());
+				task.getStatus().getThrowable().printStackTrace();
 				System.out.println("Variant Calling failed. Mutserve terminated.");
 				System.exit(-1);
 			}
