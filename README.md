@@ -20,8 +20,12 @@ Full documentation for mutserve can be found [here](https://mitoverse.readthedoc
 The focus of mutserve is currenly on SNP calling and not on indels.
 
 ## Contact
-See [here](https://mitoverse.readthedocs.io/en/latest/contact/).
+See [here](https://mitoverse.readthedocs.io/contact/).
 
 ## Citation
+
+Weissensteiner H, Forer L, Fendt L, Kheirkhah A, Salas A, Kronenberg F, Schoenherr S. 2021. Contamination detection in sequencing studies using the mitochondrial phylogeny.
+Genome Res. 31: 309-316
+
 Weissensteiner H, Forer L, Fuchsberger C, Schöpf B, Kloss-Brandstätter A, Specht G, Kronenberg F, Schönherr S. 2016. mtDNA-Server: next-generation sequencing data analysis of human mitochondrial DNA in the cloud. Nucleic Acids Res 44: W64–9.
 
