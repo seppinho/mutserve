@@ -95,7 +95,7 @@ public class VariantLine implements Comparable<VariantLine> {
 	}
 
 	public void parseLineFromFile(CsvTableReader cloudgeneReader) {
- 
+
 		this.setId(cloudgeneReader.getString("SAMPLE"));
 		this.setPosition(cloudgeneReader.getInteger("POS"));
 		this.setRef(cloudgeneReader.getString("REF").charAt(0));
@@ -388,58 +388,59 @@ public class VariantLine implements Comparable<VariantLine> {
 	}
 
 	public String toRawString() {
-		
-		
+
 		StringBuilder build = new StringBuilder();
-		
-		build.append( id + "\t");
-		build.append( position + "\t");
-		build.append( ref + "\t");
-		build.append( topBaseFWD + "\t");
-		build.append( minorBaseFWD + "\t");
-		build.append( topBaseREV + "\t");
-		build.append( minorBaseREV + "\t");
-		build.append( covFWD + "\t");
-		build.append( covREV + "\t");
-		build.append( (covFWD + covREV) + "\t");
-		build.append( type + "\t");
-		build.append( varLevel + "\t");
-		build.append( aPercentageFWD + "\t");
-		build.append( cPercentageFWD + "\t");
-		build.append( gPercentageFWD + "\t");
-		build.append( tPercentageFWD + "\t");
-		build.append( dPercentageFWD + "\t");
-		build.append( nPercentageFWD + "\t");
-		build.append( aPercentageREV + "\t");
-		build.append( cPercentageREV + "\t");
-		build.append( gPercentageREV + "\t");
-		build.append( tPercentageREV + "\t");
-		build.append( dPercentageREV + "\t");
-		build.append( nPercentageREV + "\t");
-		build.append( topBasePercentsFWD + "\t");
-		build.append( topBasePercentsREV + "\t");
-		build.append( minorBasePercentsFWD + "\t");
-		build.append( minorBasePercentsREV + "\t");
-		build.append( llrFWD + "\t");
-		build.append( llrREV + "\t");
-		build.append( llrAFWD + "\t");
-		build.append( llrAREV + "\t");
-		build.append( llrCFWD + "\t");
-		build.append( llrCREV + "\t");
-		build.append( llrGFWD + "\t");
-		build.append( llrGREV + "\t");
-		build.append( llrTFWD + "\t");
-		build.append( llrTREV + "\t");
-		build.append( llrDFWD + "\t");
-		build.append( llrDREV + "\t");
-		build.append( minors);
-		
+
+		build.append(id + "\t");
+		build.append(position + "\t");
+		build.append(ref + "\t");
+		build.append(topBaseFWD + "\t");
+		build.append(minorBaseFWD + "\t");
+		build.append(topBaseREV + "\t");
+		build.append(minorBaseREV + "\t");
+		build.append(covFWD + "\t");
+		build.append(covREV + "\t");
+		build.append((covFWD + covREV) + "\t");
+		build.append(type + "\t");
+		build.append(varLevel + "\t");
+		build.append(aPercentageFWD + "\t");
+		build.append(cPercentageFWD + "\t");
+		build.append(gPercentageFWD + "\t");
+		build.append(tPercentageFWD + "\t");
+		build.append(dPercentageFWD + "\t");
+		build.append(nPercentageFWD + "\t");
+		build.append(aPercentageREV + "\t");
+		build.append(cPercentageREV + "\t");
+		build.append(gPercentageREV + "\t");
+		build.append(tPercentageREV + "\t");
+		build.append(dPercentageREV + "\t");
+		build.append(nPercentageREV + "\t");
+		build.append(topBasePercentsFWD + "\t");
+		build.append(topBasePercentsREV + "\t");
+		build.append(minorBasePercentsFWD + "\t");
+		build.append(minorBasePercentsREV + "\t");
+		build.append(llrFWD + "\t");
+		build.append(llrREV + "\t");
+		build.append(llrAFWD + "\t");
+		build.append(llrAREV + "\t");
+		build.append(llrCFWD + "\t");
+		build.append(llrCREV + "\t");
+		build.append(llrGFWD + "\t");
+		build.append(llrGREV + "\t");
+		build.append(llrTFWD + "\t");
+		build.append(llrTREV + "\t");
+		build.append(llrDFWD + "\t");
+		build.append(llrDREV + "\t");
+		build.append(minors);
+
 		return build.toString();
-		
+
 	}
 
+	// TODO: && topBasePercentsFWD >= 0.4 && topBasePercentsFWD <= 0.6 check
+	// required for problems with 50: 50?
 	private boolean checkBases(char topFWD, char topREV, char minorFWD, char minorREV) {
-		return (minorFWD == minorREV && topFWD == topREV ) || (topFWD == minorREV && topREV == minorFWD && topBasePercentsFWD >= 0.4 && topBasePercentsFWD <= 0.6);
+		return (minorFWD == minorREV && topFWD == topREV) || (topFWD == minorREV && topREV == minorFWD);
 	}
 
 	private char detectMinorFWD(double minorPercentage) {
