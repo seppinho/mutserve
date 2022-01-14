@@ -3,7 +3,7 @@
 set -e
 
 NAME="Mutserve"
-VERSION="v2.0.0-rc12"
+VERSION="v2.0.0-rc13"
 GITHUB_USER="seppinho"
 GITHUB_REPO="mutserve"
 EXECUTABLE="mutserve"
