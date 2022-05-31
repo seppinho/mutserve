@@ -154,16 +154,17 @@ public class BamAnalyser {
 		}
 
 		String readString = samRecord.getReadString();
-
+		
 		for (int i = 0; i < readString.length(); i++) {
 
 			int currentPos = samRecord.getReferencePositionAtReadPosition(i + 1);
+			
 
 			// if e.g softclips/insertions are included pos is 0, so skip them
 			// immediately!
 			if (currentPos > 0) {
 
-				if (samRecord.getBaseQualities()[i] >= baseQual) {
+				if (50 >= baseQual) {
 
 					int key = currentPos;
 
@@ -181,19 +182,19 @@ public class BamAnalyser {
 						switch (base) {
 						case 'A':
 							basePos.addaRev(1);
-							basePos.addaRevQ(samRecord.getBaseQualities()[i]);
+							basePos.addaRevQ((byte)50);
 							break;
 						case 'C':
 							basePos.addcRev(1);
-							basePos.addcRevQ(samRecord.getBaseQualities()[i]);
+							basePos.addcRevQ((byte)50);
 							break;
 						case 'G':
 							basePos.addgRev(1);
-							basePos.addgRevQ(samRecord.getBaseQualities()[i]);
+							basePos.addgRevQ((byte)50);
 							break;
 						case 'T':
 							basePos.addtRev(1);
-							basePos.addtRevQ(samRecord.getBaseQualities()[i]);
+							basePos.addtRevQ((byte)50);
 							break;
 						case 'N':
 							basePos.addnRev(1);
@@ -206,19 +207,19 @@ public class BamAnalyser {
 						switch (base) {
 						case 'A':
 							basePos.addaFor(1);
-							basePos.addaForQ(samRecord.getBaseQualities()[i]);
+							basePos.addaForQ((byte)50);
 							break;
 						case 'C':
 							basePos.addcFor(1);
-							basePos.addcForQ(samRecord.getBaseQualities()[i]);
+							basePos.addcForQ((byte)50);
 							break;
 						case 'G':
 							basePos.addgFor(1);
-							basePos.addgForQ(samRecord.getBaseQualities()[i]);
+							basePos.addgForQ((byte)50);
 							break;
 						case 'T':
 							basePos.addtFor(1);
-							basePos.addtForQ(samRecord.getBaseQualities()[i]);
+							basePos.addtForQ((byte)50);
 							break;
 						case 'N':
 							basePos.addnFor(1);
