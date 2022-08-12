@@ -223,16 +223,17 @@ public class VariantCaller {
 		return (fwd + rev) / (line.getCovFWD() + line.getCovREV());
 	}
 
+
 	private static boolean checkAlleleCoverage(VariantLine line, double minorPercentFWD, double minorPercentREV) {
 		int coverage = 2;
 
 		if (line.getTopBasePercentsREV() * line.getCovREV() <= coverage
-				|| (line.getTopBasePercentsFWD() * line.getCovFWD()) <= coverage) {
+				&& (line.getTopBasePercentsFWD() * line.getCovFWD()) <= coverage) {
 			return false;
 		}
 
 		if ((minorPercentREV * line.getCovREV() <= coverage)
-				|| (line.getTopBasePercentsFWD() * line.getCovFWD()) <= coverage) {
+				&& (minorPercentFWD * line.getCovFWD()) <= coverage) {
 			return false;
 		}
 
