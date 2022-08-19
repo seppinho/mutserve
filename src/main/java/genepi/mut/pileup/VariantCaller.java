@@ -76,7 +76,7 @@ public class VariantCaller {
 
 		Filter filter = null;
 		try {
-
+		
 			/**
 			 * 10× coverage of qualified bases on both positive and negative strands;
 			 */
@@ -112,7 +112,7 @@ public class VariantCaller {
 				return addVariantResult(line, type, filter);
 			}
 
-			if (!(calcStrandBias(line, minorBasePercentsFWD, minorBasePercentsREV) <= 1)) {
+			if (!(calcStrandBias(line, minorBasePercentsFWD, minorBasePercentsREV) <= 1.2)) {
 				type = LOW_LEVEL_VARIANT;
 				filter = Filter.STRAND_BIAS;
 				line.setFilter(filter);
@@ -228,7 +228,7 @@ public class VariantCaller {
 		int coverage = 2;
 
 		if (line.getTopBasePercentsREV() * line.getCovREV() <= coverage
-				&& (line.getTopBasePercentsFWD() * line.getCovFWD()) <= coverage) {
+				&&  (line.getTopBasePercentsFWD() * line.getCovFWD()) <= coverage) {
 			return false;
 		}
 
