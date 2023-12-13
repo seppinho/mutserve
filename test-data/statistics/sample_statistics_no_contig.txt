@@ -1,0 +1,4 @@
+sample	parameter	value
+HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123_copy	NumberofReads	241373
+HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123	Contig	MTT
+HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123	NumberofReads	241373

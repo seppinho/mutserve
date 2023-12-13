@@ -2,11 +2,17 @@ package genepi.mut.commands;
 
 import java.io.DataInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.Callable;
+
+import org.apache.commons.io.FileUtils;
 
 import genepi.mut.App;
 import genepi.mut.objects.BayesFrequencies;
@@ -87,6 +93,10 @@ public class VariantCallingCommand implements Callable<Integer> {
 	String mode = "mtdna";
 
 	@Option(names = {
+			"--excluded-samples" }, description = "Specifify mutserve mode", required = false, showDefaultValue = Visibility.ALWAYS)
+	String excludedSamples = null;
+
+	@Option(names = {
 			"--no-ansi" }, description = "Disable ANSI support", required = false, showDefaultValue = Visibility.ALWAYS)
 	boolean noAnsi = false;
 
@@ -97,7 +107,7 @@ public class VariantCallingCommand implements Callable<Integer> {
 	boolean showHelp;
 
 	@Override
-	public Integer call() {
+	public Integer call() throws IOException {
 
 		if (input.size() == 1 && new File(input.get(0)).isDirectory()) {
 			int count = 0;
@@ -109,6 +119,18 @@ public class VariantCallingCommand implements Callable<Integer> {
 			}
 			System.out.println(count + " files added.");
 			input.remove(0);
+		} else if (excludedSamples != null) {
+			for (String file : input) {
+				String fileWithoutExtenssion = file.replaceAll(".bam", "").replaceAll(".cram", "");
+				String content = FileUtils.readFileToString(new File(excludedSamples), StandardCharsets.UTF_8);
+				String[] excluded = content.split(",");
+				for (String e : excluded) {
+					if (e.trim().equals(fileWithoutExtenssion)) {
+						System.out.println("File " + file + "removed");
+						input.remove(file);
+					}
+				}
+			}
 		}
 
 		if (input == null || input.isEmpty()) {
@@ -222,7 +244,7 @@ public class VariantCallingCommand implements Callable<Integer> {
 		System.out.println();
 		System.out.println("Execution Time: " + formatTime(watch.getElapsedTimeSecs()));
 		System.out.println();
-		
+
 		watch.stop();
 
 		return 0;

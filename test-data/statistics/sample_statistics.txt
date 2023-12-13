@@ -1,0 +1,15 @@
+sample	parameter	value
+HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123_copy	Contig	MT
+HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123_copy	NumberofReads	241373
+HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123_copy	CoveredBases	16569
+HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123_copy	CoveragePercentage	100
+HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123_copy	MeanDepth	1399.72
+HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123_copy	MeanBaseQuality	33.1
+HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123_copy	MeanMapQuality	52.8
+HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123	Contig	MT
+HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123	NumberofReads	241373
+HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123	CoveredBases	16569
+HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123	CoveragePercentage	100
+HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123	MeanDepth	1399.72
+HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123	MeanBaseQuality	33.1
+HG00096.mapped.ILLUMINA.bwa.GBR.low_coverage.20101123	MeanMapQuality	52.8

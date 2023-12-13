@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 import genepi.mut.commands.AnnotationCommand;
 import genepi.mut.commands.ReportCommand;
+import genepi.mut.commands.StatisticsCommand;
 import genepi.mut.commands.VariantCallingCommand;
 import lukfor.progress.renderer.ProgressIndicatorGroup;
 import picocli.CommandLine;
@@ -55,6 +56,7 @@ public class App implements Runnable {
 		commandLine.addSubcommand("call", new VariantCallingCommand());
 		commandLine.addSubcommand("annotate", new AnnotationCommand());
 		commandLine.addSubcommand("report", new ReportCommand());
+		commandLine.addSubcommand("stats", new StatisticsCommand());
 
 		commandLine.setExecutionStrategy(new CommandLine.RunLast());
 		commandLine.execute(args);
