@@ -28,7 +28,7 @@ public class StatisticsTest {
 		
 		CloudgeneReport CloudgeneLog = new CloudgeneReport(CLOUDGENE_LOG);
 
-		assertTrue(CloudgeneLog.hasInMemory("Detected and validated files:2"));
+		assertTrue(CloudgeneLog.hasInMemory("Passed Samples: 2"));
 		assertTrue(CloudgeneLog.hasInMemory("[OK]"));
 
 
@@ -103,7 +103,7 @@ public class StatisticsTest {
 		assertEquals(0, (int) command.call());
 		
 		CloudgeneReport CloudgeneLog = new CloudgeneReport(CLOUDGENE_LOG);
-		assertTrue(CloudgeneLog.hasInMemory("Detected and validated files:1"));
+		assertTrue(CloudgeneLog.hasInMemory("Passed Samples: 1"));
 
 
 	}
