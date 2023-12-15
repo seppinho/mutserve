@@ -222,7 +222,7 @@ public class StatisticsCommand implements Callable<Integer> {
 			context.error("No input samples passed the QC step");
 			return -1;
 		} else {
-			context.ok("QC run succesfully, mtDNA analysis can be started.");
+			context.ok("Input Validation run succesfully, mtDNA analysis can be started.");
 			return 0;
 		}
 	}
