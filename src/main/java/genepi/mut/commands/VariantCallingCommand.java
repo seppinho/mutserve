@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -119,18 +120,24 @@ public class VariantCallingCommand implements Callable<Integer> {
 			}
 			System.out.println(count + " files added.");
 			input.remove(0);
-		} else if (excludedSamples != null) {
+		}
+
+		if (excludedSamples != null) {
+			List<String> inputIncluded = new ArrayList<String>();
+			String content = FileUtils.readFileToString(new File(excludedSamples), StandardCharsets.UTF_8);
+			String[] excluded = content.split(",");
+
 			for (String file : input) {
 				String fileWithoutExtenssion = file.replaceAll(".bam", "").replaceAll(".cram", "");
-				String content = FileUtils.readFileToString(new File(excludedSamples), StandardCharsets.UTF_8);
-				String[] excluded = content.split(",");
 				for (String e : excluded) {
-					if (e.trim().equals(fileWithoutExtenssion)) {
+					if (!e.trim().equals(fileWithoutExtenssion)) {
 						System.out.println("File " + file + "removed");
-						input.remove(file);
+						inputIncluded.add(file);
 					}
 				}
 			}
+
+			input = inputIncluded;
 		}
 
 		if (input == null || input.isEmpty()) {
