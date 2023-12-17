@@ -21,11 +21,19 @@ public class StatisticsCommand implements Callable<Integer> {
 	private static final int MIN_MEAN_BASE_QUALITY = 10;
 	private static final int MIN_MEAN_DEPTH = 50;
 
+	List<String> allowed_contigs = new ArrayList<>(List.of("chrM", "MT", "chrMT", "rCRS", "NC_012920.1"));
+
 	@Option(names = { "--input" }, description = "\"Input file", required = true)
 	private String input;
 
-	@Option(names = { "--output" }, description = "\"Exclude file", required = true)
+	@Option(names = { "--output-excluded-samples" }, description = "\"Exclude file", required = true)
 	private String output;
+
+	@Option(names = { "--output-contig" }, description = "\"Exclude file", required = false)
+	private String contigOut = "chrM";
+
+	@Option(names = { "--tool" }, description = "\"Exclude file", required = false)
+	private String tool = "mutserve";
 
 	@Option(names = {
 			"--baseQ" }, description = "Minimum Base Quality", required = false, showDefaultValue = Visibility.ALWAYS)
@@ -34,18 +42,18 @@ public class StatisticsCommand implements Callable<Integer> {
 	@Option(names = {
 			"--mapQ" }, description = "Minimum Map Quality", required = false, showDefaultValue = Visibility.ALWAYS)
 	private int mapQ = 30;
-	
+
 	@Option(names = {
-	"--alignQ" }, description = "Minimum Alignment Quality", required = false, showDefaultValue = Visibility.ALWAYS)
-    private int alignQ = 30;
-	
+			"--alignQ" }, description = "Minimum Alignment Quality", required = false, showDefaultValue = Visibility.ALWAYS)
+	private int alignQ = 30;
+
 	@Option(names = {
-	"--detection-limit" }, description = "Defined Detection Limit", required = false, showDefaultValue = Visibility.ALWAYS)
-    private double detectionLimit = 0.01;
-	
+			"--detection-limit" }, description = "Defined Detection Limit", required = false, showDefaultValue = Visibility.ALWAYS)
+	private double detectionLimit = 0.01;
+
 	@Option(names = {
-	"--reference" }, description = "Reference for Variant Calling", required = false, showDefaultValue = Visibility.ALWAYS)
-    private String reference = "rcrs";	
+			"--reference" }, description = "Reference for Variant Calling", required = false, showDefaultValue = Visibility.ALWAYS)
+	private String reference = "rcrs";
 
 	@Option(names = "--report", description = "Cloudgene Report Output", required = false)
 	private String report = "cloudgene.report.json";
@@ -59,6 +67,7 @@ public class StatisticsCommand implements Callable<Integer> {
 
 		StringBuffer excludedSamplesFile = new StringBuffer();
 		LineWriter writer = new LineWriter(output);
+		LineWriter writerContig = new LineWriter(contigOut);
 
 		StatisticsFileUtil stats = new StatisticsFileUtil();
 		List<StatisticsFile> samples = stats.load(input);
@@ -153,7 +162,7 @@ public class StatisticsCommand implements Callable<Integer> {
 		text.append("Min Mapping Quality: " + mapQ + "\n");
 		text.append("Min Alignment Quality: " + alignQ + "\n");
 		context.ok(text.toString());
-		
+
 		text = new StringBuffer();
 		int validFiles = samples.size() - excludedSamples;
 		text.append("<b>Statistics:</b> \n");
@@ -167,17 +176,34 @@ public class StatisticsCommand implements Callable<Integer> {
 			text.append("Detected contig name: " + contigs.get(0) + "\n");
 		}
 
+		if (tool.equals("mutect2")) {
+			
+			boolean found = false;
+			for (String contig : allowed_contigs) {
+				if (contig.equals(contigs.get(0))) {
+					found = true;
+				}
+			}
+
+			if (!found) {
+				context.error("For Mutect2, please one of the following contig names for chromosome MT: "
+						+ allowed_contigs.toString());
+				return -1;
+			}
+
+		}
+
 		if (lowestMeanDepth != -1) {
 			text.append("Min Mean Depth: " + lowestMeanDepth + "\n");
 		}
-		if (highgestMeanDepth != -1) {
+		if (highgestMeanDepth != -1  && validFiles > 1) {
 			text.append("Max Mean Depth: " + highgestMeanDepth + "\n");
 		}
 
 		if (lowestMeanDepth != -1) {
 			text.append("Min Mean Base Quality: " + lowestMeanBaseQuality + "\n");
 		}
-		if (highgestMeanDepth != -1) {
+		if (highgestMeanDepth != -1 && validFiles > 1) {
 			text.append("Max Mean Base Quality: " + highestMeanBaseQuality + "\n");
 		}
 
@@ -188,6 +214,9 @@ public class StatisticsCommand implements Callable<Integer> {
 		if (countMissingContigs > 0) {
 			text.append(countMissingContigs + " sample(s) with missing contigs have been excluded");
 		}
+
+		writerContig.write(contigs.get(0));
+		writerContig.close();
 
 		if (countLowCoveredPercentage > 0) {
 			text.append(countLowCoveredPercentage + " sample(s) with a coverage percentage of < "
