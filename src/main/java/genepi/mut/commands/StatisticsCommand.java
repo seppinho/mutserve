@@ -102,7 +102,7 @@ public class StatisticsCommand implements Callable<Integer> {
 			} else {
 				countMissingContigs++;
 				excludedSamples++;
-				excludedSamplesFile.append(sample.getSampleName() + ",");
+				excludedSamplesFile.append(sample.getSampleName() + "\n");
 			}
 
 			if (sample.getMeanDepth() != -1) {
@@ -130,26 +130,27 @@ public class StatisticsCommand implements Callable<Integer> {
 			if (sample.getCoveredPercentage() != -1 && sample.getCoveredPercentage() < MIN_COVERAGE_PERCENTAGE) {
 				countLowCoveredPercentage++;
 				excludedSamples++;
-				excludedSamplesFile.append(sample.getSampleName() + ",");
+				excludedSamplesFile.append(sample.getSampleName() + "\t" + "Mean Coverage Percentage <"+ MIN_COVERAGE_PERCENTAGE +"\n");
 			} else if (sample.getMeanBaseQuality() != -1 && sample.getMeanBaseQuality() < MIN_MEAN_BASE_QUALITY) {
 				countMeanBaseQuality++;
 				excludedSamples++;
-				excludedSamplesFile.append(sample.getSampleName() + ",");
+				excludedSamplesFile.append(sample.getSampleName() + "\t" + "Mean Base Quality < "+ MIN_MEAN_BASE_QUALITY +"\n");
 			} else if (sample.getMeanDepth() != -1 && sample.getMeanDepth() < MIN_MEAN_DEPTH) {
 				countMeanDepth++;
 				excludedSamples++;
-				excludedSamplesFile.append(sample.getSampleName() + ",");
+				excludedSamplesFile.append(sample.getSampleName() + "\t" + "Mean Depth < "+ MIN_MEAN_DEPTH +"\n");
 			} else if (sample.getMeanBaseQuality() != -1 && sample.getMeanBaseQuality() < baseQ) {
 				countTooLowBaseQuality++;
 				excludedSamples++;
-				excludedSamplesFile.append(sample.getSampleName() + ",");
+				excludedSamplesFile.append(sample.getSampleName() + "\t" + "Sample Mean Base Quality < "+ baseQ +"\n");
 			} else if (sample.getMeanMapQuality() != -1 && sample.getMeanMapQuality() < mapQ) {
 				countTooLowBaseQuality++;
 				excludedSamples++;
-				excludedSamplesFile.append(sample.getSampleName() + ",");
+				excludedSamplesFile.append(sample.getSampleName() + "\t" + "Mapping Quality < "+ mapQ +"\n");
 			}
-
+			
 		}
+		
 		writer.write(excludedSamplesFile.toString());
 		writer.close();
 

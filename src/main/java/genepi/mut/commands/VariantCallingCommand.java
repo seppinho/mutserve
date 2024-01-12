@@ -125,15 +125,19 @@ public class VariantCallingCommand implements Callable<Integer> {
 		if (excludedSamples != null) {
 			List<String> inputIncluded = new ArrayList<String>();
 			String content = FileUtils.readFileToString(new File(excludedSamples), StandardCharsets.UTF_8);
-			String[] excluded = content.split(",");
+			String[] excluded = content.split("\n");
 
 			for (String file : input) {
-				String fileWithoutExtenssion = file.replaceAll(".bam", "").replaceAll(".cram", "");
+				boolean exclude = false;
 				for (String e : excluded) {
-					if (!e.trim().equals(fileWithoutExtenssion)) {
-						System.out.println("File " + file + "removed");
-						inputIncluded.add(file);
+					if (e.split("\t")[0].trim().equals(file)) {
+						System.out.println("File " + file + " removed");
+						exclude = true;
+						continue;
 					}
+				}
+				if (!exclude) {
+					inputIncluded.add(file);
 				}
 			}
 

@@ -51,7 +51,7 @@ public class StatisticsFileUtil {
 						file.setCoveredBases(Integer.parseInt(value));
 						break;
 					case "CoveragePercentage":
-						file.setCoveredPercentage(Integer.parseInt(value));
+						file.setCoveredPercentage(Double.parseDouble(value));
 						break;
 					case "MeanDepth":
 						file.setMeanDepth(Double.parseDouble(value));

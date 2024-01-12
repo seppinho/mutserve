@@ -6,7 +6,7 @@ public class StatisticsFile {
 	private String contig;
 	private int numberOfReads = -1;;
 	private int coveredBases = -1;;
-	private int coveredPercentage = -1;
+	private double coveredPercentage = -1;
 	private double meanDepth = -1;;
 	private double meanBaseQuality = -1;;
 	private double meanMapQuality = -1;;
@@ -43,11 +43,11 @@ public class StatisticsFile {
 		this.coveredBases = coveredBases;
 	}
 
-	public int getCoveredPercentage() {
+	public double getCoveredPercentage() {
 		return coveredPercentage;
 	}
 
-	public void setCoveredPercentage(int coveredPercentage) {
+	public void setCoveredPercentage(double coveredPercentage) {
 		this.coveredPercentage = coveredPercentage;
 	}
 
