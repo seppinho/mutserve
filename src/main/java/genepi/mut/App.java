@@ -24,7 +24,7 @@ public class App implements Runnable {
 
 	public static final String APP = "mtDNA Variant Detection";
 
-	public static final String VERSION = "v2.0.0-rc15";
+	public static final String VERSION = "v2.0.0-rc16";
 
 	public static final String COPYRIGHT = "(c) Sebastian Schoenherr, Hansi Weissensteiner, Lukas Forer";
 
@@ -59,8 +59,9 @@ public class App implements Runnable {
 		commandLine.addSubcommand("stats", new StatisticsCommand());
 
 		commandLine.setExecutionStrategy(new CommandLine.RunLast());
+		int result = commandLine.execute(args);
 		commandLine.execute(args);
-		
+		System.exit(result);
 	}
 
 	public static ProgressIndicatorGroup STYLE_LONG_TASK = new ProgressIndicatorGroup(SPACE, SPINNER, SPACE, TASK_NAME,

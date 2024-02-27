@@ -112,7 +112,7 @@ public class VariantCaller {
 				return addVariantResult(line, type, filter);
 			}
 
-			if (!(calcStrandBias(line, minorBasePercentsFWD, minorBasePercentsREV) <= 1.2)) {
+			if (!(calcStrandBias(line, minorBasePercentsFWD, minorBasePercentsREV) <= 1.6)) {
 				type = LOW_LEVEL_VARIANT;
 				filter = Filter.STRAND_BIAS;
 				line.setFilter(filter);
