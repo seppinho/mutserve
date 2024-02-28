@@ -214,6 +214,7 @@ public class MutserveTest {
 		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
+		task.setStrandBias(1.2);
 		task.setVarName(out);
 		task.setRawName(raw);
 		TaskService.setAnsiSupport(false);
@@ -284,6 +285,7 @@ public class MutserveTest {
 		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
+		task.setStrandBias(1.2);
 		task.setVarName(out);
 		task.setRawName(raw);
 		TaskService.setAnsiSupport(false);
@@ -296,6 +298,7 @@ public class MutserveTest {
 		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
+		task.setStrandBias(1.2);
 		task.setVarName(out);
 		task.setRawName(raw);
 		TaskService.setAnsiSupport(false);
@@ -315,6 +318,7 @@ public class MutserveTest {
 		int count = 0;
 		while (reader.next()) {
 			String[] splits = reader.get().split("\t");
+			System.out.println(reader.get());
 			if(splits[1].equals("PASS")) {
 				count++;
 			}
