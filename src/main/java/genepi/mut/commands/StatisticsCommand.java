@@ -32,7 +32,7 @@ public class StatisticsCommand implements Callable<Integer> {
 	@Option(names = { "--output-contig" }, description = "\"Exclude file", required = false)
 	private String contigOut = "chrM";
 
-	@Option(names = { "--tool" }, description = "\"Exclude file", required = false)
+	@Option(names = { "--tool" }, description = "\"Tool", required = false)
 	private String tool = "mutserve";
 
 	@Option(names = {
@@ -157,6 +157,7 @@ public class StatisticsCommand implements Callable<Integer> {
 		text = new StringBuffer();
 
 		text.append("<b>Variant Calling Parameters:</b> \n");
+		text.append("Mode: " + tool + "\n");
 		text.append("Reference: " + reference + "\n");
 		text.append("Heteroplasmic Detection Limit: " + detectionLimit + "\n");
 		text.append("Min Base Quality: " + baseQ + "\n");
@@ -177,7 +178,7 @@ public class StatisticsCommand implements Callable<Integer> {
 			text.append("Detected contig name: " + contigs.get(0) + "\n");
 		}
 
-		if (tool.equals("mutect2")) {
+		if (tool.equals("mutect2") || tool.equals("fusion")) {
 			
 			boolean found = false;
 			for (String contig : allowed_contigs) {
