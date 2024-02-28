@@ -60,7 +60,6 @@ public class App implements Runnable {
 
 		commandLine.setExecutionStrategy(new CommandLine.RunLast());
 		int result = commandLine.execute(args);
-		commandLine.execute(args);
 		System.exit(result);
 	}
 
