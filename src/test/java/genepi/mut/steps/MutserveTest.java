@@ -91,6 +91,7 @@ public class MutserveTest {
 		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
+        task.setStrandBias(1.2);
 		task.setVarName(out);
 		task.setRawName(raw);
 		task.setDeletions(true);
@@ -144,6 +145,7 @@ public class MutserveTest {
 		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
+		task.setStrandBias(1.2);
 		task.setVarName(out);
 		task.setRawName(raw);
 		TaskService.setAnsiSupport(false);
@@ -199,6 +201,7 @@ public class MutserveTest {
 		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
+		task.setStrandBias(1.2);
 		task.setVarName(out);
 		task.setRawName(raw);
 		TaskService.setAnsiSupport(false);
@@ -268,6 +271,7 @@ public class MutserveTest {
 		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
+		task.setStrandBias(1.2);
 		task.setVarName(out);
 		task.setRawName(raw);
 		TaskService.setAnsiSupport(false);
@@ -338,6 +342,7 @@ public class MutserveTest {
 		task.setVarName(out);
 		task.setRawName(outRaw);
 		task.setLevel(0.01);
+		task.setStrandBias(1.2);
 		TaskService.setAnsiSupport(false);
 		tasks.add(task);
 		TaskService.monitor(null).run(tasks);
@@ -384,6 +389,7 @@ public class MutserveTest {
 		task.setReference(ref);
 		task.setVarName(out);
 		task.setRawName(outRaw);
+		task.setStrandBias(1.2);
 		task.setLevel(0.004);
 		task.setBaq(false);
 		TaskService.setAnsiSupport(false);
