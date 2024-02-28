@@ -17,6 +17,7 @@ public class AnalyseRawFileVariantsTest {
 	public void HetModelTest() {
 
 		double hetLevel = 0.01;
+		double bias = 1.2;
 		String refPath = "test-data/mtdna/raw-results/rCRS.fasta";
 		String sanger = "test-data/mtdna/mixtures/expected/sanger.txt";
 
@@ -25,7 +26,7 @@ public class AnalyseRawFileVariantsTest {
 		File input = new File("test-data/mtdna/mixtures/raw-out/raw-s4-nodel.txt");
 
 		System.out.println("input file is " + input.getName());
-		ArrayList<QCMetric> metrics = rawAnalyser.calculateLowLevelForTest(input.getPath(), refPath, sanger, hetLevel);
+		ArrayList<QCMetric> metrics = rawAnalyser.calculateLowLevelForTest(input.getPath(), refPath, sanger, hetLevel, bias);
 		for (QCMetric metric : metrics) {
 			assertEquals(100, metric.getPrecision(), 0);
 			// paper value, changed since I added checkbases check: assertEquals(59.259,
@@ -38,6 +39,7 @@ public class AnalyseRawFileVariantsTest {
 	public void Plasmid12Test() {
 
 		double hetLevel = 0.01;
+		double bias = 1.2;
 
 		String refPath = "test-data/dna/plasmids/reference/kiv2_6.fasta";
 		String sanger = "test-data/dna/plasmids/plasmid12/gold/plasmid12_major.txt";
@@ -46,13 +48,14 @@ public class AnalyseRawFileVariantsTest {
 		File input = new File("test-data/dna/plasmids/plasmid12/raw/plasmid12-raw.txt");
 
 		System.out.println("input file is " + input.getName());
-		ArrayList<QCMetric> metrics = rawAnalyser.calculateLowLevelForTest(input.getPath(), refPath, sanger, hetLevel);
+		ArrayList<QCMetric> metrics = rawAnalyser.calculateLowLevelForTest(input.getPath(), refPath, sanger, hetLevel, bias);
 	}
 
 	@Test
 	public void Plasmid13Test() {
 
 		double hetLevel = 0.01;
+		double bias = 1.2;
 
 		String refPath = "test-data/dna/plasmids/reference/kiv2_6.fasta";
 		String sanger = "test-data/dna/plasmids/plasmid13/gold/plasmid13_minor.txt";
@@ -61,7 +64,7 @@ public class AnalyseRawFileVariantsTest {
 		File input = new File("test-data/dna/plasmids/plasmid13/raw/plasmid13-raw.txt");
 
 		System.out.println("input file is " + input.getName());
-		ArrayList<QCMetric> metrics = rawAnalyser.calculateLowLevelForTest(input.getPath(), refPath, sanger, hetLevel);
+		ArrayList<QCMetric> metrics = rawAnalyser.calculateLowLevelForTest(input.getPath(), refPath, sanger, hetLevel, bias);
 
 	}
 

@@ -31,6 +31,7 @@ public class VariantCallingTask implements ITaskRunnable {
 	private String rawName;
 	private HashMap<String, Double> freqFile;
 	private double level;
+	private double bias;
 	private int baseQ = 20;
 	private int mapQ = 20;
 	private int alignQ = 30;
@@ -149,7 +150,7 @@ public class VariantCallingTask implements ITaskRunnable {
 				while (index < recordStart) {
 					if (positions.containsKey(index) && index <= reference.length()) {
 						callVariant(writerRaw, writerVar, name, level, index, positions.get(index), reference,
-								freqFile);
+								freqFile, bias);
 
 					}
 					positions.remove(index);
@@ -161,7 +162,7 @@ public class VariantCallingTask implements ITaskRunnable {
 			// analyze remaining positions
 			while (index <= reference.length()) {
 				if (positions.containsKey(index) && index <= reference.length()) {
-					callVariant(writerRaw, writerVar, name, level, index, positions.get(index), reference, freqFile);
+					callVariant(writerRaw, writerVar, name, level, index, positions.get(index), reference, freqFile, bias);
 				}
 				positions.remove(index);
 				index++;
@@ -180,7 +181,7 @@ public class VariantCallingTask implements ITaskRunnable {
 	}
 
 	private void callVariant(LineWriter writerRaw, LineWriter writerVar, String id, double level, int pos,
-			BasePosition basePosition, String reference, HashMap<String, Double> freqFile) throws IOException {
+			BasePosition basePosition, String reference, HashMap<String, Double> freqFile, double bias) throws IOException {
 
 		basePosition.setId(id);
 
@@ -208,7 +209,7 @@ public class VariantCallingTask implements ITaskRunnable {
 			double llrRev = VariantCaller.determineLlrRev(line, base);
 
 			VariantResult varResult = VariantCaller.determineLowLevelVariant(line, minorPercentageFwd,
-					minorPercentageRev, llrFwd, llrRev, level, base);
+					minorPercentageRev, llrFwd, llrRev, level, base, bias);
 
 			if (varResult != null && varResult.getType() == VariantCaller.LOW_LEVEL_VARIANT) {
 
@@ -364,6 +365,11 @@ public class VariantCallingTask implements ITaskRunnable {
 
 	public void setInput(String input) {
 		this.input = input;
+	}
+
+	public void setStrandBias(double bias) {
+		this.bias = bias;
+		
 	}
 
 }

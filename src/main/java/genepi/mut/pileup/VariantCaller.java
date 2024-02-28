@@ -70,7 +70,7 @@ public class VariantCaller {
 	}
 
 	public static VariantResult determineLowLevelVariant(VariantLine line, double minorBasePercentsFWD,
-			double minorBasePercentsREV, double llrFwd, double llrRev, double level, char minor) {
+			double minorBasePercentsREV, double llrFwd, double llrRev, double level, char minor, double bias) {
 
 		int type = 0;
 
@@ -112,7 +112,7 @@ public class VariantCaller {
 				return addVariantResult(line, type, filter);
 			}
 
-			if (!(calcStrandBias(line, minorBasePercentsFWD, minorBasePercentsREV) <= 1.6)) {
+			if (!(calcStrandBias(line, minorBasePercentsFWD, minorBasePercentsREV) <= bias)) {
 				type = LOW_LEVEL_VARIANT;
 				filter = Filter.STRAND_BIAS;
 				line.setFilter(filter);

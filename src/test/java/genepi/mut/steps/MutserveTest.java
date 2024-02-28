@@ -355,7 +355,7 @@ public class MutserveTest {
 		String sanger = "test-data/mtdna/mixtures/expected/sanger.txt";
 
 		ArrayList<QCMetric> list = analyser.calculateLowLevelForTest(outRawFinal, refPath, sanger,
-				Double.valueOf(0.01));
+				Double.valueOf(0.01), Double.valueOf(1.2));
 
 		assertTrue(list.size() == 1);
 

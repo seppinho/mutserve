@@ -49,6 +49,9 @@ public class VariantCallingCommand implements Callable<Integer> {
 
 	@Option(names = { "--level" }, description = "Minimum Heteroplasmy Level", required = false)
 	double level = 0.01;
+	
+	@Option(names = { "--strand-bias" }, description = "Set Strand Bias", required = false)
+	double bias = 1.2;
 
 	@Option(names = {
 			"--baseQ" }, description = "Minimum Base Quality", required = false, showDefaultValue = Visibility.ALWAYS)
@@ -198,6 +201,7 @@ public class VariantCallingCommand implements Callable<Integer> {
 			vc.setRawName(rawName);
 			vc.setFreqFile(freqFile);
 			vc.setLevel(level);
+			vc.setStrandBias(bias);
 			vc.setBaseQ(baseQ);
 			vc.setMapQ(mapQ);
 			vc.setAlignQ(alignQ);
