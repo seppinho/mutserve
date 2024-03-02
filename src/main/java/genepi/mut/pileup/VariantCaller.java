@@ -28,6 +28,8 @@ public class VariantCaller {
 	public static int DELETION = 4;
 
 	public static int INSERTION = 5;
+	
+	static DecimalFormat df = new DecimalFormat("#.##");
 
 	public static boolean isFinalVariant(VariantLine line) {
 
@@ -152,6 +154,7 @@ public class VariantCaller {
 		output.setCovFWD(line.getCovFWD());
 		output.setCovREV(line.getCovREV());
 		output.setType(type);
+		output.setMeanBaseQuality(df.format(line.getMeanBaseQuality()));
 
 		if (filter == null) {
 			filter = Filter.PASS;
@@ -189,6 +192,7 @@ public class VariantCaller {
 		output.setCovFWD(line.getCovFWD());
 		output.setCovREV(line.getCovREV());
 		output.setType(type);
+		output.setMeanBaseQuality(df.format(line.getMeanBaseQuality()));
 
 		Filter filter = Filter.PASS;
 		if (blacklist.contains(line.getPosition())) {
@@ -450,7 +454,9 @@ public class VariantCaller {
 
 		build.append((result.getCovREV()) + "\t");
 
-		build.append(result.getType());
+		build.append(result.getType() + "\t");
+		
+		build.append(result.getMeanBaseQuality());
 
 		return build.toString();
 
