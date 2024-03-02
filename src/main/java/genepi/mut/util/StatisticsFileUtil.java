@@ -62,6 +62,9 @@ public class StatisticsFileUtil {
 					case "MeanMapQuality":
 						file.setMeanMapQuality(Double.parseDouble(value));
 						break;
+					case "RG":
+						file.setReadGroup(value);
+						break;		
 					}
 				}
 

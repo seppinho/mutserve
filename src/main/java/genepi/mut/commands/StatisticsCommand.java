@@ -1,5 +1,8 @@
 package genepi.mut.commands;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,9 @@ public class StatisticsCommand implements Callable<Integer> {
 
 	@Option(names = { "--input" }, description = "\"Input file", required = true)
 	private String input;
+
+	@Option(names = { "--mapping" }, description = "\"Mapping file", required = true)
+	private String mapping;
 
 	@Option(names = { "--output-excluded-samples" }, description = "\"Exclude file", required = true)
 	private String output;
@@ -74,6 +80,7 @@ public class StatisticsCommand implements Callable<Integer> {
 
 		int countLowCoveredPercentage = 0;
 		int countMeanBaseQuality = 0;
+		int countNoReadGroups = 0;
 		int countMeanDepth = 0;
 		int countTooLowBaseQuality = 0;
 		int countTooLowMapQuality = 0;
@@ -86,10 +93,48 @@ public class StatisticsCommand implements Callable<Integer> {
 		List<String> contigs = new ArrayList<String>();
 		StringBuffer text = new StringBuffer();
 
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(mapping));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		}
+		String line;
+		ArrayList<String> sampleList = new ArrayList<>();
+
+		// header
+		reader.readLine();
+
+		while ((line = reader.readLine()) != null) {
+			String sampleName = line.split("\t")[0];
+			String fileName = line.split("\t")[1];
+			if (sampleList.contains(sampleName)) {
+				text.append("\n<b>Error:</b> Duplicate sample name for sample '" + sampleName + "' (Filename: "
+						+ fileName + ".<br>mtDNA analysis cannot be started!");
+				context.error(text.toString());
+				reader.close();
+				return -1;
+			}
+
+			sampleList.add(sampleName);
+		}
+		reader.close();
+
 		for (StatisticsFile sample : samples) {
 
+			if ((tool.equals("mutect2") || tool.equals("fusion")) && sample.getReadGroup() == null) {
+				{
+					countNoReadGroups++;
+					excludedSamples++;
+					excludedSamplesFile.append(
+							sample.getSampleName() + "\t" + "No readgroup tag (@RG) available in BAM file" + "\n");
+				}
+			}
+
 			if (sample.getSampleName() == null) {
-				text.append("\n<b>Error:</b> Error in sample file name. mtDNA analysis cannot be started!");
+				text.append("\n<b>Error:</b> Error in sample file name.<br>mtDNA analysis cannot be started!");
 				context.error(text.toString());
 				return -1;
 			}
@@ -130,27 +175,30 @@ public class StatisticsCommand implements Callable<Integer> {
 			if (sample.getCoveredPercentage() != -1 && sample.getCoveredPercentage() < MIN_COVERAGE_PERCENTAGE) {
 				countLowCoveredPercentage++;
 				excludedSamples++;
-				excludedSamplesFile.append(sample.getSampleName() + "\t" + "Mean Coverage Percentage <"+ MIN_COVERAGE_PERCENTAGE +"\n");
+				excludedSamplesFile.append(
+						sample.getSampleName() + "\t" + "Mean Coverage Percentage <" + MIN_COVERAGE_PERCENTAGE + "\n");
 			} else if (sample.getMeanBaseQuality() != -1 && sample.getMeanBaseQuality() < MIN_MEAN_BASE_QUALITY) {
 				countMeanBaseQuality++;
 				excludedSamples++;
-				excludedSamplesFile.append(sample.getSampleName() + "\t" + "Mean Base Quality < "+ MIN_MEAN_BASE_QUALITY +"\n");
+				excludedSamplesFile
+						.append(sample.getSampleName() + "\t" + "Mean Base Quality < " + MIN_MEAN_BASE_QUALITY + "\n");
 			} else if (sample.getMeanDepth() != -1 && sample.getMeanDepth() < MIN_MEAN_DEPTH) {
 				countMeanDepth++;
 				excludedSamples++;
-				excludedSamplesFile.append(sample.getSampleName() + "\t" + "Mean Depth < "+ MIN_MEAN_DEPTH +"\n");
+				excludedSamplesFile.append(sample.getSampleName() + "\t" + "Mean Depth < " + MIN_MEAN_DEPTH + "\n");
 			} else if (sample.getMeanBaseQuality() != -1 && sample.getMeanBaseQuality() < baseQ) {
 				countTooLowBaseQuality++;
 				excludedSamples++;
-				excludedSamplesFile.append(sample.getSampleName() + "\t" + "Sample Mean Base Quality < "+ baseQ +"\n");
+				excludedSamplesFile
+						.append(sample.getSampleName() + "\t" + "Sample Mean Base Quality < " + baseQ + "\n");
 			} else if (sample.getMeanMapQuality() != -1 && sample.getMeanMapQuality() < mapQ) {
 				countTooLowBaseQuality++;
 				excludedSamples++;
-				excludedSamplesFile.append(sample.getSampleName() + "\t" + "Mapping Quality < "+ mapQ +"\n");
+				excludedSamplesFile.append(sample.getSampleName() + "\t" + "Mapping Quality < " + mapQ + "\n");
 			}
-			
+
 		}
-		
+
 		writer.write(excludedSamplesFile.toString());
 		writer.close();
 
@@ -179,7 +227,7 @@ public class StatisticsCommand implements Callable<Integer> {
 		}
 
 		if (tool.equals("mutect2") || tool.equals("fusion")) {
-			
+
 			boolean found = false;
 			for (String contig : allowed_contigs) {
 				if (contig.equals(contigs.get(0))) {
@@ -198,7 +246,7 @@ public class StatisticsCommand implements Callable<Integer> {
 		if (lowestMeanDepth != -1) {
 			text.append("Min Mean Depth: " + lowestMeanDepth + "\n");
 		}
-		if (highgestMeanDepth != -1  && validFiles > 1) {
+		if (highgestMeanDepth != -1 && validFiles > 1) {
 			text.append("Max Mean Depth: " + highgestMeanDepth + "\n");
 		}
 
@@ -214,7 +262,7 @@ public class StatisticsCommand implements Callable<Integer> {
 		text = new StringBuffer();
 
 		if (countMissingContigs > 0) {
-			text.append(countMissingContigs + " sample(s) with missing contigs have been excluded");
+			text.append(countMissingContigs + " sample(s) with missing contigs have been excluded.");
 		}
 
 		writerContig.write(contigs.get(0));
@@ -222,27 +270,30 @@ public class StatisticsCommand implements Callable<Integer> {
 
 		if (countLowCoveredPercentage > 0) {
 			text.append(countLowCoveredPercentage + " sample(s) with a coverage percentage of < "
-					+ MIN_COVERAGE_PERCENTAGE + " have been excluded");
+					+ MIN_COVERAGE_PERCENTAGE + " have been excluded.");
 		}
 		if (countMeanBaseQuality > 0) {
 			text.append(countMeanBaseQuality + " sample(s) with a mean base quality of < " + MIN_MEAN_BASE_QUALITY
-					+ " have been excluded");
+					+ " have been excluded.");
+		}
+
+		if (countNoReadGroups > 0) {
+			text.append(countNoReadGroups + " sample(s) with no readgroups (RG) have been excluded.");
 		}
 
 		if (countMeanDepth > 0) {
-			text.append(countMeanDepth + " sample(s) with mean depth of < " + MIN_MEAN_DEPTH
-					+ " have been excluded. This affects the level of heteroplasmy which can be detected.");
+			text.append(countMeanDepth + " sample(s) with mean depth of < " + MIN_MEAN_DEPTH + " have been excluded.");
 		}
 
 		if (countTooLowBaseQuality > 0) {
 			text.append(countTooLowBaseQuality
 					+ " sample(s) have been removed where the mean base quality is lower then configured base quality ("
-					+ baseQ + ")");
+					+ baseQ + ").");
 		}
 		if (countTooLowMapQuality > 0) {
 			text.append(countTooLowMapQuality
 					+ " sample(s) have been removed where the mean base quality is lower then configured base quality ("
-					+ mapQ + ")");
+					+ mapQ + ").");
 		}
 
 		if (text.length() > 0) {
@@ -250,7 +301,7 @@ public class StatisticsCommand implements Callable<Integer> {
 		}
 
 		if (validFiles == 0) {
-			context.error("No input samples passed the QC step");
+			context.error("No input samples passed the QC step.");
 			return -1;
 		} else {
 			context.ok("Input Validation run succesfully, mtDNA analysis can be started.");

@@ -4,12 +4,13 @@ public class StatisticsFile {
 
 	private String sampleName;
 	private String contig;
-	private int numberOfReads = -1;;
-	private int coveredBases = -1;;
+	private int numberOfReads = -1;
+	private int coveredBases = -1;
 	private double coveredPercentage = -1;
-	private double meanDepth = -1;;
-	private double meanBaseQuality = -1;;
-	private double meanMapQuality = -1;;
+	private double meanDepth = -1;
+	private double meanBaseQuality = -1;
+	private double meanMapQuality = -1;
+	private String readGroup;
 
 	public String getSampleName() {
 		return sampleName;
@@ -73,5 +74,13 @@ public class StatisticsFile {
 
 	public void setMeanMapQuality(double meanMapQuality) {
 		this.meanMapQuality = meanMapQuality;
+	}
+
+	public String getReadGroup() {
+		return readGroup;
+	}
+
+	public void setReadGroup(String readGroup) {
+		this.readGroup = readGroup;
 	}
 }
