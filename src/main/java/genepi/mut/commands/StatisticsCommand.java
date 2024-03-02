@@ -29,8 +29,8 @@ public class StatisticsCommand implements Callable<Integer> {
 	@Option(names = { "--input" }, description = "\"Input file", required = true)
 	private String input;
 
-	@Option(names = { "--mapping" }, description = "\"Mapping file", required = true)
-	private String mapping;
+	@Option(names = { "--mapping" }, description = "\"Mapping file", required = false)
+	private String mapping = null;
 
 	@Option(names = { "--output-excluded-samples" }, description = "\"Exclude file", required = true)
 	private String output;
@@ -93,34 +93,36 @@ public class StatisticsCommand implements Callable<Integer> {
 		List<String> contigs = new ArrayList<String>();
 		StringBuffer text = new StringBuffer();
 
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(mapping));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return -1;
-		}
-		String line;
-		ArrayList<String> sampleList = new ArrayList<>();
-
-		// header
-		reader.readLine();
-
-		while ((line = reader.readLine()) != null) {
-			String sampleName = line.split("\t")[0];
-			String fileName = line.split("\t")[1];
-			if (sampleList.contains(sampleName)) {
-				text.append("\n<b>Error:</b> Duplicate sample name for sample '" + sampleName + "' (Filename: "
-						+ fileName + ".<br>mtDNA analysis cannot be started!");
-				context.error(text.toString());
-				reader.close();
+		if (mapping != null) {
+			BufferedReader reader = null;
+			try {
+				reader = new BufferedReader(new FileReader(mapping));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 				return -1;
 			}
+			String line;
+			ArrayList<String> sampleList = new ArrayList<>();
 
-			sampleList.add(sampleName);
+			// header
+			reader.readLine();
+
+			while ((line = reader.readLine()) != null) {
+				String sampleName = line.split("\t")[0];
+				String fileName = line.split("\t")[1];
+				if (sampleList.contains(sampleName)) {
+					text.append("\n<b>Error:</b> Duplicate sample name for sample '" + sampleName + "' (Filename: "
+							+ fileName + ".<br>mtDNA analysis cannot be started!");
+					context.error(text.toString());
+					reader.close();
+					return -1;
+				}
+
+				sampleList.add(sampleName);
+			}
+			reader.close();
 		}
-		reader.close();
 
 		for (StatisticsFile sample : samples) {
 
