@@ -94,6 +94,7 @@ public class MutationServerReader {
 			variant.setMajorLevel(majorLevel);
 			variant.setMinorLevel(minorLevel);
 			variant.setMeanBaseQualiy(meanBaseQuality);
+			variant.setCoverage(coverage);
 			variant.setType(type);
 
 			sample.addVariant(variant);
