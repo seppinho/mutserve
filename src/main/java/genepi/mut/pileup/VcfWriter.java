@@ -155,6 +155,7 @@ public class VcfWriter {
 						final GenotypeBuilder gb = new GenotypeBuilder(sample.getId(), Arrays.asList(varAllele));
 						gb.DP(variant.getCoverage());
 						gb.attribute("AF", variant.getLevel());
+						gb.attribute("BQ", variant.getMeanBaseQualiy());
 
 						genotypes.add(gb.make());
 
@@ -197,6 +198,7 @@ public class VcfWriter {
 						}
 
 						gb.attribute("AF", alleleFreq);
+						gb.attribute("BQ", variant.getMeanBaseQualiy());
 
 						genotypes.add(gb.make());
 
@@ -239,6 +241,9 @@ public class VcfWriter {
 		header.addMetaDataLine(new VCFFormatHeaderLine("AF", 1, VCFHeaderLineType.String,
 				"Inferred Allele Frequency of top (non-reference) allele"));
 
+		header.addMetaDataLine(new VCFFormatHeaderLine("BQ", 1, VCFHeaderLineType.String,
+				"Mean Base Quality of ALT Allele"));
+		
 		header.addMetaDataLine(new VCFFormatHeaderLine("DP", 1, VCFHeaderLineType.Integer, "Read Depth"));
 
 		return header;
