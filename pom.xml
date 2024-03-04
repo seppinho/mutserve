@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>genepi</groupId>
 	<artifactId>mutserve</artifactId>
-	<version>v2.0.0-rc15</version>
+	<version>v2.0.0-rc17</version>
 	<packaging>jar</packaging>
 
 	<properties>
@@ -30,11 +30,12 @@
 			<url>file://${basedir}/libs</url>
 		</repository>
 
-	<repository>
-		<id>jfrog-genepi-maven</id>
-		<name>jfrog-genepi-maven</name>
-		<url>https://genepi.jfrog.io/artifactory/maven/</url>
-	</repository>
+		<repository>
+			<id>imed-genepi-maven</id>
+			<name>imed-genepi-maven</name>
+			<url>https://genepi.i-med.ac.at/maven</url>
+		</repository>
+		
 
 	</repositories>
 
@@ -126,6 +127,13 @@
 	</build>
 
 	<dependencies>
+		
+    	<dependency>
+		    <groupId>com.google.code.gson</groupId>
+		    <artifactId>gson</artifactId>
+		    <version>2.10.1</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>genepi</groupId>
@@ -148,7 +156,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.13.1</version>
+			<version>4.13.2</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -241,6 +249,14 @@
 			<artifactId>magic-tables</artifactId>
 			<version>0.3.1</version>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/io.marioslab.basis/template -->
+<dependency>
+    <groupId>io.marioslab.basis</groupId>
+    <artifactId>template</artifactId>
+    <version>1.7</version>
+</dependency>
+
 
 	</dependencies>
 

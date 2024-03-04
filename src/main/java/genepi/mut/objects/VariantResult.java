@@ -17,6 +17,7 @@ public class VariantResult {
 	private int covREV;
 	private int type;
 	private Filter filter;
+	private String meanBaseQuality;
 
 	public int getType() {
 		return type;
@@ -120,6 +121,15 @@ public class VariantResult {
 
 	public void setFilter(Filter filter) {
 		this.filter = filter;
+	}
+
+	public void setMeanBaseQuality(String meanBaseQuality) {
+		this.meanBaseQuality = meanBaseQuality;
+		
+	}
+
+	public String getMeanBaseQuality() {
+		return meanBaseQuality;
 	}
 	
 }

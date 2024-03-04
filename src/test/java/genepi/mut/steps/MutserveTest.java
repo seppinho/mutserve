@@ -91,6 +91,7 @@ public class MutserveTest {
 		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
+        task.setStrandBias(1.2);
 		task.setVarName(out);
 		task.setRawName(raw);
 		task.setDeletions(true);
@@ -144,6 +145,7 @@ public class MutserveTest {
 		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
+		task.setStrandBias(1.2);
 		task.setVarName(out);
 		task.setRawName(raw);
 		TaskService.setAnsiSupport(false);
@@ -199,6 +201,7 @@ public class MutserveTest {
 		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
+		task.setStrandBias(1.2);
 		task.setVarName(out);
 		task.setRawName(raw);
 		TaskService.setAnsiSupport(false);
@@ -211,6 +214,7 @@ public class MutserveTest {
 		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
+		task.setStrandBias(1.2);
 		task.setVarName(out);
 		task.setRawName(raw);
 		TaskService.setAnsiSupport(false);
@@ -268,6 +272,7 @@ public class MutserveTest {
 		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
+		task.setStrandBias(1.2);
 		task.setVarName(out);
 		task.setRawName(raw);
 		TaskService.setAnsiSupport(false);
@@ -280,6 +285,7 @@ public class MutserveTest {
 		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
+		task.setStrandBias(1.2);
 		task.setVarName(out);
 		task.setRawName(raw);
 		TaskService.setAnsiSupport(false);
@@ -292,6 +298,7 @@ public class MutserveTest {
 		task.setInput(input);
 		task.setReference(ref);
 		task.setLevel(0.01);
+		task.setStrandBias(1.2);
 		task.setVarName(out);
 		task.setRawName(raw);
 		TaskService.setAnsiSupport(false);
@@ -311,6 +318,7 @@ public class MutserveTest {
 		int count = 0;
 		while (reader.next()) {
 			String[] splits = reader.get().split("\t");
+			System.out.println(reader.get());
 			if(splits[1].equals("PASS")) {
 				count++;
 			}
@@ -338,6 +346,7 @@ public class MutserveTest {
 		task.setVarName(out);
 		task.setRawName(outRaw);
 		task.setLevel(0.01);
+		task.setStrandBias(1.2);
 		TaskService.setAnsiSupport(false);
 		tasks.add(task);
 		TaskService.monitor(null).run(tasks);
@@ -355,7 +364,7 @@ public class MutserveTest {
 		String sanger = "test-data/mtdna/mixtures/expected/sanger.txt";
 
 		ArrayList<QCMetric> list = analyser.calculateLowLevelForTest(outRawFinal, refPath, sanger,
-				Double.valueOf(0.01));
+				Double.valueOf(0.01), Double.valueOf(1.2));
 
 		assertTrue(list.size() == 1);
 
@@ -384,6 +393,7 @@ public class MutserveTest {
 		task.setReference(ref);
 		task.setVarName(out);
 		task.setRawName(outRaw);
+		task.setStrandBias(1.2);
 		task.setLevel(0.004);
 		task.setBaq(false);
 		TaskService.setAnsiSupport(false);

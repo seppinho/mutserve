@@ -45,6 +45,7 @@ public class MutationServerReader {
 
 			double majorLevel = 0;
 			double minorLevel = 0;
+			double meanBaseQuality = 0;
 			int coverage = -1;
 			int pos;
  
@@ -72,6 +73,10 @@ public class MutationServerReader {
 			if (reader.hasColumn("Coverage")) {
 				coverage = reader.getInteger("Coverage");
 			}
+			
+			if (reader.hasColumn("MeanBaseQuality")) {
+				meanBaseQuality = Double.valueOf(reader.getString("MeanBaseQuality"));
+			}
 
 			sample.setId(id);
 
@@ -88,6 +93,7 @@ public class MutationServerReader {
 			variant.setMinor(minor);
 			variant.setMajorLevel(majorLevel);
 			variant.setMinorLevel(minorLevel);
+			variant.setMeanBaseQualiy(meanBaseQuality);
 			variant.setCoverage(coverage);
 			variant.setType(type);
 

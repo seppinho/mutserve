@@ -13,7 +13,7 @@ import genepi.mut.pileup.VariantCaller;
 
 public class RawFileAnalyserDNA {
 
-	public ArrayList<QCMetric> calculateLowLevelForTest(String in, String refpath, String sangerpos, double hetLevel) {
+	public ArrayList<QCMetric> calculateLowLevelForTest(String in, String refpath, String sangerpos, double hetLevel, double bias) {
 
 		ArrayList<QCMetric> metrics = new ArrayList<QCMetric>();
 
@@ -68,7 +68,7 @@ public class RawFileAnalyserDNA {
 					int position = line.getPosition();
 
 					VariantCaller.determineLowLevelVariant(line, line.getMinorBasePercentsFWD(),
-							line.getMinorBasePercentsREV(), line.getLlrFWD(), line.getLlrREV(), hetLevel, line.getMinorBaseFWD());
+							line.getMinorBasePercentsREV(), line.getLlrFWD(), line.getLlrREV(), hetLevel, line.getMinorBaseFWD(), bias);
 
 					VariantCaller.determineVariants(line);
 

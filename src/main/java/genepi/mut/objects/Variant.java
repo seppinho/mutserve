@@ -16,6 +16,7 @@ public class Variant {
 	private double minorLevel;
 	private int coverage;
 	private int type;
+	private double meanBaseQualiy;
 
 	public int getPos() {
 		return pos;
@@ -116,5 +117,13 @@ public class Variant {
 
 	public void setFilter(Filter filter) {
 		this.filter = filter;
+	}
+
+	public double getMeanBaseQualiy() {
+		return meanBaseQualiy;
+	}
+
+	public void setMeanBaseQualiy(double meanBaseQualiy) {
+		this.meanBaseQualiy = meanBaseQualiy;
 	}
 }

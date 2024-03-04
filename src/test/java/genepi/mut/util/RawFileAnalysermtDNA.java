@@ -26,7 +26,7 @@ public class RawFileAnalysermtDNA {
 
 	private boolean callDel;
 
-	public ArrayList<QCMetric> calculateLowLevelForTest(String in, String refpath, String sangerpos, double level) {
+	public ArrayList<QCMetric> calculateLowLevelForTest(String in, String refpath, String sangerpos, double level, double bias) {
 
 		ArrayList<QCMetric> metrics = new ArrayList<QCMetric>();
 
@@ -89,7 +89,7 @@ public class RawFileAnalysermtDNA {
 
 								VariantResult varResult = VariantCaller.determineLowLevelVariant(line,
 										line.getMinorBasePercentsFWD(), line.getMinorBasePercentsREV(),
-										line.getLlrFWD(), line.getLlrREV(), level, line.getMinorBaseFWD());
+										line.getLlrFWD(), line.getLlrREV(), level, line.getMinorBaseFWD(),bias);
 
 								
 
@@ -171,7 +171,7 @@ public class RawFileAnalysermtDNA {
 		return metrics;
 	}
 
-	public void analyseRaw(String in, String refpath, String sangerpos, double level) {
+	public void analyseRaw(String in, String refpath, String sangerpos, double level, double bias) {
 
 		NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
 		DecimalFormat df = (DecimalFormat) nf;
@@ -198,7 +198,7 @@ public class RawFileAnalysermtDNA {
 
 					VariantResult varResult = VariantCaller.determineLowLevelVariant(line,
 							line.getMinorBasePercentsFWD(), line.getMinorBasePercentsREV(), line.getLlrFWD(),
-							line.getLlrREV(), level, line.getMinorBaseFWD());
+							line.getLlrREV(), level, line.getMinorBaseFWD(),bias);
 
 					varResult.setLevel(hetLevel);
 

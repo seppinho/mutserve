@@ -49,6 +49,8 @@ public class VariantLine implements Comparable<VariantLine> {
 	private double bayesProbability;
 	private double bayesPercentageFWD;
 	private double bayesPercentageREV;
+	
+	private double meanBaseQuality;
 
 	private String insPosition;
 
@@ -186,7 +188,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		// set
 		this.setCovFWD(totalFWD);
 		this.setCovREV(totalREV);
-
+		
 		if (totalFWD > 0) {
 			aFWDPercents = aFWD / (double) totalFWD;
 			cFWDPercents = cFWD / (double) totalFWD;
@@ -555,27 +557,41 @@ public class VariantLine implements Comparable<VariantLine> {
 			}
 		}
 
+		double meanQualityA = 0; 
+		double meanQualityC = 0; 
+		double meanQualityG = 0; 
+		double meanQualityT = 0; 
+		
+		double qualityA = 0;
+		double qualityC = 0;
+		double qualityG = 0;
+		double qualityT = 0;
+		
 		for (int i = 0; i < base.getaFor(); i++) {
 			byte err = base.getaForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
+			qualityA += err;
 			probAFor += Math.log10(1 - qualScore);
 			probCFor += Math.log10(qualScore / 3);
 			probGFor += Math.log10(qualScore / 3);
 			probTFor += Math.log10(qualScore / 3);
 		}
-
+		
+		
 		for (int i = 0; i < base.getcFor(); i++) {
 			byte err = base.getcForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
+			qualityC += err;
 			probCFor += Math.log10(1 - qualScore);
 			probAFor += Math.log10(qualScore / 3);
 			probGFor += Math.log10(qualScore / 3);
 			probTFor += Math.log10(qualScore / 3);
 		}
-
+		
 		for (int i = 0; i < base.getgFor(); i++) {
 			byte err = base.getgForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
+			qualityG += err;
 			probGFor += Math.log10(1 - qualScore);
 			probAFor += Math.log10(qualScore / 3);
 			probCFor += Math.log10(qualScore / 3);
@@ -586,6 +602,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		for (int i = 0; i < base.gettFor(); i++) {
 			byte err = base.gettForQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
+			qualityT += err;
 			probTFor += Math.log10(1 - qualScore);
 			probAFor += Math.log10(qualScore / 3);
 			probCFor += Math.log10(qualScore / 3);
@@ -595,6 +612,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		for (int i = 0; i < base.getaRev(); i++) {
 			byte err = base.getaRevQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
+			qualityA += err;
 			probARev += Math.log10(1 - qualScore);
 			probCRev += Math.log10(qualScore / 3);
 			probGRev += Math.log10(qualScore / 3);
@@ -604,6 +622,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		for (int i = 0; i < base.getcRev(); i++) {
 			byte err = base.getcRevQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
+			qualityC += err;
 			probCRev += Math.log10((1 - qualScore));
 			probARev += Math.log10(qualScore / 3);
 			probGRev += Math.log10(qualScore / 3);
@@ -613,6 +632,7 @@ public class VariantLine implements Comparable<VariantLine> {
 		for (int i = 0; i < base.getgRev(); i++) {
 			byte err = base.getgRevQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
+			qualityG += err;
 			probGRev += Math.log10((1 - qualScore));
 			probARev += Math.log10(qualScore / 3);
 			probCRev += Math.log10(qualScore / 3);
@@ -622,11 +642,17 @@ public class VariantLine implements Comparable<VariantLine> {
 		for (int i = 0; i < base.gettRev(); i++) {
 			byte err = base.gettRevQ().get(i);
 			double qualScore = Math.pow(10, (-err / 10));
+			qualityT += err;
 			probTRev += Math.log10((1 - qualScore));
 			probARev += Math.log10(qualScore / 3);
 			probCRev += Math.log10(qualScore / 3);
 			probGRev += Math.log10(qualScore / 3);
 		}
+		
+		meanQualityA = qualityA / (base.getaForQ().size() + base.getaRevQ().size());
+		meanQualityC = qualityC / (base.getcForQ().size() + base.getcRevQ().size());
+		meanQualityG = qualityG / (base.getgForQ().size() + base.getgRevQ().size());
+		meanQualityT = qualityT / (base.gettForQ().size() + base.gettRevQ().size());
 
 		// add prior
 		double probA = (probAFor + probARev) + Math.log10(freqA);
@@ -657,18 +683,22 @@ public class VariantLine implements Comparable<VariantLine> {
 		if (finalBase == 'A') {
 			this.bayesPercentageFWD = aPercentageFWD;
 			this.bayesPercentageREV = aPercentageREV;
+			this.meanBaseQuality = meanQualityA;
 		}
 		if (finalBase == 'C') {
 			this.bayesPercentageFWD = cPercentageFWD;
 			this.bayesPercentageREV = cPercentageREV;
+			this.meanBaseQuality = meanQualityC;
 		}
 		if (finalBase == 'G') {
 			this.bayesPercentageFWD = gPercentageFWD;
 			this.bayesPercentageREV = gPercentageREV;
+			this.meanBaseQuality = meanQualityG;
 		}
 		if (finalBase == 'T') {
 			this.bayesPercentageFWD = tPercentageFWD;
 			this.bayesPercentageREV = tPercentageREV;
+			this.meanBaseQuality = meanQualityT;
 		}
 
 		this.setBayesProbability(Math.pow(10, bayesProb - d));
@@ -1398,6 +1428,14 @@ public class VariantLine implements Comparable<VariantLine> {
 
 	public void setFilter(Filter filter) {
 		this.filter = filter;
+	}
+
+	public double getMeanBaseQuality() {
+		return meanBaseQuality;
+	}
+
+	public void setMeanBaseQuality(double meanBaseQuality) {
+		this.meanBaseQuality = meanBaseQuality;
 	}
 
 }
