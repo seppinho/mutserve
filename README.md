@@ -1,11 +1,12 @@
 # Mutserve2
 
 [![Mutserve Tests](https://github.com/seppinho/mutserve/actions/workflows/run-tests.yml/badge.svg?event=public)](https://github.com/seppinho/mutserve/actions/workflows/run-tests.yml)
-[![Twitter Follow](https://img.shields.io/twitter/follow/mtdnaserver.svg?style=social&label=Follow)](https://twitter.com/mtdnaserver)
 
-Mutserve is a variant caller for the mitochondrial genome to detect homoplasmic and heteroplasmic sites in sequence data. It is used by [haplocheck](https://github.com/genepi/haplocheck) and [mtDNA-Server 2](https://mitoverse.i-med.ac.at).
+Mutserve2 is a variant caller for the mitochondrial genome to detect homoplasmic and heteroplasmic sites in sequence data. 
 
-## Quick Start
+We recommend to use our [Nextflow DSL2 pipeline for mtDNA-Server 2](https://github.com/genepi/mtdna-server-2) which includes mutserve2. 
+
+## Standalone Quick Start
 Mutserve requires sorted and indexed CRAM/BAM files as an input.
 
 ```
