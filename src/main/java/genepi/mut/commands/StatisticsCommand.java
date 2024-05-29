@@ -24,7 +24,8 @@ public class StatisticsCommand implements Callable<Integer> {
 	private static final int MIN_MEAN_BASE_QUALITY = 10;
 	private static final int MIN_MEAN_DEPTH = 50;
 
-	List<String> allowed_contigs = new ArrayList<>(List.of("chrM", "MT", "chrMT", "rCRS", "NC_012920.1"));
+	List<String> allowed_contigs = new ArrayList<>(
+			List.of("chrM", "MT", "chrMT", "rCRS", "NC_012920.1", "gi|251831106|ref|NC_012920.1|"));
 
 	@Option(names = { "--input" }, description = "\"Input file", required = true)
 	private String input;
@@ -107,6 +108,8 @@ public class StatisticsCommand implements Callable<Integer> {
 
 			// header
 			reader.readLine();
+			
+		
 
 			while ((line = reader.readLine()) != null) {
 				String sampleName = line.split("\t")[0];
@@ -116,6 +119,7 @@ public class StatisticsCommand implements Callable<Integer> {
 							+ fileName + ".<br>mtDNA analysis cannot be started!");
 					context.error(text.toString());
 					reader.close();
+					System.out.println("\n\nERROR: Duplicate sample name for sample '" + sampleName + "' (Filename: " + fileName+".");
 					return -1;
 				}
 
@@ -126,18 +130,16 @@ public class StatisticsCommand implements Callable<Integer> {
 
 		for (StatisticsFile sample : samples) {
 
-			if ((tool.equals("mutect2") || tool.equals("fusion")) && sample.getReadGroup() == null) {
+			if (sample.getReadGroup() == null) {
 				{
 					countNoReadGroups++;
-					excludedSamples++;
-					excludedSamplesFile.append(
-							sample.getSampleName() + "\t" + "No readgroup tag (@RG) available in BAM file" + "\n");
 				}
 			}
 
 			if (sample.getSampleName() == null) {
 				text.append("\n<b>Error:</b> Error in sample file name.<br>mtDNA analysis cannot be started!");
 				context.error(text.toString());
+				System.out.println("\n\nERROR: No sample file name has been detected.");
 				return -1;
 			}
 
@@ -223,27 +225,24 @@ public class StatisticsCommand implements Callable<Integer> {
 
 		if (contigs.size() > 1) {
 			context.error("Different contigs have been detected");
+			System.out.println("\n\nERROR: Different contigs have been detected for your input samples. Please upload them in different batches.");
 			return -1;
 		} else {
 			text.append("Detected contig name: " + contigs.get(0) + "\n");
 		}
 
-		if (tool.equals("mutect2") || tool.equals("fusion")) {
-
-			boolean found = false;
-			for (String contig : allowed_contigs) {
-				if (contig.equals(contigs.get(0))) {
-					found = true;
-				}
-			}
-
-			if (!found) {
-				context.error("For Mutect2, please one of the following contig names for chromosome MT: "
-						+ allowed_contigs.toString());
-				return -1;
-			}
-
-		}
+		/*
+		 * if (tool.equals("mutect2") || tool.equals("fusion")) {
+		 * 
+		 * boolean found = false; for (String contig : allowed_contigs) { if
+		 * (contig.equals(contigs.get(0))) { found = true; } }
+		 * 
+		 * if (!found) { context.
+		 * error("For Mutect2, please one of the following contig names for chromosome MT: "
+		 * + allowed_contigs.toString()); return -1; }
+		 * 
+		 * }
+		 */
 
 		if (lowestMeanDepth != -1) {
 			text.append("Min Mean Depth: " + lowestMeanDepth + "\n");
@@ -280,7 +279,7 @@ public class StatisticsCommand implements Callable<Integer> {
 		}
 
 		if (countNoReadGroups > 0) {
-			text.append(countNoReadGroups + " sample(s) with no readgroups (RG) have been excluded.");
+			text.append("For " + countNoReadGroups + " sample(s) a readgroup tag (@RG) have been added");
 		}
 
 		if (countMeanDepth > 0) {
@@ -304,11 +303,14 @@ public class StatisticsCommand implements Callable<Integer> {
 
 		if (validFiles == 0) {
 			context.error("No input samples passed the QC step.");
+			System.out.println("\n\nERROR: No input samples passed the QC step.");
 			return -1;
 		} else {
 			context.ok("Input Validation run succesfully, mtDNA analysis can be started.");
 			return 0;
 		}
+		
+	
 	}
 
 	public String formatTime(long timeInSeconds) {
@@ -318,7 +320,6 @@ public class StatisticsCommand implements Callable<Integer> {
 	public String getInput() {
 		return input;
 	}
-
 	public void setInput(String input) {
 		this.input = input;
 	}
