@@ -1,6 +1,6 @@
 # Mutserve2
 
-[![Mutserve Tests](https://github.com/seppinho/mutserve/actions/workflows/run-tests.yml/badge.svg?event=public)](https://github.com/seppinho/mutserve/actions/workflows/run-tests.yml)
+![Mutserve Tests](https://github.com/seppinho/mutserve/actions/workflows/run-tests.yml/badge.svg)
 
 Mutserve2 is a variant caller for the mitochondrial genome to detect homoplasmic and heteroplasmic sites in sequence data. 
 
