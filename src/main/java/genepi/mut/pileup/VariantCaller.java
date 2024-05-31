@@ -19,7 +19,7 @@ public class VariantCaller {
 	}
 
 	private static Set<Integer> blacklist = new HashSet<Integer>(
-			Arrays.asList(301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 315, 316, 3105, 3106, 3107, 16182));
+			Arrays.asList(3107));
 
 	public static int VARIANT = 1;
 
