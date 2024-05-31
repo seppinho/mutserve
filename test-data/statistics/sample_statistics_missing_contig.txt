@@ -1,0 +1,9 @@
+Sample  Parameter       Value
+seb.bam	Contig	
+seb.bam	NumberofReads
+seb.bam	CoveredBases
+seb.bam	CoveragePercentage
+seb.bam	MeanDepth
+seb.bam	MeanBaseQuality
+seb.bam	MeanMapQuality
+seb.bam	RG	@RG,ID:seb,SM:seb
