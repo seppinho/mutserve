@@ -48,7 +48,7 @@ public class StatisticsTest {
 		
 		CloudgeneReport CloudgeneLog = new CloudgeneReport(CLOUDGENE_LOG);
 
-		assertTrue(CloudgeneLog.hasInMemory("Different contigs have been detected"));
+		assertTrue(CloudgeneLog.hasInMemory("Different mtDNA contig names have been detected in your input files."));
 		assertTrue(CloudgeneLog.hasInMemory("[ERROR]"));
 
 
@@ -104,6 +104,23 @@ public class StatisticsTest {
 		
 		CloudgeneReport CloudgeneLog = new CloudgeneReport(CLOUDGENE_LOG);
 		assertTrue(CloudgeneLog.hasInMemory("Passed Samples: 1"));
+
+
+	}
+	
+	@Test
+	public void testWithMissingContig() throws Exception {
+
+		String inputFolder = "test-data/statistics/sample_statistics_missing_contig.txt";
+
+
+		StatisticsCommand command = new StatisticsCommand();
+		command.setInput(inputFolder);
+		command.setOutput("excluded_samples.txt");
+
+		assertEquals(-1, (int) command.call());
+		
+
 
 
 	}

@@ -99,7 +99,6 @@ public class StatisticsCommand implements Callable<Integer> {
 			try {
 				reader = new BufferedReader(new FileReader(mapping));
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return -1;
 			}
@@ -129,7 +128,7 @@ public class StatisticsCommand implements Callable<Integer> {
 		}
 
 		for (StatisticsFile sample : samples) {
-
+			
 			if (sample.getReadGroup() == null) {
 				{
 					countNoReadGroups++;
@@ -223,26 +222,20 @@ public class StatisticsCommand implements Callable<Integer> {
 		text.append("Input Samples: " + samples.size() + "\n");
 		text.append("Passed Samples: " + validFiles + "\n");
 
-		if (contigs.size() > 1) {
-			context.error("Different contigs have been detected");
-			System.out.println("\n\nERROR: Different contigs have been detected for your input samples. Please upload them in different batches.");
+		
+		if (contigs.size() == 0) {
+			context.error("No valid mtDNA contigs with length 16569 have been detected in your input files.");
+			System.out.println("\n\nERROR: No valid mtDNA contigs detected.");
 			return -1;
-		} else {
-			text.append("Detected contig name: " + contigs.get(0) + "\n");
 		}
-
-		/*
-		 * if (tool.equals("mutect2") || tool.equals("fusion")) {
-		 * 
-		 * boolean found = false; for (String contig : allowed_contigs) { if
-		 * (contig.equals(contigs.get(0))) { found = true; } }
-		 * 
-		 * if (!found) { context.
-		 * error("For Mutect2, please one of the following contig names for chromosome MT: "
-		 * + allowed_contigs.toString()); return -1; }
-		 * 
-		 * }
-		 */
+	
+		if (contigs.size() != 1) {
+			context.error("Different mtDNA contig names have been detected in your input files.");
+			System.out.println("\n\nERROR: Different contig names have been detected for your input samples. Please upload them in different batches.");
+			return -1;
+		}
+		
+		text.append("Detected mtDNA contig name: " + contigs.get(0) + "\n");
 
 		if (lowestMeanDepth != -1) {
 			text.append("Min Mean Depth: " + lowestMeanDepth + "\n");
@@ -306,7 +299,7 @@ public class StatisticsCommand implements Callable<Integer> {
 			System.out.println("\n\nERROR: No input samples passed the QC step.");
 			return -1;
 		} else {
-			context.ok("Input Validation run succesfully, mtDNA analysis can be started.");
+			context.ok("Input Validation finished successfully, mtDNA analysis can be started.");
 			return 0;
 		}
 		
