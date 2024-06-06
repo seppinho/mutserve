@@ -4,9 +4,9 @@
 
 Mutserve2 is a variant caller for the mitochondrial genome to detect homoplasmic and heteroplasmic sites in sequence data. 
 
-We recommend to use our [Nextflow DSL2 pipeline for mtDNA-Server 2](https://github.com/genepi/mtdna-server-2) which includes mutserve2. 
+For easier execution and pre- and postprocessing steps, mutserve2 has been integrated into the [mtDNA-Server 2](https://github.com/genepi/mtdna-server-2)
 
-## Standalone Quick Start
+## Quick Start
 Mutserve requires sorted and indexed CRAM/BAM files as an input.
 
 ```
@@ -15,14 +15,6 @@ curl -sL mutserve.vercel.app | bash
 ```
 
 ## Documentation
-
-### Quick Start
-Mutserve requires sorted and indexed CRAM/BAM files as an input.
-
-```
-curl -sL mutserve.vercel.app | bash
-./mutserve
-```
 
 ### Available Tools
 Currently two tools are available. 
@@ -71,12 +63,12 @@ Mutserve allows to annotate the variant file (.txt) with a predefined [annotatio
 | Show version     |  | `--version`|
 | Show help     |  | `--help`|
 
-## Output Formats
+### Output Formats
 
-### Tab delimited File
+#### Tab delimited File
 By default (`--output filename` does not end with .vcf or .vcf.gz) we export a TAB-delimited file including *ID, Position, Reference, Variant & VariantLevel*. Please note that the *VariantLevel* always reports the non-reference variant level. The output file also includes the **most** and **second most base** at a specific position (MajorBase + MajorLevel, MinorBase+MinorLevel). The reported variant can be the major or the minor component. The last column includes the type of the variant (1: Homoplasmy, 2: Heteroplasmy or Low-Level Variant, 3: Low-Level Deletion, 4: Deletion, 5: Insertion). See [here](https://raw.githubusercontent.com/seppinho/mutation-server/master/test-data/results/variantsLocal1000G) for an example. 
 
-### VCF
+#### VCF
 If you want a **VCF** file as an output, please specify `--output filename.vcf.gz`. Heteroplasmies are coded as 1/0 genotypes, the heteroplasmy level is included in the FORMAT using the **AF** attribute (allele frequency) of the first non-reference allele. Please note that indels are currently not included in the VCF.  This VCF file can be used as an input for https://github.com/seppinho/haplogrep-cmd.
 
 ## Limitations
