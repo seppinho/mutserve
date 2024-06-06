@@ -75,7 +75,7 @@ If you want a **VCF** file as an output, please specify `--output filename.vcf.g
 The focus of mutserve is currenly on SNP calling and not on indels. Please checkout [mtDNA-Server 2](https://github.com/genepi/mtdna-server-2/) to combine SNV with InDel Calling. 
 
 ## Contact
-[Sebastian Schoenherr](mailto:sebastian.schoenherr@i-med.ac.at)
+[Sebastian Schoenherr](https://genepi.i-med.ac.at/team/schoenherr-sebastian/)
 
 ## Citation
 
