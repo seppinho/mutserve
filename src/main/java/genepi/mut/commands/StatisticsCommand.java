@@ -114,7 +114,7 @@ private int minMeanBaseQ = 10;
 				reader = new BufferedReader(new FileReader(mapping));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
-				return -1;
+				return 1;
 			}
 			String line;
 			ArrayList<String> sampleList = new ArrayList<>();
@@ -133,7 +133,7 @@ private int minMeanBaseQ = 10;
 					outputWriter.error(text);
 					reader.close();
 					System.out.println("\n\nERROR: Duplicate sample name for sample '" + sampleName + "' (Filename: " + fileName+".");
-					return -1;
+					return 1;
 				}
 
 				sampleList.add(sampleName);
@@ -153,7 +153,7 @@ private int minMeanBaseQ = 10;
 				text.add("\n<b>Error:</b> Error in sample file name.<br>mtDNA analysis cannot be started!");
 				outputWriter.error(text);
 				System.out.println("\n\nERROR: No sample file name has been detected.");
-				return -1;
+				return 1;
 			}
 
 			if (sample.getContig() != null) {
@@ -225,6 +225,7 @@ private int minMeanBaseQ = 10;
 		text.add("Mode: " + tool + "\n");
 		text.add("Reference: " + reference + "\n");
 		text.add("Heteroplasmic Detection Limit: " + detectionLimit + "\n");
+		text.add("Min Mean Coverage: " + minMeanDepth + "\n");
 		text.add("Min Base Quality: " + baseQ + "\n");
 		text.add("Min Mapping Quality: " + mapQ + "\n");
 		text.add("Min Alignment Quality: " + alignQ + "\n");
@@ -240,13 +241,13 @@ private int minMeanBaseQ = 10;
 		if (contigs.size() == 0) {
 			outputWriter.error("No valid mtDNA contigs with length 16569 have been detected in your input files.");
 			System.out.println("\n\nERROR: No valid mtDNA contigs detected.");
-			return -1;
+			return 1;
 		}
 	
 		if (contigs.size() != 1) {
 			outputWriter.error("Different mtDNA contig names have been detected in your input files.");
 			System.out.println("\n\nERROR: Different contig names have been detected for your input samples. Please upload them in different batches.");
-			return -1;
+			return 1;
 		}
 		
 		text.add("Detected mtDNA contig name: " + contigs.get(0) + "\n");
@@ -310,7 +311,7 @@ private int minMeanBaseQ = 10;
 		if (validFiles == 0) {
 			outputWriter.error("No input samples passed the QC step.");
 			System.out.println("\n\nERROR: No input samples passed the QC step.");
-			return -1;
+			return 1;
 		} else {
 			outputWriter.message("Input Validation finished successfully, mtDNA analysis can be started.");
 			return 0;
