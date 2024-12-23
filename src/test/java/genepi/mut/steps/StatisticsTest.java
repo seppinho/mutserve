@@ -1,35 +1,27 @@
 package genepi.mut.steps;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
-
 import genepi.mut.commands.StatisticsCommand;
-import genepi.mut.util.report.CloudgeneReport;
-
+import genepi.mut.util.report.OutputReader;
 
 
 public class StatisticsTest {
 	
-	private static final String CLOUDGENE_LOG = "cloudgene.report.json";
+	private static final String CLOUDGENE_LOG = "cloudgene.report";
 	
 	@Test
 	public void testReadStatistics() throws Exception {
 
 		String inputFolder = "test-data/statistics/sample_statistics.txt";
 
-
-		StatisticsCommand command = new StatisticsCommand();
-		command.setInput(inputFolder);
-		command.setOutput("excluded_samples.txt");
+		StatisticsCommand command = buildCommand(inputFolder);
 
 		assertEquals(0, (int) command.call());
 		
-		CloudgeneReport CloudgeneLog = new CloudgeneReport(CLOUDGENE_LOG);
+		OutputReader log = new OutputReader(CLOUDGENE_LOG);
 
-		assertTrue(CloudgeneLog.hasInMemory("Passed Samples: 2"));
-		assertTrue(CloudgeneLog.hasInMemory("[OK]"));
+		assertTrue(log.hasInMemory("Passed Samples: 2"));
 
 
 	}
@@ -39,18 +31,13 @@ public class StatisticsTest {
 
 		String inputFolder = "test-data/statistics/sample_statistics_two_contigs.txt";
 
-
-		StatisticsCommand command = new StatisticsCommand();
-		command.setInput(inputFolder);
-		command.setOutput("excluded_samples.txt");
+		StatisticsCommand command = buildCommand(inputFolder);
 
 		assertEquals(-1, (int) command.call());
 		
-		CloudgeneReport CloudgeneLog = new CloudgeneReport(CLOUDGENE_LOG);
+		OutputReader log = new OutputReader(CLOUDGENE_LOG);
 
-		assertTrue(CloudgeneLog.hasInMemory("Different mtDNA contig names have been detected in your input files."));
-		assertTrue(CloudgeneLog.hasInMemory("[ERROR]"));
-
+		assertTrue(log.hasInMemory("Different mtDNA contig names have been detected in your input files."));
 
 	}
 	
@@ -59,15 +46,12 @@ public class StatisticsTest {
 
 		String inputFolder = "test-data/statistics/sample_statistics_bad_quality_depth.txt";
 
-
-		StatisticsCommand command = new StatisticsCommand();
-		command.setInput(inputFolder);
-		command.setOutput("excluded_samples.txt");
+		StatisticsCommand command = buildCommand(inputFolder);
 
 		assertEquals(0, (int) command.call());
 		
-		CloudgeneReport CloudgeneLog = new CloudgeneReport(CLOUDGENE_LOG);
-		assertTrue(CloudgeneLog.hasInMemory("1 sample(s) with mean depth of < 50 have been excluded"));
+		OutputReader log = new OutputReader(CLOUDGENE_LOG);
+		assertTrue(log.hasInMemory("1 sample(s) with mean depth of < 50 have been excluded"));
 
 
 	}
@@ -77,15 +61,12 @@ public class StatisticsTest {
 
 		String inputFolder = "test-data/statistics/sample_statistics_bad_quality_depth_percentage.txt";
 
-
-		StatisticsCommand command = new StatisticsCommand();
-		command.setInput(inputFolder);
-		command.setOutput("excluded_samples.txt");
+		StatisticsCommand command = buildCommand(inputFolder);
 
 		assertEquals(-1, (int) command.call());
 		
-		CloudgeneReport CloudgeneLog = new CloudgeneReport(CLOUDGENE_LOG);
-		assertTrue(CloudgeneLog.hasInMemory("No input samples passed the QC step"));
+		OutputReader log = new OutputReader(CLOUDGENE_LOG);
+		assertTrue(log.hasInMemory("No input samples passed the QC step"));
 
 
 	}
@@ -95,15 +76,12 @@ public class StatisticsTest {
 
 		String inputFolder = "test-data/statistics/sample_statistics_no_contig.txt";
 
-
-		StatisticsCommand command = new StatisticsCommand();
-		command.setInput(inputFolder);
-		command.setOutput("excluded_samples.txt");
+		StatisticsCommand command = buildCommand(inputFolder);
 
 		assertEquals(0, (int) command.call());
 		
-		CloudgeneReport CloudgeneLog = new CloudgeneReport(CLOUDGENE_LOG);
-		assertTrue(CloudgeneLog.hasInMemory("Passed Samples: 1"));
+		OutputReader log = new OutputReader(CLOUDGENE_LOG);
+		assertTrue(log.hasInMemory("Passed Samples: 1"));
 
 
 	}
@@ -113,16 +91,21 @@ public class StatisticsTest {
 
 		String inputFolder = "test-data/statistics/sample_statistics_missing_contig.txt";
 
-
-		StatisticsCommand command = new StatisticsCommand();
-		command.setInput(inputFolder);
-		command.setOutput("excluded_samples.txt");
+		StatisticsCommand command = buildCommand(inputFolder);
 
 		assertEquals(-1, (int) command.call());
 		
 
 
 
+	}
+	
+	private StatisticsCommand buildCommand(String inputFolder) {
+		StatisticsCommand command = new StatisticsCommand();
+		command.setInput(inputFolder);
+		command.setOutput("excluded_samples.txt");
+		command.setReport(CLOUDGENE_LOG);
+		return command;
 	}
 	
 
