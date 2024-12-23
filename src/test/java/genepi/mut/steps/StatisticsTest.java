@@ -33,7 +33,7 @@ public class StatisticsTest {
 
 		StatisticsCommand command = buildCommand(inputFolder);
 
-		assertEquals(-1, (int) command.call());
+		assertEquals(1, (int) command.call());
 		
 		OutputReader log = new OutputReader(CLOUDGENE_LOG);
 
@@ -63,7 +63,7 @@ public class StatisticsTest {
 
 		StatisticsCommand command = buildCommand(inputFolder);
 
-		assertEquals(-1, (int) command.call());
+		assertEquals(1, (int) command.call());
 		
 		OutputReader log = new OutputReader(CLOUDGENE_LOG);
 		assertTrue(log.hasInMemory("No input samples passed the QC step"));
@@ -93,7 +93,7 @@ public class StatisticsTest {
 
 		StatisticsCommand command = buildCommand(inputFolder);
 
-		assertEquals(-1, (int) command.call());
+		assertEquals(1, (int) command.call());
 		
 
 
