@@ -22,9 +22,9 @@ public class App implements Runnable {
 
 	public static final String URL = "https://github.com/seppinho/mutserve";
 
-	public static final String APP = "mtDNA Variant Detection";
+	public static final String APP = "mtDNA Variant Detection Tools";
 
-	public static final String VERSION = "v2.0.2";
+	public static final String VERSION = "v2.0.3";
 
 	public static final String COPYRIGHT = "(c) Sebastian Schoenherr, Hansi Weissensteiner, Lukas Forer";
 
